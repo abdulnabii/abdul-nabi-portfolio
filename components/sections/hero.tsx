@@ -1,0 +1,144 @@
+import { LinkButton } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { HeroPortrait3D } from "@/components/effects/hero-portrait-3d";
+import { siteContent } from "@/data/content";
+import { getActiveSocials } from "@/data/content";
+import { isPublicUrl } from "@/lib/links";
+import { ArrowDownRight, FileText, Github, Linkedin, Mail } from "lucide-react";
+
+const iconMap = {
+  github: Github,
+  linkedin: Linkedin,
+  email: Mail,
+  twitter: Github,
+  whatsapp: Mail,
+};
+
+export function Hero() {
+  const { hero, availability, location, resumeUrl, email } = siteContent;
+  const showResume = isPublicUrl(resumeUrl);
+  const socials = getActiveSocials();
+
+  return (
+    <section
+      id="home"
+      className="relative flex min-h-screen items-center section-padding pt-32 md:pt-36"
+      aria-labelledby="hero-heading"
+    >
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/20 blur-[100px] animate-pulse-soft motion-reduce:animate-none" />
+        <div className="absolute right-[10%] top-40 h-48 w-48 rounded-full bg-accent-cyan/15 blur-[80px] animate-float motion-reduce:animate-none" />
+        <div className="absolute bottom-32 left-[12%] h-56 w-56 rounded-full bg-accent-violet/15 blur-[90px]" />
+      </div>
+
+      <div className="container-narrow relative">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="animate-fade-up">
+            <Badge variant="accent" className="mb-6 gap-1.5">
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]"
+                aria-hidden
+              />
+              {availability}
+            </Badge>
+
+            <p className="mb-3 text-sm font-medium tracking-wide text-slate-400">
+              {hero.greeting}
+            </p>
+
+            <h1
+              id="hero-heading"
+              className="text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[3.5rem] lg:leading-[1.12]"
+            >
+              {hero.name}
+            </h1>
+
+            <p className="mt-4 max-w-xl text-xl font-medium leading-snug text-slate-100 sm:text-2xl">
+              {hero.role}
+            </p>
+
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg">
+              {hero.description}
+            </p>
+
+            <p className="mt-4 text-sm font-medium tracking-wide text-accent-soft/90">
+              {hero.focusLine}
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <LinkButton href={hero.ctaPrimary.href} size="lg" className="cursor-grow">
+                {hero.ctaPrimary.label}
+                <ArrowDownRight className="h-4 w-4" />
+              </LinkButton>
+              <LinkButton
+                href={hero.ctaSecondary.href}
+                variant="secondary"
+                size="lg"
+                className="cursor-grow"
+              >
+                {hero.ctaSecondary.label}
+              </LinkButton>
+              {showResume && resumeUrl && (
+                <LinkButton
+                  href={resumeUrl}
+                  variant="ghost"
+                  size="lg"
+                  external
+                  className="cursor-grow"
+                >
+                  <FileText className="h-4 w-4" />
+                  Download CV
+                </LinkButton>
+              )}
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              {email && (
+                <a
+                  href={`mailto:${email}`}
+                  className="cursor-grow text-sm text-slate-300 transition-colors hover:text-white"
+                >
+                  {email}
+                </a>
+              )}
+              <span className="hidden text-slate-600 sm:inline">·</span>
+              <p className="text-sm text-slate-500">{location}</p>
+            </div>
+
+            {socials.length > 0 && (
+              <ul className="mt-5 flex flex-wrap gap-2">
+                {socials.map((social) => {
+                  const Icon = iconMap[social.icon] ?? Mail;
+                  return (
+                    <li key={social.label}>
+                      <a
+                        href={social.href}
+                        target={social.icon === "email" ? undefined : "_blank"}
+                        rel={
+                          social.icon === "email"
+                            ? undefined
+                            : "noopener noreferrer"
+                        }
+                        className="cursor-grow inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-slate-300 transition-all hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                        {social.label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          <div
+            className="relative animate-fade-up"
+            style={{ animationDelay: "120ms" }}
+          >
+            <HeroPortrait3D />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

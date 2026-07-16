@@ -1,0 +1,85 @@
+[
+  {
+    "id": "aurora-dashboard",
+    "title": "Aurora Analytics",
+    "description": "Multi-tenant analytics workspace for product teams who need clear metrics without a heavy BI tool.",
+    "problem": "Teams tracked numbers across spreadsheets and disconnected dashboards, with no shared tenant model or consistent UI patterns.",
+    "role": "Built the Next.js app shell, data views, and basic RBAC-aware navigation end to end.",
+    "outcome": "Delivered a working multi-tenant dashboard prototype with reusable chart widgets and role-aware layouts ready for real data wiring.",
+    "tags": [
+      "Next.js",
+      "TypeScript",
+      "Supabase",
+      "Charts"
+    ],
+    "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
+    "status": "case-study",
+    "statusLabel": "Case study · UI + data model",
+    "featured": true,
+    "year": "2025",
+    "published": true,
+    "appreciations": 13
+  },
+  {
+    "id": "nova-commerce",
+    "title": "Nova Commerce",
+    "description": "Headless storefront focused on product storytelling and a clean mobile checkout path.",
+    "problem": "Product pages felt slow and inconsistent; content updates required developer time for simple merchandising changes.",
+    "role": "Implemented product/collection templates, performance-minded layouts, and checkout UI integration points.",
+    "outcome": "Shipped a content-friendly storefront structure with clearer product hierarchy and faster perceived load on key templates.",
+    "tags": [
+      "Next.js",
+      "Stripe",
+      "CMS",
+      "Tailwind"
+    ],
+    "image": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=80",
+    "status": "case-study",
+    "statusLabel": "Case study · Commerce UI",
+    "featured": true,
+    "year": "2025",
+    "published": true,
+    "appreciations": 8
+  },
+  {
+    "id": "pulse-chat",
+    "title": "Pulse Support Chat",
+    "description": "Embeddable support chat UI with streaming replies and knowledge-base-ready scaffolding.",
+    "problem": "Support teams needed an in-product assistant surface that felt native — without inventing answers in the UI layer.",
+    "role": "Designed the chat interface, conversation states, and client/API contract for streaming messages.",
+    "outcome": "Built a reusable widget with solid empty/loading/error states and a clean path to plug in a real model provider.",
+    "tags": [
+      "React",
+      "Node.js",
+      "Streaming",
+      "UX"
+    ],
+    "image": "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=1400&q=80",
+    "status": "in-progress",
+    "statusLabel": "In progress · Private build",
+    "featured": true,
+    "year": "2025",
+    "published": true,
+    "appreciations": 16
+  },
+  {
+    "id": "signal-ops",
+    "title": "Ops status console",
+    "description": "Lightweight internal console for deploy health and incident visibility during handoffs.",
+    "problem": "Status lived in chat threads; engineers needed one calm place to scan service state.",
+    "role": "Built authenticated status views and a simple ops-oriented UI for scanability.",
+    "outcome": "Delivered a focused console layout that reduces context-switching during on-call handoffs.",
+    "tags": [
+      "Next.js",
+      "PostgreSQL",
+      "Auth"
+    ],
+    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80",
+    "status": "case-study",
+    "statusLabel": "Case study · Internal tool",
+    "featured": true,
+    "year": "2024",
+    "published": true,
+    "appreciations": 4
+  }
+]
