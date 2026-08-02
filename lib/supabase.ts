@@ -1,54 +1,131 @@
 /**
- * Supabase client placeholder.
- *
- * Install when ready:
- *   npm install @supabase/supabase-js
- *
- * Then set in .env.local:
- *   NEXT_PUBLIC_SUPABASE_URL=
- *   NEXT_PUBLIC_SUPABASE_ANON_KEY=
+ * Supabase REST & Storage client helper.
+ * Uses native fetch against NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY/NEXT_PUBLIC_SUPABASE_ANON_KEY.
+ * Works seamlessly on Vercel serverless without requiring extra npm packages.
  */
 
-export type SupabaseClientPlaceholder = {
-  from: (table: string) => {
-    select: (columns?: string) => Promise<{ data: unknown; error: Error | null }>;
-    insert: (values: unknown) => Promise<{ data: unknown; error: Error | null }>;
-  };
-};
-
-/**
- * Returns a configured Supabase client when env vars are present.
- * Currently a safe placeholder so the app builds without the package installed.
- */
-export function createSupabaseClient(): SupabaseClientPlaceholder | null {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !anonKey) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn(
-        "[supabase] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY. Returning null client."
-      );
-    }
-    return null;
-  }
-
-  // When you install @supabase/supabase-js, replace this with:
-  // import { createClient } from "@supabase/supabase-js";
-  // return createClient(url, anonKey);
-
-  return {
-    from: (table: string) => ({
-      select: async () => {
-        console.info(`[supabase] select on "${table}" — wire up real client`);
-        return { data: null, error: new Error("Supabase client not configured") };
-      },
-      insert: async () => {
-        console.info(`[supabase] insert on "${table}" — wire up real client`);
-        return { data: null, error: new Error("Supabase client not configured") };
-      },
-    }),
-  };
+function getSupabaseConfig() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return { url, key };
 }
 
-export const supabase = createSupabaseClient();
+export async function supabaseDbQuery<T = any>(
+  table: string,
+  params: string = ""
+): Promise<T[] | null> {
+  const { url, key } = getSupabaseConfig();
+  if (!url || !key) return null;
+
+  try {
+    const res = await fetch(`${url}/rest/v1/${table}?${params}`, {
+      method: "GET",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) return null;
+    return (await res.json()) as T[];
+  } catch (err) {
+    console.error(`[supabase] DB query error on ${table}:`, err);
+    return null;
+  }
+}
+
+export async function supabaseDbInsert<T = any>(
+  table: string,
+  payload: Record<string, any> | Record<string, any>[]
+): Promise<T | null> {
+  const { url, key } = getSupabaseConfig();
+  if (!url || !key) return null;
+
+  try {
+    const res = await fetch(`${url}/rest/v1/${table}`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (Array.isArray(data) ? data[0] : data) as T;
+  } catch (err) {
+    console.error(`[supabase] DB insert error on ${table}:`, err);
+    return null;
+  }
+}
+
+export async function supabaseDbUpsert<T = any>(
+  table: string,
+  payload: Record<string, any> | Record<string, any>[]
+): Promise<T | null> {
+  const { url, key } = getSupabaseConfig();
+  if (!url || !key) return null;
+
+  try {
+    const res = await fetch(`${url}/rest/v1/${table}`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates,return=representation",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (Array.isArray(data) ? data[0] : data) as T;
+  } catch (err) {
+    console.error(`[supabase] DB upsert error on ${table}:`, err);
+    return null;
+  }
+}
+
+export async function supabaseStorageUpload(
+  bucket: string,
+  filePath: string,
+  fileBuffer: Buffer | Blob,
+  contentType: string
+): Promise<string | null> {
+  const { url, key } = getSupabaseConfig();
+  if (!url || !key) return null;
+
+  try {
+    const cleanPath = filePath.replace(/^\//, "");
+    const uploadUrl = `${url}/storage/v1/object/${bucket}/${cleanPath}`;
+
+    const res = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": contentType,
+        "x-upsert": "true",
+      },
+      body: fileBuffer as any,
+    });
+
+    if (!res.ok) {
+      console.error(`[supabase] Storage upload failed: ${res.status} ${res.statusText}`);
+      return null;
+    }
+
+    return `${url}/storage/v1/object/public/${bucket}/${cleanPath}`;
+  } catch (err) {
+    console.error(`[supabase] Storage upload exception on ${bucket}/${filePath}:`, err);
+    return null;
+  }
+}

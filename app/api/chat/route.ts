@@ -63,14 +63,11 @@ export async function POST(request: NextRequest) {
       usage: result.usage,
     });
   } catch (error) {
+    // Log the full error server-side only — never expose raw messages to the client
+    // (raw errors can leak API key fragments, internal paths, or provider-specific details)
     console.error("[api/chat]", error);
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate a chat response.",
-      },
+      { error: "Service temporarily unavailable. Please try again later." },
       { status: 500 }
     );
   }

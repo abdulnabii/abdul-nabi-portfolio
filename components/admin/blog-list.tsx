@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { BlogPost } from "@/lib/blog-store";
 import { formatDate } from "@/lib/utils";
-import { Pencil, Trash2, Search } from "lucide-react";
+import { Pencil, Trash2, Search, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -132,7 +132,7 @@ export function BlogList({ posts: initial }: BlogListProps) {
                   </Badge>
                 </div>
                 <p className="mt-1 text-xs text-slate-500 font-mono">
-                  {formatDate(post.date)} · /blog/{post.slug} · Helpful: {post.helpfulCount ?? 0} | Not: {post.notHelpfulCount ?? 0} · Rating: {post.ratingCount ? ((post.ratingSum ?? 0) / post.ratingCount).toFixed(1) : "—"} ({post.ratingCount ?? 0} votes)
+                  {formatDate(post.date)} · /blog/{post.slug} · Helpful: {post.helpfulCount ?? 0} | Not: {post.notHelpfulCount ?? 0} · {post.ratingCount ? `Rating: ${((post.ratingSum ?? 0) / post.ratingCount).toFixed(1)} (${post.ratingCount} ${post.ratingCount === 1 ? "vote" : "votes"})` : "No ratings yet"}
                 </p>
                 <p className="mt-1.5 line-clamp-1 text-sm text-slate-400">
                   {post.excerpt}
@@ -140,6 +140,17 @@ export function BlogList({ posts: initial }: BlogListProps) {
               </div>
 
               <div className="flex shrink-0 gap-2">
+                {!post.published && (
+                  <Link
+                    href={`/api/preview?secret=${process.env.NEXT_PUBLIC_PREVIEW_SECRET || "default_preview_secret"}&type=blog&slug=${post.slug}`}
+                    target="_blank"
+                  >
+                    <Button variant="secondary" size="sm" type="button" className="text-amber-300 border-amber-500/20 hover:bg-amber-500/10">
+                      <Eye className="h-3.5 w-3.5" />
+                      Preview
+                    </Button>
+                  </Link>
+                )}
                 <Link href={`/admin/blogs/${post.slug}/edit`}>
                   <Button variant="secondary" size="sm" type="button">
                     <Pencil className="h-3.5 w-3.5" />

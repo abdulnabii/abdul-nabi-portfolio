@@ -17,7 +17,7 @@ export function About() {
           <SectionHeading
             eyebrow="Background"
             title={about.title}
-            subtitle={`How ${name.split(" ")[0]} approaches product work — ownership, craft, and honest delivery.`}
+            subtitle={`How ${name} approaches product work — ownership, craft, and honest delivery.`}
           />
         </Reveal>
 
@@ -41,12 +41,12 @@ export function About() {
                 <GlassCard
                   interactive
                   hover
-                  className="grid grid-cols-[1fr_auto] items-center gap-4 cursor-grow w-full py-4 px-5"
+                  className="flex flex-col items-start gap-1.5 cursor-grow w-full py-4.5 px-6"
                 >
                   <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold leading-relaxed">
                     {stat.label}
                   </span>
-                  <span className="text-xl sm:text-2xl font-bold text-indigo-400 shrink-0 text-right">
+                  <span className="text-xl sm:text-2xl font-bold text-indigo-400 shrink-0 text-left">
                     {stat.value}
                   </span>
                 </GlassCard>

@@ -20,7 +20,7 @@ export default async function BlogPage() {
         <SectionHeading
           eyebrow="Journal"
           title="Blog"
-          subtitle="Thoughts on design systems, performance, and shipping polished full-stack products."
+          subtitle="Practical notes on product UI, application security, App Router architecture, and shipping discipline."
         />
 
         {posts.length === 0 ? (

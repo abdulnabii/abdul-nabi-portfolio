@@ -2,9 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { FileText, LayoutDashboard, LogOut, Plus } from "lucide-react";
+import { FileText, LayoutDashboard, LogOut, Plus, FolderGit2, Inbox, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface AdminShellProps {
   email: string;
@@ -14,12 +15,33 @@ interface AdminShellProps {
 const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/blogs", label: "Blogs", icon: FileText },
-  { href: "/admin/blogs/new", label: "New post", icon: Plus },
+  { href: "/admin/projects", label: "Projects", icon: FolderGit2 },
+  { href: "/admin/inbox", label: "Inbox", icon: Inbox },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export function AdminShell({ email, children }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    async function checkInbox() {
+      try {
+        const res = await fetch("/api/admin/inbox");
+        if (res.ok) {
+          const data = (await res.json()) as { unreadCount: number };
+          setUnreadCount(data.unreadCount ?? 0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch inbox count", err);
+      }
+    }
+    checkInbox();
+    // Poll every 30 seconds for new messages/reactions
+    const interval = setInterval(checkInbox, 30000);
+    return () => clearInterval(interval);
+  }, [pathname]); // Refresh when navigating
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -36,7 +58,7 @@ export function AdminShell({ email, children }: AdminShellProps) {
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
               Admin panel
             </p>
-            <h1 className="text-lg font-semibold text-white">Blog management</h1>
+            <h1 className="text-lg font-semibold text-white">Portfolio Management</h1>
             <p className="mt-1 text-xs text-slate-400">{email}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -66,14 +88,21 @@ export function AdminShell({ email, children }: AdminShellProps) {
                     <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm transition",
+                        "flex items-center justify-between rounded-xl px-3 py-2.5 text-sm transition",
                         active
-                          ? "bg-accent/20 text-white"
-                          : "text-slate-400 hover:bg-white/5 hover:text-white"
+                          ? "bg-accent/25 text-white border border-accent/40 shadow-sm font-medium"
+                          : "border border-transparent text-slate-400 hover:bg-white/5 hover:text-white"
                       )}
                     >
-                      <Icon className="h-4 w-4" />
-                      {item.label}
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.label === "Inbox" && unreadCount > 0 && (
+                        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[10px] font-bold text-white shadow-[0_0_8px_rgba(129,140,248,0.5)]">
+                          {unreadCount}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 );

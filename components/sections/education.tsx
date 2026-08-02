@@ -36,7 +36,10 @@ export function Education() {
                   {item.degree}
                 </h3>
                 <p className="mt-1 text-sm text-slate-400">
-                  {item.institution} · {item.location}
+                  {item.institution}
+                  {item.location && item.location !== "—" && (
+                    <> · {item.location}</>
+                  )}
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-slate-300">
                   {item.description}

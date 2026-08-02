@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Project } from "@/data/content";
-import { Pencil, Trash2, Search } from "lucide-react";
+import { Pencil, Trash2, Search, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -143,6 +143,17 @@ export function ProjectList({ projects: initial }: ProjectListProps) {
               </div>
 
               <div className="flex shrink-0 gap-2">
+                {project.published === false && (
+                  <Link
+                    href={`/api/preview?secret=${process.env.NEXT_PUBLIC_PREVIEW_SECRET || "default_preview_secret"}&type=project&slug=${project.id}`}
+                    target="_blank"
+                  >
+                    <Button variant="secondary" size="sm" type="button" className="text-amber-300 border-amber-500/20 hover:bg-amber-500/10">
+                      <Eye className="h-3.5 w-3.5" />
+                      Preview
+                    </Button>
+                  </Link>
+                )}
                 <Link href={`/admin/projects/${project.id}/edit`}>
                   <Button variant="secondary" size="sm" type="button">
                     <Pencil className="h-3.5 w-3.5" />

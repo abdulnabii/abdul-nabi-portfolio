@@ -6,6 +6,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      spacing: {
+        "4.5": "1.125rem",
+      },
       colors: {
         glass: {
           border: "rgba(255, 255, 255, 0.12)",
@@ -43,6 +46,7 @@ module.exports = {
         "fade-in": "fadeIn 0.6s ease-out forwards",
         "fade-up": "fadeUp 0.7s ease-out forwards",
         "slide-in": "slideIn 0.4s ease-out forwards",
+        "scale-in": "scaleIn 0.25s ease-out forwards",
         float: "float 6s ease-in-out infinite",
         "pulse-soft": "pulseSoft 3s ease-in-out infinite",
       },
@@ -66,6 +70,10 @@ module.exports = {
         pulseSoft: {
           "0%, 100%": { opacity: "0.5" },
           "50%": { opacity: "0.85" },
+        },
+        scaleIn: {
+          from: { opacity: "0", transform: "scale(0.94)" },
+          to: { opacity: "1", transform: "scale(1)" },
         },
       },
       backdropBlur: {

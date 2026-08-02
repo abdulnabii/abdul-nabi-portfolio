@@ -74,7 +74,7 @@ export function DeleteModal({
 
         <div className="mt-4">
           <p className="text-sm leading-relaxed text-slate-300">
-            Are you sure you want to delete <span className="font-medium text-white">“{itemTitle}”</span>? This action cannot be undone and will permanently remove this record from the database.
+            Delete <span className="font-semibold text-white">“{itemTitle}”</span>? This cannot be undone.
           </p>
         </div>
 

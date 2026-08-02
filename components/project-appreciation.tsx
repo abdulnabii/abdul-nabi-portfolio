@@ -48,7 +48,7 @@ export function ProjectAppreciation({
           "cursor-grow flex items-center justify-center gap-2 rounded-2xl border px-6 py-3 font-semibold text-sm transition duration-300 shadow-glass",
           appreciated
             ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
-            : "border-white/10 bg-white/[0.04] text-slate-200 hover:border-indigo-500/30 hover:bg-indigo-500/10 hover:text-white"
+            : "border-white/10 bg-white/[0.04] text-slate-200 hover:border-indigo-500/30 hover:bg-indigo-500/10 hover:text-white hover:-translate-y-0.5 hover:shadow-glow-sm"
         )}
       >
         {appreciated ? (

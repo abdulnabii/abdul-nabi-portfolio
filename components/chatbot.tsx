@@ -77,9 +77,10 @@ export function Chatbot() {
         },
       ]);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to reach the assistant.";
-      setError(message);
+      // Use safe generic message — raw API errors must never reach the user
+      const safeMessage = "Service temporarily unavailable. Please try again later.";
+      console.error("[chatbot]", err);
+      setError(safeMessage);
       setMessages((prev) => [
         ...prev,
         {
@@ -112,7 +113,7 @@ export function Chatbot() {
                 <Bot className="h-4 w-4" />
               </span>
               <div>
-                <p className="text-sm font-medium text-white">Ask Abdul AI</p>
+                <p className="text-sm font-medium text-white">Ask Abdul Nabi AI</p>
                 <p className="text-xs text-slate-500">Portfolio assistant</p>
               </div>
             </div>

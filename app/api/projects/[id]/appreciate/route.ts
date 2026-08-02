@@ -19,6 +19,13 @@ export async function POST(request: NextRequest, context: RouteContext) {
       appreciations: currentCount + 1,
     });
 
+    const { addInboxItem } = await import("@/lib/inbox-store");
+    await addInboxItem("appreciation", {
+      projectTitle: project.title,
+      projectSlug: project.id,
+      count: currentCount + 1,
+    });
+
     return NextResponse.json({
       success: true,
       id: updated.id,

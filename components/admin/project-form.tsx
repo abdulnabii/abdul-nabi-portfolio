@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { MarkdownEditor } from "./markdown-editor";
+import { ImageUploadWidget } from "./image-upload-widget";
 import type { Project, ProjectStatus } from "@/data/content";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -24,6 +26,15 @@ interface ProjectFormProps {
   initial?: Project;
 }
 
+function decodeEntities(str: string = ""): string {
+  return str
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
 export function ProjectForm({ mode, initial }: ProjectFormProps) {
   const router = useRouter();
   const [title, setTitle] = useState(initial?.title ?? "");
@@ -43,7 +54,15 @@ export function ProjectForm({ mode, initial }: ProjectFormProps) {
   const [year, setYear] = useState(initial?.year ?? new Date().getFullYear().toString());
   const [published, setPublished] = useState(initial?.published ?? true);
   const [appreciations] = useState(initial?.appreciations ?? 0);
+  // Extended case study fields
+  const [architecture, setArchitecture] = useState(decodeEntities(initial?.architecture ?? ""));
+  const [implementation, setImplementation] = useState(decodeEntities(initial?.implementation ?? ""));
+  const [results, setResults] = useState(decodeEntities(initial?.results ?? ""));
+  const [contribution, setContribution] = useState(decodeEntities(initial?.contribution ?? ""));
+  const [challenges, setChallenges] = useState(decodeEntities(initial?.challenges ?? ""));
+  const [privateExplanation, setPrivateExplanation] = useState(decodeEntities(initial?.privateExplanation ?? ""));
 
+  const [previewMarkdown, setPreviewMarkdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -103,6 +122,12 @@ export function ProjectForm({ mode, initial }: ProjectFormProps) {
       published,
       appreciations,
       id: id || undefined,
+      architecture: architecture || undefined,
+      implementation: implementation || undefined,
+      results: results || undefined,
+      contribution: contribution || undefined,
+      challenges: challenges || undefined,
+      privateExplanation: privateExplanation || undefined,
     };
 
     try {
@@ -174,9 +199,13 @@ export function ProjectForm({ mode, initial }: ProjectFormProps) {
               placeholder="auto-generated-from-title"
               disabled={mode === "edit"}
             />
-            {mode === "create" && (
+            {mode === "create" ? (
               <p className="mt-1.5 text-xs text-slate-500">
                 Slug behaves as URL path. Cannot be changed after creation.
+              </p>
+            ) : (
+              <p className="mt-1.5 text-xs font-medium text-amber-300/80">
+                Slug is fixed after creation and cannot be changed.
               </p>
             )}
           </div>
@@ -321,24 +350,73 @@ export function ProjectForm({ mode, initial }: ProjectFormProps) {
           />
         </div>
 
-        <Input
-          label="Project Cover Image URL"
+        <ImageUploadWidget
+          label="Project Cover Image"
           value={image}
-          onChange={(e) => setImage(e.target.value)}
-          placeholder="https://images.unsplash.com/..."
+          onChange={setImage}
+          type="projects"
+          slug={id || "project_cover"}
         />
+      </div>
 
-        {image && (
-          <div className="relative h-48 overflow-hidden rounded-2xl border border-white/10 bg-[#050814]">
-            <Image
-              src={image}
-              alt="Cover preview"
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
-        )}
+      {/* Extended Case Study Fields */}
+      <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5 space-y-4">
+        <div className="flex items-center justify-between border-b border-white/5 pb-2">
+          <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+            Deep Case Study Content
+            <span className="ml-2 text-xs normal-case font-normal text-slate-600">(shown on individual project pages)</span>
+          </h4>
+          <button
+            type="button"
+            onClick={() => setPreviewMarkdown((v) => !v)}
+            className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white"
+          >
+            {previewMarkdown ? "Edit Raw Markdown" : "Live Markdown Preview"}
+          </button>
+        </div>
+
+        <MarkdownEditor
+          label="System Architecture"
+          value={architecture}
+          rows={6}
+          onChange={setArchitecture}
+          placeholder="Describe the system design, data flow, and technical architecture..."
+        />
+        <MarkdownEditor
+          label="Implementation Details"
+          value={implementation}
+          rows={6}
+          onChange={setImplementation}
+          placeholder="Key technical implementation specifics, libraries used, patterns followed..."
+        />
+        <MarkdownEditor
+          label="Results & Metrics"
+          value={results}
+          rows={5}
+          onChange={setResults}
+          placeholder="Measurable outcomes — Lighthouse scores, query times, feature counts..."
+        />
+        <MarkdownEditor
+          label="My Exact Contribution"
+          value={contribution}
+          rows={5}
+          onChange={setContribution}
+          placeholder="Specific percentage ownership and which parts were built solo..."
+        />
+        <MarkdownEditor
+          label="Challenges & Lessons Learned"
+          value={challenges}
+          rows={5}
+          onChange={setChallenges}
+          placeholder="Key problems encountered and how they were resolved..."
+        />
+        <Textarea
+          label="Private Build Explanation (optional)"
+          value={privateExplanation}
+          rows={4}
+          onChange={(e) => setPrivateExplanation(e.target.value)}
+          placeholder="If repo is private, explain why professionally (IP reasons, API keys, etc.)..."
+        />
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">

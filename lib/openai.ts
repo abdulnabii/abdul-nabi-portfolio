@@ -49,7 +49,11 @@ export async function createChatCompletion(
     ...options.messages,
   ];
 
-  if (!apiKey) {
+  // Treat placeholder or missing keys as absent — use mock mode instead
+  const isRealKey =
+    apiKey && !apiKey.startsWith("sk-your") && apiKey.length > 20;
+
+  if (!isRealKey) {
     const lastUser = [...options.messages]
       .reverse()
       .find((m) => m.role === "user");
@@ -80,8 +84,10 @@ export async function createChatCompletion(
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
+    // Log raw error server-side only — never forward to client
+    const errorText = await response.text().catch(() => "(unreadable)");
+    console.error(`[openai] API error ${response.status}:`, errorText);
+    throw new Error(`OpenAI request failed with status ${response.status}`);
   }
 
   const data = (await response.json()) as {
@@ -111,7 +117,7 @@ function mockReply(userMessage: string): string {
   const lower = userMessage.toLowerCase();
 
   if (lower.includes("project") || lower.includes("work")) {
-    return "Abdul's selected work includes Aurora Analytics, Nova Commerce, and Pulse Support Chat — framed as problem / role / outcome case studies. Scroll to Selected work for details.";
+    return "Abdul Nabi's selected work includes Aurora Analytics, Nova Commerce, and Pulse Support Chat — framed as problem / role / outcome case studies. Scroll to Selected work for details.";
   }
 
   if (lower.includes("skill") || lower.includes("stack") || lower.includes("tech")) {
@@ -123,8 +129,8 @@ function mockReply(userMessage: string): string {
   }
 
   if (lower.includes("experience") || lower.includes("background")) {
-    return "Abdul is a full-stack developer with 1+ years building web products — strongest in product UI, Next.js App Router, and end-to-end feature delivery.";
+    return "Abdul Nabi is a full-stack developer with 1+ years building web products — strongest in product UI, Next.js App Router, and end-to-end feature delivery.";
   }
 
-  return "I can help with questions about Abdul's projects, stack, experience, or how to get in touch. What would you like to know?";
+  return "I can help with questions about Abdul Nabi's projects, stack, experience, or how to get in touch. What would you like to know?";
 }

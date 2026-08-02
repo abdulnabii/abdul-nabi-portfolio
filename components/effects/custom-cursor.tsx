@@ -3,13 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Desktop-only soft cursor halo. Disabled on touch devices and reduced-motion.
+ * Desktop-only premium custom cursor.
+ * Features a single, subtle, downsized custom ring that tracks the pointer rapidly (0.32 lerp).
+ * Auto-disabled on mobile, touch devices, and prefers-reduced-motion.
  */
 export function CustomCursor() {
   const [enabled, setEnabled] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [visible, setVisible] = useState(false);
+  
   const ringRef = useRef<HTMLDivElement>(null);
+  
   const target = useRef({ x: -100, y: -100 });
   const current = useRef({ x: -100, y: -100 });
 
@@ -27,12 +31,16 @@ export function CustomCursor() {
     const loop = () => {
       const t = target.current;
       const c = current.current;
-      c.x += (t.x - c.x) * 0.16;
-      c.y += (t.y - c.y) * 0.16;
-      const el = ringRef.current;
-      if (el) {
-        el.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) translate(-50%, -50%)`;
+      
+      // Smoothly lerped outer halo cursor (~0.14 LERP factor)
+      c.x += (t.x - c.x) * 0.14;
+      c.y += (t.y - c.y) * 0.14;
+      
+      const ringEl = ringRef.current;
+      if (ringEl) {
+        ringEl.style.transform = `translate3d(${c.x}px, ${c.y}px, 0)`;
       }
+      
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -44,7 +52,7 @@ export function CustomCursor() {
 
     const onOver = (e: MouseEvent) => {
       const el = (e.target as HTMLElement | null)?.closest?.(
-        "a, button, [role='button'], input, textarea, select, label, .cursor-grow"
+        "a, button, [role='button'], input, textarea, select, label, .cursor-grow, article, [data-hover]"
       );
       setHovering(Boolean(el));
     };
@@ -70,16 +78,23 @@ export function CustomCursor() {
     <div
       ref={ringRef}
       aria-hidden
-      className={`pointer-events-none fixed left-0 top-0 z-[9999] hidden rounded-full border transition-[width,height,background-color,border-color,box-shadow,opacity] duration-300 ease-out lg:block ${
-        hovering
-          ? "h-14 w-14 border-accent-soft/50 bg-accent/15 shadow-[0_0_28px_rgba(99,102,241,0.28)]"
-          : "h-9 w-9 border-white/25 bg-white/[0.05] shadow-[0_0_18px_rgba(0,0,0,0.25)]"
-      }`}
+      className="pointer-events-none fixed left-0 top-0 z-[9999] hidden lg:block"
       style={{
         opacity: visible ? 1 : 0,
-        mixBlendMode: "screen",
         willChange: "transform",
       }}
-    />
+    >
+      {/* Soft ambient halo ring with LERP 0.14 tracking */}
+      <div
+        className={`-translate-x-1/2 -translate-y-1/2 rounded-full border transition-[width,height,background-color,border-color,box-shadow,transform,opacity] duration-300 ease-out ${
+          hovering
+            ? "h-9 w-9 border-indigo-400/80 bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.35)] scale-110"
+            : "h-5 w-5 border-white/40 bg-white/[0.04] shadow-[0_0_10px_rgba(255,255,255,0.08)] scale-100"
+        }`}
+        style={{
+          mixBlendMode: "screen",
+        }}
+      />
+    </div>
   );
 }

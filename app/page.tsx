@@ -36,7 +36,7 @@ export default async function HomePage() {
               <SectionHeading
                 eyebrow="Writing"
                 title="From the blog"
-                subtitle="Practical notes on product UI, App Router architecture, and shipping discipline."
+                subtitle="Practical notes on product UI, application security, App Router architecture, and shipping discipline."
                 className="mb-0"
               />
               <LinkButton href="/blog" variant="secondary" size="sm">

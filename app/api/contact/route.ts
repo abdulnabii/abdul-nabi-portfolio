@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 interface ContactPayload {
   name?: string;
   email?: string;
+  company?: string;
   subject?: string;
   message?: string;
 }
@@ -17,6 +18,7 @@ export async function POST(request: NextRequest) {
 
     const name = body.name?.trim() ?? "";
     const email = body.email?.trim() ?? "";
+    const company = body.company?.trim() ?? "";
     const subject = body.subject?.trim() ?? "";
     const message = body.message?.trim() ?? "";
 
@@ -42,12 +44,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Scaffold: log the submission. Wire to Supabase, Resend, Nodemailer, etc.
-    // Example with Supabase:
-    // const { supabase } = await import("@/lib/supabase");
-    // await supabase?.from("contact_messages").insert({ name, email, subject, message });
+    // Persist to inbox store
+    const { addInboxItem } = await import("@/lib/inbox-store");
+    await addInboxItem("message", { name, email, company, subject, message });
 
-    console.info("[api/contact] New message", {
+    console.info("[api/contact] New message stored in inbox", {
       name,
       email,
       subject,

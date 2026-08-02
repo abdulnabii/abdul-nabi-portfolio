@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { MarkdownEditor } from "./markdown-editor";
+import { ImageUploadWidget } from "./image-upload-widget";
 import type { BlogPost } from "@/lib/blog-store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -106,13 +108,13 @@ export function BlogForm({ mode, initial }: BlogFormProps) {
         placeholder="Short summary for cards and SEO"
       />
 
-      <Textarea
-        label="Content (Markdown-style: ## for headings)"
+      <MarkdownEditor
+        label="Article Content (Markdown format)"
         required
         value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Write the full article..."
-        className="min-h-[260px]"
+        onChange={setContent}
+        placeholder="Write the full article content in markdown format..."
+        rows={10}
       />
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -131,24 +133,13 @@ export function BlogForm({ mode, initial }: BlogFormProps) {
         />
       </div>
 
-      <Input
-        label="Cover image URL (Unsplash or other HTTPS image)"
+      <ImageUploadWidget
+        label="Cover Image"
         value={coverImage}
-        onChange={(e) => setCoverImage(e.target.value)}
-        placeholder="https://images.unsplash.com/..."
+        onChange={setCoverImage}
+        type="blogs"
+        slug={slug || "blog_cover"}
       />
-
-      {coverImage && (
-        <div className="relative h-48 overflow-hidden rounded-2xl border border-white/10">
-          <Image
-            src={coverImage}
-            alt="Cover preview"
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        </div>
-      )}
 
       <label className="flex items-center gap-3 text-sm text-slate-300">
         <input

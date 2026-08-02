@@ -1,3 +1,4 @@
+import { DraftPreviewBanner } from "@/components/draft-preview-banner";
 import { SiteChrome } from "@/components/site-chrome";
 import { siteContent } from "@/data/content";
 import type { Metadata } from "next";
@@ -11,6 +12,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://abdulnabi.vercel.app"
+  ),
   title: {
     default: siteContent.title,
     template: `%s · ${siteContent.name}`,
@@ -32,11 +36,20 @@ export const metadata: Metadata = {
     title: siteContent.title,
     description: siteContent.tagline,
     siteName: siteContent.name,
+    images: [
+      {
+        url: "/profile.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Abdul Nabi — Full-Stack Developer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteContent.title,
     description: siteContent.tagline,
+    images: ["/profile.jpg"],
   },
   robots: {
     index: true,
@@ -52,6 +65,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} font-sans bg-ambient antialiased`}>
+        <DraftPreviewBanner />
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>

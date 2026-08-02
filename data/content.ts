@@ -34,6 +34,14 @@ export interface Project {
   year: string;
   published?: boolean;
   appreciations?: number;
+  // Expanded Case Study Details
+  architecture?: string;
+  implementation?: string;
+  results?: string;
+  contribution?: string;
+  challenges?: string;
+  privateExplanation?: string;
+  screenshots?: { url: string; caption: string }[];
 }
 
 export interface ExperienceItem {
@@ -125,11 +133,11 @@ export interface SiteContent {
  */
 export const siteContent: SiteContent = {
   name: "Abdul Nabi",
-  title: "Abdul Nabi — Full-Stack Developer & Pentester",
+  title: "Abdul Nabi — Full-Stack Developer · AppSec · Data & ML",
   tagline:
-    "Full-stack developer and pentester building clear product UIs and performing web application security assessments.",
+    "Security-minded full-stack developer building secure Next.js apps, clean product UIs, and REST APIs — with a practical background in data analysis and ML training.",
   email: "abdulnabi.khaskhely@gmail.com",
-  location: "Karachi, Sindh, Pakistan",
+  location: "Larkana, Sindh, Pakistan",
   availability: "Open to full-time engineering / security roles and focused freelance projects",
   portraitUrl: "/profile.jpg",
   portraitAlt: "Professional portrait of Abdul Nabi",
@@ -165,26 +173,27 @@ export const siteContent: SiteContent = {
     },
   ],
   hero: {
-    greeting: "Pentester & Full-Stack Developer",
+    greeting: "Full-Stack Developer · AppSec · Data & ML",
     name: "Abdul Nabi",
-    role: "I build secure web applications and analyze product interfaces for logic vulnerabilities.",
+    role: "Secure Next.js apps, clean product UIs & REST APIs — built with care.",
     description:
-      "I work with Next.js, TypeScript, and modern security toolkits. I focus on shipping high-performance product interfaces while ensuring proper data-model validation and endpoint authorization.",
-    focusLine: "Next.js · TypeScript · Penetration Testing · AppSec · Tailwind",
+      "I work with Next.js, TypeScript, and modern security patterns to ship robust, access-controlled product interfaces. Outside the web stack, I apply Python, Pandas, and applied ML techniques to real datasets — building data pipelines and training models end-to-end.",
+    focusLine: "Next.js · TypeScript · AppSec · Python · Data Analysis · ML Training",
     ctaPrimary: { label: "View selected work", href: "/#projects" },
     ctaSecondary: { label: "Get in touch", href: "/#contact" },
   },
   about: {
     title: "About",
     paragraphs: [
-      "I'm a full-stack developer with 1+ years building product-facing web apps. I enjoy the space where UI craft meets practical engineering — component systems, App Router patterns, and APIs that are easy to reason about.",
-      "I care about shipping work that holds up in review: clear requirements, honest trade-offs, solid loading/error states, and code teammates can extend without guesswork.",
-      "I'm looking for teams where I can own features, learn from strong peers, and keep raising the quality of what I ship.",
+      "I'm a security-minded full-stack developer with 1+ years building product-facing web apps. I work at the intersection of robust UI engineering and application security — shipping clean, testable interfaces that hold up under real-world access patterns.",
+      "I care about details: correct RBAC boundaries, clean error states, zero cross-tenant leakage, and code teammates can extend without second-guessing. AppSec isn't a bolt-on for me — it's part of how I think when I design data models and API contracts.",
+      "Alongside web work, I bring a practical data background: Python, Pandas, and applied ML — building pipelines, training and evaluating models on real datasets, and turning outputs into clear, actionable insights. I find the boundary between product engineering and data work a productive place to operate.",
+      "I'm looking for teams where I can own features end-to-end, learn from strong engineers, and build software that's both well-crafted and defensively sound.",
     ],
     stats: [
       { label: "Years building web products", value: "1+" },
-      { label: "Focus", value: "Product UI" },
-      { label: "Primary stack", value: "Next.js" },
+      { label: "Primary identity", value: "FS Dev + AppSec" },
+      { label: "Secondary strength", value: "Data & ML" },
     ],
   },
   skills: [
@@ -200,7 +209,7 @@ export const siteContent: SiteContent = {
       ],
     },
     {
-      title: "Backend & Data",
+      title: "Backend & APIs",
       skills: [
         "Node.js",
         "REST APIs",
@@ -208,6 +217,28 @@ export const siteContent: SiteContent = {
         "Supabase",
         "Prisma",
         "Auth patterns",
+      ],
+    },
+    {
+      title: "Application Security",
+      skills: [
+        "OWASP Top 10",
+        "Auth & RBAC design",
+        "SQL injection testing",
+        "XSS / CSRF awareness",
+        "Supabase RLS policies",
+        "Security code review",
+      ],
+    },
+    {
+      title: "Data & ML",
+      skills: [
+        "Python",
+        "Pandas",
+        "Data analysis",
+        "ML model training",
+        "Data storytelling",
+        "Jupyter notebooks",
       ],
     },
     {
@@ -239,8 +270,7 @@ export const siteContent: SiteContent = {
       outcome:
         "Delivered a working multi-tenant dashboard prototype with reusable chart widgets and role-aware layouts ready for real data wiring.",
       tags: ["Next.js", "TypeScript", "Supabase", "Charts"],
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
+      image: "/projects/aurora.jpg",
       status: "case-study",
       statusLabel: "Case study · UI + data model",
       featured: true,
@@ -257,8 +287,7 @@ export const siteContent: SiteContent = {
       outcome:
         "Shipped a content-friendly storefront structure with clearer product hierarchy and faster perceived load on key templates.",
       tags: ["Next.js", "Stripe", "CMS", "Tailwind"],
-      image:
-        "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=80",
+      image: "/projects/nova.jpg",
       status: "case-study",
       statusLabel: "Case study · Commerce UI",
       featured: true,
@@ -275,8 +304,7 @@ export const siteContent: SiteContent = {
       outcome:
         "Built a reusable widget with solid empty/loading/error states and a clean path to plug in a real model provider.",
       tags: ["React", "Node.js", "Streaming", "UX"],
-      image:
-        "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=1400&q=80",
+      image: "/projects/pulse.jpg",
       status: "in-progress",
       statusLabel: "In progress · Demo on request",
       featured: true,
@@ -293,8 +321,7 @@ export const siteContent: SiteContent = {
       outcome:
         "Delivered a focused console layout that reduces context-switching during on-call handoffs.",
       tags: ["Next.js", "PostgreSQL", "Auth"],
-      image:
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80",
+      image: "/projects/ops.jpg",
       status: "case-study",
       statusLabel: "Case study · Internal tool",
       featured: true,
@@ -304,16 +331,17 @@ export const siteContent: SiteContent = {
   experience: [
     {
       id: "exp-1",
-      role: "Full-Stack Developer",
+      role: "Full-Stack Developer · AppSec & Data",
       company: "Product & client projects",
       location: "Remote",
       period: "2024 — Present",
       description:
-        "Building and shipping full-stack web features with Next.js and TypeScript for product and client work.",
+        "Building and shipping full-stack web features with Next.js and TypeScript, with a strong focus on application security patterns and practical data work.",
       highlights: [
-        "Owned feature slices across UI, API routes, and data access for small product surfaces",
-        "Collaborated with design on component consistency, empty states, and responsive polish",
-        "Improved maintainability through typed models, clear folder structure, and practical performance checks",
+        "Owned feature slices across UI, API routes, and data access — including authentication, RBAC, and Supabase RLS policy definitions",
+        "Performed application security reviews on REST APIs and Next.js routes, identifying and resolving authorization logic gaps",
+        "Applied Python and Pandas to data analysis tasks: cleaning datasets, training ML models, and surfacing results as clear, actionable reports",
+        "Improved maintainability through typed models, clear folder structure, and documented security trade-offs in code reviews",
       ],
     },
     {
@@ -323,10 +351,11 @@ export const siteContent: SiteContent = {
       location: "Remote",
       period: "2023 — 2024",
       description:
-        "Grew from focused frontend work into full-stack delivery through applied projects and freelance tasks.",
+        "Grew from focused frontend work into full-stack delivery and data analysis through applied projects and freelance tasks.",
       highlights: [
         "Shipped responsive marketing and app UIs with accessibility and SEO basics in mind",
         "Practiced REST APIs, auth flows, and PostgreSQL-backed features on real briefs",
+        "Explored data pipelines and basic ML workflows — built working familiarity with Python, Pandas, and model evaluation patterns",
         "Built a habit of writing readable PRs and documenting decisions for collaborators",
       ],
     },
@@ -335,28 +364,29 @@ export const siteContent: SiteContent = {
     {
       id: "edu-1",
       degree: "Computer Science studies",
-      institution: "Formal coursework + self-directed product builds",
-      location: "—",
+      institution: "Self-directed learning & applied project work",
+      location: "Larkana, Sindh, Pakistan",
       period: "Ongoing foundation",
       description:
-        "Core CS fundamentals paired with continuous practice building production-style web apps.",
+        "Core CS fundamentals paired with continuous practice across full-stack development, application security, and applied data science.",
       highlights: [
-        "Applied projects in React/Next.js, APIs, and databases",
-        "Focus on clean architecture and user-facing quality",
+        "Applied projects in React/Next.js, REST APIs, and PostgreSQL-backed products",
+        "Practical ML work: data cleaning, model training, and evaluation with Python & Pandas",
+        "Focus on clean architecture, AppSec patterns, and user-facing quality",
       ],
     },
   ],
   contact: {
     title: "Let's talk about the role or project",
     description:
-      "Hiring managers and founders: if you need a full-stack developer who ships UI + API work with care, send a short note with context and timeline.",
+      "Hiring managers and founders: if you need a full-stack developer who ships secure UI + API work with care, send a short note with context and timeline.",
     responseTime: "Typical response time: 1–2 business days",
     formNote:
       "Include role type (full-time / contract), stack, and timeline if you can — it helps me reply with something useful.",
   },
   blog: [],
   footer: {
-    note: "Built with Next.js, TypeScript, and Tailwind. Honest work over hype.",
+    note: "Built with Next.js, TypeScript, and Tailwind — security-minded, data-aware, and honest over hype.",
   },
 };
 

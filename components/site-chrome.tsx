@@ -1,5 +1,6 @@
 "use client";
 
+import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { Chatbot } from "@/components/chatbot";
 import { CustomCursor } from "@/components/effects/custom-cursor";
 import { Footer } from "@/components/footer";
@@ -16,6 +17,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative min-h-screen">
+      <AnalyticsTracker />
       <div
         className="pointer-events-none fixed inset-0 bg-grid opacity-40"
         aria-hidden

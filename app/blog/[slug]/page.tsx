@@ -57,6 +57,45 @@ function renderContent(content: string) {
       );
     }
 
+    if (trimmed.startsWith("### ")) {
+      return (
+        <h3
+          key={index}
+          className="mt-8 text-lg font-semibold tracking-tight text-white"
+        >
+          {trimmed.replace(/^###\s+/, "")}
+        </h3>
+      );
+    }
+
+    if (trimmed.includes("\n- ") || trimmed.startsWith("- ")) {
+      const items = trimmed
+        .split("\n")
+        .map((item) => item.replace(/^- /, "").trim())
+        .filter(Boolean);
+      return (
+        <ul key={index} className="list-disc pl-5 space-y-2 my-4 text-slate-300 text-sm md:text-base leading-relaxed">
+          {items.map((item, i) => (
+            <li key={i}>
+              {item.split(/(`[^`]+`)/g).map((part, pIdx) => {
+                if (part.startsWith("`") && part.endsWith("`")) {
+                  return (
+                    <code
+                      key={pIdx}
+                      className="rounded border border-white/10 bg-white/[0.04] px-1 py-0.5 font-mono text-[0.9em] text-accent-soft"
+                    >
+                      {part.slice(1, -1)}
+                    </code>
+                  );
+                }
+                return <span key={pIdx}>{part}</span>;
+              })}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+
     return (
       <p
         key={index}
@@ -106,8 +145,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </LinkButton>
 
         <header className="mb-10">
-          {post.coverImage && (
-            <div className="relative mb-8 h-56 overflow-hidden rounded-3xl border border-white/10 sm:h-72">
+          {/* Hero image — always render container; gradient fallback when coverImage is absent */}
+          <div className="relative mb-8 h-56 overflow-hidden rounded-3xl border border-white/10 sm:h-72">
+            {post.coverImage ? (
               <Image
                 src={post.coverImage}
                 alt=""
@@ -116,9 +156,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 priority
                 sizes="(max-width: 768px) 100vw, 768px"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/70 to-transparent" />
-            </div>
-          )}
+            ) : (
+              /* Gradient placeholder — prevents raw black rectangle when no image is set */
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-slate-900" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/70 to-transparent" />
+          </div>
 
           <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-500">
             <time dateTime={post.date}>{formatDate(post.date)}</time>

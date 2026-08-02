@@ -27,8 +27,9 @@ export function Textarea({
       )}
       <textarea
         id={inputId}
+        rows={props.rows ?? 4}
         className={cn(
-          "glass-input min-h-[140px] resize-y",
+          "glass-input resize-y",
           error && "border-red-400/50 focus:border-red-400/60 focus:ring-red-400/20",
           className
         )}

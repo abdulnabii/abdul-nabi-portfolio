@@ -26,9 +26,22 @@ export function Hero() {
       aria-labelledby="hero-heading"
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {/* Ambient background blur blobs */}
         <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/20 blur-[100px] animate-pulse-soft motion-reduce:animate-none" />
         <div className="absolute right-[10%] top-40 h-48 w-48 rounded-full bg-accent-cyan/15 blur-[80px] animate-float motion-reduce:animate-none" />
         <div className="absolute bottom-32 left-[12%] h-56 w-56 rounded-full bg-accent-violet/15 blur-[90px]" />
+
+        {/* Left-side subtle circular elements */}
+        <div className="absolute left-[5%] top-[25%] h-56 w-56 rounded-full border border-white/[0.03] bg-white/[0.01] pointer-events-none hidden xl:block shadow-[inset_0_0_15px_rgba(255,255,255,0.01)]" />
+        <div className="absolute left-[11%] top-[46%] h-36 w-36 rounded-full border border-white/[0.02] bg-white/[0.005] pointer-events-none hidden xl:block shadow-[inset_0_0_10px_rgba(255,255,255,0.01)]" />
+
+        {/* Right-side arrow elements in vertical rhythm */}
+        <div className="absolute right-[6%] top-1/2 -translate-y-1/2 flex flex-col items-center gap-3 pointer-events-none hidden xl:flex">
+          <div className="h-10 w-px bg-gradient-to-b from-white/10 to-indigo-500/20" />
+          <ArrowDownRight className="h-3.5 w-3.5 text-indigo-400/40 animate-pulse-soft" />
+          <ArrowDownRight className="h-3.5 w-3.5 text-indigo-400/20" />
+          <ArrowDownRight className="h-3.5 w-3.5 text-indigo-400/10" />
+        </div>
       </div>
 
       <div className="container-narrow relative">
@@ -92,17 +105,17 @@ export function Hero() {
               )}
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-slate-400">
               {email && (
                 <a
                   href={`mailto:${email}`}
-                  className="cursor-grow text-sm text-slate-300 transition-colors hover:text-white"
+                  className="cursor-grow text-slate-200 transition-colors hover:text-accent-soft hover:underline"
                 >
                   {email}
                 </a>
               )}
-              <span className="hidden text-slate-600 sm:inline">·</span>
-              <p className="text-sm text-slate-500">{location}</p>
+              <span className="hidden text-slate-600 sm:inline" aria-hidden>·</span>
+              <span className="text-slate-400">{location}</span>
             </div>
 
             {socials.length > 0 && (

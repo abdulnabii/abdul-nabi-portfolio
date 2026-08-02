@@ -52,6 +52,14 @@ export async function POST(request: NextRequest, context: RouteContext) {
       ratingCount,
     });
 
+    const { addInboxItem } = await import("@/lib/inbox-store");
+    await addInboxItem("feedback", {
+      blogTitle: post.title,
+      blogSlug: post.slug,
+      action: body.action,
+      rating: body.action === "rate" ? body.rating : undefined,
+    });
+
     return NextResponse.json({
       success: true,
       helpfulCount: updated.helpfulCount ?? 0,

@@ -3,9 +3,9 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
-import { Code2, Layers, Wrench } from "lucide-react";
+import { Code2, Layers, ShieldAlert, Wrench } from "lucide-react";
 
-const icons = [Code2, Layers, Wrench];
+const icons = [Code2, Layers, ShieldAlert, Wrench];
 
 export function Skills() {
   return (
@@ -19,11 +19,11 @@ export function Skills() {
           <SectionHeading
             eyebrow="Stack"
             title="Tools I use in production"
-            subtitle="A focused toolkit for product UI, APIs, and reliable delivery — not an endless logo wall."
+            subtitle="A focused toolkit for product UI, APIs, application security, and reliable delivery — not an endless logo wall."
           />
         </Reveal>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {siteContent.skills.map((category, index) => {
             const Icon = icons[index % icons.length];
             return (

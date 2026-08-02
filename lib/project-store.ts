@@ -74,6 +74,13 @@ export async function createProject(input: ProjectInput): Promise<Project> {
     year: input.year || new Date().getFullYear().toString(),
     published: input.published ?? true,
     appreciations: input.appreciations ?? 0,
+    architecture: input.architecture?.trim() || undefined,
+    implementation: input.implementation?.trim() || undefined,
+    results: input.results?.trim() || undefined,
+    contribution: input.contribution?.trim() || undefined,
+    challenges: input.challenges?.trim() || undefined,
+    privateExplanation: input.privateExplanation?.trim() || undefined,
+    screenshots: input.screenshots || undefined,
   };
 
   projects.push(project);
@@ -126,6 +133,13 @@ export async function updateProject(
     year: input.year ?? current.year,
     published: input.published !== undefined ? input.published : current.published,
     appreciations: input.appreciations !== undefined ? input.appreciations : current.appreciations,
+    architecture: input.architecture !== undefined ? input.architecture.trim() || undefined : current.architecture,
+    implementation: input.implementation !== undefined ? input.implementation.trim() || undefined : current.implementation,
+    results: input.results !== undefined ? input.results.trim() || undefined : current.results,
+    contribution: input.contribution !== undefined ? input.contribution.trim() || undefined : current.contribution,
+    challenges: input.challenges !== undefined ? input.challenges.trim() || undefined : current.challenges,
+    privateExplanation: input.privateExplanation !== undefined ? input.privateExplanation.trim() || undefined : current.privateExplanation,
+    screenshots: input.screenshots !== undefined ? input.screenshots : current.screenshots,
   };
 
   projects[index] = updated;

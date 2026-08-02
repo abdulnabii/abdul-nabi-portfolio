@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -47,9 +48,7 @@ export function Navbar() {
             className="group flex items-center gap-2.5"
             onClick={() => setOpen(false)}
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-accent-soft transition-all duration-300 group-hover:border-accent/40 group-hover:shadow-glow-sm">
-              AN
-            </span>
+            <Logo className="h-9 w-9 shrink-0" />
             <span className="hidden text-sm font-medium tracking-wide text-white sm:block">
               {siteContent.name}
             </span>
@@ -60,7 +59,7 @@ export function Navbar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="rounded-xl px-3.5 py-2 text-sm text-slate-300 transition-colors duration-200 hover:bg-white/5 hover:text-white"
+                  className="rounded-xl border border-transparent px-3.5 py-2 text-sm text-slate-300 transition-all duration-300 hover:border-white/10 hover:bg-white/5 hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -99,7 +98,7 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="block rounded-xl px-4 py-3 text-sm text-slate-200 transition-colors hover:bg-white/5 hover:text-white"
+                    className="block rounded-xl border border-transparent px-4 py-3 text-sm text-slate-200 transition-all duration-300 hover:border-white/10 hover:bg-white/5 hover:text-white"
                   >
                     {link.label}
                   </Link>

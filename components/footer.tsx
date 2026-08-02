@@ -1,6 +1,7 @@
 import { getActiveSocials, siteContent } from "@/data/content";
 import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 const iconMap = {
   github: Github,
@@ -22,11 +23,9 @@ export function Footer() {
           <div className="glass rounded-3xl p-8 md:p-10">
             <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
               <div>
-                <Link href="/" className="inline-flex items-center gap-2.5">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-accent-soft">
-                    AN
-                  </span>
-                  <span className="text-sm font-medium text-white">
+                <Link href="/" className="group inline-flex items-center gap-2.5">
+                  <Logo className="h-9 w-9 shrink-0" />
+                  <span className="text-sm font-medium text-white transition-colors group-hover:text-accent-soft">
                     {siteContent.name}
                   </span>
                 </Link>
@@ -42,7 +41,7 @@ export function Footer() {
                       <li key={link.href}>
                         <Link
                           href={link.href}
-                          className="text-sm text-slate-400 transition-colors hover:text-white"
+                          className="rounded-lg border border-transparent px-2.5 py-1 text-sm text-slate-400 transition-all duration-300 hover:border-white/10 hover:bg-white/5 hover:text-white"
                         >
                           {link.label}
                         </Link>
@@ -93,7 +92,7 @@ export function Footer() {
 
             <div className="mt-8 flex flex-col gap-2 border-t border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-slate-500">
-                © {year} {siteContent.name}. All rights reserved.
+                {`© ${year} ${siteContent.name}. All rights reserved.`}
               </p>
               <p className="text-xs text-slate-500">{siteContent.footer.note}</p>
             </div>

@@ -2,7 +2,7 @@
 
 import { siteContent } from "@/data/content";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Single professional portrait with light CSS-3D depth + parallax.
@@ -11,6 +11,7 @@ import { useEffect, useRef } from "react";
 export function HeroPortrait3D() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
@@ -67,15 +68,29 @@ export function HeroPortrait3D() {
         <div className="absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-accent-cyan/20 blur-3xl" />
 
         <div className="relative overflow-hidden rounded-[1.35rem] border border-white/10">
-          <div className="relative aspect-[4/5] w-full">
-            <Image
-              src={siteContent.portraitUrl}
-              alt={siteContent.portraitAlt}
-              fill
-              priority
-              className="object-cover object-top"
-              sizes="(max-width: 768px) 90vw, 400px"
-            />
+          <div className="relative aspect-[4/5] w-full bg-[#080d1a]">
+            {!imageError ? (
+              <Image
+                src={siteContent.portraitUrl}
+                alt={siteContent.portraitAlt}
+                fill
+                priority
+                className="object-cover object-top"
+                sizes="(max-width: 768px) 90vw, 400px"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-b from-[#0e162e] to-[#060a17] p-8 text-center">
+                <div className="flex h-24 w-24 items-center justify-center rounded-3xl border border-indigo-500/30 bg-indigo-500/10 shadow-[0_0_30px_rgba(99,102,241,0.25)]">
+                  <span className="font-mono text-3xl font-bold tracking-widest text-indigo-300">
+                    AN
+                  </span>
+                </div>
+                <p className="mt-4 text-xs font-medium uppercase tracking-widest text-slate-400">
+                  Abdul Nabi
+                </p>
+              </div>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/90 via-[#050814]/15 to-transparent" />
           </div>
 
@@ -93,7 +108,7 @@ export function HeroPortrait3D() {
               {siteContent.about.stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-xl border border-white/10 bg-white/[0.06] px-2 py-2.5 text-center backdrop-blur-md"
+                  className="flex flex-col items-center justify-center min-h-[64px] rounded-xl border border-white/10 bg-white/[0.06] p-1.5 text-center backdrop-blur-md"
                 >
                   <p className="text-sm font-semibold text-white sm:text-base">
                     {stat.value}
