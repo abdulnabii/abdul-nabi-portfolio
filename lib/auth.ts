@@ -2,14 +2,14 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 
 export const ADMIN_EMAIL =
-  process.env.ADMIN_EMAIL ?? "abdulnabi.khaskhely@gmil.com";
+  process.env.ADMIN_EMAIL ?? "admin@localhost";
 export const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD ?? "abkhaskhely";
+  process.env.ADMIN_PASSWORD ?? "change-this-password-in-env";
 
 const SESSION_COOKIE = "an_admin_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const SECRET =
-  process.env.SESSION_SECRET ?? "abdul-nabi-portfolio-dev-session-secret";
+  process.env.SESSION_SECRET ?? "dev-only-secret-key-do-not-use-in-prod";
 
 interface SessionPayload {
   role: "admin";
