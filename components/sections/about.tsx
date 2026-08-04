@@ -5,6 +5,9 @@ import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
 import { useSiteSettings } from "@/components/settings-provider";
+import { Calendar, Shield, Cpu, Sparkles } from "lucide-react";
+
+const statIcons = [Calendar, Shield, Cpu];
 
 export function About() {
   const { settings, about: aboutState } = useSiteSettings();
@@ -17,7 +20,7 @@ export function About() {
       className="section-padding relative"
       aria-labelledby="about-heading"
     >
-      <div className="container-narrow">
+      <div className="container-narrow space-y-8">
         <Reveal>
           <SectionHeading
             eyebrow="Background"
@@ -26,38 +29,51 @@ export function About() {
           />
         </Reveal>
 
-        <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
-          <Reveal delay={80}>
-            <GlassCard interactive padding="lg" className="h-full space-y-5">
-              {about.paragraphs.map((paragraph, index) => (
-                <p
-                  key={index}
-                  className="text-base leading-relaxed text-slate-300 sm:text-[1.05rem]"
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </GlassCard>
-          </Reveal>
+        {/* Main Biography Card */}
+        <Reveal delay={80}>
+          <GlassCard interactive padding="lg" className="space-y-5">
+            {about.paragraphs.map((paragraph, index) => (
+              <p
+                key={index}
+                className="text-base leading-relaxed text-slate-300 sm:text-[1.05rem]"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </GlassCard>
+        </Reveal>
 
-          <div className="flex flex-col gap-4">
-            {about.stats.map((stat, index) => (
-              <Reveal key={stat.label} delay={120 + index * 60}>
+        {/* Spotlight Stat Cards 3-Column Grid */}
+        <div className="grid gap-5 grid-cols-1 sm:grid-cols-3">
+          {about.stats.map((stat, index) => {
+            const Icon = statIcons[index % statIcons.length] || Sparkles;
+            const isLongValue = stat.value.length > 12;
+
+            return (
+              <Reveal key={stat.label + index} delay={120 + index * 80}>
                 <GlassCard
                   interactive
                   hover
-                  className="flex flex-col items-start gap-1.5 cursor-grow w-full py-4.5 px-6"
+                  padding="lg"
+                  className="group flex flex-col items-center justify-center text-center h-full min-h-[160px] cursor-grow transition-all duration-200 hover:scale-[1.02] hover:border-accent/40"
                 >
-                  <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold leading-relaxed">
+                  <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-accent-soft transition-colors group-hover:border-accent/30 group-hover:bg-accent/10">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
                     {stat.label}
                   </span>
-                  <span className="text-xl sm:text-2xl font-bold text-indigo-400 shrink-0 text-left">
+                  <span
+                    className={`font-bold tracking-tight text-accent-soft transition-colors group-hover:text-white ${
+                      isLongValue ? "text-base sm:text-lg" : "text-2xl sm:text-3xl"
+                    }`}
+                  >
                     {stat.value}
                   </span>
                 </GlassCard>
               </Reveal>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>
