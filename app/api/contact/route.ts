@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
 interface ContactPayload {
   name?: string;
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
       errors.push("Name must be at least 2 characters.");
     }
     if (!email || !isValidEmail(email)) {
-      errors.push("A valid email is required.");
+      errors.push("A valid email address is required.");
     }
     if (!subject || subject.length < 3) {
       errors.push("Subject must be at least 3 characters.");
@@ -44,73 +45,66 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Try storing in Inbox store (Supabase DB + Memory + File fallback)
+    // 1. Store in inbox store (Supabase DB + Memory store fallback, ZERO filesystem operations)
     try {
       const { addInboxItem } = await import("@/lib/inbox-store");
       await addInboxItem("message", { name, email, company, subject, message });
-    } catch (storeError) {
-      console.error("[api/contact] Warning: Inbox storage failed:", storeError);
+    } catch (storeErr) {
+      console.error("[api/contact] Inbox store error:", storeErr);
     }
 
-    // 2. Try sending email via Resend if RESEND_API_KEY is configured
-    const resendApiKey = process.env.RESEND_API_KEY;
-    if (resendApiKey) {
-      try {
-        const toEmail = process.env.CONTACT_NOTIFICATION_EMAIL || "abdulnabi.khaskhely@gmail.com";
-        const emailRes = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${resendApiKey}`,
-          },
-          body: JSON.stringify({
-            from: "Portfolio Contact Form <onboarding@resend.dev>",
-            to: [toEmail],
-            subject: `[Portfolio Inquiry] ${subject}`,
-            html: `
-              <h2>New Contact Form Message</h2>
-              <p><strong>Name:</strong> ${name}</p>
-              <p><strong>Email:</strong> ${email}</p>
-              <p><strong>Company:</strong> ${company || "N/A"}</p>
-              <p><strong>Subject:</strong> ${subject}</p>
-              <hr />
-              <p><strong>Message:</strong></p>
-              <p style="white-space: pre-wrap;">${message}</p>
-            `,
-          }),
-        });
+    // 2. Transactional Email via Resend SDK
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.warn(
+        "[api/contact] Warning: RESEND_API_KEY environment variable is not configured on Vercel."
+      );
+    } else {
+      const resend = new Resend(apiKey);
+      const toEmail = process.env.CONTACT_NOTIFICATION_EMAIL || "abdulnabi.khaskhely@gmail.com";
+      const fromEmail = process.env.RESEND_FROM_EMAIL || "Portfolio Contact <onboarding@resend.dev>";
 
-        if (!emailRes.ok) {
-          const resendErr = await emailRes.text();
-          console.error("[api/contact] Resend API error:", resendErr);
-        } else {
-          console.info("[api/contact] Resend email notification sent successfully.");
-        }
-      } catch (emailError) {
-        console.error("[api/contact] Resend fetch exception:", emailError);
+      const sendResult = await resend.emails.send({
+        from: fromEmail,
+        to: [toEmail],
+        replyTo: email,
+        subject: `[Portfolio Contact] ${subject}`,
+        html: `
+          <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px;">
+            <h2 style="color: #4338ca; margin-top: 0;">New Portfolio Message</h2>
+            <p><strong>From Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+            <p><strong>Company:</strong> ${company || "N/A"}</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+            <p><strong>Message:</strong></p>
+            <div style="white-space: pre-wrap; background: #f8fafc; padding: 15px; border-radius: 8px; font-size: 14px; line-height: 1.6;">${message}</div>
+          </div>
+        `,
+      });
+
+      if (sendResult.error) {
+        console.error("[api/contact] Resend API error:", sendResult.error);
+        return NextResponse.json(
+          { error: "Failed to deliver message via email provider. Please try again later." },
+          { status: 500 }
+        );
       }
-    }
 
-    console.info("[api/contact] Contact form submission processed successfully", {
-      name,
-      email,
-      subject,
-      company,
-      hasResendKey: Boolean(resendApiKey),
-      timestamp: new Date().toISOString(),
-    });
+      console.info("[api/contact] Resend email dispatched successfully:", sendResult.data?.id);
+    }
 
     return NextResponse.json(
       {
         success: true,
-        message: "Thanks for reaching out! Your message was received successfully.",
+        message: "Message sent — I'll reply within 1-2 business days.",
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("[api/contact] Unexpected submission error:", error);
+    console.error("[api/contact] Unexpected route exception:", error);
     return NextResponse.json(
-      { error: "Service temporarily unable to store message. Please try emailing directly." },
+      { error: "Failed to process contact submission. Please try again later." },
       { status: 500 }
     );
   }
