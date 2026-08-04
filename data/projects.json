@@ -20,7 +20,7 @@
       "Tailwind"
     ],
     "image": "/projects/aurora.jpg",
-    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio",
+    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio/tree/main/app/projects/aurora-dashboard",
     "status": "case-study",
     "statusLabel": "Open Source Concept Build",
     "featured": true,
@@ -48,7 +48,7 @@
       "React Context"
     ],
     "image": "/projects/nova.jpg",
-    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio",
+    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio/tree/main/app/projects/nova-commerce",
     "status": "case-study",
     "statusLabel": "Open Source Concept Build",
     "featured": true,
@@ -75,7 +75,7 @@
       "CSS Transitions"
     ],
     "image": "/projects/pulse.jpg",
-    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio",
+    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio/tree/main/app/projects/pulse-chat",
     "status": "case-study",
     "statusLabel": "Open Source Concept Build",
     "featured": true,
@@ -103,7 +103,7 @@
       "Tailwind"
     ],
     "image": "/projects/ops.jpg",
-    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio",
+    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio/tree/main/app/projects/signal-ops",
     "status": "case-study",
     "statusLabel": "Open Source Concept Build",
     "featured": true,

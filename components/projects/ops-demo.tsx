@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Activity, AlertTriangle, CheckCircle, Database, RefreshCw, Server, ShieldCheck, Terminal } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ServiceState {
   name: string;
@@ -21,6 +21,7 @@ interface LogEntry {
 }
 
 export function OpsDemo() {
+  const [mounted, setMounted] = useState(false);
   const [services, setServices] = useState<ServiceState[]>([
     { name: "API Edge Gateway", status: "online", latency: 24 },
     { name: "Auth Microservice", status: "online", latency: 42 },
@@ -36,6 +37,30 @@ export function OpsDemo() {
     { timestamp: "11:02:15", service: "CDN Edge Cache", fromState: "online", toState: "degraded", reason: "Cache invalidation spike." },
     { timestamp: "10:42:00", service: "Auth Microservice", fromState: "online", toState: "offline", reason: "Database connection timeout." },
   ]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="relative w-full rounded-3xl border border-white/10 bg-[#050814]/80 p-6 shadow-glass-lg min-h-[480px] flex flex-col justify-between animate-pulse">
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <div className="h-4 w-44 rounded bg-white/10" />
+          <div className="h-4 w-28 rounded bg-white/10" />
+        </div>
+        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-5 my-auto">
+          <div className="space-y-3">
+            <div className="h-12 w-full rounded-xl bg-white/5" />
+            <div className="h-12 w-full rounded-xl bg-white/5" />
+            <div className="h-12 w-full rounded-xl bg-white/5" />
+          </div>
+          <div className="h-44 w-full rounded-xl bg-white/5" />
+        </div>
+        <div className="h-4 w-full rounded bg-white/5" />
+      </div>
+    );
+  }
 
   function triggerIncident() {
     // Transition CDN Edge Cache to Degraded
