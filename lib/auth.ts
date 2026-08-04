@@ -2,9 +2,9 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 
 export const ADMIN_EMAIL =
-  process.env.ADMIN_EMAIL ?? "admin@localhost";
+  process.env.ADMIN_EMAIL ?? "abdulnabi.khaskhely@gmail.com";
 export const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD ?? "change-this-password-in-env";
+  process.env.ADMIN_PASSWORD ?? "abkhaskheli";
 
 const SESSION_COOKIE = "an_admin_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
