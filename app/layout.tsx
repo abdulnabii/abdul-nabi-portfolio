@@ -57,16 +57,39 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { SettingsProvider } from "@/components/settings-provider";
+import {
+  getSiteSettings,
+  getAboutData,
+  getSkillsData,
+  getExperienceData,
+  getEducationData,
+} from "@/lib/settings-store";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+  const about = await getAboutData();
+  const skills = await getSkillsData();
+  const experience = await getExperienceData();
+  const education = await getEducationData();
+
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} font-sans bg-ambient antialiased`}>
-        <DraftPreviewBanner />
-        <SiteChrome>{children}</SiteChrome>
+        <SettingsProvider
+          initialSettings={settings}
+          initialAbout={about}
+          initialSkills={skills}
+          initialExperience={experience}
+          initialEducation={education}
+        >
+          <DraftPreviewBanner />
+          <SiteChrome>{children}</SiteChrome>
+        </SettingsProvider>
       </body>
     </html>
   );

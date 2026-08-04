@@ -1,13 +1,18 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
-import { Code2, Layers, ShieldAlert, Wrench } from "lucide-react";
+import { useSiteSettings } from "@/components/settings-provider";
+import { Code2, Layers, ShieldAlert, Wrench, Cpu } from "lucide-react";
 
-const icons = [Code2, Layers, ShieldAlert, Wrench];
+const icons = [Code2, Layers, ShieldAlert, Wrench, Cpu];
 
 export function Skills() {
+  const { skills: skillsData } = useSiteSettings();
+  const categories = skillsData || siteContent.skills;
   return (
     <section
       id="stack"
@@ -24,7 +29,7 @@ export function Skills() {
         </Reveal>
 
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {siteContent.skills.map((category, index) => {
+          {categories.map((category, index) => {
             const Icon = icons[index % icons.length];
             return (
               <Reveal key={category.title} delay={index * 80}>

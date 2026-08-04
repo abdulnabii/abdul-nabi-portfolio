@@ -121,7 +121,28 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
 
         <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5 space-y-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-white/5 pb-2">
-            Hero & Identity
+            Identity
+          </h4>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label="Full Name"
+              value={settings.fullName}
+              onChange={(e) => handleChange("fullName", e.target.value)}
+              placeholder="e.g. Abdul Nabi"
+            />
+            <Input
+              label="Location"
+              value={settings.location}
+              onChange={(e) => handleChange("location", e.target.value)}
+              placeholder="e.g. Larkana, Sindh, Pakistan"
+            />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5 space-y-4">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-white/5 pb-2">
+            Hero & Messaging
           </h4>
 
           <Input

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { FileText, LayoutDashboard, LogOut, Plus, FolderGit2, Inbox, Settings } from "lucide-react";
+import { FileText, LayoutDashboard, LogOut, FolderGit2, Inbox, Settings, User, Layers, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,6 +16,9 @@ const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/blogs", label: "Blogs", icon: FileText },
   { href: "/admin/projects", label: "Projects", icon: FolderGit2 },
+  { href: "/admin/about", label: "About Bio", icon: User },
+  { href: "/admin/stack", label: "Tech Stack", icon: Layers },
+  { href: "/admin/experience", label: "Experience", icon: Briefcase },
   { href: "/admin/inbox", label: "Inbox", icon: Inbox },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];

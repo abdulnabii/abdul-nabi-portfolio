@@ -1,11 +1,11 @@
 import { getAdminSession } from "@/lib/auth";
-import { getSiteSettings, saveSiteSettings } from "@/lib/settings-store";
+import { getAboutData, saveAboutData } from "@/lib/settings-store";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
-  const settings = await getSiteSettings();
-  return NextResponse.json(settings);
+  const data = await getAboutData();
+  return NextResponse.json(data);
 }
 
 export async function POST(req: NextRequest) {
@@ -16,16 +16,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const updated = await saveSiteSettings(body);
+    const updated = await saveAboutData(body);
 
     revalidatePath("/", "layout");
     revalidatePath("/about", "layout");
-    revalidatePath("/contact", "layout");
-    revalidatePath("/admin/settings", "layout");
+    revalidatePath("/admin/about", "layout");
 
-    return NextResponse.json({ success: true, settings: updated });
+    return NextResponse.json({ success: true, about: updated });
   } catch (err) {
-    console.error("Save settings error:", err);
-    return NextResponse.json({ error: "Failed to save settings" }, { status: 500 });
+    console.error("Save about error:", err);
+    return NextResponse.json({ error: "Failed to save about content" }, { status: 500 });
   }
 }

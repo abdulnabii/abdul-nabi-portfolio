@@ -1,9 +1,14 @@
+"use client";
+
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
+import { useSiteSettings } from "@/components/settings-provider";
 
 export function Experience() {
+  const { experience: expData } = useSiteSettings();
+  const experience = expData || siteContent.experience;
   return (
     <section
       id="experience"
@@ -25,7 +30,7 @@ export function Experience() {
             aria-hidden
           />
 
-          {siteContent.experience.map((item, index) => (
+          {experience.map((item, index) => (
             <Reveal key={item.id} delay={index * 80} as="li">
               <div className="relative grid gap-4 pl-0 md:grid-cols-[180px_1fr] md:gap-8">
                 <div className="flex items-start gap-4 md:block md:pl-0">

@@ -1,10 +1,15 @@
+"use client";
+
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
+import { useSiteSettings } from "@/components/settings-provider";
 
 export function About() {
-  const { about, name } = siteContent;
+  const { settings, about: aboutState } = useSiteSettings();
+  const name = settings.fullName || siteContent.name;
+  const about = aboutState || siteContent.about;
 
   return (
     <section

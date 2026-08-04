@@ -45,7 +45,10 @@ const socialIcons = {
   whatsapp: Mail,
 };
 
+import { useSiteSettings } from "@/components/settings-provider";
+
 export function Contact() {
+  const { settings } = useSiteSettings();
   const [form, setForm] = useState<FormState>(initialState);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
     "idle"
@@ -60,7 +63,12 @@ export function Contact() {
     }
   }
 
-  const email = siteContent.email?.trim();
+  const email = settings.email || siteContent.email?.trim();
+  const location = settings.location || siteContent.location;
+  const phone = settings.phone || "0333 7597315";
+  const whatsapp = settings.whatsapp || "+92 309 3751434";
+  const responseTime = settings.responseTime || siteContent.contact.responseTime;
+  const availabilityText = settings.availabilityText || siteContent.availability;
   const mailto = email ? `mailto:${email}` : null;
   const socials = getActiveSocials();
   const showResume = isPublicUrl(siteContent.resumeUrl);
@@ -178,7 +186,7 @@ export function Contact() {
                       Location
                     </p>
                     <p className="text-sm text-slate-200">
-                      {siteContent.location}
+                      {location}
                     </p>
                   </div>
                 </li>
@@ -190,8 +198,8 @@ export function Contact() {
                     <p className="text-xs uppercase tracking-wider text-slate-500">
                       Voice Phone
                     </p>
-                    <a href="tel:+923337597315" className="cursor-grow text-sm text-slate-200 transition-colors hover:text-accent-soft hover:underline">
-                      0333 7597315
+                    <a href={`tel:${phone.replace(/\s+/g, "")}`} className="cursor-grow text-sm text-slate-200 transition-colors hover:text-accent-soft hover:underline">
+                      {phone}
                     </a>
                   </div>
                 </li>
@@ -204,12 +212,12 @@ export function Contact() {
                       WhatsApp Direct
                     </p>
                     <a
-                      href="https://wa.me/923093751434"
+                      href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="cursor-grow text-sm text-emerald-300 transition-colors hover:text-emerald-200 hover:underline"
                     >
-                      +92 309 3751434
+                      {whatsapp}
                     </a>
                   </div>
                 </li>
@@ -222,7 +230,7 @@ export function Contact() {
                       Response
                     </p>
                     <p className="text-sm text-slate-200">
-                      {siteContent.contact.responseTime}
+                      {responseTime}
                     </p>
                   </div>
                 </li>
@@ -233,7 +241,7 @@ export function Contact() {
                   Availability
                 </p>
                 <p className="mt-1 text-sm text-slate-200">
-                  {siteContent.availability}
+                  {availabilityText}
                 </p>
               </div>
 

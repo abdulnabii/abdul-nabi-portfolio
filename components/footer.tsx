@@ -1,7 +1,10 @@
+"use client";
+
 import { getActiveSocials, siteContent } from "@/data/content";
 import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
+import { useSiteSettings } from "@/components/settings-provider";
 
 const iconMap = {
   github: Github,
@@ -12,9 +15,11 @@ const iconMap = {
 };
 
 export function Footer() {
+  const { settings } = useSiteSettings();
   const year = new Date().getFullYear();
   const socials = getActiveSocials();
-  const email = siteContent.email?.trim();
+  const name = settings.fullName || siteContent.name;
+  const email = settings.email || siteContent.email?.trim();
 
   return (
     <footer className="relative border-t border-white/5">
@@ -26,7 +31,7 @@ export function Footer() {
                 <Link href="/" className="group inline-flex items-center gap-2.5">
                   <Logo className="h-9 w-9 shrink-0" />
                   <span className="text-sm font-medium text-white transition-colors group-hover:text-accent-soft">
-                    {siteContent.name}
+                    {name}
                   </span>
                 </Link>
                 <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-400">
@@ -92,7 +97,7 @@ export function Footer() {
 
             <div className="mt-8 flex flex-col gap-2 border-t border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-slate-500">
-                {`© ${year} ${siteContent.name}. All rights reserved.`}
+                {`© ${year} ${name}. All rights reserved.`}
               </p>
               <p className="text-xs text-slate-500">{siteContent.footer.note}</p>
             </div>

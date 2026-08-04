@@ -8,9 +8,13 @@ import { useEffect, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 
+import { useSiteSettings } from "@/components/settings-provider";
+
 export function Navbar() {
+  const { settings } = useSiteSettings();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const name = settings.fullName || siteContent.name;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -50,7 +54,7 @@ export function Navbar() {
           >
             <Logo className="h-9 w-9 shrink-0" />
             <span className="hidden text-sm font-medium tracking-wide text-white sm:block">
-              {siteContent.name}
+              {name}
             </span>
           </Link>
 

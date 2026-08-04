@@ -1,9 +1,12 @@
+"use client";
+
 import { LinkButton } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HeroPortrait3D } from "@/components/effects/hero-portrait-3d";
 import { siteContent } from "@/data/content";
 import { getActiveSocials } from "@/data/content";
 import { isPublicUrl } from "@/lib/links";
+import { useSiteSettings } from "@/components/settings-provider";
 import { ArrowDownRight, FileText, Github, Linkedin, Mail } from "lucide-react";
 
 const iconMap = {
@@ -15,7 +18,14 @@ const iconMap = {
 };
 
 export function Hero() {
-  const { hero, availability, location, resumeUrl, email } = siteContent;
+  const { settings } = useSiteSettings();
+  const { hero, resumeUrl } = siteContent;
+  const fullName = settings.fullName || siteContent.name;
+  const location = settings.location || siteContent.location;
+  const availability = settings.availabilityText || siteContent.availability;
+  const tagline = settings.heroTagline || hero.role;
+  const description = settings.heroDescription || hero.description;
+  const email = settings.email || siteContent.email;
   const showResume = isPublicUrl(resumeUrl);
   const socials = getActiveSocials();
 
@@ -63,15 +73,15 @@ export function Hero() {
               id="hero-heading"
               className="text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[3.5rem] lg:leading-[1.12]"
             >
-              {hero.name}
+              {fullName}
             </h1>
 
             <p className="mt-4 max-w-xl text-xl font-medium leading-snug text-slate-100 sm:text-2xl">
-              {hero.role}
+              {tagline}
             </p>
 
             <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg">
-              {hero.description}
+              {description}
             </p>
 
             <p className="mt-4 text-sm font-medium tracking-wide text-accent-soft/90">

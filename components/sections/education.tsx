@@ -1,11 +1,16 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
+import { useSiteSettings } from "@/components/settings-provider";
 import { GraduationCap } from "lucide-react";
 
 export function Education() {
+  const { education: eduData } = useSiteSettings();
+  const education = eduData || siteContent.education;
   return (
     <section
       id="education"
@@ -22,7 +27,7 @@ export function Education() {
         </Reveal>
 
         <div className="grid gap-5 md:grid-cols-2">
-          {siteContent.education.map((item, index) => (
+          {education.map((item, index) => (
             <Reveal key={item.id} delay={index * 90}>
               <GlassCard interactive hover padding="lg" className="h-full cursor-grow">
                 <div className="mb-4 flex items-start justify-between gap-3">
