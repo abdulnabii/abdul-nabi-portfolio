@@ -12,9 +12,22 @@ interface BlogPostPageProps {
 }
 
 function slugToTitle(slug: string): string {
+  const acronyms: Record<string, string> = {
+    ai: "AI",
+    ui: "UI",
+    ux: "UX",
+    api: "API",
+    whats: "What's",
+    nextjs: "Next.js",
+  };
+
   return slug
     .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => {
+      const lower = word.toLowerCase();
+      if (acronyms[lower]) return acronyms[lower];
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
     .join(" ");
 }
 
