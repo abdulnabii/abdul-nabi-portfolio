@@ -33,23 +33,29 @@ export interface InboxItem {
   payload: MessagePayload | AppreciationPayload | FeedbackPayload;
 }
 
+import seedInbox from "@/data/inbox.json";
+
 // Memory fallback store for serverless environment lifecycles
 const memoryInboxItems: InboxItem[] = [];
 
 export async function getAllInboxItems(): Promise<InboxItem[]> {
-  // 1. Fetch from Supabase DB if available
+  const map = new Map<string, InboxItem>();
+
+  // 1. Load static seed inbox items (bundled into JS at build time — zero fs I/O)
+  (seedInbox as InboxItem[]).forEach((item) => map.set(item.id, item));
+
+  // 2. Overlay in-memory items (submitted during active container session)
+  memoryInboxItems.forEach((item) => map.set(item.id, item));
+
+  // 3. Overlay Supabase DB items if database is connected
   const dbItems = await supabaseDbQuery<InboxItem>("inbox", "select=*&order=timestamp.desc");
   if (dbItems && dbItems.length > 0) {
-    // Merge with any in-memory items not yet refetched
-    const map = new Map<string, InboxItem>();
     dbItems.forEach((item) => map.set(item.id, item));
-    memoryInboxItems.forEach((item) => map.set(item.id, item));
-    return Array.from(map.values()).sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
   }
 
-  return memoryInboxItems;
+  return Array.from(map.values()).sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
 }
 
 export async function saveAllInboxItems(items: InboxItem[]): Promise<void> {
