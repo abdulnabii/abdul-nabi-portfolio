@@ -1,5 +1,3 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { supabaseDbInsert, supabaseDbQuery } from "./supabase";
 
 export interface MessagePayload {
@@ -35,53 +33,29 @@ export interface InboxItem {
   payload: MessagePayload | AppreciationPayload | FeedbackPayload;
 }
 
-const INBOX_FILE = path.join(process.cwd(), "data", "inbox.json");
+// Memory fallback store for serverless environment lifecycles
 const memoryInboxItems: InboxItem[] = [];
 
-async function ensureInboxFile(): Promise<void> {
-  try {
-    await fs.access(INBOX_FILE);
-  } catch {
-    try {
-      await fs.mkdir(path.dirname(INBOX_FILE), { recursive: true });
-      await fs.writeFile(INBOX_FILE, "[]", "utf8");
-    } catch {
-      // Ignored on read-only serverless filesystems (e.g., Vercel)
-    }
-  }
-}
-
 export async function getAllInboxItems(): Promise<InboxItem[]> {
-  // Try Supabase first if available
+  // 1. Fetch from Supabase DB if available
   const dbItems = await supabaseDbQuery<InboxItem>("inbox", "select=*&order=timestamp.desc");
   if (dbItems && dbItems.length > 0) {
-    return dbItems;
-  }
-
-  try {
-    await ensureInboxFile();
-    const raw = await fs.readFile(INBOX_FILE, "utf8");
-    const items = JSON.parse(raw) as InboxItem[];
-    const combined = [...items, ...memoryInboxItems];
-    // Deduplicate by ID
+    // Merge with any in-memory items not yet refetched
     const map = new Map<string, InboxItem>();
-    combined.forEach((item) => map.set(item.id, item));
+    dbItems.forEach((item) => map.set(item.id, item));
+    memoryInboxItems.forEach((item) => map.set(item.id, item));
     return Array.from(map.values()).sort(
       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
-  } catch {
-    return memoryInboxItems;
   }
+
+  return memoryInboxItems;
 }
 
 export async function saveAllInboxItems(items: InboxItem[]): Promise<void> {
-  try {
-    await ensureInboxFile();
-    await fs.writeFile(INBOX_FILE, JSON.stringify(items, null, 2), "utf8");
-  } catch (err) {
-    // Read-only filesystem on Vercel — log warning and keep items in memory
-    console.warn("[inbox-store] Read-only filesystem detected, saved to memory fallback.");
-  }
+  // In serverless, saveAllInboxItems updates memory cache
+  memoryInboxItems.length = 0;
+  memoryInboxItems.push(...items);
 }
 
 export async function addInboxItem(
@@ -97,10 +71,10 @@ export async function addInboxItem(
     payload,
   };
 
-  // Always keep in memory store first for immediate session availability
+  // 1. Always append to memory store for instant availability
   memoryInboxItems.unshift(newItem);
 
-  // Attempt Supabase DB Insert if configured
+  // 2. Insert into Supabase 'inbox' table if configured
   await supabaseDbInsert("inbox", {
     id: newItem.id,
     type: newItem.type,
@@ -110,13 +84,18 @@ export async function addInboxItem(
     payload: newItem.payload,
   });
 
-  // Attempt local disk file sync if writeable
-  try {
-    const items = await getAllInboxItems();
-    items.unshift(newItem);
-    await saveAllInboxItems(items);
-  } catch {
-    // Read-only environment safe fallback
+  // 3. If payload is a message, also insert into 'contact_submissions' table (Option A)
+  if (type === "message") {
+    const msg = payload as MessagePayload;
+    await supabaseDbInsert("contact_submissions", {
+      id: newItem.id,
+      name: msg.name,
+      email: msg.email,
+      company: msg.company || null,
+      subject: msg.subject,
+      message: msg.message,
+      created_at: newItem.timestamp,
+    });
   }
 
   return newItem;
@@ -134,16 +113,10 @@ export async function markAsRead(id: string, read: boolean): Promise<InboxItem |
 
 export async function markAllAsRead(): Promise<void> {
   const items = await getAllInboxItems();
-  let updated = false;
   for (const item of items) {
-    if (!item.read) {
-      item.read = true;
-      updated = true;
-    }
+    item.read = true;
   }
-  if (updated) {
-    await saveAllInboxItems(items);
-  }
+  await saveAllInboxItems(items);
 }
 
 export async function archiveInboxItem(id: string, archived = true): Promise<InboxItem | null> {

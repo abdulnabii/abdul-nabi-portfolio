@@ -14,16 +14,20 @@ async function ensureProjectsFile(): Promise<void> {
 }
 
 export async function getAllProjects(): Promise<Project[]> {
-  await ensureProjectsFile();
-  const raw = await fs.readFile(PROJECTS_FILE, "utf8");
-  const projects = JSON.parse(raw) as Project[];
-  // Sort projects: featured first, then by year descending
-  return projects.sort((a, b) => {
-    if (a.featured !== b.featured) {
-      return a.featured ? -1 : 1;
-    }
-    return b.year.localeCompare(a.year);
-  });
+  try {
+    await ensureProjectsFile();
+    const raw = await fs.readFile(PROJECTS_FILE, "utf8");
+    const projects = JSON.parse(raw) as Project[];
+    return projects.sort((a, b) => {
+      if (a.featured !== b.featured) {
+        return a.featured ? -1 : 1;
+      }
+      return b.year.localeCompare(a.year);
+    });
+  } catch {
+    const { siteContent } = await import("@/data/content");
+    return siteContent.projects;
+  }
 }
 
 export async function getPublishedProjects(): Promise<Project[]> {
