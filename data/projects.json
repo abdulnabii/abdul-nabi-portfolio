@@ -12,12 +12,6 @@
       "Supabase",
       "Recharts",
       "Tailwind"
-    "tags": [
-      "Next.js",
-      "TypeScript",
-      "Supabase",
-      "Recharts",
-      "Tailwind"
     ],
     "image": "/projects/aurora.jpg",
     "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio/tree/main/app/projects/aurora-dashboard",

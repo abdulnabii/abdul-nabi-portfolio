@@ -68,14 +68,14 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
     // Read-only filesystem fallback
   }
 
-  // 3. Overlay in-memory cache
-  memoryBlogs.forEach((p) => map.set(p.slug, p));
-
-  // 4. Overlay Supabase DB if connected
+  // 3. Overlay Supabase DB if connected
   const dbPosts = await supabaseDbQuery<BlogPost>("blogs", "select=*&order=date.desc");
   if (dbPosts && dbPosts.length > 0) {
     dbPosts.forEach((p) => map.set(p.slug, p));
   }
+
+  // 4. Overlay in-memory cache LAST (ensures active container session creations/edits take top priority)
+  memoryBlogs.forEach((p) => map.set(p.slug, p));
 
   return Array.from(map.values()).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()

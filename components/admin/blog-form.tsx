@@ -73,10 +73,19 @@ export function BlogForm({ mode, initial }: BlogFormProps) {
         throw new Error(data.error ?? "Save failed");
       }
 
+      // Trigger public site revalidation
+      try {
+        await fetch("/api/admin/revalidate?secret=default_revalidate_secret", {
+          method: "POST",
+        });
+      } catch (revalErr) {
+        console.warn("[blog-form] Revalidation notice:", revalErr);
+      }
+
       router.push("/admin/blogs");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Save failed");
+      setError(err instanceof Error ? err.message : "Failed to save blog post");
     } finally {
       setLoading(false);
     }

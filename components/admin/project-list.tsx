@@ -24,6 +24,11 @@ export function ProjectList({ projects: initial }: ProjectListProps) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const router = useRouter();
 
+  // Sync internal state when initial prop changes (e.g. after router.push / router.refresh)
+  useEffect(() => {
+    setProjects(initial);
+  }, [initial]);
+
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       const matchesSearch =

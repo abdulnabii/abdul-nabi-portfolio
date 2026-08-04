@@ -25,6 +25,11 @@ export function BlogList({ posts: initial }: BlogListProps) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const router = useRouter();
 
+  // Sync internal state when initial prop changes (e.g. after router.push / router.refresh)
+  useEffect(() => {
+    setPosts(initial);
+  }, [initial]);
+
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
       const matchesSearch =
