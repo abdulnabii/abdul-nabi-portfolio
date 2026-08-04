@@ -45,6 +45,8 @@ export function AuroraDemo() {
     "System: DB connection initialized.",
     "System: Awaiting JWT authorization payload...",
   ]);
+  const [queryResult, setQueryResult] = useState<DBRow[] | null>(null);
+  const [queryStatus, setQueryStatus] = useState<"idle" | "success" | "blocked">("idle");
   const [loading, setLoading] = useState(false);
 
   function handleReset() {
