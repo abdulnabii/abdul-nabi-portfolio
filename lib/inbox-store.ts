@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { supabaseDbInsert, supabaseDbQuery } from "./supabase";
 
 export interface MessagePayload {
   name: string;
@@ -35,40 +36,58 @@ export interface InboxItem {
 }
 
 const INBOX_FILE = path.join(process.cwd(), "data", "inbox.json");
+const memoryInboxItems: InboxItem[] = [];
 
 async function ensureInboxFile(): Promise<void> {
   try {
     await fs.access(INBOX_FILE);
   } catch {
-    await fs.mkdir(path.dirname(INBOX_FILE), { recursive: true });
-    await fs.writeFile(INBOX_FILE, "[]", "utf8");
+    try {
+      await fs.mkdir(path.dirname(INBOX_FILE), { recursive: true });
+      await fs.writeFile(INBOX_FILE, "[]", "utf8");
+    } catch {
+      // Ignored on read-only serverless filesystems (e.g., Vercel)
+    }
   }
 }
 
 export async function getAllInboxItems(): Promise<InboxItem[]> {
-  await ensureInboxFile();
-  const raw = await fs.readFile(INBOX_FILE, "utf8");
+  // Try Supabase first if available
+  const dbItems = await supabaseDbQuery<InboxItem>("inbox", "select=*&order=timestamp.desc");
+  if (dbItems && dbItems.length > 0) {
+    return dbItems;
+  }
+
   try {
+    await ensureInboxFile();
+    const raw = await fs.readFile(INBOX_FILE, "utf8");
     const items = JSON.parse(raw) as InboxItem[];
-    // Filter out archived items by default or sort them newest-first
-    return items.sort(
+    const combined = [...items, ...memoryInboxItems];
+    // Deduplicate by ID
+    const map = new Map<string, InboxItem>();
+    combined.forEach((item) => map.set(item.id, item));
+    return Array.from(map.values()).sort(
       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
   } catch {
-    return [];
+    return memoryInboxItems;
   }
 }
 
 export async function saveAllInboxItems(items: InboxItem[]): Promise<void> {
-  await ensureInboxFile();
-  await fs.writeFile(INBOX_FILE, JSON.stringify(items, null, 2), "utf8");
+  try {
+    await ensureInboxFile();
+    await fs.writeFile(INBOX_FILE, JSON.stringify(items, null, 2), "utf8");
+  } catch (err) {
+    // Read-only filesystem on Vercel — log warning and keep items in memory
+    console.warn("[inbox-store] Read-only filesystem detected, saved to memory fallback.");
+  }
 }
 
 export async function addInboxItem(
   type: "message" | "appreciation" | "feedback",
   payload: MessagePayload | AppreciationPayload | FeedbackPayload
 ): Promise<InboxItem> {
-  const items = await getAllInboxItems();
   const newItem: InboxItem = {
     id: Math.random().toString(36).substring(2, 11) + "_" + Date.now(),
     type,
@@ -78,8 +97,28 @@ export async function addInboxItem(
     payload,
   };
 
-  items.unshift(newItem);
-  await saveAllInboxItems(items);
+  // Always keep in memory store first for immediate session availability
+  memoryInboxItems.unshift(newItem);
+
+  // Attempt Supabase DB Insert if configured
+  await supabaseDbInsert("inbox", {
+    id: newItem.id,
+    type: newItem.type,
+    timestamp: newItem.timestamp,
+    read: newItem.read,
+    archived: newItem.archived,
+    payload: newItem.payload,
+  });
+
+  // Attempt local disk file sync if writeable
+  try {
+    const items = await getAllInboxItems();
+    items.unshift(newItem);
+    await saveAllInboxItems(items);
+  } catch {
+    // Read-only environment safe fallback
+  }
+
   return newItem;
 }
 

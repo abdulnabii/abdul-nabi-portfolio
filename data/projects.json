@@ -12,10 +12,17 @@
       "Supabase",
       "Recharts",
       "Tailwind"
+    "tags": [
+      "Next.js",
+      "TypeScript",
+      "Supabase",
+      "Recharts",
+      "Tailwind"
     ],
     "image": "/projects/aurora.jpg",
+    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio",
     "status": "case-study",
-    "statusLabel": "Case study · UI + data model",
+    "statusLabel": "Open Source Concept Build",
     "featured": true,
     "year": "2025",
     "published": true,
@@ -41,8 +48,9 @@
       "React Context"
     ],
     "image": "/projects/nova.jpg",
+    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio",
     "status": "case-study",
-    "statusLabel": "Case study · Commerce UI",
+    "statusLabel": "Open Source Concept Build",
     "featured": true,
     "year": "2025",
     "published": true,
@@ -67,8 +75,9 @@
       "CSS Transitions"
     ],
     "image": "/projects/pulse.jpg",
-    "status": "in-progress",
-    "statusLabel": "In progress · Private build",
+    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio",
+    "status": "case-study",
+    "statusLabel": "Open Source Concept Build",
     "featured": true,
     "year": "2025",
     "published": true,
@@ -78,7 +87,7 @@
     "results": "### Verified Results\n\n- **Response Latency**: Reduced Time-to-First-Token (TTFT) to less than 150ms using the edge streaming layout.\n- **Performance**: Heavy model parsing is run asynchronously, maintaining 60fps animations even during high token-per-second outputs.\n- **Widget Size**: Extremely light footprint, compiling to less than 12KB (gzipped) for easy third-party insertion.",
     "contribution": "### Contribution Details\n\n- **100% Widget Codebase**: Built the streaming hook, the UI component system, custom CSS transitions, and local mock API routes.",
     "challenges": "### Challenges & Key Decisions\n\n- **Challenge**: Handling rapid, double-submitted questions without creating state conflicts or duplicate API charges.\n- **Solution**: Implemented an optimistic lock on the chat inputs, immediately disabling button states and rendering an animated 'assistant thinking' bubble before executing backend fetches.",
-    "privateExplanation": "Built as a personal learning prototype — source walkthrough available on request."
+    "privateExplanation": "Designed and built by Abdul Nabi as an open-source personal project case study with interactive live sandbox below."
   },
   {
     "id": "signal-ops",
@@ -94,8 +103,9 @@
       "Tailwind"
     ],
     "image": "/projects/ops.jpg",
+    "githubUrl": "https://github.com/abdulnabii/abdul-nabi-portfolio",
     "status": "case-study",
-    "statusLabel": "Case study · Internal tool",
+    "statusLabel": "Open Source Concept Build",
     "featured": true,
     "year": "2024",
     "published": true,

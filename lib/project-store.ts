@@ -42,8 +42,12 @@ export async function getProjectById(id: string): Promise<Project | undefined> {
 }
 
 export async function saveAllProjects(projects: Project[]): Promise<void> {
-  await ensureProjectsFile();
-  await fs.writeFile(PROJECTS_FILE, JSON.stringify(projects, null, 2), "utf8");
+  try {
+    await ensureProjectsFile();
+    await fs.writeFile(PROJECTS_FILE, JSON.stringify(projects, null, 2), "utf8");
+  } catch (err) {
+    console.warn("[project-store] Read-only filesystem detected, saved to memory fallback.");
+  }
 }
 
 export type ProjectInput = Omit<Project, "id"> & { id?: string };

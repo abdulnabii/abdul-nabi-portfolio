@@ -45,51 +45,70 @@ export function AuroraDemo() {
     "System: DB connection initialized.",
     "System: Awaiting JWT authorization payload...",
   ]);
-  const [queryResult, setQueryResult] = useState<DBRow[] | null>(null);
-  const [queryStatus, setQueryStatus] = useState<"idle" | "success" | "blocked">("idle");
+  const [loading, setLoading] = useState(false);
+
+  function handleReset() {
+    setTokenRole("guest");
+    setTargetTable("metrics");
+    setCrossTenantAttempt(false);
+    setConsoleLogs([
+      "System: DB connection initialized.",
+      "System: Awaiting JWT authorization payload...",
+    ]);
+    setQueryResult(null);
+    setQueryStatus("idle");
+  }
 
   function runQuery() {
-    const logs: string[] = [];
-    const timestamp = new Date().toLocaleTimeString();
-    
-    logs.push(`[${timestamp}] [SQL] Initializing query SELECT * FROM ${targetTable === "metrics" ? "organization_metrics" : "billing_records"};`);
+    setLoading(true);
+    setQueryStatus("idle");
 
-    // Verify JWT Session
-    if (tokenRole === "guest") {
-      logs.push(`[${timestamp}] [AUTH] Evaluating JWT auth headers: NONE`);
-      logs.push(`[${timestamp}] [RLS CHECK] Policy 'restrict_anonymous_access' evaluated: FAILED`);
-      logs.push(`[${timestamp}] [SECURITY ALERT] 403 Forbidden. Anonymous queries are blocked by default.`);
+    setTimeout(() => {
+      const logs: string[] = [];
+      const timestamp = new Date().toLocaleTimeString();
+      
+      logs.push(`[${timestamp}] [SQL] Initializing query SELECT * FROM ${targetTable === "metrics" ? "organization_metrics" : "billing_records"};`);
+
+      // Verify JWT Session
+      if (tokenRole === "guest") {
+        logs.push(`[${timestamp}] [AUTH] Evaluating JWT auth headers: NONE`);
+        logs.push(`[${timestamp}] [RLS CHECK] Policy 'restrict_anonymous_access' evaluated: FAILED`);
+        logs.push(`[${timestamp}] [SECURITY ALERT] 403 Forbidden. Anonymous queries are blocked by default.`);
+        setConsoleLogs(logs);
+        setQueryResult([]);
+        setQueryStatus("blocked");
+        setLoading(false);
+        return;
+      }
+
+      const tenant = tokenRole.includes("tenant-a") ? "tenant-a" : "tenant-b";
+      const role = tokenRole.includes("admin") ? "admin" : "member";
+      
+      logs.push(`[${timestamp}] [AUTH] Verified JWT signature. Claims decrypted: { tenant_id: '${tenant.toUpperCase()}', role: '${role}' }`);
+
+      // Simulate cross-tenant exploitation injection attempt
+      if (crossTenantAttempt) {
+        logs.push(`[${timestamp}] [ATTEMPT] Injected filter bypass parameter: WHERE tenant_id = 'TENANT-${tenant === "tenant-a" ? "B" : "A"}'`);
+        logs.push(`[${timestamp}] [RLS CHECK] RLS Policy 'select_tenant_isolation' triggered: tenant_id MUST EQUAL '${tenant.toUpperCase()}'`);
+        logs.push(`[${timestamp}] [SECURITY ALERT] Exploit prevented: user attempted to access foreign tenant database rows.`);
+        logs.push(`[${timestamp}] [SECURITY ALERT] Violation logged. System aborted transaction.`);
+        setConsoleLogs(logs);
+        setQueryResult([]);
+        setQueryStatus("blocked");
+        setLoading(false);
+        return;
+      }
+
+      // Normal secure path
+      logs.push(`[${timestamp}] [RLS CHECK] RLS Policy 'select_tenant_isolation' evaluated: PASSED`);
+      logs.push(`[${timestamp}] [SUCCESS] Database returned rows matching tenant context: '${tenant.toUpperCase()}'`);
+      
+      const results = mockDatabase[tenant][targetTable] ?? [];
       setConsoleLogs(logs);
-      setQueryResult([]);
-      setQueryStatus("blocked");
-      return;
-    }
-
-    const tenant = tokenRole.includes("tenant-a") ? "tenant-a" : "tenant-b";
-    const role = tokenRole.includes("admin") ? "admin" : "member";
-    
-    logs.push(`[${timestamp}] [AUTH] Verified JWT signature. Claims decrypted: { tenant_id: '${tenant.toUpperCase()}', role: '${role}' }`);
-
-    // Simulate cross-tenant exploitation injection attempt
-    if (crossTenantAttempt) {
-      logs.push(`[${timestamp}] [ATTEMPT] Injected filter bypass parameter: WHERE tenant_id = 'TENANT-${tenant === "tenant-a" ? "B" : "A"}'`);
-      logs.push(`[${timestamp}] [RLS CHECK] RLS Policy 'select_tenant_isolation' triggered: tenant_id MUST EQUAL '${tenant.toUpperCase()}'`);
-      logs.push(`[${timestamp}] [SECURITY ALERT] Exploit prevented: user attempted to access foreign tenant database rows.`);
-      logs.push(`[${timestamp}] [SECURITY ALERT] Violation logged. System aborted transaction.`);
-      setConsoleLogs(logs);
-      setQueryResult([]);
-      setQueryStatus("blocked");
-      return;
-    }
-
-    // Normal secure path
-    logs.push(`[${timestamp}] [RLS CHECK] RLS Policy 'select_tenant_isolation' evaluated: PASSED`);
-    logs.push(`[${timestamp}] [SUCCESS] Database returned rows matching tenant context: '${tenant.toUpperCase()}'`);
-    
-    const results = mockDatabase[tenant][targetTable] ?? [];
-    setConsoleLogs(logs);
-    setQueryResult(results);
-    setQueryStatus("success");
+      setQueryResult(results);
+      setQueryStatus("success");
+      setLoading(false);
+    }, 250);
   }
 
   return (

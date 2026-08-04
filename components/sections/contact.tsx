@@ -377,9 +377,10 @@ export function Contact() {
                   )}
 
                   {errorMessage && (
-                    <p className="text-sm text-red-400" role="alert">
-                      {errorMessage}
-                    </p>
+                    <div className="flex items-start gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-xs text-red-300 animate-fade-in" role="alert">
+                      <span className="font-bold uppercase tracking-wider text-red-400 shrink-0">Error:</span>
+                      <p className="leading-relaxed">{errorMessage}</p>
+                    </div>
                   )}
 
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

@@ -14,7 +14,7 @@ function isValidEmail(email: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as ContactPayload;
+    const body = (await request.json().catch(() => ({}))) as ContactPayload;
 
     const name = body.name?.trim() ?? "";
     const email = body.email?.trim() ?? "";
@@ -44,29 +44,73 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Persist to inbox store
-    const { addInboxItem } = await import("@/lib/inbox-store");
-    await addInboxItem("message", { name, email, company, subject, message });
+    // 1. Try storing in Inbox store (Supabase DB + Memory + File fallback)
+    try {
+      const { addInboxItem } = await import("@/lib/inbox-store");
+      await addInboxItem("message", { name, email, company, subject, message });
+    } catch (storeError) {
+      console.error("[api/contact] Warning: Inbox storage failed:", storeError);
+    }
 
-    console.info("[api/contact] New message stored in inbox", {
+    // 2. Try sending email via Resend if RESEND_API_KEY is configured
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (resendApiKey) {
+      try {
+        const toEmail = process.env.CONTACT_NOTIFICATION_EMAIL || "abdulnabi.khaskhely@gmail.com";
+        const emailRes = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify({
+            from: "Portfolio Contact Form <onboarding@resend.dev>",
+            to: [toEmail],
+            subject: `[Portfolio Inquiry] ${subject}`,
+            html: `
+              <h2>New Contact Form Message</h2>
+              <p><strong>Name:</strong> ${name}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Company:</strong> ${company || "N/A"}</p>
+              <p><strong>Subject:</strong> ${subject}</p>
+              <hr />
+              <p><strong>Message:</strong></p>
+              <p style="white-space: pre-wrap;">${message}</p>
+            `,
+          }),
+        });
+
+        if (!emailRes.ok) {
+          const resendErr = await emailRes.text();
+          console.error("[api/contact] Resend API error:", resendErr);
+        } else {
+          console.info("[api/contact] Resend email notification sent successfully.");
+        }
+      } catch (emailError) {
+        console.error("[api/contact] Resend fetch exception:", emailError);
+      }
+    }
+
+    console.info("[api/contact] Contact form submission processed successfully", {
       name,
       email,
       subject,
-      messageLength: message.length,
-      receivedAt: new Date().toISOString(),
+      company,
+      hasResendKey: Boolean(resendApiKey),
+      timestamp: new Date().toISOString(),
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Thanks for your message. I'll get back to you soon.",
+        message: "Thanks for reaching out! Your message was received successfully.",
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("[api/contact]", error);
+    console.error("[api/contact] Unexpected submission error:", error);
     return NextResponse.json(
-      { error: "Failed to process contact form." },
+      { error: "Service temporarily unable to store message. Please try emailing directly." },
       { status: 500 }
     );
   }

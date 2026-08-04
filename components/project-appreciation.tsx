@@ -17,6 +17,21 @@ export function ProjectAppreciation({
   const [appreciated, setAppreciated] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(`appreciated_${projectId}`);
+      if (stored) {
+        setAppreciated(true);
+        const savedCount = parseInt(stored, 10);
+        if (!isNaN(savedCount) && savedCount > initialCount) {
+          setCount(savedCount);
+        }
+      }
+    } catch {
+      // Ignored
+    }
+  }, [projectId, initialCount]);
+
   async function handleAppreciate() {
     if (appreciated || loading) return;
     setLoading(true);
@@ -26,8 +41,14 @@ export function ProjectAppreciation({
       });
       if (res.ok) {
         const data = await res.json();
-        setCount(data.appreciations);
+        const nextCount = data.appreciations ?? count + 1;
+        setCount(nextCount);
         setAppreciated(true);
+        try {
+          localStorage.setItem(`appreciated_${projectId}`, nextCount.toString());
+        } catch {
+          // Ignored
+        }
       }
     } catch (err) {
       console.error(err);

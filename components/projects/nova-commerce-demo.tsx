@@ -191,6 +191,12 @@ export function NovaCommerceDemo() {
     );
   }
 
+  function handleResetCart() {
+    saveCart([]);
+    setTamperingSimulated(false);
+    setPriceOverride(0);
+  }
+
   return (
     <div className="relative w-full rounded-3xl border border-white/10 bg-[#050814]/80 p-1 shadow-glass-lg backdrop-blur-2xl overflow-hidden">
       
@@ -202,17 +208,27 @@ export function NovaCommerceDemo() {
             Nova Storefront Sandbox
           </h4>
         </div>
-        <button
-          type="button"
-          onClick={() => setCartOpen(true)}
-          className="cursor-grow flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white hover:bg-white/10 transition"
-          aria-label={`Open cart — ${cartDetails.count} item${cartDetails.count !== 1 ? "s" : ""}, $${cartDetails.subtotal}`}
-        >
-          <ShoppingBag className="h-3.5 w-3.5 text-accent-soft" />
-          <span className="font-medium">
-            Cart ({cartDetails.count}) · ${cartDetails.subtotal}
-          </span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleResetCart}
+            className="cursor-grow rounded-xl border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-white/10 transition"
+            title="Reset Cart & Simulation"
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            onClick={() => setCartOpen(true)}
+            className="cursor-grow flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white hover:bg-white/10 transition"
+            aria-label={`Open cart — ${cartDetails.count} item${cartDetails.count !== 1 ? "s" : ""}, $${cartDetails.subtotal}`}
+          >
+            <ShoppingBag className="h-3.5 w-3.5 text-accent-soft" />
+            <span className="font-medium">
+              Cart ({cartDetails.count}) · ${cartDetails.subtotal}
+            </span>
+          </button>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-[1.6fr_1fr] min-h-[480px]">

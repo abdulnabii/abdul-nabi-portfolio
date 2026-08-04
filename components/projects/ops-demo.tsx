@@ -112,10 +112,10 @@ export function OpsDemo() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[1.3fr_1fr] min-h-[460px]">
+      <div className="grid lg:grid-cols-[1.3fr_1fr] min-h-[460px] min-w-0">
         
         {/* Left Side: Services Status Matrix */}
-        <div className="flex flex-col border-r border-white/5 bg-[#070b18]/60 p-5 justify-between">
+        <div className="flex flex-col border-r border-white/5 bg-[#070b18]/60 p-5 justify-between min-w-0 overflow-hidden">
           <div className="space-y-4">
             <h5 className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 border-b border-white/5 pb-2">
               System Service Status Monitor
