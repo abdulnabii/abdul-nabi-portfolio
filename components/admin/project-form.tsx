@@ -149,6 +149,18 @@ export function ProjectForm({ mode, initial }: ProjectFormProps) {
         throw new Error(data.error ?? "Save failed");
       }
 
+      // Sync to localStorage for serverless container persistence
+      if (data.project && typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("an_local_projects");
+          const localProjects = raw ? (JSON.parse(raw) as Project[]) : [];
+          const updated = [data.project, ...localProjects.filter((p) => p.id !== data.project!.id && p.id !== initial?.id)];
+          localStorage.setItem("an_local_projects", JSON.stringify(updated));
+        } catch (storageErr) {
+          console.warn("[project-form] LocalStorage sync warning:", storageErr);
+        }
+      }
+
       setSaveState("saved");
       setTimeout(() => {
         router.push("/admin/projects");

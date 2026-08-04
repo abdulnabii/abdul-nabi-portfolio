@@ -24,9 +24,31 @@ export function ProjectList({ projects: initial }: ProjectListProps) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const router = useRouter();
 
-  // Sync internal state when initial prop changes (e.g. after router.push / router.refresh)
+  // Sync internal state when initial prop changes and merge localStorage projects
   useEffect(() => {
-    setProjects(initial);
+    let merged = initial;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("an_local_projects");
+        if (raw) {
+          const localProjects = JSON.parse(raw) as Project[];
+          if (localProjects.length > 0) {
+            const map = new Map<string, Project>();
+            initial.forEach((p) => map.set(p.id, p));
+            localProjects.forEach((p) => map.set(p.id, p));
+            merged = Array.from(map.values()).sort((a, b) => {
+              if (a.featured !== b.featured) {
+                return a.featured ? -1 : 1;
+              }
+              return b.year.localeCompare(a.year);
+            });
+          }
+        }
+      } catch {
+        // LocalStorage fallback
+      }
+    }
+    setProjects(merged);
   }, [initial]);
 
   const filteredProjects = useMemo(() => {
@@ -55,6 +77,15 @@ export function ProjectList({ projects: initial }: ProjectListProps) {
         throw new Error(data.error ?? "Delete failed");
       }
       setProjects((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("an_local_projects");
+          if (raw) {
+            const localProjects = (JSON.parse(raw) as Project[]).filter((p) => p.id !== deleteTarget.id);
+            localStorage.setItem("an_local_projects", JSON.stringify(localProjects));
+          }
+        } catch {}
+      }
       setDeleteTarget(null);
       router.refresh();
     } catch (err) {

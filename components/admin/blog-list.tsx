@@ -25,9 +25,28 @@ export function BlogList({ posts: initial }: BlogListProps) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const router = useRouter();
 
-  // Sync internal state when initial prop changes (e.g. after router.push / router.refresh)
+  // Sync internal state when initial prop changes and merge localStorage blogs
   useEffect(() => {
-    setPosts(initial);
+    let merged = initial;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("an_local_blogs");
+        if (raw) {
+          const localBlogs = JSON.parse(raw) as BlogPost[];
+          if (localBlogs.length > 0) {
+            const map = new Map<string, BlogPost>();
+            initial.forEach((p) => map.set(p.slug, p));
+            localBlogs.forEach((p) => map.set(p.slug, p));
+            merged = Array.from(map.values()).sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+          }
+        }
+      } catch {
+        // LocalStorage fallback
+      }
+    }
+    setPosts(merged);
   }, [initial]);
 
   const filteredPosts = useMemo(() => {
@@ -56,6 +75,15 @@ export function BlogList({ posts: initial }: BlogListProps) {
         throw new Error(data.error ?? "Delete failed");
       }
       setPosts((prev) => prev.filter((p) => p.slug !== deleteTarget.slug));
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("an_local_blogs");
+          if (raw) {
+            const localBlogs = (JSON.parse(raw) as BlogPost[]).filter((p) => p.slug !== deleteTarget.slug);
+            localStorage.setItem("an_local_blogs", JSON.stringify(localBlogs));
+          }
+        } catch {}
+      }
       setDeleteTarget(null);
       router.refresh();
     } catch (err) {

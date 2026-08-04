@@ -73,6 +73,18 @@ export function BlogForm({ mode, initial }: BlogFormProps) {
         throw new Error(data.error ?? "Save failed");
       }
 
+      // Sync to localStorage for serverless container persistence
+      if (data.post && typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("an_local_blogs");
+          const localBlogs = raw ? (JSON.parse(raw) as BlogPost[]) : [];
+          const updated = [data.post, ...localBlogs.filter((p) => p.slug !== data.post!.slug && p.slug !== initial?.slug)];
+          localStorage.setItem("an_local_blogs", JSON.stringify(updated));
+        } catch (storageErr) {
+          console.warn("[blog-form] LocalStorage sync warning:", storageErr);
+        }
+      }
+
       // Trigger public site revalidation
       try {
         await fetch("/api/admin/revalidate?secret=default_revalidate_secret", {
