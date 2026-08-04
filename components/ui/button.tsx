@@ -64,6 +64,7 @@ interface LinkButtonProps {
   size?: ButtonSize;
   className?: string;
   external?: boolean;
+  onClick?: () => void;
 }
 
 export function LinkButton({
@@ -73,10 +74,12 @@ export function LinkButton({
   size = "md",
   className,
   external = false,
+  onClick,
 }: LinkButtonProps) {
   return (
     <a
       href={href}
+      onClick={onClick}
       className={cn(
         "inline-flex items-center justify-center gap-2 font-medium",
         "transition-all duration-300 ease-out",
