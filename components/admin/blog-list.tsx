@@ -8,7 +8,7 @@ import { Pencil, Trash2, Search, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { DeleteModal } from "./delete-modal";
 
 interface BlogListProps {
