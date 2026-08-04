@@ -40,3 +40,7 @@ export function AnimatedGlassBackground() {
     </div>
   );
 }
+
+export function GlassBackground() {
+  return <AnimatedGlassBackground />;
+}

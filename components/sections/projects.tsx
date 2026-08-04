@@ -46,14 +46,14 @@ export async function Projects() {
                   <div className="grid lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
                     <Link
                       href={`/projects/${project.id}`}
-                      className="relative block min-h-[240px] overflow-hidden border-b border-white/5 lg:min-h-[320px] lg:border-b-0 lg:border-r cursor-grow group/img bg-[#060a17]"
+                      className="relative block min-h-[260px] overflow-hidden border-b border-white/5 lg:min-h-[340px] lg:border-b-0 lg:border-r cursor-grow group/img bg-[#060a17] p-2 sm:p-3"
                     >
                       {project.image ? (
                         <Image
                           src={project.image}
                           alt={`${project.title} preview`}
                           fill
-                          className="object-cover object-top transition-transform duration-700 group-hover/img:scale-[1.02]"
+                          className="object-contain object-top p-2 transition-transform duration-700 group-hover/img:scale-[1.02]"
                           sizes="(max-width: 1024px) 100vw, 50vw"
                         />
                       ) : (
