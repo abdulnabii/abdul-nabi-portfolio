@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ReplyModal } from "./reply-modal";
 import { DeleteModal } from "./delete-modal";
@@ -50,7 +50,7 @@ export function InboxView({ initialItems }: InboxViewProps) {
   }
 
   // Fetch latest data from API
-  async function refreshInbox() {
+  const refreshInbox = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/admin/inbox");
@@ -64,12 +64,12 @@ export function InboxView({ initialItems }: InboxViewProps) {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   // Auto-refresh when active tab or routing changes
   useEffect(() => {
     refreshInbox();
-  }, []);
+  }, [refreshInbox]);
 
   // Update selected item reference in state if the items list updates
   useEffect(() => {
