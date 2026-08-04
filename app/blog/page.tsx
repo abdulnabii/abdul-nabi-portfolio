@@ -1,4 +1,4 @@
-import { BlogCard } from "@/components/blog-card";
+import { BlogGridClient } from "@/components/blog/blog-grid-client";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getPublishedBlogs } from "@/lib/blog-store";
 import type { Metadata } from "next";
@@ -23,15 +23,7 @@ export default async function BlogPage() {
           subtitle="Practical notes on product UI, application security, App Router architecture, and shipping discipline."
         />
 
-        {posts.length === 0 ? (
-          <p className="text-slate-400">No posts published yet.</p>
-        ) : (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post, index) => (
-              <BlogCard key={post.slug} post={post} index={index} />
-            ))}
-          </div>
-        )}
+        <BlogGridClient initialPosts={posts} />
       </div>
     </div>
   );
