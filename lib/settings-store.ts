@@ -16,8 +16,8 @@ export interface SiteSettings {
 const DEFAULT_SETTINGS: SiteSettings = {
   availabilityText: "Open to full-time engineering / security roles and focused freelance projects",
   heroTagline: "I build secure web applications and design clean, robust product interfaces.",
-  heroDescription: "Full-Stack Developer with AppSec Focus based in Karachi, Pakistan. 1+ years experience building production Next.js, Supabase, and TypeScript systems.",
-  responseTime: "Usually responds within 24 hours.",
+  heroDescription: "Full-Stack Developer with AppSec Focus based in Larkana, Sindh, Pakistan. 1+ years experience building production Next.js, Supabase, and TypeScript systems.",
+  responseTime: "Typical response time: 1–2 business days",
   githubUrl: "https://github.com/abdulnabii",
   linkedinUrl: "https://linkedin.com/in/abdul-nabi-95391a3b0",
   whatsapp: "+92 309 3751434",
