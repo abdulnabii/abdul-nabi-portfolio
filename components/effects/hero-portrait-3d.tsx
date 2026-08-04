@@ -91,33 +91,20 @@ export function HeroPortrait3D() {
                 </p>
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/90 via-[#050814]/15 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#050814] via-[#050814]/85 to-transparent pointer-events-none" />
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
-              {siteContent.hero.greeting}
-            </p>
-            <p className="mt-1 text-lg font-semibold text-white">
-              {siteContent.name}
-            </p>
-            <p className="mt-1 text-sm text-slate-300">
-              Next.js · TypeScript · Product UI
-            </p>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {siteContent.about.stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex flex-col items-center justify-center min-h-[64px] rounded-xl border border-white/10 bg-white/[0.06] p-1.5 text-center backdrop-blur-md"
-                >
-                  <p className="text-sm font-semibold text-white sm:text-base">
-                    {stat.value}
-                  </p>
-                  <p className="mt-0.5 text-[9px] leading-tight text-slate-400 sm:text-[10px]">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
+          <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4">
+            <div className="rounded-2xl border border-white/15 bg-[#050814]/90 p-4 sm:p-5 backdrop-blur-xl shadow-2xl">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent-soft">
+                {siteContent.hero.greeting}
+              </p>
+              <p className="mt-0.5 text-base font-bold text-white sm:text-lg">
+                {siteContent.name}
+              </p>
+              <p className="mt-1 text-xs text-slate-300">
+                Full-Stack Engineer · AppSec Focus
+              </p>
             </div>
           </div>
         </div>

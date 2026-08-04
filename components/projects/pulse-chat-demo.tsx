@@ -47,7 +47,7 @@ function ChatMarkdown({ text }: { text: string }) {
         blocks.push(currentBlock);
       }
     } else {
-      const numMatch = line.match(/^\d+\.\s+(.*)/);
+      const numMatch = line.match(/^\d+\.\s*(.*)/);
       if (numMatch) {
         const content = numMatch[1];
         if (currentBlock && currentBlock.type === "ordered") {

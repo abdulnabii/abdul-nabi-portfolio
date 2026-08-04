@@ -28,24 +28,26 @@ export function Skills() {
           />
         </Reveal>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="grid gap-5 items-stretch md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {categories.map((category, index) => {
             const Icon = icons[index % icons.length];
             return (
-              <Reveal key={category.title} delay={index * 80}>
-                <GlassCard interactive hover padding="lg" className="h-full cursor-grow">
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-accent-soft">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <h3 className="text-lg font-semibold text-white">
-                      {category.title}
-                    </h3>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {category.skills.map((skill) => (
-                      <Badge key={skill}>{skill}</Badge>
-                    ))}
+              <Reveal key={category.title} delay={index * 80} className="h-full">
+                <GlassCard interactive hover padding="lg" className="h-full flex flex-col justify-between cursor-grow">
+                  <div>
+                    <div className="mb-5 flex items-center gap-3">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-accent-soft">
+                        <Icon className="h-5 w-5" />
+                      </span>
+                      <h3 className="text-lg font-semibold text-white">
+                        {category.title}
+                      </h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {category.skills.map((skill) => (
+                        <Badge key={skill}>{skill}</Badge>
+                      ))}
+                    </div>
                   </div>
                 </GlassCard>
               </Reveal>

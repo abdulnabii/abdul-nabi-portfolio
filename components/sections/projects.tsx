@@ -46,20 +46,20 @@ export async function Projects() {
                   <div className="grid lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
                     <Link
                       href={`/projects/${project.id}`}
-                      className="relative block min-h-[220px] overflow-hidden border-b border-white/5 lg:min-h-[300px] lg:border-b-0 lg:border-r cursor-grow group/img"
+                      className="relative block min-h-[240px] overflow-hidden border-b border-white/5 lg:min-h-[320px] lg:border-b-0 lg:border-r cursor-grow group/img bg-[#060a17]"
                     >
                       {project.image ? (
                         <Image
                           src={project.image}
                           alt={`${project.title} preview`}
                           fill
-                          className="object-cover transition-transform duration-700 group-hover/img:scale-[1.03]"
+                          className="object-cover object-top transition-transform duration-700 group-hover/img:scale-[1.02]"
                           sizes="(max-width: 1024px) 100vw, 50vw"
                         />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-accent-cyan/10" />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e] via-[#0a0f1e]/45 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e] via-[#0a0f1e]/40 to-transparent pointer-events-none" />
                       <div className="absolute inset-x-0 bottom-0 p-6">
                         <div className="mb-3 flex flex-wrap items-center gap-2">
                           <Badge variant="accent">{project.year}</Badge>
