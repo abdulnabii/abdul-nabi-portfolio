@@ -10,7 +10,7 @@ export function AnimatedGlassBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none"
     >
       {/* Soft Frosted Glass Diffusion Overlay */}
       <div className="absolute inset-0 bg-[#050814]/40 backdrop-blur-[60px]" />
