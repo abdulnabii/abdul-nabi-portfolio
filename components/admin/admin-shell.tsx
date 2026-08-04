@@ -37,10 +37,25 @@ export function AdminShell({ email, children }: AdminShellProps) {
         console.error("Failed to fetch inbox count", err);
       }
     }
+
     checkInbox();
+
+    function handleInboxUpdate(e: Event) {
+      const customEvent = e as CustomEvent<{ unreadCount?: number }>;
+      if (typeof customEvent.detail?.unreadCount === "number") {
+        setUnreadCount(customEvent.detail.unreadCount);
+      } else {
+        checkInbox();
+      }
+    }
+
+    window.addEventListener("inbox-updated", handleInboxUpdate);
     // Poll every 30 seconds for new messages/reactions
     const interval = setInterval(checkInbox, 30000);
-    return () => clearInterval(interval);
+    return () => {
+      window.removeEventListener("inbox-updated", handleInboxUpdate);
+      clearInterval(interval);
+    };
   }, [pathname]); // Refresh when navigating
 
   async function logout() {

@@ -42,6 +42,13 @@ export function InboxView({ initialItems }: InboxViewProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  function notifyUnreadCount(updatedItems: InboxItem[]) {
+    const unread = updatedItems.filter((i) => !i.read && !i.archived).length;
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("inbox-updated", { detail: { unreadCount: unread } }));
+    }
+  }
+
   // Fetch latest data from API
   async function refreshInbox() {
     setLoading(true);
@@ -50,6 +57,7 @@ export function InboxView({ initialItems }: InboxViewProps) {
       if (res.ok) {
         const data = (await res.json()) as { items: InboxItem[] };
         setItems(data.items);
+        notifyUnreadCount(data.items);
       }
     } catch (err) {
       console.error("Failed to refresh inbox", err);
@@ -78,6 +86,7 @@ export function InboxView({ initialItems }: InboxViewProps) {
       if (res.ok) {
         const data = (await res.json()) as { items: InboxItem[] };
         setItems(data.items);
+        notifyUnreadCount(data.items);
         router.refresh();
       }
     } catch (err) {
@@ -94,9 +103,11 @@ export function InboxView({ initialItems }: InboxViewProps) {
         body: JSON.stringify({ read: !currentRead }),
       });
       if (res.ok) {
-        setItems((prev) =>
-          prev.map((item) => (item.id === id ? { ...item, read: !currentRead } : item))
-        );
+        setItems((prev) => {
+          const next = prev.map((item) => (item.id === id ? { ...item, read: !currentRead } : item));
+          notifyUnreadCount(next);
+          return next;
+        });
         router.refresh();
       }
     } catch (err) {
@@ -110,7 +121,11 @@ export function InboxView({ initialItems }: InboxViewProps) {
     try {
       const res = await fetch(`/api/admin/inbox/${id}`, { method: "DELETE" });
       if (res.ok) {
-        setItems((prev) => prev.filter((item) => item.id !== id));
+        setItems((prev) => {
+          const next = prev.filter((item) => item.id !== id);
+          notifyUnreadCount(next);
+          return next;
+        });
         if (selectedItem?.id === id) {
           setSelectedItem(null);
         }
