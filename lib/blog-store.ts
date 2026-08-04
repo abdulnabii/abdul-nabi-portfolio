@@ -1,5 +1,7 @@
+import seedBlogs from "@/data/blogs.json";
 import { promises as fs } from "fs";
 import path from "path";
+import { supabaseDbQuery, supabaseDbUpsert } from "./supabase";
 
 export interface BlogPost {
   slug: string;
@@ -19,6 +21,7 @@ export interface BlogPost {
 }
 
 const BLOGS_FILE = path.join(process.cwd(), "data", "blogs.json");
+const memoryBlogs: BlogPost[] = [];
 
 function estimateReadTime(content: string): string {
   const words = content.trim().split(/\s+/).filter(Boolean).length;
@@ -40,16 +43,41 @@ async function ensureBlogsFile(): Promise<void> {
   try {
     await fs.access(BLOGS_FILE);
   } catch {
-    await fs.mkdir(path.dirname(BLOGS_FILE), { recursive: true });
-    await fs.writeFile(BLOGS_FILE, "[]", "utf8");
+    try {
+      await fs.mkdir(path.dirname(BLOGS_FILE), { recursive: true });
+      await fs.writeFile(BLOGS_FILE, "[]", "utf8");
+    } catch {
+      // Ignored on read-only serverless filesystems (e.g., Vercel)
+    }
   }
 }
 
 export async function getAllBlogs(): Promise<BlogPost[]> {
-  await ensureBlogsFile();
-  const raw = await fs.readFile(BLOGS_FILE, "utf8");
-  const posts = JSON.parse(raw) as BlogPost[];
-  return posts.sort(
+  const map = new Map<string, BlogPost>();
+
+  // 1. Static seed blogs from bundled JSON
+  (seedBlogs as BlogPost[]).forEach((p) => map.set(p.slug, p));
+
+  // 2. Read from disk if writeable/readable
+  try {
+    await ensureBlogsFile();
+    const raw = await fs.readFile(BLOGS_FILE, "utf8");
+    const posts = JSON.parse(raw) as BlogPost[];
+    posts.forEach((p) => map.set(p.slug, p));
+  } catch {
+    // Read-only filesystem fallback
+  }
+
+  // 3. Overlay in-memory cache
+  memoryBlogs.forEach((p) => map.set(p.slug, p));
+
+  // 4. Overlay Supabase DB if connected
+  const dbPosts = await supabaseDbQuery<BlogPost>("blogs", "select=*&order=date.desc");
+  if (dbPosts && dbPosts.length > 0) {
+    dbPosts.forEach((p) => map.set(p.slug, p));
+  }
+
+  return Array.from(map.values()).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 }
@@ -71,8 +99,20 @@ export async function getBlogBySlug(
 }
 
 export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
-  await ensureBlogsFile();
-  await fs.writeFile(BLOGS_FILE, JSON.stringify(posts, null, 2), "utf8");
+  // 1. Update memory store for immediate active session reactivity
+  memoryBlogs.length = 0;
+  memoryBlogs.push(...posts);
+
+  // 2. Upsert to Supabase DB if available
+  await supabaseDbUpsert("blogs", posts);
+
+  // 3. Write to local disk if filesystem is writeable
+  try {
+    await ensureBlogsFile();
+    await fs.writeFile(BLOGS_FILE, JSON.stringify(posts, null, 2), "utf8");
+  } catch (err) {
+    console.warn("[blog-store] Read-only filesystem detected, saved to memory & Supabase fallback.");
+  }
 }
 
 export interface BlogInput {
