@@ -117,6 +117,12 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
     setLoading(false);
   }, [post, slug]);
 
+  useEffect(() => {
+    if (post?.title && typeof document !== "undefined") {
+      document.title = `${post.title} · Abdul Nabi`;
+    }
+  }, [post]);
+
   if (loading) {
     return (
       <div className="section-padding pt-32 md:pt-36 flex items-center justify-center min-h-[50vh]">

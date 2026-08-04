@@ -11,24 +11,30 @@ interface BlogPostPageProps {
   params: { slug: string };
 }
 
+function slugToTitle(slug: string): string {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
   const post = await getBlogBySlug(params.slug);
-  if (!post) {
-    return { title: "Post not found" };
-  }
+  const title = post?.title ?? slugToTitle(params.slug);
+  const description = post?.excerpt ?? "Article by Abdul Nabi";
 
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: `${title} · Abdul Nabi`,
+    description,
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: `${title} · Abdul Nabi`,
+      description,
       type: "article",
-      publishedTime: post.date,
-      tags: post.tags,
-      images: post.coverImage ? [post.coverImage] : undefined,
+      publishedTime: post?.date,
+      tags: post?.tags,
+      images: post?.coverImage ? [post.coverImage] : undefined,
     },
   };
 }
