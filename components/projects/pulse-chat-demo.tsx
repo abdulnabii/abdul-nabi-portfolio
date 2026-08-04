@@ -18,45 +18,86 @@ const WELCOME_MESSAGE: Message = {
     "Hi — I'm the **Pulse Support Assistant**. This is an interactive sandbox showing secure Edge-streaming in action.\n\nAsk about **architecture**, **security**, or **skills** to see instant markdown token streaming!",
 };
 
-// Safe simple markdown renderer to avoid React dangerouslySetInnerHTML hazards
+// Safe simple markdown renderer supporting headings, unordered lists, and ordered lists
 function ChatMarkdown({ text }: { text: string }) {
   if (!text) return null;
+
   const lines = text.split("\n");
+  const blocks: Array<
+    | { type: "heading"; text: string }
+    | { type: "unordered"; items: string[] }
+    | { type: "ordered"; items: string[] }
+    | { type: "paragraph"; text: string }
+  > = [];
+
+  let currentBlock: (typeof blocks)[number] | null = null;
+
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+
+    if (line.startsWith("### ")) {
+      currentBlock = { type: "heading", text: line.replace("### ", "") };
+      blocks.push(currentBlock);
+    } else if (line.startsWith("- ") || line.startsWith("* ")) {
+      const content = line.substring(2);
+      if (currentBlock && currentBlock.type === "unordered") {
+        currentBlock.items.push(content);
+      } else {
+        currentBlock = { type: "unordered", items: [content] };
+        blocks.push(currentBlock);
+      }
+    } else {
+      const numMatch = line.match(/^\d+\.\s+(.*)/);
+      if (numMatch) {
+        const content = numMatch[1];
+        if (currentBlock && currentBlock.type === "ordered") {
+          currentBlock.items.push(content);
+        } else {
+          currentBlock = { type: "ordered", items: [content] };
+          blocks.push(currentBlock);
+        }
+      } else if (line.trim() === "") {
+        currentBlock = null;
+      } else {
+        if (currentBlock && currentBlock.type === "paragraph") {
+          currentBlock.text += " " + line.trim();
+        } else {
+          currentBlock = { type: "paragraph", text: line.trim() };
+          blocks.push(currentBlock);
+        }
+      }
+    }
+  }
 
   return (
     <div className="space-y-2 leading-relaxed text-sm">
-      {lines.map((line, idx) => {
-        // Renders bold headings starting with ###
-        if (line.startsWith("### ")) {
+      {blocks.map((block, idx) => {
+        if (block.type === "heading") {
           return (
             <h4 key={idx} className="font-semibold text-white mt-3 mb-1 border-b border-white/5 pb-1">
-              {line.replace("### ", "")}
+              {renderInlineStyles(block.text)}
             </h4>
           );
         }
-
-        // Renders bullet lists starting with -
-        if (line.startsWith("- ") || line.startsWith("* ")) {
-          const content = line.substring(2);
+        if (block.type === "unordered") {
           return (
-            <ul key={idx} className="list-disc pl-4 space-y-1 my-1">
-              <li>{renderInlineStyles(content)}</li>
+            <ul key={idx} className="list-disc pl-5 space-y-1 my-1">
+              {block.items.map((item, itemIdx) => (
+                <li key={itemIdx}>{renderInlineStyles(item)}</li>
+              ))}
             </ul>
           );
         }
-
-        // Renders standard bullet lists with 1. 2.
-        const numMatch = line.match(/^\d+\.\s(.*)/);
-        if (numMatch) {
+        if (block.type === "ordered") {
           return (
-            <ol key={idx} className="list-decimal pl-4 space-y-1 my-1">
-              <li>{renderInlineStyles(numMatch[1])}</li>
+            <ol key={idx} className="list-decimal pl-5 space-y-1 my-1">
+              {block.items.map((item, itemIdx) => (
+                <li key={itemIdx}>{renderInlineStyles(item)}</li>
+              ))}
             </ol>
           );
         }
-
-        // Regular paragraph line
-        return <p key={idx}>{renderInlineStyles(line)}</p>;
+        return <p key={idx}>{renderInlineStyles(block.text)}</p>;
       })}
     </div>
   );

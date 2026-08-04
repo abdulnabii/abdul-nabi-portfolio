@@ -55,21 +55,21 @@ export function About() {
                   interactive
                   hover
                   padding="lg"
-                  className="group flex flex-col items-center justify-center text-center h-full min-h-[160px] cursor-grow transition-all duration-200 hover:scale-[1.02] hover:border-accent/40"
+                  className="group flex flex-col items-center justify-center text-center h-full min-h-[170px] cursor-grow p-6 transition-all duration-200 hover:scale-[1.02] hover:border-accent/40"
                 >
-                  <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-accent-soft transition-colors group-hover:border-accent/30 group-hover:bg-accent/10">
+                  <div className="mb-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-accent-soft transition-colors group-hover:border-accent/30 group-hover:bg-accent/10">
                     <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+                  </div>
+                  <p className="w-full mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 leading-snug">
                     {stat.label}
-                  </span>
-                  <span
-                    className={`font-bold tracking-tight text-accent-soft transition-colors group-hover:text-white ${
+                  </p>
+                  <p
+                    className={`w-full font-bold tracking-tight text-accent-soft transition-colors group-hover:text-white ${
                       isLongValue ? "text-base sm:text-lg" : "text-2xl sm:text-3xl"
                     }`}
                   >
                     {stat.value}
-                  </span>
+                  </p>
                 </GlassCard>
               </Reveal>
             );
