@@ -25,7 +25,7 @@ export function About() {
           <SectionHeading
             eyebrow="Background"
             title={about.title}
-            subtitle={`How ${name} approaches product work — ownership, craft, and honest delivery.`}
+            subtitle="How I approach product work — ownership, craft, and honest delivery."
           />
         </Reveal>
 
