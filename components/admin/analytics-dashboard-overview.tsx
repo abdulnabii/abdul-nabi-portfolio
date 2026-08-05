@@ -12,7 +12,15 @@ interface AnalyticsDashboardOverviewProps {
 type DateRange = "7d" | "30d" | "90d" | "all";
 
 export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboardOverviewProps) {
-  const [summary, setSummary] = useState<AnalyticsSummary>(initialSummary);
+  const [summary, setSummary] = useState<AnalyticsSummary>(
+    initialSummary || {
+      totalViews: 0,
+      viewsThisWeek: 0,
+      topBlogs: [],
+      topProjects: [],
+      topCtas: [],
+    }
+  );
   const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +30,7 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
       const res = await fetch(`/api/analytics/summary?range=${dateRange}`);
       if (res.ok) {
         const data = await res.json();
-        setSummary(data);
+        if (data) setSummary(data);
       }
     } catch (err) {
       console.error("Failed to refresh analytics:", err);
@@ -32,13 +40,17 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
   }
 
   function exportCSV() {
+    const topBlogs = summary.topBlogs || [];
+    const topProjects = summary.topProjects || [];
+    const topCtas = summary.topCtas || [];
+
     const rows = [
       ["Metric / Section", "Name / Title", "Value / Count"],
-      ["Summary", "Total Views", summary.totalViews],
-      ["Summary", "Views This Week", summary.viewsThisWeek],
-      ...summary.topBlogs.map((b) => ["Top Blog", b.title, b.views]),
-      ...summary.topProjects.map((p) => ["Top Project", p.title, p.views]),
-      ...summary.topCtas.map((c) => ["Top CTA", c.label, c.clicks]),
+      ["Summary", "Total Views", summary.totalViews || 0],
+      ["Summary", "Views This Week", summary.viewsThisWeek || 0],
+      ...topBlogs.map((b) => ["Top Blog", b.title, b.views]),
+      ...topProjects.map((p) => ["Top Project", p.title, p.views]),
+      ...topCtas.map((c) => ["Top CTA", c.label, c.clicks]),
     ];
 
     const csvContent =
@@ -52,15 +64,21 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
     document.body.removeChild(link);
   }
 
+  const totalViews = summary.totalViews || 0;
+  const viewsThisWeek = summary.viewsThisWeek || 0;
+  const topBlogs = summary.topBlogs || [];
+  const topProjects = summary.topProjects || [];
+  const topCtas = summary.topCtas || [];
+
   // Calculate views multiplier visually based on selected date range
   const displayViews =
     dateRange === "7d"
-      ? summary.viewsThisWeek
+      ? viewsThisWeek
       : dateRange === "30d"
-      ? Math.round(summary.totalViews * 0.75)
+      ? Math.round(totalViews * 0.75)
       : dateRange === "90d"
-      ? Math.round(summary.totalViews * 0.9)
-      : summary.totalViews;
+      ? Math.round(totalViews * 0.9)
+      : totalViews;
 
   return (
     <div className="space-y-4">
@@ -125,7 +143,7 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
             <span className="text-xs uppercase tracking-wider text-slate-500">This Week</span>
             <TrendingUp className="h-4 w-4 text-emerald-400" />
           </div>
-          <p className="mt-2 text-3xl font-semibold text-emerald-300">{summary.viewsThisWeek}</p>
+          <p className="mt-2 text-3xl font-semibold text-emerald-300">{viewsThisWeek}</p>
           <p className="mt-1 text-xs text-slate-500">Last 7 days activity</p>
         </GlassCard>
 
@@ -135,10 +153,10 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
             <BarChart3 className="h-4 w-4 text-indigo-400" />
           </div>
           <p className="mt-2 truncate text-lg font-semibold text-indigo-200">
-            {summary.topBlogs[0]?.title || "N/A"}
+            {topBlogs[0]?.title || "N/A"}
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            {summary.topBlogs[0]?.views || 0} views
+            {topBlogs[0]?.views ? `${topBlogs[0].views} views` : "No views recorded yet"}
           </p>
         </GlassCard>
 
@@ -147,47 +165,56 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
             <span className="text-xs uppercase tracking-wider text-slate-500">Top CTA Button</span>
             <MousePointerClick className="h-4 w-4 text-amber-400" />
           </div>
-          <p className="mt-2 truncate text-lg font-semibold text-amber-200 font-medium">
-            {summary.topCtas[0]?.label || "N/A"}
+          <p className="mt-2 truncate text-lg font-semibold text-amber-200/90">
+            {topCtas[0]?.label || "N/A"}
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            {summary.topCtas[0]?.clicks || 0} clicks
+            {topCtas[0]?.clicks ? `${topCtas[0].clicks} clicks` : "No clicks recorded yet"}
           </p>
         </GlassCard>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* Breakdown Lists */}
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
             Top Performing Case Studies
           </h4>
           <div className="space-y-2">
-            {summary.topProjects.map((p, idx) => (
-              <div
-                key={p.slug + idx}
-                className="flex items-center justify-between rounded-xl bg-white/[0.03] p-2.5 text-xs border border-white/5"
-              >
-                <span className="font-medium text-slate-200 truncate">{p.title}</span>
-                <span className="text-slate-400 font-mono">{p.views} views</span>
-              </div>
-            ))}
+            {topProjects.length === 0 ? (
+              <p className="text-xs text-slate-500 italic">No case study views recorded yet.</p>
+            ) : (
+              topProjects.map((p, idx) => (
+                <div
+                  key={p.slug + idx}
+                  className="flex items-center justify-between rounded-xl bg-white/[0.03] p-2.5 text-xs border border-white/5"
+                >
+                  <span className="font-medium text-slate-200 truncate">{p.title}</span>
+                  <span className="text-slate-400 font-mono">{p.views} views</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
         <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-            Top Clicked Actions (CTAs)
+            Top Clicked Actions (CTAS)
           </h4>
           <div className="space-y-2">
-            {summary.topCtas.map((c, idx) => (
-              <div
-                key={c.label + idx}
-                className="flex items-center justify-between rounded-xl bg-white/[0.03] p-2.5 text-xs border border-white/5"
-              >
-                <span className="font-medium text-slate-200 truncate">{c.label}</span>
-                <span className="text-amber-300/90 font-mono">{c.clicks} clicks</span>
-              </div>
-            ))}
+            {topCtas.length === 0 ? (
+              <p className="text-xs text-slate-500 italic">No CTA clicks recorded yet.</p>
+            ) : (
+              topCtas.map((c, idx) => (
+                <div
+                  key={c.label + idx}
+                  className="flex items-center justify-between rounded-xl bg-white/[0.03] p-2.5 text-xs border border-white/5"
+                >
+                  <span className="font-medium text-slate-200 truncate">{c.label}</span>
+                  <span className="text-amber-300/90 font-mono">{c.clicks} clicks</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

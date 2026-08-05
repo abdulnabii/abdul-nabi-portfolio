@@ -1,7 +1,7 @@
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AnalyticsDashboardOverview } from "@/components/admin/analytics-dashboard-overview";
 import { GlassCard } from "@/components/ui/glass-card";
-import { getAnalyticsSummary } from "@/lib/analytics-store";
+import { AnalyticsSummary, getAnalyticsSummary } from "@/lib/analytics-store";
 import { getAdminSession } from "@/lib/auth";
 import { getAllBlogs } from "@/lib/blog-store";
 import { getAllProjects } from "@/lib/project-store";
@@ -15,18 +15,42 @@ export default async function AdminDashboardPage() {
   const session = await getAdminSession();
   if (!session) redirect("/admin/login");
 
-  const posts = await getAllBlogs();
+  let posts: any[] = [];
+  try {
+    posts = await getAllBlogs();
+  } catch (err) {
+    console.error("[AdminDashboardPage] Error fetching blogs:", err);
+  }
+
   const published = posts.filter((p) => p.published).length;
   const drafts = posts.length - published;
 
-  const projects = await getAllProjects();
+  let projects: any[] = [];
+  try {
+    projects = await getAllProjects();
+  } catch (err) {
+    console.error("[AdminDashboardPage] Error fetching projects:", err);
+  }
+
   const featuredProjects = projects.filter((p) => p.featured).length;
   const totalLikes = projects.reduce(
     (sum, p) => sum + (p.appreciations ?? 0),
     0
   );
 
-  const analyticsSummary = await getAnalyticsSummary();
+  let analyticsSummary: AnalyticsSummary = {
+    totalViews: 0,
+    viewsThisWeek: 0,
+    topBlogs: [],
+    topProjects: [],
+    topCtas: [],
+  };
+
+  try {
+    analyticsSummary = await getAnalyticsSummary();
+  } catch (err) {
+    console.error("[AdminDashboardPage] Error fetching analytics summary:", err);
+  }
 
   return (
     <AdminShell email={session.email}>
