@@ -41,16 +41,39 @@ const memoryInboxItems: InboxItem[] = [];
 export async function getAllInboxItems(): Promise<InboxItem[]> {
   const map = new Map<string, InboxItem>();
 
-  // 1. Load static seed inbox items (bundled into JS at build time — zero fs I/O)
+  // 1. Load static seed inbox items
   (seedInbox as InboxItem[]).forEach((item) => map.set(item.id, item));
 
   // 2. Overlay in-memory items (submitted during active container session)
   memoryInboxItems.forEach((item) => map.set(item.id, item));
 
-  // 3. Overlay Supabase DB items if database is connected
+  // 3. Overlay Supabase DB 'inbox' items
   const dbItems = await supabaseDbQuery<InboxItem>("inbox", "select=*&order=timestamp.desc");
   if (dbItems && dbItems.length > 0) {
     dbItems.forEach((item) => map.set(item.id, item));
+  }
+
+  // 4. Overlay Supabase DB 'contact_submissions' items to guarantee recently submitted messages appear
+  const contactSubs = await supabaseDbQuery<any>("contact_submissions", "select=*&order=created_at.desc");
+  if (contactSubs && contactSubs.length > 0) {
+    contactSubs.forEach((sub) => {
+      if (!map.has(sub.id)) {
+        map.set(sub.id, {
+          id: sub.id,
+          type: "message",
+          timestamp: sub.created_at || new Date().toISOString(),
+          read: sub.read ?? false,
+          archived: false,
+          payload: {
+            name: sub.name,
+            email: sub.email,
+            company: sub.company || undefined,
+            subject: sub.subject,
+            message: sub.message,
+          },
+        });
+      }
+    });
   }
 
   return Array.from(map.values()).sort(

@@ -52,7 +52,7 @@ export function HeroPortrait3D() {
       />
       <div
         aria-hidden
-        className="absolute -left-6 bottom-16 h-20 w-20 rounded-2xl border border-white/10 bg-accent-cyan/10 animate-float motion-reduce:animate-none"
+        className="absolute -left-6 bottom-16 h-20 w-20 rounded-2xl border border-white/10 bg-indigo-500/10 animate-float motion-reduce:animate-none"
         style={{ animationDelay: "1.2s", transform: "rotate(-8deg)" }}
       />
 
@@ -65,7 +65,7 @@ export function HeroPortrait3D() {
         }}
       >
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/30 blur-3xl" />
-        <div className="absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-accent-cyan/20 blur-3xl" />
+        <div className="absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-indigo-900/20 blur-3xl" />
 
         <div className="relative overflow-hidden rounded-[1.35rem] border border-white/10">
           <div className="relative aspect-[4/5] w-full bg-[#080d1a]">

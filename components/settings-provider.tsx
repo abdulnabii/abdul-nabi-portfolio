@@ -38,27 +38,14 @@ export function SettingsProvider({
   const [experience, setExperience] = useState<ExperienceItem[]>(initialExperience);
   const [education, setEducation] = useState<EducationItem[]>(initialEducation);
 
-  // Sync client-side localStorage overrides if saved locally
+  // Sync state if initial props update from server revalidation
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const localSet = localStorage.getItem("an_site_settings");
-        if (localSet) setSettings(JSON.parse(localSet));
+    if (initialSettings) setSettings(initialSettings);
+  }, [initialSettings]);
 
-        const localAbout = localStorage.getItem("an_about_data");
-        if (localAbout) setAbout(JSON.parse(localAbout));
-
-        const localSkills = localStorage.getItem("an_skills_data");
-        if (localSkills) setSkills(JSON.parse(localSkills));
-
-        const localExp = localStorage.getItem("an_experience_data");
-        if (localExp) setExperience(JSON.parse(localExp));
-
-        const localEdu = localStorage.getItem("an_education_data");
-        if (localEdu) setEducation(JSON.parse(localEdu));
-      } catch {}
-    }
-  }, []);
+  useEffect(() => {
+    if (initialAbout) setAbout(initialAbout);
+  }, [initialAbout]);
 
   const refreshAll = async () => {
     try {

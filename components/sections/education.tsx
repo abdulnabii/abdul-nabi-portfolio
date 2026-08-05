@@ -9,8 +9,10 @@ import { useSiteSettings } from "@/components/settings-provider";
 import { GraduationCap } from "lucide-react";
 
 export function Education() {
-  const { education: eduData } = useSiteSettings();
+  const { education: eduData, settings } = useSiteSettings();
   const education = eduData || siteContent.education;
+  const canonicalLocation = settings?.location || siteContent.location;
+
   return (
     <section
       id="education"
@@ -42,8 +44,8 @@ export function Education() {
                 </h3>
                 <p className="mt-1 text-sm text-slate-400">
                   {item.institution}
-                  {item.location && item.location !== "—" && (
-                    <> · {item.location}</>
+                  {canonicalLocation && (
+                    <> · {canonicalLocation}</>
                   )}
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-slate-300">

@@ -37,9 +37,9 @@ export function Hero() {
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* Ambient background blur blobs */}
-        <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/20 blur-[100px] animate-pulse-soft motion-reduce:animate-none" />
-        <div className="absolute right-[10%] top-40 h-48 w-48 rounded-full bg-accent-cyan/15 blur-[80px] animate-float motion-reduce:animate-none" />
-        <div className="absolute bottom-32 left-[12%] h-56 w-56 rounded-full bg-accent-violet/15 blur-[90px]" />
+        <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/15 blur-[100px] animate-pulse-soft motion-reduce:animate-none" />
+        <div className="absolute right-[10%] top-40 h-48 w-48 rounded-full bg-indigo-900/15 blur-[80px] animate-float motion-reduce:animate-none" />
+        <div className="absolute bottom-32 left-[12%] h-56 w-56 rounded-full bg-indigo-950/15 blur-[90px]" />
 
         {/* Left-side subtle circular elements */}
         <div className="absolute left-[5%] top-[25%] h-56 w-56 rounded-full border border-white/[0.03] bg-white/[0.01] pointer-events-none hidden xl:block shadow-[inset_0_0_15px_rgba(255,255,255,0.01)]" />
