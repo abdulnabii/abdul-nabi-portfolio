@@ -34,30 +34,57 @@ export interface InboxItem {
 }
 
 import seedInbox from "@/data/inbox.json";
+import { supabaseDbUpsert } from "./supabase";
 
 // Memory fallback store for serverless environment lifecycles
 const memoryInboxItems: InboxItem[] = [];
+const memoryDeletedIds = new Set<string>();
 
 export async function getAllInboxItems(): Promise<InboxItem[]> {
   const map = new Map<string, InboxItem>();
+  const deletedSet = new Set<string>(memoryDeletedIds);
+
+  // Load deleted IDs from Supabase DB site_settings
+  const deletedRows = await supabaseDbQuery<{ key: string; value: string }>(
+    "site_settings",
+    "select=*&key=eq.deleted_inbox_ids"
+  );
+  if (deletedRows && deletedRows.length > 0 && deletedRows[0].value) {
+    try {
+      const parsed = JSON.parse(deletedRows[0].value) as string[];
+      parsed.forEach((id) => deletedSet.add(id));
+    } catch {}
+  }
 
   // 1. Load static seed inbox items
-  (seedInbox as InboxItem[]).forEach((item) => map.set(item.id, item));
+  (seedInbox as InboxItem[]).forEach((item) => {
+    if (!deletedSet.has(item.id)) {
+      map.set(item.id, item);
+    }
+  });
 
   // 2. Overlay in-memory items (submitted during active container session)
-  memoryInboxItems.forEach((item) => map.set(item.id, item));
+  memoryInboxItems.forEach((item) => {
+    if (!deletedSet.has(item.id)) {
+      map.set(item.id, item);
+    }
+  });
 
   // 3. Overlay Supabase DB 'inbox' items
   const dbItems = await supabaseDbQuery<InboxItem>("inbox", "select=*&order=timestamp.desc");
   if (dbItems && dbItems.length > 0) {
-    dbItems.forEach((item) => map.set(item.id, item));
+    dbItems.forEach((item) => {
+      if (!deletedSet.has(item.id)) {
+        map.set(item.id, item);
+      }
+    });
   }
 
-  // 4. Overlay Supabase DB 'contact_submissions' items to guarantee recently submitted messages appear
+  // 4. Overlay Supabase DB 'contact_submissions' items
   const contactSubs = await supabaseDbQuery<any>("contact_submissions", "select=*&order=created_at.desc");
   if (contactSubs && contactSubs.length > 0) {
     contactSubs.forEach((sub) => {
-      if (!map.has(sub.id)) {
+      if (!map.has(sub.id) && !deletedSet.has(sub.id)) {
         map.set(sub.id, {
           id: sub.id,
           type: "message",
@@ -168,15 +195,25 @@ export async function archiveInboxItem(id: string, archived = true): Promise<Inb
 }
 
 export async function deleteInboxItem(id: string): Promise<boolean> {
+  memoryDeletedIds.add(id);
+
   const items = await getAllInboxItems();
   const next = items.filter((i) => i.id !== id);
-  if (next.length === items.length) return false;
 
   await saveAllInboxItems(next);
 
   // Permanently delete record from Supabase DB tables
   await supabaseDbDelete("inbox", `id=eq.${id}`);
   await supabaseDbDelete("contact_submissions", `id=eq.${id}`);
+
+  // Persist deleted IDs array to Supabase DB site_settings
+  const currentDeletedList = Array.from(memoryDeletedIds);
+  await supabaseDbUpsert("site_settings", [{
+    key: "deleted_inbox_ids",
+    value: JSON.stringify(currentDeletedList),
+    updated_at: new Date().toISOString(),
+  }]);
+
   return true;
 }
 
