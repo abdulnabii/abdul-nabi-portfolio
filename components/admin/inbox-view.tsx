@@ -53,7 +53,10 @@ export function InboxView({ initialItems }: InboxViewProps) {
   const refreshInbox = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/inbox");
+      const res = await fetch(`/api/admin/inbox?t=${Date.now()}`, {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         const data = (await res.json()) as { items: InboxItem[] };
         setItems(data.items);

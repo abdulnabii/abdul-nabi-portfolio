@@ -439,7 +439,7 @@ export function ExperienceManager({
                   placeholder="e.g. 2022 – 2026"
                 />
                 <Input
-                  label="Location"
+                  label="Institution Location (e.g. Larkana, Pakistan)"
                   value={item.location}
                   onChange={(e) => handleEduChange(idx, "location", e.target.value)}
                   placeholder="e.g. Larkana, Pakistan"
