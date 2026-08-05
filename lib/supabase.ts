@@ -27,7 +27,7 @@ export async function supabaseDbQuery<T = any>(
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
       },
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
 
     if (!res.ok) return null;

@@ -49,13 +49,20 @@ export function SettingsProvider({
 
   const refreshAll = async () => {
     try {
-      const res = await fetch("/api/admin/settings");
+      const res = await fetch(`/api/admin/settings?t=${Date.now()}`, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         setSettings(data);
       }
     } catch {}
   };
+
+  useEffect(() => {
+    refreshAll();
+    const handleFocus = () => refreshAll();
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
 
   return (
     <SettingsContext.Provider
