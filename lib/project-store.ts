@@ -8,8 +8,10 @@ async function ensureProjectsFile(): Promise<void> {
   try {
     await fs.access(PROJECTS_FILE);
   } catch {
-    await fs.mkdir(path.dirname(PROJECTS_FILE), { recursive: true });
-    await fs.writeFile(PROJECTS_FILE, "[]", "utf8");
+    try {
+      await fs.mkdir(path.dirname(PROJECTS_FILE), { recursive: true });
+      await fs.writeFile(PROJECTS_FILE, "[]", "utf8");
+    } catch {}
   }
 }
 
@@ -21,65 +23,89 @@ const memoryProjects: Project[] = [];
 export async function getAllProjects(): Promise<Project[]> {
   const map = new Map<string, Project>();
 
-  // 1. Static seed projects from bundled JSON
-  (seedProjects as Project[]).forEach((p) => map.set(p.id, p));
-
-  // 2. Read from disk if readable
   try {
-    await ensureProjectsFile();
-    const raw = await fs.readFile(PROJECTS_FILE, "utf8");
-    const projects = JSON.parse(raw) as Project[];
-    projects.forEach((p) => map.set(p.id, p));
-  } catch {
-    // Read-only filesystem fallback
-  }
+    // 1. Static seed projects from bundled JSON
+    (seedProjects as Project[]).forEach((p) => map.set(p.id, p));
 
-  // 3. Overlay Supabase DB if connected
-  const dbProjects = await supabaseDbQuery<Project>("projects", "select=*");
-  if (dbProjects && dbProjects.length > 0) {
-    dbProjects.forEach((p) => map.set(p.id, p));
-  }
+    // 2. Read from disk if readable
+    try {
+      await ensureProjectsFile();
+      const raw = await fs.readFile(PROJECTS_FILE, "utf8");
+      const projects = JSON.parse(raw) as Project[];
+      projects.forEach((p) => map.set(p.id, p));
+    } catch {
+      // Read-only filesystem fallback
+    }
 
-  // 4. Overlay in-memory cache LAST (ensures active container session creations/edits take top priority)
-  memoryProjects.forEach((p) => map.set(p.id, p));
+    // 3. Overlay Supabase DB if connected
+    try {
+      const dbProjects = await supabaseDbQuery<Project>("projects", "select=*");
+      if (dbProjects && dbProjects.length > 0) {
+        dbProjects.forEach((p) => map.set(p.id, p));
+      }
+    } catch {}
+
+    // 4. Overlay in-memory cache LAST
+    memoryProjects.forEach((p) => map.set(p.id, p));
+  } catch (err) {
+    console.error("[getAllProjects] Exception:", err);
+  }
 
   return Array.from(map.values()).sort((a, b) => {
     if (a.featured !== b.featured) {
       return a.featured ? -1 : 1;
     }
-    return b.year.localeCompare(a.year);
+    return (b.year || "").localeCompare(a.year || "");
   });
 }
 
 export async function getPublishedProjects(): Promise<Project[]> {
-  const projects = await getAllProjects();
-  return projects.filter((p) => p.published !== false);
+  try {
+    const projects = await getAllProjects();
+    return projects.filter((p) => p.published !== false);
+  } catch {
+    return [];
+  }
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
-  const projects = await getPublishedProjects();
-  return projects.filter((p) => p.featured);
+  try {
+    const projects = await getPublishedProjects();
+    return projects.filter((p) => p.featured);
+  } catch {
+    return [];
+  }
 }
 
 export async function getProjectById(id: string): Promise<Project | undefined> {
-  const projects = await getAllProjects();
-  return projects.find((p) => p.id === id);
+  try {
+    const projects = await getAllProjects();
+    return projects.find((p) => p.id === id);
+  } catch {
+    return undefined;
+  }
 }
 
 export async function saveAllProjects(projects: Project[]): Promise<void> {
-  // 1. Update memory store for active container session
-  memoryProjects.length = 0;
-  memoryProjects.push(...projects);
-
-  // 2. Upsert to Supabase DB if available
-  await supabaseDbUpsert("projects", projects);
-
-  // 3. Write to local disk if filesystem is writeable
   try {
-    await ensureProjectsFile();
-    await fs.writeFile(PROJECTS_FILE, JSON.stringify(projects, null, 2), "utf8");
+    // 1. Update memory store for active container session
+    memoryProjects.length = 0;
+    memoryProjects.push(...projects);
+
+    // 2. Upsert to Supabase DB if available
+    try {
+      await supabaseDbUpsert("projects", projects);
+    } catch {}
+
+    // 3. Write to local disk if filesystem is writeable
+    try {
+      await ensureProjectsFile();
+      await fs.writeFile(PROJECTS_FILE, JSON.stringify(projects, null, 2), "utf8");
+    } catch (err) {
+      console.warn("[project-store] Read-only filesystem detected, saved to memory & Supabase fallback.");
+    }
   } catch (err) {
-    console.warn("[project-store] Read-only filesystem detected, saved to memory & Supabase fallback.");
+    console.error("[saveAllProjects] Exception:", err);
   }
 }
 

@@ -55,27 +55,33 @@ async function ensureBlogsFile(): Promise<void> {
 export async function getAllBlogs(): Promise<BlogPost[]> {
   const map = new Map<string, BlogPost>();
 
-  // 1. Static seed blogs from bundled JSON
-  (seedBlogs as BlogPost[]).forEach((p) => map.set(p.slug, p));
-
-  // 2. Read from disk if writeable/readable
   try {
-    await ensureBlogsFile();
-    const raw = await fs.readFile(BLOGS_FILE, "utf8");
-    const posts = JSON.parse(raw) as BlogPost[];
-    posts.forEach((p) => map.set(p.slug, p));
-  } catch {
-    // Read-only filesystem fallback
-  }
+    // 1. Static seed blogs from bundled JSON
+    (seedBlogs as BlogPost[]).forEach((p) => map.set(p.slug, p));
 
-  // 3. Overlay Supabase DB if connected
-  const dbPosts = await supabaseDbQuery<BlogPost>("blogs", "select=*&order=date.desc");
-  if (dbPosts && dbPosts.length > 0) {
-    dbPosts.forEach((p) => map.set(p.slug, p));
-  }
+    // 2. Read from disk if writeable/readable
+    try {
+      await ensureBlogsFile();
+      const raw = await fs.readFile(BLOGS_FILE, "utf8");
+      const posts = JSON.parse(raw) as BlogPost[];
+      posts.forEach((p) => map.set(p.slug, p));
+    } catch {
+      // Read-only filesystem fallback
+    }
 
-  // 4. Overlay in-memory cache LAST (ensures active container session creations/edits take top priority)
-  memoryBlogs.forEach((p) => map.set(p.slug, p));
+    // 3. Overlay Supabase DB if connected
+    try {
+      const dbPosts = await supabaseDbQuery<BlogPost>("blogs", "select=*&order=date.desc");
+      if (dbPosts && dbPosts.length > 0) {
+        dbPosts.forEach((p) => map.set(p.slug, p));
+      }
+    } catch {}
+
+    // 4. Overlay in-memory cache LAST
+    memoryBlogs.forEach((p) => map.set(p.slug, p));
+  } catch (err) {
+    console.error("[getAllBlogs] Exception:", err);
+  }
 
   return Array.from(map.values()).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -83,35 +89,49 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
 }
 
 export async function getPublishedBlogs(): Promise<BlogPost[]> {
-  const posts = await getAllBlogs();
-  return posts.filter((p) => p.published !== false);
+  try {
+    const posts = await getAllBlogs();
+    return posts.filter((p) => p.published !== false);
+  } catch {
+    return [];
+  }
 }
 
 export async function getBlogBySlug(
   slug: string,
   options?: { includeDrafts?: boolean }
 ): Promise<BlogPost | undefined> {
-  const posts = await getAllBlogs();
-  const post = posts.find((p) => p.slug === slug);
-  if (!post) return undefined;
-  if (!options?.includeDrafts && post.published === false) return undefined;
-  return post;
+  try {
+    const posts = await getAllBlogs();
+    const post = posts.find((p) => p.slug === slug);
+    if (!post) return undefined;
+    if (!options?.includeDrafts && post.published === false) return undefined;
+    return post;
+  } catch {
+    return undefined;
+  }
 }
 
 export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
-  // 1. Update memory store for immediate active session reactivity
-  memoryBlogs.length = 0;
-  memoryBlogs.push(...posts);
-
-  // 2. Upsert to Supabase DB if available
-  await supabaseDbUpsert("blogs", posts);
-
-  // 3. Write to local disk if filesystem is writeable
   try {
-    await ensureBlogsFile();
-    await fs.writeFile(BLOGS_FILE, JSON.stringify(posts, null, 2), "utf8");
+    // 1. Update memory store for immediate active session reactivity
+    memoryBlogs.length = 0;
+    memoryBlogs.push(...posts);
+
+    // 2. Upsert to Supabase DB if available
+    try {
+      await supabaseDbUpsert("blogs", posts);
+    } catch {}
+
+    // 3. Write to local disk if filesystem is writeable
+    try {
+      await ensureBlogsFile();
+      await fs.writeFile(BLOGS_FILE, JSON.stringify(posts, null, 2), "utf8");
+    } catch (err) {
+      console.warn("[blog-store] Read-only filesystem detected, saved to memory & Supabase fallback.");
+    }
   } catch (err) {
-    console.warn("[blog-store] Read-only filesystem detected, saved to memory & Supabase fallback.");
+    console.error("[saveAllBlogs] Exception:", err);
   }
 }
 
