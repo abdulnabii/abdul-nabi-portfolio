@@ -3,6 +3,9 @@ import { getEducationData, saveEducationData } from "@/lib/settings-store";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   const data = await getEducationData();
   return NextResponse.json(data);
