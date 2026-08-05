@@ -118,7 +118,6 @@ export function InboxView({ initialItems }: InboxViewProps) {
     }
   }
 
-  // Delete item
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to permanently delete this event?")) return;
     try {
@@ -132,10 +131,18 @@ export function InboxView({ initialItems }: InboxViewProps) {
         if (selectedItem?.id === id) {
           setSelectedItem(null);
         }
-        router.refresh();
+      } else {
+        if (res.status === 401) {
+          alert("Admin session expired. Please log in again to delete items.");
+          router.push("/admin/login");
+        } else {
+          const data = await res.json().catch(() => ({}));
+          alert(`Failed to delete activity: ${data.error || "Server error"}`);
+        }
       }
     } catch (err) {
       console.error("Failed to delete inbox item", err);
+      alert("Failed to delete activity due to network error.");
     }
   }
 

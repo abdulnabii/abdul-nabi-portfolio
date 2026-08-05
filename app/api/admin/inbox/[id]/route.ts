@@ -35,12 +35,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     await requireAdminSession();
     const id = context.params.id;
-    const deleted = await deleteInboxItem(id);
-
-    if (!deleted) {
-      return NextResponse.json({ error: "Item not found" }, { status: 404 });
-    }
-
+    await deleteInboxItem(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof Error && error.message === "UNAUTHORIZED") {
