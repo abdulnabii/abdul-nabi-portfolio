@@ -77,10 +77,6 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
 
   // Load project appreciation likes from project store
   const allProjects = await getAllProjects();
-  const projectLikesMap: Record<string, number> = {};
-  allProjects.forEach((p) => {
-    projectLikesMap[p.id] = p.appreciations ?? 0;
-  });
 
   // Project views breakdown
   const projectViewsMap: Record<string, number> = {};
@@ -94,7 +90,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   const topProjects = allProjects.slice(0, 4).map((p) => ({
     slug: p.id,
     title: p.title,
-    views: projectViewsMap[p.id] || 12,
+    views: projectViewsMap[p.id] || 0,
     likes: p.appreciations ?? 0,
   })).sort((a, b) => (b.likes + b.views) - (a.likes + a.views));
 
@@ -114,17 +110,10 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
     .slice(0, 4);
 
   return {
-    totalViews: Math.max(pageViews.length, 42),
-    viewsThisWeek: Math.max(viewsThisWeek, 18),
-    topBlogs: topBlogs.length > 0 ? topBlogs : [
-      { slug: "rbac-nextjs-app-router", title: "RBAC in Next.js", views: 28 },
-      { slug: "supabase-rls-multi-tenant-isolation", title: "Supabase RLS Architecture", views: 19 },
-    ],
+    totalViews: pageViews.length,
+    viewsThisWeek: viewsThisWeek,
+    topBlogs,
     topProjects,
-    topCtas: topCtas.length > 0 ? topCtas : [
-      { label: "View selected work", clicks: 34 },
-      { label: "Get in touch", clicks: 21 },
-      { label: "Download CV", clicks: 17 },
-    ],
+    topCtas,
   };
 }
