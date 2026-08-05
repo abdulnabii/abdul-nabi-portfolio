@@ -89,8 +89,60 @@ export async function supabaseDbUpsert<T = any>(
     const data = await res.json();
     return (Array.isArray(data) ? data[0] : data) as T;
   } catch (err) {
-    console.error(`[supabase] DB upsert error on ${table}:`, err);
     return null;
+  }
+}
+
+export async function supabaseDbPatch<T = any>(
+  table: string,
+  matchParams: string,
+  payload: Record<string, any>
+): Promise<T | null> {
+  const { url, key } = getSupabaseConfig();
+  if (!url || !key) return null;
+
+  try {
+    const res = await fetch(`${url}/rest/v1/${table}?${matchParams}`, {
+      method: "PATCH",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (Array.isArray(data) ? data[0] : data) as T;
+  } catch (err) {
+    console.error(`[supabase] DB patch error on ${table}:`, err);
+    return null;
+  }
+}
+
+export async function supabaseDbDelete(
+  table: string,
+  matchParams: string
+): Promise<boolean> {
+  const { url, key } = getSupabaseConfig();
+  if (!url || !key) return false;
+
+  try {
+    const res = await fetch(`${url}/rest/v1/${table}?${matchParams}`, {
+      method: "DELETE",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return res.ok;
+  } catch (err) {
+    console.error(`[supabase] DB delete error on ${table}:`, err);
+    return false;
   }
 }
 

@@ -9,13 +9,27 @@ interface RouteContext {
 
 export async function POST(request: NextRequest, context: RouteContext) {
   try {
-    const project = await getProjectById(context.params.id);
+    const projectId = context.params.id;
+    const cookieName = `liked_${projectId}`;
+    const existingCookie = request.cookies.get(cookieName)?.value;
+
+    const project = await getProjectById(projectId);
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
+    // If visitor already liked this project in the active session, return current count
+    if (existingCookie) {
+      return NextResponse.json({
+        success: true,
+        alreadyAppreciated: true,
+        id: project.id,
+        appreciations: project.appreciations ?? 0,
+      });
+    }
+
     const currentCount = project.appreciations ?? 0;
-    const updated = await updateProject(context.params.id, {
+    const updated = await updateProject(projectId, {
       appreciations: currentCount + 1,
     });
 
@@ -26,11 +40,20 @@ export async function POST(request: NextRequest, context: RouteContext) {
       count: currentCount + 1,
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       id: updated.id,
       appreciations: updated.appreciations,
     });
+
+    // Set 24h deduplication cookie
+    response.cookies.set(cookieName, "1", {
+      path: "/",
+      maxAge: 86400,
+      sameSite: "lax",
+    });
+
+    return response;
   } catch (error) {
     console.error("[api/projects/[id]/appreciate]", error);
     return NextResponse.json(

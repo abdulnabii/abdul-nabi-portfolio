@@ -1,4 +1,4 @@
-import { supabaseDbInsert, supabaseDbQuery } from "./supabase";
+import { supabaseDbInsert, supabaseDbQuery, supabaseDbPatch, supabaseDbDelete } from "./supabase";
 
 export interface MessagePayload {
   name: string;
@@ -90,7 +90,7 @@ export async function addInboxItem(
     payload: newItem.payload,
   });
 
-  // 3. If payload is a message, also insert into 'contact_submissions' table (Option A)
+  // 3. If payload is a message, also insert into 'contact_submissions' table
   if (type === "message") {
     const msg = payload as MessagePayload;
     await supabaseDbInsert("contact_submissions", {
@@ -114,6 +114,9 @@ export async function markAsRead(id: string, read: boolean): Promise<InboxItem |
 
   item.read = read;
   await saveAllInboxItems(items);
+
+  // Persist update to Supabase DB
+  await supabaseDbPatch("inbox", `id=eq.${id}`, { read });
   return item;
 }
 
@@ -123,6 +126,9 @@ export async function markAllAsRead(): Promise<void> {
     item.read = true;
   }
   await saveAllInboxItems(items);
+
+  // Persist update to Supabase DB
+  await supabaseDbPatch("inbox", "read=eq.false", { read: true });
 }
 
 export async function archiveInboxItem(id: string, archived = true): Promise<InboxItem | null> {
@@ -132,6 +138,9 @@ export async function archiveInboxItem(id: string, archived = true): Promise<Inb
 
   item.archived = archived;
   await saveAllInboxItems(items);
+
+  // Persist update to Supabase DB
+  await supabaseDbPatch("inbox", `id=eq.${id}`, { archived });
   return item;
 }
 
@@ -141,6 +150,10 @@ export async function deleteInboxItem(id: string): Promise<boolean> {
   if (next.length === items.length) return false;
 
   await saveAllInboxItems(next);
+
+  // Permanently delete record from Supabase DB tables
+  await supabaseDbDelete("inbox", `id=eq.${id}`);
+  await supabaseDbDelete("contact_submissions", `id=eq.${id}`);
   return true;
 }
 
