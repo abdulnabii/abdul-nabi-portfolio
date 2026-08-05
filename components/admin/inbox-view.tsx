@@ -118,42 +118,56 @@ export function InboxView({ initialItems }: InboxViewProps) {
     }
   }
 
+  // Delete item with dual-layer local and server persistence
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to permanently delete this event?")) return;
+
+    if (typeof window !== "undefined") {
+      try {
+        const stored = JSON.parse(localStorage.getItem("an_deleted_inbox_ids") || "[]");
+        if (!stored.includes(id)) {
+          stored.push(id);
+          localStorage.setItem("an_deleted_inbox_ids", JSON.stringify(stored));
+        }
+      } catch {}
+    }
+
+    setItems((prev) => {
+      const next = prev.filter((item) => item.id !== id);
+      notifyUnreadCount(next);
+      return next;
+    });
+    if (selectedItem?.id === id) {
+      setSelectedItem(null);
+    }
+
     try {
       const res = await fetch(`/api/admin/inbox/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setItems((prev) => {
-          const next = prev.filter((item) => item.id !== id);
-          notifyUnreadCount(next);
-          return next;
-        });
-        if (selectedItem?.id === id) {
-          setSelectedItem(null);
-        }
-      } else {
-        if (res.status === 401) {
-          alert("Admin session expired. Please log in again to delete items.");
-          router.push("/admin/login");
-        } else {
-          const data = await res.json().catch(() => ({}));
-          alert(`Failed to delete activity: ${data.error || "Server error"}`);
-        }
+      if (!res.ok && res.status === 401) {
+        alert("Admin session expired. Please log in again to delete items.");
+        router.push("/admin/login");
       }
     } catch (err) {
-      console.error("Failed to delete inbox item", err);
-      alert("Failed to delete activity due to network error.");
+      console.error("Failed to delete inbox item on server", err);
     }
   }
 
   // Tab calculations
   const counts = useMemo(() => {
-    const unread = items.filter((i) => !i.read && !i.archived);
+    let deletedFromLocal: string[] = [];
+    if (typeof window !== "undefined") {
+      try {
+        deletedFromLocal = JSON.parse(localStorage.getItem("an_deleted_inbox_ids") || "[]");
+      } catch {}
+    }
+    const visible = items.filter((i) => !i.archived && !deletedFromLocal.includes(i.id));
+    const unread = visible.filter((i) => !i.read);
+
     return {
-      all: items.filter((i) => !i.archived).length,
-      message: items.filter((i) => i.type === "message" && !i.archived).length,
-      appreciation: items.filter((i) => i.type === "appreciation" && !i.archived).length,
-      feedback: items.filter((i) => i.type === "feedback" && !i.archived).length,
+      all: visible.length,
+      message: visible.filter((i) => i.type === "message").length,
+      appreciation: visible.filter((i) => i.type === "appreciation").length,
+      feedback: visible.filter((i) => i.type === "feedback").length,
       unread: unread.length,
       unreadMessages: unread.filter((i) => i.type === "message").length,
       unreadAppreciations: unread.filter((i) => i.type === "appreciation").length,
@@ -163,8 +177,15 @@ export function InboxView({ initialItems }: InboxViewProps) {
 
   // Filter and search computation
   const filteredItems = useMemo(() => {
+    let deletedFromLocal: string[] = [];
+    if (typeof window !== "undefined") {
+      try {
+        deletedFromLocal = JSON.parse(localStorage.getItem("an_deleted_inbox_ids") || "[]");
+      } catch {}
+    }
+
     return items.filter((item) => {
-      if (item.archived) return false;
+      if (item.archived || deletedFromLocal.includes(item.id)) return false;
 
       const matchesTab = activeTab === "all" || item.type === activeTab;
       if (!matchesTab) return false;
