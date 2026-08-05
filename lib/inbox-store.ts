@@ -1,4 +1,5 @@
-import { supabaseDbInsert, supabaseDbQuery, supabaseDbPatch, supabaseDbDelete } from "./supabase";
+import { supabaseDbInsert, supabaseDbQuery, supabaseDbPatch, supabaseDbDelete, supabaseDbUpsert } from "./supabase";
+import seedInbox from "@/data/inbox.json";
 
 export interface MessagePayload {
   name: string;
@@ -33,9 +34,6 @@ export interface InboxItem {
   payload: MessagePayload | AppreciationPayload | FeedbackPayload;
 }
 
-import seedInbox from "@/data/inbox.json";
-import { supabaseDbUpsert } from "./supabase";
-
 // Memory fallback store for serverless environment lifecycles
 const memoryInboxItems: InboxItem[] = [];
 const memoryDeletedIds = new Set<string>();
@@ -52,7 +50,10 @@ export async function getAllInboxItems(): Promise<InboxItem[]> {
   if (deletedRows && deletedRows.length > 0 && deletedRows[0].value) {
     try {
       const parsed = JSON.parse(deletedRows[0].value) as string[];
-      parsed.forEach((id) => deletedSet.add(id));
+      parsed.forEach((id) => {
+        deletedSet.add(id);
+        memoryDeletedIds.add(id);
+      });
     } catch {}
   }
 
@@ -119,7 +120,6 @@ export async function getAllInboxItems(): Promise<InboxItem[]> {
 }
 
 export async function saveAllInboxItems(items: InboxItem[]): Promise<void> {
-  // In serverless, saveAllInboxItems updates memory cache
   memoryInboxItems.length = 0;
   memoryInboxItems.push(...items);
 }
@@ -137,10 +137,8 @@ export async function addInboxItem(
     payload,
   };
 
-  // 1. Always append to memory store for instant availability
   memoryInboxItems.unshift(newItem);
 
-  // 2. Insert into Supabase 'inbox' table if configured
   await supabaseDbInsert("inbox", {
     id: newItem.id,
     type: newItem.type,
@@ -150,7 +148,6 @@ export async function addInboxItem(
     payload: newItem.payload,
   });
 
-  // 3. If payload is a message, also insert into 'contact_submissions' table
   if (type === "message") {
     const msg = payload as MessagePayload;
     await supabaseDbInsert("contact_submissions", {
@@ -174,8 +171,6 @@ export async function markAsRead(id: string, read: boolean): Promise<InboxItem |
 
   item.read = read;
   await saveAllInboxItems(items);
-
-  // Persist update to Supabase DB
   await supabaseDbPatch("inbox", `id=eq.${id}`, { read });
   return item;
 }
@@ -186,8 +181,6 @@ export async function markAllAsRead(): Promise<void> {
     item.read = true;
   }
   await saveAllInboxItems(items);
-
-  // Persist update to Supabase DB
   await supabaseDbPatch("inbox", "read=eq.false", { read: true });
 }
 
@@ -198,8 +191,6 @@ export async function archiveInboxItem(id: string, archived = true): Promise<Inb
 
   item.archived = archived;
   await saveAllInboxItems(items);
-
-  // Persist update to Supabase DB
   await supabaseDbPatch("inbox", `id=eq.${id}`, { archived });
   return item;
 }
@@ -207,22 +198,34 @@ export async function archiveInboxItem(id: string, archived = true): Promise<Inb
 export async function deleteInboxItem(id: string): Promise<boolean> {
   memoryDeletedIds.add(id);
 
-  const items = await getAllInboxItems();
-  const next = items.filter((i) => i.id !== id);
+  // Load existing deleted IDs from Supabase DB site_settings first
+  const deletedRows = await supabaseDbQuery<{ key: string; value: string }>(
+    "site_settings",
+    "select=*&key=eq.deleted_inbox_ids"
+  );
+  if (deletedRows && deletedRows.length > 0 && deletedRows[0].value) {
+    try {
+      const parsed = JSON.parse(deletedRows[0].value) as string[];
+      parsed.forEach((dId) => memoryDeletedIds.add(dId));
+    } catch {}
+  }
 
-  await saveAllInboxItems(next);
-
-  // Permanently delete record from Supabase DB tables
-  await supabaseDbDelete("inbox", `id=eq.${id}`);
-  await supabaseDbDelete("contact_submissions", `id=eq.${id}`);
-
-  // Persist deleted IDs array to Supabase DB site_settings
   const currentDeletedList = Array.from(memoryDeletedIds);
+
+  // Persist updated deleted IDs array to Supabase DB site_settings
   await supabaseDbUpsert("site_settings", [{
     key: "deleted_inbox_ids",
     value: JSON.stringify(currentDeletedList),
     updated_at: new Date().toISOString(),
   }]);
+
+  // Permanently delete record from Supabase DB tables
+  await supabaseDbDelete("inbox", `id=eq.${id}`);
+  await supabaseDbDelete("contact_submissions", `id=eq.${id}`);
+
+  const items = await getAllInboxItems();
+  const next = items.filter((i) => i.id !== id);
+  await saveAllInboxItems(next);
 
   return true;
 }
