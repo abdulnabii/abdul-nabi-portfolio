@@ -47,12 +47,28 @@ export function SettingsProvider({
     if (initialAbout) setAbout(initialAbout);
   }, [initialAbout]);
 
+  useEffect(() => {
+    if (initialSkills) setSkills(initialSkills);
+  }, [initialSkills]);
+
+  useEffect(() => {
+    if (initialExperience) setExperience(initialExperience);
+  }, [initialExperience]);
+
+  useEffect(() => {
+    if (initialEducation) setEducation(initialEducation);
+  }, [initialEducation]);
+
   const refreshAll = async () => {
     try {
       const res = await fetch(`/api/admin/settings?t=${Date.now()}`, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
-        setSettings(data);
+        if (data.settings) setSettings(data.settings);
+        if (data.about) setAbout(data.about);
+        if (data.skills) setSkills(data.skills);
+        if (data.experience) setExperience(data.experience);
+        if (data.education) setEducation(data.education);
       }
     } catch {}
   };

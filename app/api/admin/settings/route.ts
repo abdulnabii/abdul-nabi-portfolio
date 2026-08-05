@@ -1,11 +1,29 @@
 import { getAdminSession } from "@/lib/auth";
-import { getSiteSettings, saveSiteSettings } from "@/lib/settings-store";
+import {
+  getSiteSettings,
+  saveSiteSettings,
+  getAboutData,
+  getSkillsData,
+  getExperienceData,
+  getEducationData,
+} from "@/lib/settings-store";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   const settings = await getSiteSettings();
-  return NextResponse.json(settings);
+  const about = await getAboutData();
+  const skills = await getSkillsData();
+  const experience = await getExperienceData();
+  const education = await getEducationData();
+
+  return NextResponse.json({
+    settings,
+    about,
+    skills,
+    experience,
+    education,
+  });
 }
 
 export async function POST(req: NextRequest) {
