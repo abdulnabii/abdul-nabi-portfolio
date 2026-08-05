@@ -40,6 +40,13 @@ export async function POST(request: NextRequest, context: RouteContext) {
       count: currentCount + 1,
     });
 
+    const { recordAnalyticsEvent } = await import("@/lib/analytics-store");
+    await recordAnalyticsEvent({
+      event_type: "cta_click",
+      cta_label: `Appreciated ${project.title}`,
+      page_slug: `/projects/${project.id}`,
+    });
+
     const response = NextResponse.json({
       success: true,
       id: updated.id,

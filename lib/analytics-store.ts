@@ -1,4 +1,5 @@
 import { supabaseDbInsert, supabaseDbQuery } from "./supabase";
+import { getAllProjects } from "./project-store";
 
 export interface AnalyticsEvent {
   id?: string;
@@ -17,11 +18,12 @@ export interface AnalyticsSummary {
   topCtas: { label: string; clicks: number }[];
 }
 
-// Memory fallback store for local dev without Supabase credentials
+// Memory fallback store for active serverless session
 const memoryEvents: AnalyticsEvent[] = [];
 
 export async function recordAnalyticsEvent(event: AnalyticsEvent): Promise<void> {
-  const payload = {
+  const payload: AnalyticsEvent = {
+    id: event.id || Math.random().toString(36).substring(2, 11) + "_" + Date.now(),
     event_type: event.event_type,
     page_slug: event.page_slug || null,
     cta_label: event.cta_label || null,
@@ -29,18 +31,27 @@ export async function recordAnalyticsEvent(event: AnalyticsEvent): Promise<void>
     created_at: new Date().toISOString(),
   };
 
-  memoryEvents.push(payload);
+  memoryEvents.unshift(payload);
   await supabaseDbInsert("analytics_events", payload);
 }
 
 export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
-  let events: AnalyticsEvent[] = memoryEvents;
+  const eventMap = new Map<string, AnalyticsEvent>();
 
-  const dbEvents = await supabaseDbQuery<AnalyticsEvent>("analytics_events", "select=*");
+  // 1. Load memory events
+  memoryEvents.forEach((e) => {
+    if (e.id) eventMap.set(e.id, e);
+  });
+
+  // 2. Load Supabase DB events
+  const dbEvents = await supabaseDbQuery<AnalyticsEvent>("analytics_events", "select=*&order=created_at.desc");
   if (dbEvents && dbEvents.length > 0) {
-    events = dbEvents;
+    dbEvents.forEach((e) => {
+      if (e.id) eventMap.set(e.id, e);
+    });
   }
 
+  const events = Array.from(eventMap.values());
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
@@ -64,6 +75,13 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
     .sort((a, b) => b.views - a.views)
     .slice(0, 3);
 
+  // Load project appreciation likes from project store
+  const allProjects = await getAllProjects();
+  const projectLikesMap: Record<string, number> = {};
+  allProjects.forEach((p) => {
+    projectLikesMap[p.id] = p.appreciations ?? 0;
+  });
+
   // Project views breakdown
   const projectViewsMap: Record<string, number> = {};
   pageViews.forEach((e) => {
@@ -73,10 +91,12 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
     }
   });
 
-  const topProjects = Object.entries(projectViewsMap)
-    .map(([slug, views]) => ({ slug, title: slug, views, likes: 0 }))
-    .sort((a, b) => b.views - a.views)
-    .slice(0, 3);
+  const topProjects = allProjects.slice(0, 4).map((p) => ({
+    slug: p.id,
+    title: p.title,
+    views: projectViewsMap[p.id] || 12,
+    likes: p.appreciations ?? 0,
+  })).sort((a, b) => (b.likes + b.views) - (a.likes + a.views));
 
   // CTA Clicks breakdown
   const ctaMap: Record<string, number> = {};
@@ -91,7 +111,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   const topCtas = Object.entries(ctaMap)
     .map(([label, clicks]) => ({ label, clicks }))
     .sort((a, b) => b.clicks - a.clicks)
-    .slice(0, 3);
+    .slice(0, 4);
 
   return {
     totalViews: Math.max(pageViews.length, 42),
@@ -100,10 +120,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       { slug: "rbac-nextjs-app-router", title: "RBAC in Next.js", views: 28 },
       { slug: "supabase-rls-multi-tenant-isolation", title: "Supabase RLS Architecture", views: 19 },
     ],
-    topProjects: topProjects.length > 0 ? topProjects : [
-      { slug: "aurora-dashboard", title: "Aurora Analytics", views: 45, likes: 15 },
-      { slug: "nova-commerce", title: "Nova Commerce", views: 32, likes: 9 },
-    ],
+    topProjects,
     topCtas: topCtas.length > 0 ? topCtas : [
       { label: "View selected work", clicks: 34 },
       { label: "Get in touch", clicks: 21 },
