@@ -74,8 +74,18 @@ export async function getAllInboxItems(): Promise<InboxItem[]> {
   const dbItems = await supabaseDbQuery<InboxItem>("inbox", "select=*&order=timestamp.desc");
   if (dbItems && dbItems.length > 0) {
     dbItems.forEach((item) => {
-      if (!deletedSet.has(item.id)) {
-        map.set(item.id, item);
+      let payload = item.payload;
+      if (typeof payload === "string") {
+        try {
+          payload = JSON.parse(payload);
+        } catch {}
+      }
+      const cleanItem: InboxItem = {
+        ...item,
+        payload: payload || {},
+      };
+      if (!deletedSet.has(cleanItem.id)) {
+        map.set(cleanItem.id, cleanItem);
       }
     });
   }
