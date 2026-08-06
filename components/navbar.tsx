@@ -2,7 +2,7 @@
 
 import { siteContent } from "@/data/content";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, Briefcase, Layers, Trophy, Gamepad2, FileText, Mail, FolderGit2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
@@ -10,6 +10,17 @@ import { Logo } from "@/components/ui/logo";
 import { usePathname } from "next/navigation";
 
 import { useSiteSettings } from "@/components/settings-provider";
+
+const NAV_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  "/#about": User,
+  "/#projects": FolderGit2,
+  "/#stack": Layers,
+  "/#experience": Briefcase,
+  "/#achievements": Trophy,
+  "/#games": Gamepad2,
+  "/blog": FileText,
+  "/#contact": Mail,
+};
 
 export function Navbar() {
   const { settings, sectionVisibility } = useSiteSettings();
@@ -152,25 +163,37 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav Pills (only show enabled sections) */}
+          {/* Desktop Nav Pills (Icon by default, expands text on hover/active) */}
           {visibleNavLinks.length > 0 && (
             <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.05] p-1.5 backdrop-blur-md">
-              <ul className="flex items-center gap-0.5">
+              <ul className="flex items-center gap-1">
                 {visibleNavLinks.map((link) => {
                   const active = isLinkActive(link.href);
+                  const IconComponent = NAV_ICON_MAP[link.href] || FolderGit2;
+
                   return (
                     <li key={link.href}>
                       <Link
                         href={link.href}
                         onClick={(e) => handleNavClick(e, link.href)}
+                        title={link.label}
                         className={cn(
-                          "rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-150 whitespace-nowrap",
+                          "group relative flex items-center gap-1.5 rounded-full p-2 text-xs font-medium transition-all duration-300 ease-out",
                           active
-                            ? "bg-[#6D5EF8]/30 text-white border border-[#6D5EF8]/50 shadow-sm font-semibold"
-                            : "text-slate-300 hover:bg-white/10 hover:text-white"
+                            ? "bg-[#6D5EF8]/30 text-white border border-[#6D5EF8]/50 shadow-sm px-3"
+                            : "border border-transparent text-slate-300 hover:bg-white/10 hover:text-white hover:px-3"
                         )}
                       >
-                        {link.label}
+                        <IconComponent className={cn(
+                          "h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110",
+                          active ? "text-indigo-300" : "text-slate-400 group-hover:text-indigo-400"
+                        )} />
+                        <span className={cn(
+                          "overflow-hidden transition-all duration-300 whitespace-nowrap text-xs",
+                          active ? "max-w-xs opacity-100" : "max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100"
+                        )}>
+                          {link.label}
+                        </span>
                       </Link>
                     </li>
                   );
