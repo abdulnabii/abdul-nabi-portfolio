@@ -27,7 +27,7 @@ export default async function AllProjectsPage() {
   const others = projects.filter((p) => !p.featured);
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen pt-28 md:pt-36">
       {/* Header */}
       <section className="section-padding pb-8">
         <div className="container-narrow">
