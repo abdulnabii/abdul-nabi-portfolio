@@ -8,6 +8,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+import { revalidatePath } from "next/cache";
+
 interface RouteContext {
   params: { id: string };
 }
@@ -36,6 +38,11 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     const body = await request.json();
     const project = await updateProject(context.params.id, body);
+
+    revalidatePath("/", "layout");
+    revalidatePath("/projects", "layout");
+    revalidatePath(`/projects/${context.params.id}`, "layout");
+
     return NextResponse.json({ project });
   } catch (error) {
     if (error instanceof Error) {
@@ -64,6 +71,10 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
     }
 
     await deleteProject(context.params.id);
+
+    revalidatePath("/", "layout");
+    revalidatePath("/projects", "layout");
+
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof Error && error.message === "NOT_FOUND") {

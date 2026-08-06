@@ -4,6 +4,7 @@ import {
   getAllBlogs,
   getPublishedBlogs,
 } from "@/lib/blog-store";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -73,6 +74,9 @@ export async function POST(request: NextRequest) {
       published: body.published,
       slug: body.slug,
     });
+
+    revalidatePath("/", "layout");
+    revalidatePath("/blog", "layout");
 
     return NextResponse.json({ post }, { status: 201 });
   } catch (error) {

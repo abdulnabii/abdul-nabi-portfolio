@@ -4,6 +4,7 @@ import {
   getAllProjects,
   getFeaturedProjects,
 } from "@/lib/project-store";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +56,10 @@ export async function POST(request: NextRequest) {
     }
 
     const project = await createProject(body);
+
+    revalidatePath("/", "layout");
+    revalidatePath("/projects", "layout");
+
     return NextResponse.json({ project }, { status: 201 });
   } catch (error) {
     console.error("[api/projects POST]", error);

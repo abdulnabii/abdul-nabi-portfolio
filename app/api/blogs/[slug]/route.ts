@@ -8,6 +8,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+import { revalidatePath } from "next/cache";
+
 interface RouteContext {
   params: { slug: string };
 }
@@ -68,6 +70,10 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       newSlug: body.slug,
     });
 
+    revalidatePath("/", "layout");
+    revalidatePath("/blog", "layout");
+    revalidatePath(`/blog/${context.params.slug}`, "layout");
+
     return NextResponse.json({ post });
   } catch (error) {
     if (error instanceof Error) {
@@ -96,6 +102,10 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
     }
 
     await deleteBlog(context.params.slug);
+
+    revalidatePath("/", "layout");
+    revalidatePath("/blog", "layout");
+
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof Error && error.message === "NOT_FOUND") {
