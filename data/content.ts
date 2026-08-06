@@ -200,6 +200,7 @@ export const siteContent: SiteContent = {
     {
       title: "Frontend & UI",
       skills: [
+        "Web Development",
         "React",
         "Next.js (App Router)",
         "TypeScript",

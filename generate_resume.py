@@ -109,7 +109,7 @@ def generate_pdf(output_path):
     # 3. Technical Skills Matrix
     story.append(Paragraph("TECHNICAL COMPETENCIES", section_heading))
     skills_data = [
-        [Paragraph("<b>Frontend & UI:</b>", body_style), Paragraph("React, Next.js (App Router), TypeScript, Tailwind CSS, Responsive Design, Accessibility", body_style)],
+        [Paragraph("<b>Frontend & UI:</b>", body_style), Paragraph("Web Development, React, Next.js (App Router), TypeScript, Tailwind CSS, Responsive Design", body_style)],
         [Paragraph("<b>Backend & APIs:</b>", body_style), Paragraph("Node.js, REST APIs, PostgreSQL, Supabase, Prisma, Auth & Session Management", body_style)],
         [Paragraph("<b>AppSec:</b>", body_style), Paragraph("OWASP Top 10, Auth & RBAC Design, Supabase RLS Policies, XSS/SQLi Prevention, Code Review", body_style)],
         [Paragraph("<b>Data & ML:</b>", body_style), Paragraph("Python, Pandas, Data Analysis, ML Model Training, Data Storytelling, Jupyter Notebooks", body_style)],
