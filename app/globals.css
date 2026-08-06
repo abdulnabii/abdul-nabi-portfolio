@@ -64,13 +64,8 @@ body {
 
 /* Ambient background layers */
 .bg-ambient {
-  background-color: #050814;
-  background-image:
-    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(99, 102, 241, 0.22), transparent 55%),
-    radial-gradient(ellipse 60% 45% at 85% 20%, rgba(34, 211, 238, 0.12), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 50% 90%, rgba(167, 139, 250, 0.14), transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.4), transparent 70%);
-  background-attachment: fixed;
+  background-color: transparent;
+  background-image: none;
 }
 
 .bg-grid {

@@ -31,21 +31,21 @@ export function AnimatedGlassBackground() {
 
     // Dynamic morphing glowing orbs
     const orbs = [
-      { x: width * 0.2, y: height * 0.25, vx: 0.6, vy: 0.35, radius: 480, hue: 235 },
-      { x: width * 0.8, y: height * 0.35, vx: -0.55, vy: 0.45, radius: 440, hue: 190 },
-      { x: width * 0.55, y: height * 0.75, vx: 0.45, vy: -0.65, radius: 520, hue: 275 },
-      { x: width * 0.15, y: height * 0.85, vx: -0.35, vy: -0.45, radius: 420, hue: 325 },
+      { x: width * 0.2, y: height * 0.25, vx: 0.7, vy: 0.4, radius: 480, hue: 235 },
+      { x: width * 0.8, y: height * 0.35, vx: -0.65, vy: 0.5, radius: 440, hue: 190 },
+      { x: width * 0.55, y: height * 0.75, vx: 0.5, vy: -0.7, radius: 520, hue: 275 },
+      { x: width * 0.15, y: height * 0.85, vx: -0.4, vy: -0.5, radius: 420, hue: 325 },
     ];
 
-    // Floating quantum particles
-    const particleCount = 45;
+    // Floating quantum particles (glowing data nodes)
+    const particleCount = 55;
     const particles = Array.from({ length: particleCount }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: Math.random() * 2.2 + 0.8,
-      vy: -(Math.random() * 0.35 + 0.15),
-      vx: (Math.random() - 0.5) * 0.2,
-      alpha: Math.random() * 0.6 + 0.2,
+      radius: Math.random() * 3 + 1.2,
+      vy: -(Math.random() * 0.45 + 0.2),
+      vx: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.65 + 0.35,
       phase: Math.random() * Math.PI * 2,
     }));
 
@@ -67,29 +67,29 @@ export function AnimatedGlassBackground() {
       const elapsed = (now - startTime) / 1000;
 
       // Smooth mouse inertia
-      mouseX += (targetMouseX - mouseX) * 0.05;
-      mouseY += (targetMouseY - mouseY) * 0.05;
+      mouseX += (targetMouseX - mouseX) * 0.08;
+      mouseY += (targetMouseY - mouseY) * 0.08;
 
       ctx.clearRect(0, 0, width, height);
 
       // 1. Deep space base gradient
       const bgGrad = ctx.createLinearGradient(0, 0, width, height);
       bgGrad.addColorStop(0, "#030511");
-      bgGrad.addColorStop(0.5, "#060919");
+      bgGrad.addColorStop(0.5, "#060918");
       bgGrad.addColorStop(1, "#030511");
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
       // 2. Render morphing aurora orbs
       orbs.forEach((orb, i) => {
-        orb.x += orb.vx + Math.sin(elapsed * 0.8 + i) * 0.65;
-        orb.y += orb.vy + Math.cos(elapsed * 0.7 + i) * 0.65;
+        orb.x += orb.vx + Math.sin(elapsed * 0.9 + i) * 0.75;
+        orb.y += orb.vy + Math.cos(elapsed * 0.8 + i) * 0.75;
 
         if (orb.x < -180 || orb.x > width + 180) orb.vx *= -1;
         if (orb.y < -180 || orb.y > height + 180) orb.vy *= -1;
 
-        const currentHue = (orb.hue + elapsed * 15) % 360;
-        const dynamicRadius = orb.radius + Math.sin(elapsed * 2.2 + i * 1.6) * 50;
+        const currentHue = (orb.hue + elapsed * 16) % 360;
+        const dynamicRadius = orb.radius + Math.sin(elapsed * 2.4 + i * 1.6) * 55;
 
         const gradient = ctx.createRadialGradient(
           orb.x,
@@ -100,8 +100,8 @@ export function AnimatedGlassBackground() {
           dynamicRadius
         );
 
-        gradient.addColorStop(0, `hsla(${currentHue}, 88%, 64%, 0.38)`);
-        gradient.addColorStop(0.4, `hsla(${currentHue + 30}, 78%, 50%, 0.18)`);
+        gradient.addColorStop(0, `hsla(${currentHue}, 90%, 65%, 0.45)`);
+        gradient.addColorStop(0.45, `hsla(${currentHue + 35}, 80%, 52%, 0.22)`);
         gradient.addColorStop(1, "transparent");
 
         ctx.fillStyle = gradient;
@@ -117,32 +117,32 @@ export function AnimatedGlassBackground() {
         0,
         mouseX,
         mouseY,
-        350
+        380
       );
-      mouseGrad.addColorStop(0, "rgba(99, 102, 241, 0.22)");
-      mouseGrad.addColorStop(0.5, "rgba(34, 211, 238, 0.08)");
+      mouseGrad.addColorStop(0, "rgba(99, 102, 241, 0.35)");
+      mouseGrad.addColorStop(0.5, "rgba(34, 211, 238, 0.15)");
       mouseGrad.addColorStop(1, "transparent");
       ctx.fillStyle = mouseGrad;
       ctx.beginPath();
-      ctx.arc(mouseX, mouseY, 350, 0, Math.PI * 2);
+      ctx.arc(mouseX, mouseY, 380, 0, Math.PI * 2);
       ctx.fill();
 
       // 4. Undulating liquid light wave ribbons
       ctx.save();
-      ctx.lineWidth = 2;
-      for (let w = 0; w < 3; w++) {
+      for (let w = 0; w < 4; w++) {
         ctx.beginPath();
-        const waveHue = (220 + w * 40 + elapsed * 10) % 360;
-        ctx.strokeStyle = `hsla(${waveHue}, 80%, 65%, 0.08)`;
+        ctx.lineWidth = 2.5;
+        const waveHue = (210 + w * 45 + elapsed * 12) % 360;
+        ctx.strokeStyle = `hsla(${waveHue}, 85%, 68%, 0.22)`;
 
-        const startY = height * (0.3 + w * 0.25);
+        const startY = height * (0.2 + w * 0.22);
         ctx.moveTo(0, startY);
 
-        for (let x = 0; x <= width; x += 30) {
+        for (let x = 0; x <= width; x += 25) {
           const y =
             startY +
-            Math.sin(x * 0.003 + elapsed * 1.5 + w) * 45 +
-            Math.cos(x * 0.002 - elapsed * 1.1) * 30;
+            Math.sin(x * 0.0035 + elapsed * 1.8 + w) * 50 +
+            Math.cos(x * 0.0022 - elapsed * 1.3) * 35;
           ctx.lineTo(x, y);
         }
         ctx.stroke();
@@ -152,7 +152,7 @@ export function AnimatedGlassBackground() {
       // 5. Floating twinkling quantum particles
       particles.forEach((p) => {
         p.y += p.vy;
-        p.x += p.vx + Math.sin(elapsed + p.phase) * 0.2;
+        p.x += p.vx + Math.sin(elapsed * 1.2 + p.phase) * 0.3;
 
         if (p.y < -10) {
           p.y = height + 10;
@@ -162,11 +162,24 @@ export function AnimatedGlassBackground() {
         if (p.x > width + 10) p.x = -10;
 
         const twinklingAlpha =
-          p.alpha * (0.6 + 0.4 * Math.sin(elapsed * 3 + p.phase));
+          p.alpha * (0.65 + 0.35 * Math.sin(elapsed * 3.5 + p.phase));
 
-        ctx.fillStyle = `rgba(224, 231, 255, ${twinklingAlpha})`;
+        // Particle glow
+        const particleGrad = ctx.createRadialGradient(
+          p.x,
+          p.y,
+          0,
+          p.x,
+          p.y,
+          p.radius * 3
+        );
+        particleGrad.addColorStop(0, `rgba(224, 231, 255, ${twinklingAlpha})`);
+        particleGrad.addColorStop(0.5, `rgba(129, 140, 248, ${twinklingAlpha * 0.5})`);
+        particleGrad.addColorStop(1, "transparent");
+
+        ctx.fillStyle = particleGrad;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
         ctx.fill();
       });
 
@@ -187,11 +200,11 @@ export function AnimatedGlassBackground() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none"
     >
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-95" />
-      {/* Frosted Glass Overlay for Liquid Mesh Diffusion */}
-      <div className="absolute inset-0 bg-[#040612]/30 backdrop-blur-[70px]" />
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-100" />
+      {/* Light Frosted Glass Diffusion Overlay */}
+      <div className="absolute inset-0 bg-[#040612]/20 backdrop-blur-[12px]" />
       {/* Low-Opacity Technical Grid Overlay */}
-      <div className="absolute inset-0 bg-grid opacity-20 mix-blend-overlay" />
+      <div className="absolute inset-0 bg-grid opacity-25 mix-blend-overlay" />
     </div>
   );
 }
