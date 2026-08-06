@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import type { SiteSettings, AboutData } from "@/lib/settings-store";
+import type { SiteSettings, AboutData, SectionVisibility } from "@/lib/settings-store";
 import type { SkillCategory, ExperienceItem, EducationItem } from "@/data/content";
 
 interface SettingsContextType {
@@ -10,8 +10,22 @@ interface SettingsContextType {
   skills: SkillCategory[];
   experience: ExperienceItem[];
   education: EducationItem[];
+  sectionVisibility: SectionVisibility;
   refreshAll: () => Promise<void>;
 }
+
+const DEFAULT_VISIBILITY: SectionVisibility = {
+  hero: true,
+  about: true,
+  skills: true,
+  projects: true,
+  experience: true,
+  education: true,
+  blog: true,
+  games: true,
+  achievements: true,
+  contact: true,
+};
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
@@ -22,6 +36,7 @@ interface SettingsProviderProps {
   initialSkills: SkillCategory[];
   initialExperience: ExperienceItem[];
   initialEducation: EducationItem[];
+  initialSectionVisibility: SectionVisibility;
 }
 
 export function SettingsProvider({
@@ -31,33 +46,23 @@ export function SettingsProvider({
   initialSkills,
   initialExperience,
   initialEducation,
+  initialSectionVisibility,
 }: SettingsProviderProps) {
   const [settings, setSettings] = useState<SiteSettings>(initialSettings);
   const [about, setAbout] = useState<AboutData>(initialAbout);
   const [skills, setSkills] = useState<SkillCategory[]>(initialSkills);
   const [experience, setExperience] = useState<ExperienceItem[]>(initialExperience);
   const [education, setEducation] = useState<EducationItem[]>(initialEducation);
+  const [sectionVisibility, setSectionVisibility] = useState<SectionVisibility>(
+    initialSectionVisibility ?? DEFAULT_VISIBILITY
+  );
 
-  // Sync state if initial props update from server revalidation
-  useEffect(() => {
-    if (initialSettings) setSettings(initialSettings);
-  }, [initialSettings]);
-
-  useEffect(() => {
-    if (initialAbout) setAbout(initialAbout);
-  }, [initialAbout]);
-
-  useEffect(() => {
-    if (initialSkills) setSkills(initialSkills);
-  }, [initialSkills]);
-
-  useEffect(() => {
-    if (initialExperience) setExperience(initialExperience);
-  }, [initialExperience]);
-
-  useEffect(() => {
-    if (initialEducation) setEducation(initialEducation);
-  }, [initialEducation]);
+  useEffect(() => { if (initialSettings) setSettings(initialSettings); }, [initialSettings]);
+  useEffect(() => { if (initialAbout) setAbout(initialAbout); }, [initialAbout]);
+  useEffect(() => { if (initialSkills) setSkills(initialSkills); }, [initialSkills]);
+  useEffect(() => { if (initialExperience) setExperience(initialExperience); }, [initialExperience]);
+  useEffect(() => { if (initialEducation) setEducation(initialEducation); }, [initialEducation]);
+  useEffect(() => { if (initialSectionVisibility) setSectionVisibility(initialSectionVisibility); }, [initialSectionVisibility]);
 
   const refreshAll = async () => {
     try {
@@ -69,6 +74,13 @@ export function SettingsProvider({
         if (data.skills) setSkills(data.skills);
         if (data.experience) setExperience(data.experience);
         if (data.education) setEducation(data.education);
+      }
+    } catch {}
+    try {
+      const res2 = await fetch(`/api/admin/sections?t=${Date.now()}`, { cache: "no-store" });
+      if (res2.ok) {
+        const data2 = await res2.json();
+        if (data2.visibility) setSectionVisibility({ ...DEFAULT_VISIBILITY, ...data2.visibility });
       }
     } catch {}
   };
@@ -88,6 +100,7 @@ export function SettingsProvider({
         skills,
         experience,
         education,
+        sectionVisibility,
         refreshAll,
       }}
     >

@@ -64,6 +64,7 @@ import {
   getSkillsData,
   getExperienceData,
   getEducationData,
+  getSectionVisibility,
 } from "@/lib/settings-store";
 
 export default async function RootLayout({
@@ -76,6 +77,7 @@ export default async function RootLayout({
   const skills = await getSkillsData();
   const experience = await getExperienceData();
   const education = await getEducationData();
+  const sectionVisibility = await getSectionVisibility();
 
   return (
     <html lang="en" className="scroll-smooth">
@@ -86,6 +88,7 @@ export default async function RootLayout({
           initialSkills={skills}
           initialExperience={experience}
           initialEducation={education}
+          initialSectionVisibility={sectionVisibility}
         >
           <DraftPreviewBanner />
           <SiteChrome>{children}</SiteChrome>

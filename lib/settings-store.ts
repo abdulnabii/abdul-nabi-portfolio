@@ -191,3 +191,111 @@ export async function saveEducationData(education: EducationItem[]): Promise<Edu
   }
   return memoryEducation;
 }
+
+// ─── Section Visibility ───────────────────────────────────────────────────────
+
+export interface SectionVisibility {
+  hero: boolean;
+  about: boolean;
+  skills: boolean;
+  projects: boolean;
+  experience: boolean;
+  education: boolean;
+  blog: boolean;
+  games: boolean;
+  achievements: boolean;
+  contact: boolean;
+}
+
+const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
+  hero: true,
+  about: true,
+  skills: true,
+  projects: true,
+  experience: true,
+  education: true,
+  blog: true,
+  games: true,
+  achievements: true,
+  contact: true,
+};
+
+let memorySectionVisibility: SectionVisibility = { ...DEFAULT_SECTION_VISIBILITY };
+
+export async function getSectionVisibility(): Promise<SectionVisibility> {
+  try {
+    const rows = await supabaseDbQuery<{ key: string; value: string }>("site_settings", "select=*&key=eq.section_visibility");
+    if (rows && rows.length > 0 && rows[0].value) {
+      const parsed = JSON.parse(rows[0].value) as Partial<SectionVisibility>;
+      return { ...DEFAULT_SECTION_VISIBILITY, ...parsed };
+    }
+  } catch (err) {
+    console.error("[getSectionVisibility] Exception:", err);
+  }
+  return memorySectionVisibility;
+}
+
+export async function saveSectionVisibility(visibility: Partial<SectionVisibility>): Promise<SectionVisibility> {
+  try {
+    memorySectionVisibility = { ...memorySectionVisibility, ...visibility };
+    await supabaseDbUpsert("site_settings", [{
+      key: "section_visibility",
+      value: JSON.stringify(memorySectionVisibility),
+      updated_at: new Date().toISOString(),
+    }]);
+  } catch (err) {
+    console.error("[saveSectionVisibility] Exception:", err);
+  }
+  return memorySectionVisibility;
+}
+
+// ─── Achievements ─────────────────────────────────────────────────────────────
+
+export interface AchievementItem {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  date: string;
+  color: string;
+  category: string;
+}
+
+const DEFAULT_ACHIEVEMENTS: AchievementItem[] = [
+  { id: "1", title: "FYP Completed", description: "Delivered Blood Sugar Tracker ML system as Final Year Project using Flask & scikit-learn", icon: "🎓", date: "2024", color: "indigo", category: "Academic" },
+  { id: "2", title: "First Production Deployment", description: "Shipped first full-stack Next.js + Supabase app to Vercel with live users", icon: "🚀", date: "2024", color: "violet", category: "Dev" },
+  { id: "3", title: "GitHub Streak", description: "Maintained consistent GitHub contribution streak across multiple repositories", icon: "🔥", date: "2024", color: "orange", category: "Dev" },
+  { id: "4", title: "Full-Stack Stack Mastered", description: "Proficient in Next.js, TypeScript, Supabase, TailwindCSS, PostgreSQL end-to-end", icon: "⚡", date: "2024", color: "cyan", category: "Skills" },
+  { id: "5", title: "AppSec Learning Journey", description: "Actively studying Application Security — OWASP Top 10, authentication, and threat modeling", icon: "🛡️", date: "2025", color: "emerald", category: "Learning" },
+  { id: "6", title: "ML Model Shipped", description: "Built and deployed ElasticNet regression model predicting glucose levels with real accuracy", icon: "🧠", date: "2024", color: "purple", category: "ML" },
+  { id: "7", title: "Portfolio Launched", description: "Built premium portfolio with admin CMS, real-time DB, AI chatbot, and mini games", icon: "🌟", date: "2025", color: "yellow", category: "Dev" },
+  { id: "8", title: "Open Source Contributor", description: "Published projects on GitHub with clean READMEs and documentation", icon: "💻", date: "2024", color: "blue", category: "Dev" },
+];
+
+let memoryAchievements: AchievementItem[] = [...DEFAULT_ACHIEVEMENTS];
+
+export async function getAchievements(): Promise<AchievementItem[]> {
+  try {
+    const rows = await supabaseDbQuery<{ key: string; value: string }>("site_settings", "select=*&key=eq.achievements_data");
+    if (rows && rows.length > 0 && rows[0].value) {
+      return JSON.parse(rows[0].value) as AchievementItem[];
+    }
+  } catch (err) {
+    console.error("[getAchievements] Exception:", err);
+  }
+  return memoryAchievements;
+}
+
+export async function saveAchievements(achievements: AchievementItem[]): Promise<AchievementItem[]> {
+  try {
+    memoryAchievements = [...achievements];
+    await supabaseDbUpsert("site_settings", [{
+      key: "achievements_data",
+      value: JSON.stringify(achievements),
+      updated_at: new Date().toISOString(),
+    }]);
+  } catch (err) {
+    console.error("[saveAchievements] Exception:", err);
+  }
+  return memoryAchievements;
+}

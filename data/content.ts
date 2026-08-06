@@ -147,6 +147,8 @@ export const siteContent: SiteContent = {
     { label: "Work", href: "/#projects" },
     { label: "Stack", href: "/#stack" },
     { label: "Experience", href: "/#experience" },
+    { label: "Achievements", href: "/#achievements" },
+    { label: "Games", href: "/#games" },
     { label: "Blog", href: "/blog" },
     { label: "Contact", href: "/#contact" },
   ],
