@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
 import { getFeaturedProjects, getAllProjects } from "@/lib/project-store";
 import { isPublicUrl } from "@/lib/links";
-import { ArrowUpRight, FolderGit2, Github, Heart } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Github, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -26,11 +26,18 @@ export async function Projects() {
     >
       <div className="container-narrow">
         <Reveal>
-          <SectionHeading
-            eyebrow="Portfolio"
-            title={projectsIntro.title}
-            subtitle={projectsIntro.subtitle}
-          />
+          <div className="mb-12 flex flex-col gap-6 sm:mb-16 sm:flex-row sm:items-end sm:justify-between">
+            <SectionHeading
+              eyebrow="Portfolio"
+              title={projectsIntro.title}
+              subtitle={projectsIntro.subtitle}
+              className="mb-0"
+            />
+            <LinkButton href="/projects" variant="secondary" size="sm">
+              View all projects
+              <ArrowRight className="h-3.5 w-3.5" />
+            </LinkButton>
+          </div>
         </Reveal>
 
         <div className="space-y-6">
@@ -162,30 +169,6 @@ export async function Projects() {
           })}
         </div>
 
-        {/* ── View All Projects CTA ── */}
-        <Reveal delay={200}>
-          <div className="mt-12 flex flex-col items-center gap-4">
-            <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            <p className="text-sm text-slate-500">
-              Showing {featured.length} featured projects
-            </p>
-            <LinkButton
-              href="/projects"
-              variant="primary"
-              size="lg"
-              className="group relative overflow-hidden gap-2 px-8 py-3"
-            >
-              <FolderGit2 className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              <span>View All Projects</span>
-              {totalCount > featured.length && (
-                <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-[11px] font-bold">
-                  {totalCount}
-                </span>
-              )}
-              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </LinkButton>
-          </div>
-        </Reveal>
       </div>
     </section>
   );
