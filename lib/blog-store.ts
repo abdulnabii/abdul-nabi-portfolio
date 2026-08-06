@@ -103,7 +103,16 @@ export async function getBlogBySlug(
 ): Promise<BlogPost | undefined> {
   try {
     const posts = await getAllBlogs();
-    const post = posts.find((p) => p.slug === slug);
+    const decoded = decodeURIComponent(slug);
+    const targetSlug = slugify(slug);
+
+    const post = posts.find(
+      (p) =>
+        p.slug === slug ||
+        p.slug === decoded ||
+        slugify(p.slug) === targetSlug
+    );
+
     if (!post) return undefined;
     if (!options?.includeDrafts && post.published === false) return undefined;
     return post;
