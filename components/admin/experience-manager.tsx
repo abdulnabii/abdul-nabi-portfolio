@@ -56,7 +56,7 @@ export function ExperienceManager({
       id: "exp_" + Date.now(),
       role: "Full-Stack Engineer",
       company: "Company Name",
-      location: "Remote / Larkana",
+      location: "Remote / Karachi",
       period: "2026 – Present",
       description: "Brief role summary...",
       highlights: ["Built key features using Next.js and TypeScript."],
@@ -310,7 +310,7 @@ export function ExperienceManager({
                   label="Location (Remote / On-site)"
                   value={item.location}
                   onChange={(e) => handleExpChange(idx, "location", e.target.value)}
-                  placeholder="e.g. Remote · Larkana, Pakistan"
+                  placeholder="e.g. Remote · Karachi, Pakistan"
                 />
               </div>
 
@@ -439,10 +439,10 @@ export function ExperienceManager({
                   placeholder="e.g. 2022 – 2026"
                 />
                 <Input
-                  label="Institution Location (e.g. Larkana, Pakistan)"
+                  label="Institution Location (e.g. Karachi, Pakistan)"
                   value={item.location}
                   onChange={(e) => handleEduChange(idx, "location", e.target.value)}
-                  placeholder="e.g. Larkana, Pakistan"
+                  placeholder="e.g. Karachi, Pakistan"
                 />
               </div>
 

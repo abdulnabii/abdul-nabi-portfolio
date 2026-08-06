@@ -88,7 +88,7 @@ def generate_pdf(output_path):
     story.append(Spacer(1, 3))
     
     contact_text = (
-        "Email: <b>abdulnabi.khaskhely@gmail.com</b> | Phone: <b>+92 309 3751434</b> | Location: <b>Larkana, Sindh, Pakistan</b><br/>"
+        "Email: <b>abdulnabi.khaskhely@gmail.com</b> | Phone: <b>+92 309 3751434</b> | Location: <b>Karachi, Sindh, Pakistan</b><br/>"
         "GitHub: <b>github.com/abdulnabii</b> | LinkedIn: <b>linkedin.com/in/abdul-nabi-95391a3b0</b>"
     )
     story.append(Paragraph(contact_text, contact_style))
@@ -166,7 +166,7 @@ def generate_pdf(output_path):
 
     # 6. Education
     story.append(Paragraph("EDUCATION", section_heading))
-    story.append(Paragraph("<b>Computer Science Studies</b> &mdash; Self-Directed & Applied Project Work <i>(Larkana, Sindh, Pakistan)</i>", body_style))
+    story.append(Paragraph("<b>Computer Science Studies</b> &mdash; Self-Directed & Applied Project Work <i>(Karachi, Sindh, Pakistan)</i>", body_style))
     story.append(Paragraph("&bull; Comprehensive coursework and hands-on projects spanning full-stack development, application security, and applied data science.", bullet_style))
 
     doc.build(story)

@@ -137,7 +137,7 @@ export const siteContent: SiteContent = {
   tagline:
     "Security-minded full-stack developer building secure Next.js apps, clean product UIs, and REST APIs — with a practical background in data analysis and ML training.",
   email: "abdulnabi.khaskhely@gmail.com",
-  location: "Larkana, Sindh, Pakistan",
+  location: "Karachi, Sindh, Pakistan",
   availability: "Open to full-time engineering / security roles and focused freelance projects",
   portraitUrl: "/profile.jpg",
   portraitAlt: "Professional portrait of Abdul Nabi",
@@ -369,7 +369,7 @@ export const siteContent: SiteContent = {
       id: "edu-1",
       degree: "Computer Science studies",
       institution: "Self-directed learning & applied project work",
-      location: "Larkana, Sindh, Pakistan",
+      location: "Karachi, Sindh, Pakistan",
       period: "Ongoing foundation",
       description:
         "Core CS fundamentals paired with continuous practice across full-stack development, application security, and applied data science.",

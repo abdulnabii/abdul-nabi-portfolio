@@ -135,7 +135,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
               label="Location"
               value={settings.location}
               onChange={(e) => handleChange("location", e.target.value)}
-              placeholder="e.g. Larkana, Sindh, Pakistan"
+              placeholder="e.g. Karachi, Sindh, Pakistan"
             />
           </div>
         </div>
