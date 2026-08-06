@@ -16,26 +16,34 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "https://www.aiwithab.site"
   ),
   title: {
-    default: siteContent.title,
-    template: `%s · ${siteContent.name}`,
+    default: "Abdul Nabi — Full-Stack Developer & Data / ML Engineer",
+    template: `%s · Abdul Nabi`,
   },
-  description: siteContent.tagline,
+  description:
+    "Official portfolio of Abdul Nabi — Full-Stack Engineer specializing in Next.js, TypeScript, REST APIs, Python ML models, and Application Security (AppSec) based in Karachi, Pakistan.",
   keywords: [
     "Abdul Nabi",
-    "Full-Stack Engineer",
-    "Next.js",
-    "TypeScript",
-    "Product UI",
-    "Portfolio",
+    "aiwithab.site",
+    "Abdul Nabi Portfolio",
+    "Full-Stack Developer Karachi",
+    "Full-Stack Engineer Pakistan",
+    "Next.js Developer",
+    "TypeScript Specialist",
+    "Python ML Engineer",
+    "Blood Sugar Tracker FYP",
+    "Application Security Learner",
+    "Supabase PostgreSQL Developer",
   ],
-  authors: [{ name: siteContent.name }],
-  creator: siteContent.name,
+  authors: [{ name: "Abdul Nabi", url: "https://www.aiwithab.site" }],
+  creator: "Abdul Nabi",
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: siteContent.title,
-    description: siteContent.tagline,
-    siteName: siteContent.name,
+    url: "https://www.aiwithab.site",
+    title: "Abdul Nabi — Full-Stack Developer & Data / ML Engineer",
+    description:
+      "Full-stack developer building clean Next.js apps, REST APIs, and ML models with active learning in Application Security.",
+    siteName: "Abdul Nabi Portfolio",
     images: [
       {
         url: "/profile.jpg",
@@ -47,13 +55,21 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: siteContent.title,
-    description: siteContent.tagline,
+    title: "Abdul Nabi — Full-Stack Developer & Data / ML Engineer",
+    description:
+      "Full-stack developer building production Next.js apps, REST APIs, and ML models.",
     images: ["/profile.jpg"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -79,8 +95,43 @@ export default async function RootLayout({
   const education = await getEducationData();
   const sectionVisibility = await getSectionVisibility();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Abdul Nabi",
+    jobTitle: "Full-Stack Developer & Data / ML Engineer",
+    url: "https://www.aiwithab.site",
+    sameAs: [
+      "https://github.com/abdulnabii",
+      "https://linkedin.com/in/abdul-nabi-95391a3b0",
+    ],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Karachi",
+      addressRegion: "Sindh",
+      addressCountry: "Pakistan",
+    },
+    knowsAbout: [
+      "Next.js",
+      "TypeScript",
+      "React",
+      "Full-Stack Web Development",
+      "Python",
+      "Machine Learning",
+      "Application Security",
+      "Supabase",
+      "PostgreSQL",
+    ],
+  };
+
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={`${inter.variable} font-sans bg-ambient antialiased`}>
         <SettingsProvider
           initialSettings={settings}
