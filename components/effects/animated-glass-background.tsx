@@ -2,10 +2,21 @@
 
 import React, { useEffect, useRef } from "react";
 
+interface TrailParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  radius: number;
+  hue: number;
+}
+
 /**
- * Quantum Light Wave & Floating Particle Field Background.
- * Renders real-time 60-120 FPS undulating liquid aurora waves, floating glowing particle nodes,
- * and interactive cursor spotlight refraction.
+ * Quantum Light Wave & Interactive Plasma Mouse Glow Background.
+ * Features multi-layer color-shifting cursor plasma halo, magnetic particle attraction field,
+ * dynamic mouse spark trails, and undulating liquid aurora ribbons.
  */
 export function AnimatedGlassBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -38,7 +49,7 @@ export function AnimatedGlassBackground() {
     ];
 
     // Floating quantum particles (glowing data nodes)
-    const particleCount = 55;
+    const particleCount = 60;
     const particles = Array.from({ length: particleCount }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -49,14 +60,33 @@ export function AnimatedGlassBackground() {
       phase: Math.random() * Math.PI * 2,
     }));
 
+    // Dynamic mouse spark trails
+    const trail: TrailParticle[] = [];
+
     let mouseX = width / 2;
     let mouseY = height / 2;
     let targetMouseX = width / 2;
     let targetMouseY = height / 2;
+    let lastSpawnTime = 0;
 
     const handleMouseMove = (e: MouseEvent) => {
       targetMouseX = e.clientX;
       targetMouseY = e.clientY;
+
+      const now = performance.now();
+      if (now - lastSpawnTime > 25) {
+        lastSpawnTime = now;
+        trail.push({
+          x: e.clientX,
+          y: e.clientY,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: (Math.random() - 0.5) * 1.5 - 0.5,
+          life: 1,
+          maxLife: Math.random() * 25 + 20,
+          radius: Math.random() * 3.5 + 1.5,
+          hue: (Math.random() * 60 + 200) % 360,
+        });
+      }
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -67,8 +97,10 @@ export function AnimatedGlassBackground() {
       const elapsed = (now - startTime) / 1000;
 
       // Smooth mouse inertia
-      mouseX += (targetMouseX - mouseX) * 0.08;
-      mouseY += (targetMouseY - mouseY) * 0.08;
+      const dxMouse = targetMouseX - mouseX;
+      const dyMouse = targetMouseY - mouseY;
+      mouseX += dxMouse * 0.1;
+      mouseY += dyMouse * 0.1;
 
       ctx.clearRect(0, 0, width, height);
 
@@ -80,7 +112,7 @@ export function AnimatedGlassBackground() {
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // 2. Render morphing aurora orbs
+      // 2. Render morphing aurora background orbs
       orbs.forEach((orb, i) => {
         orb.x += orb.vx + Math.sin(elapsed * 0.9 + i) * 0.75;
         orb.y += orb.vy + Math.cos(elapsed * 0.8 + i) * 0.75;
@@ -100,8 +132,8 @@ export function AnimatedGlassBackground() {
           dynamicRadius
         );
 
-        gradient.addColorStop(0, `hsla(${currentHue}, 90%, 65%, 0.45)`);
-        gradient.addColorStop(0.45, `hsla(${currentHue + 35}, 80%, 52%, 0.22)`);
+        gradient.addColorStop(0, `hsla(${currentHue}, 90%, 65%, 0.42)`);
+        gradient.addColorStop(0.45, `hsla(${currentHue + 35}, 80%, 52%, 0.20)`);
         gradient.addColorStop(1, "transparent");
 
         ctx.fillStyle = gradient;
@@ -110,21 +142,45 @@ export function AnimatedGlassBackground() {
         ctx.fill();
       });
 
-      // 3. Interactive cursor glowing spotlight
-      const mouseGrad = ctx.createRadialGradient(
+      // 3. Multi-Layer Color-Shifting Cyber Plasma Mouse Glow Halo
+      const mouseHue = (elapsed * 30) % 360;
+      const pulseFactor = 1 + Math.sin(elapsed * 4) * 0.08;
+
+      // Outer Plasma Glow Aura
+      const outerMouseGrad = ctx.createRadialGradient(
         mouseX,
         mouseY,
         0,
         mouseX,
         mouseY,
-        380
+        420 * pulseFactor
       );
-      mouseGrad.addColorStop(0, "rgba(99, 102, 241, 0.35)");
-      mouseGrad.addColorStop(0.5, "rgba(34, 211, 238, 0.15)");
-      mouseGrad.addColorStop(1, "transparent");
-      ctx.fillStyle = mouseGrad;
+      outerMouseGrad.addColorStop(0, `hsla(${mouseHue}, 90%, 65%, 0.30)`);
+      outerMouseGrad.addColorStop(0.35, `hsla(${(mouseHue + 40) % 360}, 85%, 55%, 0.18)`);
+      outerMouseGrad.addColorStop(0.7, `hsla(${(mouseHue + 90) % 360}, 80%, 45%, 0.07)`);
+      outerMouseGrad.addColorStop(1, "transparent");
+
+      ctx.fillStyle = outerMouseGrad;
       ctx.beginPath();
-      ctx.arc(mouseX, mouseY, 380, 0, Math.PI * 2);
+      ctx.arc(mouseX, mouseY, 420 * pulseFactor, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner Sharp Plasma Core Ring
+      const innerCoreGrad = ctx.createRadialGradient(
+        mouseX,
+        mouseY,
+        0,
+        mouseX,
+        mouseY,
+        140
+      );
+      innerCoreGrad.addColorStop(0, "rgba(255, 255, 255, 0.45)");
+      innerCoreGrad.addColorStop(0.3, `hsla(${mouseHue}, 95%, 70%, 0.35)`);
+      innerCoreGrad.addColorStop(1, "transparent");
+
+      ctx.fillStyle = innerCoreGrad;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, 140, 0, Math.PI * 2);
       ctx.fill();
 
       // 4. Undulating liquid light wave ribbons
@@ -149,8 +205,18 @@ export function AnimatedGlassBackground() {
       }
       ctx.restore();
 
-      // 5. Floating twinkling quantum particles
+      // 5. Floating quantum particles with cursor magnetic field attraction
       particles.forEach((p) => {
+        // Magnetic attraction to cursor
+        const dx = mouseX - p.x;
+        const dy = mouseY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 260 && dist > 1) {
+          const pull = (1 - dist / 260) * 0.4;
+          p.x += (dx / dist) * pull;
+          p.y += (dy / dist) * pull;
+        }
+
         p.y += p.vy;
         p.x += p.vx + Math.sin(elapsed * 1.2 + p.phase) * 0.3;
 
@@ -164,7 +230,6 @@ export function AnimatedGlassBackground() {
         const twinklingAlpha =
           p.alpha * (0.65 + 0.35 * Math.sin(elapsed * 3.5 + p.phase));
 
-        // Particle glow
         const particleGrad = ctx.createRadialGradient(
           p.x,
           p.y,
@@ -182,6 +247,37 @@ export function AnimatedGlassBackground() {
         ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
         ctx.fill();
       });
+
+      // 6. Interactive Mouse Spark Particle Trails
+      for (let i = trail.length - 1; i >= 0; i--) {
+        const tp = trail[i];
+        tp.x += tp.vx;
+        tp.y += tp.vy;
+        tp.life++;
+
+        const lifeRatio = 1 - tp.life / tp.maxLife;
+        if (lifeRatio <= 0) {
+          trail.splice(i, 1);
+          continue;
+        }
+
+        const trailGrad = ctx.createRadialGradient(
+          tp.x,
+          tp.y,
+          0,
+          tp.x,
+          tp.y,
+          tp.radius * 2.5
+        );
+        trailGrad.addColorStop(0, `hsla(${tp.hue}, 90%, 75%, ${lifeRatio * 0.8})`);
+        trailGrad.addColorStop(0.6, `hsla(${tp.hue + 30}, 80%, 60%, ${lifeRatio * 0.4})`);
+        trailGrad.addColorStop(1, "transparent");
+
+        ctx.fillStyle = trailGrad;
+        ctx.beginPath();
+        ctx.arc(tp.x, tp.y, tp.radius * 2.5 * lifeRatio, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       animationFrameId = requestAnimationFrame(render);
     };
