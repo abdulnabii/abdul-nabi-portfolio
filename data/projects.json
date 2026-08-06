@@ -109,5 +109,33 @@
     "results": "### Performance & Security Metrics\n\n- **Telemetry Retrieval**: Optimized PostgreSQL indices, bringing metric querying times down to 50ms on a table containing 10,000+ status records.\n- **Scrape Reliability**: Configured scrape workers with 3-second timeouts, ensuring scraping runs do not block resources or impact overall dashboard reactivity.",
     "contribution": "### Contribution Details\n\n- **Full Implementation**: Coded the dashboard, database schemas, scraper pipelines, and authentication system.",
     "challenges": "### Challenges & Key Decisions\n\n- **Challenge**: Scraper logs were filling database disks rapidly with duplicate 'healthy' entries.\n- **Solution**: Redesigned the table schema to use state-duration logic. Rather than logging checks on every interval, the system only writes to the DB when a service changes state, drastically reducing write operations."
+  },
+  {
+    "id": "blood-sugar-tracker",
+    "title": "Blood Sugar Tracker",
+    "description": "Final Year Project — A clinical web application that predicts patient blood glucose levels using a trained ElasticNet ML model and provides a real-time daily health monitoring dashboard.",
+    "problem": "Medical staff lacked a fast, data-driven tool to predict blood glucose levels from patient vitals. Manual tracking across spreadsheets was error-prone and provided no early alert for high-risk glucose readings.",
+    "role": "Sole developer — designed the full-stack Flask architecture, trained the ElasticNet regression model on patient vitals data, built the patient management dashboard, daily log system, role-based auth, and PDF/CSV report export.",
+    "outcome": "Delivered a fully functioning clinical prediction system with ML-powered glucose forecasting, admin and staff role access, automated high-risk alert flags, and exportable patient reports.",
+    "tags": [
+      "Python",
+      "Flask",
+      "scikit-learn",
+      "SQLAlchemy",
+      "ElasticNet ML",
+      "SQLite"
+    ],
+    "githubUrl": "https://github.com/abdulnabii/blood-sugar-tracker-fyp",
+    "status": "github",
+    "statusLabel": "Final Year Project (FYP)",
+    "featured": true,
+    "year": "2025",
+    "published": true,
+    "appreciations": 0,
+    "architecture": "### Full-Stack Clinical Architecture\n\nThe application follows a traditional MVC architecture using Flask as the web framework, SQLAlchemy as the ORM, and a pre-trained scikit-learn ElasticNet model served via joblib.\n\n```\n[Patient / Staff / Admin Browser]\n   │\n   ▼\n[Flask Routes (app.py)] ── CSRF Protected WTForms\n   │\n   ├── [SQLAlchemy ORM] ── SQLite / PostgreSQL DB\n   │       └── User, Patient, DailyLog models\n   │\n   └── [ML Prediction Pipeline]\n           ├── ElasticNet model (.pkl)\n           ├── Feature Scaler (.pkl)\n           └── Feature Names (JSON)\n```\n\n- **ML Pipeline**: Patient vitals (weight, carbs, protein, fat, activity calories, heart rate, time-of-day) are scaled and passed to a trained ElasticNet regression model to predict blood glucose in mg/dL.\n- **Auth Layer**: Flask-Login handles session management with role separation (admin vs. staff). All form submissions are CSRF protected via Flask-WTF.",
+    "implementation": "### Technical Details & Implementation\n\n- **ElasticNet Model Training**: Trained on clinical patient vitals dataset using scikit-learn's ElasticNet regressor with cross-validated hyperparameter tuning (L1/L2 regularization ratio). Serialised with joblib for production serving.\n- **Daily Log System**: Staff log patient vitals once per day (enforced by unique DB constraint on user_id + log_date). Net calories are computed server-side from macronutrient inputs.\n- **Alert System**: Patients with predicted glucose readings above clinical thresholds are automatically flagged with `alert_flag=True` and highlighted in the dashboard.\n- **Report Export**: PDF reports are generated per patient with their prediction history and health trends. CSV exports are available for bulk data analysis.",
+    "results": "### Project Outcomes & Results\n\n- **ML Accuracy**: ElasticNet model achieved strong predictive performance on held-out validation data with low RMSE on blood glucose prediction.\n- **Clinical Utility**: The alert system automatically identifies high-risk patients, enabling faster clinical intervention.\n- **Full Production Stack**: Role-based auth, CSRF security, database migrations, PDF export, and a clean dashboard UI — all functional in a single deployable Python app.",
+    "contribution": "### Contribution Details\n\n- **100% Solo Development**: Designed and built the entire system — ML model training pipeline, Flask backend, Jinja2 frontend templates, SQLAlchemy database schema, Flask-Migrate migrations, role-based authentication, and report generation.",
+    "challenges": "### Challenges & Key Decisions\n\n- **Challenge**: Ensuring the ML model returns clinically meaningful predictions from sparse or incomplete patient data inputs.\n- **Solution**: Applied feature scaling with a pre-fitted StandardScaler and used ElasticNet's regularization to prevent overfitting on the limited clinical dataset. Added server-side validation to reject incomplete vitals submissions before predictions are made."
   }
-]
+]
