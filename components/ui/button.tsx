@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import Link from "next/link";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "icon";
 type ButtonSize = "sm" | "md" | "lg";
@@ -76,24 +77,34 @@ export function LinkButton({
   external = false,
   onClick,
 }: LinkButtonProps) {
+  const combinedClassName = cn(
+    "inline-flex items-center justify-center gap-2 font-medium",
+    "transition-all duration-300 ease-out",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050814]",
+    "active:scale-[0.98]",
+    variantStyles[variant],
+    sizeStyles[size],
+    className
+  );
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        onClick={onClick}
+        className={combinedClassName}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <a
-      href={href}
-      onClick={onClick}
-      className={cn(
-        "inline-flex items-center justify-center gap-2 font-medium",
-        "transition-all duration-300 ease-out",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050814]",
-        "active:scale-[0.98]",
-        variantStyles[variant],
-        sizeStyles[size],
-        className
-      )}
-      {...(external
-        ? { target: "_blank", rel: "noopener noreferrer" }
-        : undefined)}
-    >
+    <Link href={href} onClick={onClick} className={combinedClassName}>
       {children}
-    </a>
+    </Link>
   );
 }
+
