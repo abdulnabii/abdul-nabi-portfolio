@@ -1,5 +1,39 @@
 [
   {
+    "slug": "nextjs-supabase-rls-production-guide",
+    "title": "Production Next.js 14 & Supabase RLS: Complete Security & Performance Blueprint (2026)",
+    "excerpt": "A comprehensive 2026 guide to building zero-trust Next.js applications with Supabase Row-Level Security, server-side caching, and sub-300ms API response times.",
+    "content": "Building scalable web applications in 2026 requires an architecture that combines instant server rendering with defense-in-depth security. By pairing Next.js 14 App Router with Supabase Row-Level Security (RLS), engineering teams can achieve sub-300ms page loads while ensuring zero cross-tenant data leaks.\n\n## 1. Zero-Trust Architecture with Supabase RLS\n\nTraditional web backends rely on application-layer WHERE clauses to restrict user access. If a developer forgets a `where user_id = current_user` check, sensitive data is exposed. Supabase Row-Level Security (RLS) moves access control directly into the PostgreSQL database engine.\n\n```sql\n-- Create RLS Policy for Tenant Data Isolation\nCREATE POLICY \"Users can read their own tenant data\"\nON public.projects\nFOR SELECT\nUSING (\n  tenant_id = auth.jwt() ->> 'tenant_id'\n);\n```\n\n### Benefits of Database-Level RLS:\n- **Guaranteed Isolation**: Even if an API endpoint forgets authorization code, PostgreSQL rejects unauthorized rows at the engine layer.\n- **JWT Claim Propagation**: Custom JWT claims passed from Next.js server calls automatically scope all REST and GraphQL database queries.\n\n## 2. Server Components vs Client Interactivity\n\nNext.js 14 App Router allows developers to render 90% of page UI on the server, sending minimal JavaScript to the browser client.\n\n```tsx\n// app/projects/page.tsx - Server Component\nimport { supabaseDbQuery } from \"@/lib/supabase\";\n\nexport default async function ProjectsPage() {\n  const projects = await supabaseDbQuery(\"projects\", \"select=*\");\n  return <ProjectGrid items={projects} />;\n}\n```\n\n## 3. Real-Time Cache Revalidation & ISR\n\nTo combine ultra-fast static caching with instant admin updates, leverage Next.js `revalidatePath` and `revalidateTag` inside Server Actions or API Route Handlers.\n\n```ts\nimport { revalidatePath } from \"next/cache\";\n\nexport async function updateProject(id: string, data: ProjectData) {\n  await saveProjectToDb(id, data);\n  revalidatePath(\"/\", \"layout\");\n}\n```\n\n## Summary\n\nCombining Next.js 14 App Router with Supabase RLS policies delivers maximum page load performance alongside rigorous application security standards.",
+    "date": "2026-08-06",
+    "readTime": "7 min read",
+    "tags": [
+      "Next.js",
+      "Supabase",
+      "AppSec",
+      "TypeScript"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1600&q=80",
+    "published": true,
+    "updatedAt": "2026-08-06T08:43:00.000Z"
+  },
+  {
+    "slug": "clinical-glucose-prediction-python-ml",
+    "title": "Machine Learning in Healthcare: Building Clinical Glucose Prediction Models with Python",
+    "excerpt": "Inside the architecture of an ElasticNet regression ML model trained to predict blood glucose levels in clinical patient monitoring systems.",
+    "content": "Predictive modeling in healthcare demands a strict balance between predictive accuracy and model interpretability. When predicting patient blood glucose dynamics, black-box deep learning models can be difficult for clinicians to audit. In our Final Year Project (Blood Sugar Tracker), we designed and deployed an ElasticNet Regression ML model integrated into a full-stack Flask web platform.\n\n## 1. Why ElasticNet Regression for Glucose Modeling?\n\nGlucose regulation is influenced by multiple correlated physiological variables: carbohydrate intake, physical activity, insulin dosage, heart rate, and sleep quality.\n\nLinear models face multicollinearity challenges, while Lasso regression may prematurely discard correlated health features. ElasticNet combines both L1 (Lasso) and L2 (Ridge) regularization penalties:\n\n### Advantages in Clinical Datasets:\n- **L1 Penalty**: Encourages feature sparsity by zeroing out non-predictive noise variables.\n- **L2 Penalty**: Handles feature groups with collinearity gracefully.\n- **Interpretability**: Clinicians can inspect coefficient weights to understand how specific macro nutrients affect target glucose predictions.\n\n## 2. Feature Engineering & Preprocessing Pipeline\n\n```python\nfrom sklearn.linear_model import ElasticNet\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\nml_pipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('model', ElasticNet(alpha=0.1, l1_ratio=0.5, random_state=42))\n])\n\nml_pipeline.fit(X_train, y_train)\n```\n\n## 3. Real-Time Patient Risk Flagging\n\nWhen a patient logs their daily biometric metrics via the web dashboard, the backend model computes predicted 2-hour postprandial glucose levels. If the model output exceeds 180 mg/dL, the system automatically flags the patient profile in the clinician admin panel.\n\n## Conclusion\n\nMachine learning applications in clinical domains thrive when predictive performance is paired with transparent, interpretable model features. ElasticNet provides an ideal framework for real-time patient monitoring systems.",
+    "date": "2026-08-06",
+    "readTime": "8 min read",
+    "tags": [
+      "Python",
+      "Machine Learning",
+      "Healthcare",
+      "scikit-learn"
+    ],
+    "coverImage": "https://plus.unsplash.com/premium_photo-1683121710572-7723bd2e235d?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "published": true,
+    "updatedAt": "2026-08-06T08:43:00.000Z"
+  },
+  {
     "slug": "ai-integration-security-risks",
     "title": "AI Integration Risks: An Application Security Perspective",
     "excerpt": "Analyzing prompt injection paths, data exposure vectors, and insecure output rendering in production LLM integrations (2025–2026).",
