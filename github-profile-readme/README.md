@@ -2,10 +2,10 @@
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=6366f1&height=200&section=header&text=Abdul%20Nabi&fontSize=52&fontColor=ffffff&fontAlignY=38&desc=Full-Stack%20Developer%20%C2%B7%20Data%20%26amp%3B%20ML%20%C2%B7%20AppSec%20(Learning)&descAlignY=58&descSize=18&descColor=a5b4fc" width="100%"/>
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-abdulnabi.vercel.app-6366f1?style=for-the-badge&logo=vercel&logoColor=white)](https://abdulnabi.vercel.app)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Abdul%20Nabi-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/abdul-nabi-95391a3b0)
-[![Email](https://img.shields.io/badge/Email-abdulnabi.khaskhely%40gmail.com-ea4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:abdulnabi.khaskhely@gmail.com)
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-%2B92%20309%203751434-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/923093751434)
+[![Portfolio](https://img.shields.io/badge/Portfolio-6366f1?style=for-the-badge&logo=vercel&logoColor=white)](https://abdulnabi.vercel.app)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/abdul-nabi-95391a3b0)
+[![Email](https://img.shields.io/badge/Email-ea4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:abdulnabi.khaskhely@gmail.com)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/923093751434)
 
 </div>
 
