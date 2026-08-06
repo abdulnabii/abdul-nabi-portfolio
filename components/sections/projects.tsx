@@ -4,15 +4,19 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
-import { getFeaturedProjects } from "@/lib/project-store";
+import { getFeaturedProjects, getAllProjects } from "@/lib/project-store";
 import { isPublicUrl } from "@/lib/links";
-import { ArrowUpRight, Github, Heart } from "lucide-react";
+import { ArrowUpRight, FolderGit2, Github, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export async function Projects() {
-  const featured = await getFeaturedProjects();
+  const [featured, all] = await Promise.all([
+    getFeaturedProjects(),
+    getAllProjects(),
+  ]);
   const { projectsIntro } = siteContent;
+  const totalCount = all.length;
 
   return (
     <section
@@ -157,6 +161,31 @@ export async function Projects() {
             );
           })}
         </div>
+
+        {/* ── View All Projects CTA ── */}
+        <Reveal delay={200}>
+          <div className="mt-12 flex flex-col items-center gap-4">
+            <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <p className="text-sm text-slate-500">
+              Showing {featured.length} featured projects
+            </p>
+            <LinkButton
+              href="/projects"
+              variant="primary"
+              size="lg"
+              className="group relative overflow-hidden gap-2 px-8 py-3"
+            >
+              <FolderGit2 className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              <span>View All Projects</span>
+              {totalCount > featured.length && (
+                <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-[11px] font-bold">
+                  {totalCount}
+                </span>
+              )}
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </LinkButton>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
