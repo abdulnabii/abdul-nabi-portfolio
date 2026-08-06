@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 import { useSiteSettings } from "@/components/settings-provider";
 
 export function Navbar() {
-  const { settings } = useSiteSettings();
+  const { settings, sectionVisibility } = useSiteSettings();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
@@ -43,6 +43,22 @@ export function Navbar() {
     setOpen(false);
   }, [pathname]);
 
+  // Helper to check if a nav item's section is enabled in admin
+  const isNavVisible = (href: string) => {
+    if (!sectionVisibility) return true;
+    if (href === "/#about") return sectionVisibility.about !== false;
+    if (href === "/#projects") return sectionVisibility.projects !== false;
+    if (href === "/#stack") return sectionVisibility.skills !== false;
+    if (href === "/#experience") return sectionVisibility.experience !== false;
+    if (href === "/#achievements") return sectionVisibility.achievements !== false;
+    if (href === "/#games") return sectionVisibility.games !== false;
+    if (href === "/blog") return sectionVisibility.blog !== false;
+    if (href === "/#contact") return sectionVisibility.contact !== false;
+    return true;
+  };
+
+  const visibleNavLinks = siteContent.navLinks.filter((link) => isNavVisible(link.href));
+
   // Scroll-Spy IntersectionObserver for active section highlight
   useEffect(() => {
     if (pathname !== "/") {
@@ -63,7 +79,6 @@ export function Navbar() {
 
       observerRef.current = new IntersectionObserver(
         (entries) => {
-          // Pick the entry closest to top of viewport
           const visible = entries
             .filter((e) => e.isIntersecting)
             .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -78,7 +93,6 @@ export function Navbar() {
       return true;
     };
 
-    // Retry until sections are rendered
     if (!tryObserve()) {
       const timer = setTimeout(tryObserve, 500);
       return () => {
@@ -138,49 +152,53 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav Pills */}
-          <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.05] p-1.5 backdrop-blur-md">
-            <ul className="flex items-center gap-0.5">
-              {siteContent.navLinks.map((link) => {
-                const active = isLinkActive(link.href);
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={(e) => handleNavClick(e, link.href)}
-                      className={cn(
-                        "rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-150 whitespace-nowrap",
-                        active
-                          ? "bg-[#6D5EF8]/30 text-white border border-[#6D5EF8]/50 shadow-sm font-semibold"
-                          : "text-slate-300 hover:bg-white/10 hover:text-white"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          {/* Desktop Nav Pills (only show enabled sections) */}
+          {visibleNavLinks.length > 0 && (
+            <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.05] p-1.5 backdrop-blur-md">
+              <ul className="flex items-center gap-0.5">
+                {visibleNavLinks.map((link) => {
+                  const active = isLinkActive(link.href);
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        onClick={(e) => handleNavClick(e, link.href)}
+                        className={cn(
+                          "rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-150 whitespace-nowrap",
+                          active
+                            ? "bg-[#6D5EF8]/30 text-white border border-[#6D5EF8]/50 shadow-sm font-semibold"
+                            : "text-slate-300 hover:bg-white/10 hover:text-white"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
 
-          <div className="hidden items-center gap-3 md:flex">
-            <LinkButton
-              href="/#contact"
-              variant="primary"
-              size="sm"
-              className="hover:scale-105 transition-transform duration-200"
-              onClick={() => {
-                setOpen(false);
-                if (pathname === "/") {
-                  const el = document.getElementById("contact");
-                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                  setActiveSection("contact");
-                }
-              }}
-            >
-              Hire / Contact
-            </LinkButton>
-          </div>
+          {sectionVisibility?.contact !== false && (
+            <div className="hidden items-center gap-3 md:flex">
+              <LinkButton
+                href="/#contact"
+                variant="primary"
+                size="sm"
+                className="hover:scale-105 transition-transform duration-200"
+                onClick={() => {
+                  setOpen(false);
+                  if (pathname === "/") {
+                    const el = document.getElementById("contact");
+                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    setActiveSection("contact");
+                  }
+                }}
+              >
+                Hire / Contact
+              </LinkButton>
+            </div>
+          )}
 
           {/* Mobile Hamburger */}
           <Button
@@ -204,7 +222,7 @@ export function Navbar() {
         >
           <div className="rounded-3xl border border-white/10 bg-[#050814]/95 p-4 shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
             <ul className="flex flex-col gap-1">
-              {siteContent.navLinks.map((link) => {
+              {visibleNavLinks.map((link) => {
                 const active = isLinkActive(link.href);
                 return (
                   <li key={link.href}>
@@ -223,24 +241,26 @@ export function Navbar() {
                   </li>
                 );
               })}
-              <li className="pt-2">
-                <LinkButton
-                  href="/#contact"
-                  variant="primary"
-                  size="md"
-                  className="w-full justify-center"
-                  onClick={() => {
-                    setOpen(false);
-                    if (pathname === "/") {
-                      const el = document.getElementById("contact");
-                      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                      setActiveSection("contact");
-                    }
-                  }}
-                >
-                  Hire / Contact
-                </LinkButton>
-              </li>
+              {sectionVisibility?.contact !== false && (
+                <li className="pt-2">
+                  <LinkButton
+                    href="/#contact"
+                    variant="primary"
+                    size="md"
+                    className="w-full justify-center"
+                    onClick={() => {
+                      setOpen(false);
+                      if (pathname === "/") {
+                        const el = document.getElementById("contact");
+                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                        setActiveSection("contact");
+                      }
+                    }}
+                  >
+                    Hire / Contact
+                  </LinkButton>
+                </li>
+              )}
             </ul>
           </div>
         </div>
