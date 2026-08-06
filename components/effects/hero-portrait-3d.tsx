@@ -103,7 +103,7 @@ export function HeroPortrait3D() {
                 {siteContent.name}
               </p>
               <p className="mt-1 text-xs text-slate-300">
-                Full-Stack Engineer · AppSec Focus
+                Full-Stack Engineer · Web & Data
               </p>
             </div>
           </div>

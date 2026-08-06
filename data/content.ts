@@ -133,9 +133,9 @@ export interface SiteContent {
  */
 export const siteContent: SiteContent = {
   name: "Abdul Nabi",
-  title: "Abdul Nabi — Full-Stack Developer · AppSec · Data & ML",
+  title: "Abdul Nabi — Full-Stack Developer · Data & ML (Learning AppSec)",
   tagline:
-    "Security-minded full-stack developer building secure Next.js apps, clean product UIs, and REST APIs — with a practical background in data analysis and ML training.",
+    "Full-stack developer building clean Next.js apps, REST APIs, and ML models — with a growing interest and active learning in Application Security (AppSec).",
   email: "abdulnabi.khaskhely@gmail.com",
   location: "Karachi, Sindh, Pakistan",
   availability: "Open to full-time engineering / security roles and focused freelance projects",
@@ -173,27 +173,27 @@ export const siteContent: SiteContent = {
     },
   ],
   hero: {
-    greeting: "Full-Stack Developer · AppSec · Data & ML",
+    greeting: "Full-Stack Developer · Data & ML · AppSec Learner",
     name: "Abdul Nabi",
-    role: "Secure Next.js apps, clean product UIs & REST APIs — built with care.",
+    role: "Clean Next.js apps, REST APIs & ML workflows — built with security awareness.",
     description:
-      "I work with Next.js, TypeScript, and modern security patterns to ship robust, access-controlled product interfaces. Outside the web stack, I apply Python, Pandas, and applied ML techniques to real datasets — building data pipelines and training models end-to-end.",
-    focusLine: "Next.js · TypeScript · AppSec · Python · Data Analysis · ML Training",
+      "I build web products with Next.js, TypeScript, and modern APIs. Outside web engineering, I train ML models in Python (like my Blood Sugar Tracker FYP) and am actively learning Application Security (AppSec) fundamentals.",
+    focusLine: "Next.js · TypeScript · Python · ML Training · AppSec (Learning)",
     ctaPrimary: { label: "View selected work", href: "/#projects" },
     ctaSecondary: { label: "Get in touch", href: "/#contact" },
   },
   about: {
     title: "About",
     paragraphs: [
-      "I'm a security-minded full-stack developer with 1+ years building product-facing web apps. I work at the intersection of robust UI engineering and application security — shipping clean, testable interfaces that hold up under real-world access patterns.",
-      "I care about details: correct RBAC boundaries, clean error states, zero cross-tenant leakage, and code teammates can extend without second-guessing. AppSec isn't a bolt-on for me — it's part of how I think when I design data models and API contracts.",
-      "Alongside web work, I bring a practical data background: Python, Pandas, and applied ML — building pipelines, training and evaluating models on real datasets, and turning outputs into clear, actionable insights. I find the boundary between product engineering and data work a productive place to operate.",
-      "I'm looking for teams where I can own features end-to-end, learn from strong engineers, and build software that's both well-crafted and defensively sound.",
+      "I'm a full-stack developer with 1+ years of experience building web applications. My core engineering focus spans responsive Next.js interfaces, RESTful backends, and data/ML projects in Python.",
+      "I have a strong interest in Application Security (AppSec) as an active learner — continuously building awareness around OWASP Top 10 guidelines, safe authentication, proper authorization, and secure coding practices.",
+      "Alongside web work, I bring practical experience in data analysis and machine learning — from data cleaning with Pandas to training regression models (such as my ElasticNet Blood Sugar Tracker FYP).",
+      "I'm looking for engineering teams where I can build quality software, expand my technical skillset, and continue learning security and full-stack best practices.",
     ],
     stats: [
       { label: "Years building web products", value: "1+" },
-      { label: "Primary identity", value: "FS Dev + AppSec" },
-      { label: "Secondary strength", value: "Data & ML" },
+      { label: "Primary identity", value: "Full-Stack Developer" },
+      { label: "Learning & Interests", value: "Data/ML & AppSec" },
     ],
   },
   skills: [
@@ -220,7 +220,7 @@ export const siteContent: SiteContent = {
       ],
     },
     {
-      title: "Application Security",
+      title: "AppSec (Learning & Basics)",
       skills: [
         "OWASP Top 10",
         "Auth & RBAC design",
@@ -335,7 +335,7 @@ export const siteContent: SiteContent = {
   experience: [
     {
       id: "exp-1",
-      role: "Full-Stack Developer · AppSec & Data",
+      role: "Full-Stack Developer · Web & Data",
       company: "Product & client projects",
       location: "Remote",
       period: "2024 — Present",

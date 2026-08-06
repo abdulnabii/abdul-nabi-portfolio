@@ -27,7 +27,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   location: "Karachi, Sindh, Pakistan",
   availabilityText: "Open to full-time engineering / security roles and focused freelance projects",
   heroTagline: "I build secure web applications and design clean, robust product interfaces.",
-  heroDescription: "Full-Stack Developer with AppSec Focus. 1+ years experience building production Next.js, Supabase, and TypeScript systems.",
+  heroDescription: "Full-Stack Developer with 1+ years experience building production Next.js, Supabase, TypeScript, and ML systems — actively learning AppSec fundamentals.",
   responseTime: "Typical response time: 1–2 business days",
   githubUrl: "https://github.com/abdulnabii",
   linkedinUrl: "https://linkedin.com/in/abdul-nabi-95391a3b0",

@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
           "### Integrated Security Controls\n\nTo demonstrate AppSec developer principles, this chat project implements:\n\n1. **Input Length Validation**: Blocks messages longer than 1000 characters.\n2. **Time Skew Validation**: Rejects out-of-bounds client timestamps via `X-Client-Timestamp` headers.\n3. **Throttling**: Throttles request rates (mock 429 triggered in this demo frame after 5 requests).\n4. **No Secret Leakage**: API key bindings are strictly server-only.";
       } else if (userText.includes("abdul") || userText.includes("skills") || userText.includes("hiring")) {
         responseText =
-          "### Abdul Nabi's Background\n\nAbdul Nabi is a Full-Stack Developer with AppSec Focus. He works with **Next.js**, **TypeScript**, and **Tailwind CSS**, and designs robust data layers with **PostgreSQL/Supabase**. You can send him a message through the portfolio contact form at the bottom of the home page!";
+          "### Abdul Nabi's Background\n\nAbdul Nabi is a Full-Stack Developer building clean Web & ML applications, actively learning AppSec fundamentals. He works with **Next.js**, **TypeScript**, **Python**, and **Tailwind CSS**, and designs data layers with **PostgreSQL/Supabase**. You can send him a message through the portfolio contact form at the bottom of the home page!";
       }
 
       const stream = new ReadableStream({

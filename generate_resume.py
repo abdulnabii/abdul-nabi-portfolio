@@ -84,7 +84,7 @@ def generate_pdf(output_path):
     # 1. Header Section
     story.append(Paragraph("Abdul Nabi", title_style))
     story.append(Spacer(1, 2))
-    story.append(Paragraph("Full-Stack Developer &bull; AppSec &bull; Data & ML", subtitle_style))
+    story.append(Paragraph("Full-Stack Developer &bull; Data & ML &bull; AppSec Learner", subtitle_style))
     story.append(Spacer(1, 3))
     
     contact_text = (
@@ -98,10 +98,10 @@ def generate_pdf(output_path):
     # 2. Executive Summary
     story.append(Paragraph("PROFESSIONAL SUMMARY", section_heading))
     summary_text = (
-        "Security-minded Full-Stack Developer and Data Practitioner with expertise in building access-controlled "
-        "Next.js web applications, high-performance product UIs, REST APIs, and applied machine learning models. "
-        "Proficient in full-stack architecture, application security (OWASP Top 10, RBAC, Supabase RLS policies), "
-        "Python data pipelines, and end-to-end model evaluation. Passionate about shipping robust, production-ready software."
+        "Full-Stack Developer and Data Practitioner with expertise in building responsive Next.js web applications, "
+        "REST APIs, and applied machine learning models. Proficient in full-stack architecture, Python data pipelines, "
+        "and end-to-end model evaluation — with a strong interest and active learning in Application Security (OWASP Top 10, "
+        "safe auth, and RLS policies). Passionate about shipping robust, production-ready software."
     )
     story.append(Paragraph(summary_text, body_style))
     story.append(Spacer(1, 4))
