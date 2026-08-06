@@ -14,7 +14,7 @@
 
 <!-- SLEEK SOCIAL & PORTFOLIO QUICK LINKS -->
 <p align="center">
-  <a href="https://abdulnabi.vercel.app" target="_blank">
+  <a href="https://aiwithab.site" target="_blank">
     <img src="https://img.shields.io/badge/Portfolio-6366f1?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfolio"/>
   </a>
   <a href="https://linkedin.com/in/abdul-nabi-95391a3b0" target="_blank">
