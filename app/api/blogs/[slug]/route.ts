@@ -14,11 +14,17 @@ interface RouteContext {
   params: { slug: string };
 }
 
-export async function GET(_request: NextRequest, context: RouteContext) {
+export async function GET(request: NextRequest, context: RouteContext) {
   try {
+    const { searchParams } = new URL(request.url);
     const session = await getAdminSession();
+    const includeDrafts =
+      searchParams.get("drafts") === "1" ||
+      searchParams.get("all") === "1" ||
+      Boolean(session);
+
     const post = await getBlogBySlug(context.params.slug, {
-      includeDrafts: Boolean(session),
+      includeDrafts,
     });
 
     if (!post) {

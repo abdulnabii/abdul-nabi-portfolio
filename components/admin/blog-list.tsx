@@ -69,7 +69,10 @@ export function BlogList({ posts: initial }: BlogListProps) {
     if (!deleteTarget) return;
     setLoadingDelete(true);
     try {
-      const res = await fetch(`/api/blogs/${deleteTarget.slug}`, { method: "DELETE" });
+      const res = await fetch(`/api/blogs/${encodeURIComponent(deleteTarget.slug)}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      });
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
         throw new Error(data.error ?? "Delete failed");
@@ -184,7 +187,7 @@ export function BlogList({ posts: initial }: BlogListProps) {
                     </Button>
                   </Link>
                 )}
-                <Link href={`/admin/blogs/${post.slug}/edit`}>
+                <Link href={`/admin/blogs/${encodeURIComponent(post.slug)}/edit`}>
                   <Button variant="secondary" size="sm" type="button">
                     <Pencil className="h-3.5 w-3.5" />
                     Edit

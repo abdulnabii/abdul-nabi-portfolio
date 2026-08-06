@@ -28,7 +28,10 @@ export function BlogEditClient({ slug, initialPost }: BlogEditClientProps) {
     const decodedSlug = decodeURIComponent(slug);
 
     // 1. Try fetching from server API
-    fetch(`/api/blogs/${encodeURIComponent(decodedSlug)}`, { cache: "no-store" })
+    fetch(`/api/blogs/${encodeURIComponent(decodedSlug)}?drafts=1`, {
+      cache: "no-store",
+      credentials: "same-origin",
+    })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.post) {
