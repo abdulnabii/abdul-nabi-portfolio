@@ -9,7 +9,6 @@ const SESSION_COOKIE = "an_admin_session";
 const SECTION_REDIRECTS: Record<string, string> = {
   "/about": "/#about",
   "/work": "/#projects",
-  "/projects": "/#projects",
   "/stack": "/#stack",
   "/skills": "/#stack",
   "/experience": "/#experience",
@@ -57,7 +56,6 @@ export const config = {
   matcher: [
     "/about",
     "/work",
-    "/projects",
     "/stack",
     "/skills",
     "/experience",
