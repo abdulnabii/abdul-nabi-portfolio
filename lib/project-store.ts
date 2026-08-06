@@ -16,7 +16,7 @@ async function ensureProjectsFile(): Promise<void> {
 }
 
 import seedProjects from "@/data/projects.json";
-import { supabaseDbQuery, supabaseDbUpsert } from "./supabase";
+import { supabaseDbDelete, supabaseDbQuery, supabaseDbUpsert } from "./supabase";
 
 const memoryProjects: Project[] = [];
 
@@ -80,7 +80,8 @@ export async function getFeaturedProjects(): Promise<Project[]> {
 export async function getProjectById(id: string): Promise<Project | undefined> {
   try {
     const projects = await getAllProjects();
-    return projects.find((p) => p.id === id);
+    const decoded = decodeURIComponent(id);
+    return projects.find((p) => p.id === id || p.id === decoded);
   } catch {
     return undefined;
   }
@@ -211,8 +212,25 @@ export async function updateProject(
 }
 
 export async function deleteProject(id: string): Promise<void> {
+  const decoded = decodeURIComponent(id);
+
+  // 1. Delete from Supabase DB
+  try {
+    await supabaseDbDelete("projects", `id=eq.${encodeURIComponent(id)}`);
+    if (decoded !== id) {
+      await supabaseDbDelete("projects", `id=eq.${encodeURIComponent(decoded)}`);
+    }
+  } catch {}
+
+  // 2. Filter from memory store & local file
   const projects = await getAllProjects();
-  const next = projects.filter((p) => p.id !== id);
-  if (next.length === projects.length) throw new Error("NOT_FOUND");
-  await saveAllProjects(next);
+  const next = projects.filter((p) => p.id !== id && p.id !== decoded);
+
+  memoryProjects.length = 0;
+  memoryProjects.push(...next);
+
+  try {
+    await ensureProjectsFile();
+    await fs.writeFile(PROJECTS_FILE, JSON.stringify(next, null, 2), "utf8");
+  } catch {}
 }

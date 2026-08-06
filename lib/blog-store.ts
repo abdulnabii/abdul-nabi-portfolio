@@ -1,7 +1,7 @@
 import seedBlogs from "@/data/blogs.json";
 import { promises as fs } from "fs";
 import path from "path";
-import { supabaseDbQuery, supabaseDbUpsert } from "./supabase";
+import { supabaseDbDelete, supabaseDbQuery, supabaseDbUpsert } from "./supabase";
 
 export interface BlogPost {
   slug: string;
@@ -248,8 +248,32 @@ export async function updateBlog(
 }
 
 export async function deleteBlog(slug: string): Promise<void> {
+  const decoded = decodeURIComponent(slug);
+  const targetSlug = slugify(slug);
+
+  // 1. Delete from Supabase DB
+  try {
+    await supabaseDbDelete("blogs", `slug=eq.${encodeURIComponent(slug)}`);
+    if (decoded !== slug) {
+      await supabaseDbDelete("blogs", `slug=eq.${encodeURIComponent(decoded)}`);
+    }
+  } catch {}
+
+  // 2. Filter from memory & local array
   const posts = await getAllBlogs();
-  const next = posts.filter((p) => p.slug !== slug);
-  if (next.length === posts.length) throw new Error("NOT_FOUND");
-  await saveAllBlogs(next);
+  const next = posts.filter(
+    (p) =>
+      p.slug !== slug &&
+      p.slug !== decoded &&
+      slugify(p.slug) !== targetSlug
+  );
+
+  memoryBlogs.length = 0;
+  memoryBlogs.push(...next);
+
+  // 3. Persist to disk if writable
+  try {
+    await ensureBlogsFile();
+    await fs.writeFile(BLOGS_FILE, JSON.stringify(next, null, 2), "utf8");
+  } catch {}
 }
