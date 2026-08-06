@@ -17,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: "daily",
-      priority: 0.8,
+      priority: 0.9,
     },
   ];
 
@@ -28,8 +28,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     projectRoutes = projects.map((project) => ({
       url: `${baseUrl}/projects/${project.id}`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
+      changeFrequency: "daily",
+      priority: 0.95,
     }));
   } catch (err) {
     console.error("[Sitemap] Error fetching projects:", err);
@@ -44,8 +44,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .map((post) => ({
         url: `${baseUrl}/blog/${post.slug}`,
         lastModified: new Date(post.date || Date.now()),
-        changeFrequency: "monthly",
-        priority: 0.7,
+        changeFrequency: "daily",
+        priority: 0.9,
       }));
   } catch (err) {
     console.error("[Sitemap] Error fetching blogs:", err);

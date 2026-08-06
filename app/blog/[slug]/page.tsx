@@ -36,99 +36,39 @@ export async function generateMetadata({
 }: BlogPostPageProps): Promise<Metadata> {
   const post = await getBlogBySlug(params.slug);
   const title = post?.title ?? slugToTitle(params.slug);
-  const description = post?.excerpt ?? "Article by Abdul Nabi";
+  const description = post?.excerpt ?? "Technical article by Abdul Nabi";
 
   return {
     title: `${title} · Abdul Nabi`,
     description,
+    keywords: [
+      title,
+      ...(post?.tags || []),
+      "Abdul Nabi",
+      "Abdul Nabi Blog",
+      "Full-Stack Engineering",
+      "aiwithab.site",
+    ],
+    authors: [{ name: "Abdul Nabi", url: "https://www.aiwithab.site" }],
     openGraph: {
       title: `${title} · Abdul Nabi`,
       description,
       type: "article",
+      url: `https://www.aiwithab.site/blog/${params.slug}`,
       publishedTime: post?.date,
+      authors: ["Abdul Nabi"],
       tags: post?.tags,
-      images: post?.coverImage ? [post.coverImage] : undefined,
+      images: post?.coverImage
+        ? [{ url: post.coverImage, alt: title }]
+        : [{ url: "/profile.jpg", alt: "Abdul Nabi" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · Abdul Nabi`,
+      description,
+      images: post?.coverImage ? [post.coverImage] : ["/profile.jpg"],
     },
   };
-}
-
-function renderContent(content: string) {
-  const blocks = content.split(/\n\n+/);
-
-  return blocks.map((block, index) => {
-    const trimmed = block.trim();
-
-    if (trimmed.startsWith("## ")) {
-      return (
-        <h2
-          key={index}
-          className="mt-10 text-2xl font-semibold tracking-tight text-white first:mt-0"
-        >
-          {trimmed.replace(/^##\s+/, "")}
-        </h2>
-      );
-    }
-
-    if (trimmed.startsWith("### ")) {
-      return (
-        <h3
-          key={index}
-          className="mt-8 text-lg font-semibold tracking-tight text-white"
-        >
-          {trimmed.replace(/^###\s+/, "")}
-        </h3>
-      );
-    }
-
-    if (trimmed.includes("\n- ") || trimmed.startsWith("- ")) {
-      const items = trimmed
-        .split("\n")
-        .map((item) => item.replace(/^- /, "").trim())
-        .filter(Boolean);
-      return (
-        <ul key={index} className="list-disc pl-5 space-y-2 my-4 text-slate-300 text-sm md:text-base leading-relaxed">
-          {items.map((item, i) => (
-            <li key={i}>
-              {item.split(/(`[^`]+`)/g).map((part, pIdx) => {
-                if (part.startsWith("`") && part.endsWith("`")) {
-                  return (
-                    <code
-                      key={pIdx}
-                      className="rounded border border-white/10 bg-white/[0.04] px-1 py-0.5 font-mono text-[0.9em] text-accent-soft"
-                    >
-                      {part.slice(1, -1)}
-                    </code>
-                  );
-                }
-                return <span key={pIdx}>{part}</span>;
-              })}
-            </li>
-          ))}
-        </ul>
-      );
-    }
-
-    return (
-      <p
-        key={index}
-        className="mt-5 text-base leading-relaxed text-slate-300 first:mt-0"
-      >
-        {trimmed.split(/(`[^`]+`)/g).map((part, i) => {
-          if (part.startsWith("`") && part.endsWith("`")) {
-            return (
-              <code
-                key={i}
-                className="rounded-md border border-white/10 bg-white/[0.06] px-1.5 py-0.5 font-mono text-[0.85em] text-accent-soft"
-              >
-                {part.slice(1, -1)}
-              </code>
-            );
-          }
-          return <span key={i}>{part}</span>;
-        })}
-      </p>
-    );
-  });
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -136,11 +76,46 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const all = await getPublishedBlogs();
   const related = all.filter((p) => p.slug !== params.slug).slice(0, 2);
 
+  const jsonLd = post
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: post.title,
+        description: post.excerpt,
+        image: post.coverImage || "https://www.aiwithab.site/profile.jpg",
+        datePublished: post.date,
+        dateModified: post.updatedAt || post.date,
+        author: {
+          "@type": "Person",
+          name: "Abdul Nabi",
+          url: "https://www.aiwithab.site",
+        },
+        publisher: {
+          "@type": "Person",
+          name: "Abdul Nabi",
+          url: "https://www.aiwithab.site",
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `https://www.aiwithab.site/blog/${params.slug}`,
+        },
+        keywords: post.tags?.join(", "),
+      }
+    : null;
+
   return (
-    <BlogPostClient
-      initialPost={post ?? null}
-      slug={params.slug}
-      related={related}
-    />
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <BlogPostClient
+        initialPost={post ?? null}
+        slug={params.slug}
+        related={related}
+      />
+    </>
   );
 }

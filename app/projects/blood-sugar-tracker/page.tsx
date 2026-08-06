@@ -25,9 +25,20 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${project.title} — FYP Case Study | Abdul Nabi`,
     description: project.description,
+    keywords: [
+      "Blood Sugar Tracker FYP",
+      "Blood Sugar Tracker Abdul Nabi",
+      "Glucose Prediction ML",
+      "Python Flask Healthcare",
+      "ElasticNet Regression",
+      "Abdul Nabi",
+      "aiwithab.site",
+    ],
     openGraph: {
-      title: project.title,
+      title: `${project.title} — FYP Case Study | Abdul Nabi`,
       description: project.description,
+      url: "https://www.aiwithab.site/projects/blood-sugar-tracker",
+      images: [{ url: "/profile.jpg", alt: project.title }],
     },
   };
 }
