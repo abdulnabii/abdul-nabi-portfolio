@@ -2,12 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
-import { getAllProjects } from "@/lib/project-store";
+import { getPublishedProjects } from "@/lib/project-store";
 import { isPublicUrl } from "@/lib/links";
 import { ArrowLeft, ArrowUpRight, FolderGit2, Github, Heart, Star } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import seedProjects from "@/data/projects.json";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,17 @@ export const metadata: Metadata = {
 };
 
 export default async function AllProjectsPage() {
-  const projects = await getAllProjects();
+  let projects: any[] = [];
+  try {
+    projects = await getPublishedProjects();
+    if (!projects || projects.length === 0) {
+      projects = seedProjects as any[];
+    }
+  } catch (err) {
+    console.error("[AllProjectsPage] Error fetching projects:", err);
+    projects = seedProjects as any[];
+  }
+
   const featured = projects.filter((p) => p.featured);
   const others = projects.filter((p) => !p.featured);
 
@@ -97,6 +108,7 @@ export default async function AllProjectsPage() {
               {featured.map((project, index) => {
                 const live = isPublicUrl(project.liveUrl);
                 const code = isPublicUrl(project.githubUrl);
+                const tags: string[] = Array.isArray(project.tags) ? project.tags : [];
                 return (
                   <Reveal key={project.id} delay={index * 60}>
                     <GlassCard interactive tilt hover padding="none" className="group overflow-hidden">
@@ -119,8 +131,8 @@ export default async function AllProjectsPage() {
                           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e] via-[#0a0f1e]/40 to-transparent pointer-events-none" />
                           <div className="absolute inset-x-0 bottom-0 p-5">
                             <div className="mb-2 flex flex-wrap items-center gap-2">
-                              <Badge variant="accent">{project.year}</Badge>
-                              <Badge variant="muted">{project.statusLabel}</Badge>
+                              <Badge variant="accent">{project.year || "2024"}</Badge>
+                              <Badge variant="muted">{project.statusLabel || "Completed"}</Badge>
                               {(project.appreciations ?? 0) > 0 && (
                                 <Badge variant="muted" className="gap-1 text-indigo-300">
                                   <Heart className="h-3 w-3 fill-indigo-400/40" />
@@ -150,11 +162,13 @@ export default async function AllProjectsPage() {
                               </div>
                             )}
                           </dl>
-                          <div className="flex flex-wrap gap-2 pt-1">
-                            {project.tags.slice(0, 5).map((tag) => (
-                              <Badge key={tag}>{tag}</Badge>
-                            ))}
-                          </div>
+                          {tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-1">
+                              {tags.slice(0, 5).map((tag) => (
+                                <Badge key={tag}>{tag}</Badge>
+                              ))}
+                            </div>
+                          )}
                           <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-white/5">
                             {live && project.liveUrl && (
                               <LinkButton href={project.liveUrl} variant="primary" size="sm" external className="cursor-grow">
@@ -199,6 +213,7 @@ export default async function AllProjectsPage() {
               {others.map((project, index) => {
                 const live = isPublicUrl(project.liveUrl);
                 const code = isPublicUrl(project.githubUrl);
+                const tags: string[] = Array.isArray(project.tags) ? project.tags : [];
                 return (
                   <Reveal key={project.id} delay={index * 50}>
                     <GlassCard interactive hover padding="none" className="group flex flex-col overflow-hidden h-full">
@@ -221,8 +236,8 @@ export default async function AllProjectsPage() {
                       {/* Content */}
                       <div className="flex flex-1 flex-col gap-3 p-5">
                         <div className="flex flex-wrap items-center gap-2">
-                          <Badge variant="accent">{project.year}</Badge>
-                          <Badge variant="muted">{project.statusLabel}</Badge>
+                          <Badge variant="accent">{project.year || "2024"}</Badge>
+                          <Badge variant="muted">{project.statusLabel || "Completed"}</Badge>
                         </div>
                         <h3 className="text-base font-semibold text-white group-hover:text-indigo-300 transition-colors">
                           {project.title}
@@ -230,14 +245,16 @@ export default async function AllProjectsPage() {
                         <p className="text-xs leading-relaxed text-slate-400 line-clamp-3">
                           {project.description}
                         </p>
-                        <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-white/5">
-                          {project.tags.slice(0, 3).map((tag) => (
-                            <Badge key={tag} className="text-[10px]">{tag}</Badge>
-                          ))}
-                          {project.tags.length > 3 && (
-                            <span className="text-[10px] text-slate-500 self-center">+{project.tags.length - 3}</span>
-                          )}
-                        </div>
+                        {tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-white/5">
+                            {tags.slice(0, 3).map((tag) => (
+                              <Badge key={tag} className="text-[10px]">{tag}</Badge>
+                            ))}
+                            {tags.length > 3 && (
+                              <span className="text-[10px] text-slate-500 self-center">+{tags.length - 3}</span>
+                            )}
+                          </div>
+                        )}
                         <div className="flex items-center gap-2 pt-1">
                           {live && project.liveUrl && (
                             <LinkButton href={project.liveUrl} variant="primary" size="sm" external className="flex-1 justify-center text-xs">
