@@ -188,6 +188,28 @@ export async function fetchTrendingAiNews(): Promise<NewsItem[]> {
   return deduped.slice(0, 6);
 }
 
+export function selectTopicCoverImage(title: string, tags: string[] = []): string {
+  const text = `${title} ${tags.join(" ")}`.toLowerCase();
+
+  if (text.includes("health") || text.includes("medical") || text.includes("patient") || text.includes("diabetes") || text.includes("clinical")) {
+    return "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200&auto=format&fit=crop";
+  }
+  if (text.includes("security") || text.includes("appsec") || text.includes("threat") || text.includes("injection") || text.includes("hack")) {
+    return "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1200&auto=format&fit=crop";
+  }
+  if (text.includes("python") || text.includes("code") || text.includes("pipeline") || text.includes("polars") || text.includes("pytorch")) {
+    return "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop";
+  }
+  if (text.includes("agent") || text.includes("llm") || text.includes("transformer") || text.includes("gpt") || text.includes("claude") || text.includes("gemini")) {
+    return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop";
+  }
+  if (text.includes("neural") || text.includes("deep learning") || text.includes("model")) {
+    return "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=1200&auto=format&fit=crop";
+  }
+
+  return "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop";
+}
+
 /**
  * Fallback generator when OpenAI API key is not configured or rate limited.
  * Generates structured, high-quality technical articles written in Abdul Nabi's voice.
@@ -264,12 +286,15 @@ Combining predictive modeling with modern Web APIs allows developers to deliver 
 *Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*
 `.trim();
 
+  const tags = ["Artificial Intelligence", "Machine Learning", "Python", "AppSec", "Tech Trends"];
+
   return {
     title: `${cleanTitle} (${year} Guide)`,
     slug: slug.slice(0, 60),
     excerpt: `An in-depth technical analysis of ${cleanTitle}, covering implementation workflows, architecture patterns, and real-world deployment strategies.`,
     content,
-    tags: ["Artificial Intelligence", "Machine Learning", "Python", "AppSec", "Tech Trends"],
+    tags,
+    coverImage: selectTopicCoverImage(cleanTitle, tags),
   };
 }
 
@@ -351,12 +376,15 @@ Return a JSON object with this exact structure (no markdown wrapper, pure JSON):
     const parsed = JSON.parse(raw) as GeneratedBlogPost;
     if (!parsed.title || !parsed.content || !parsed.excerpt) return generateTechnicalFallbackPost(topic);
 
+    const tags = Array.isArray(parsed.tags) ? parsed.tags.slice(0, 6) : ["AI", "Machine Learning"];
+
     return {
       title: parsed.title,
       slug: slugify(parsed.slug || parsed.title),
       excerpt: parsed.excerpt,
       content: parsed.content,
-      tags: Array.isArray(parsed.tags) ? parsed.tags.slice(0, 6) : ["AI", "Machine Learning"],
+      tags,
+      coverImage: selectTopicCoverImage(parsed.title, tags),
     };
   } catch (err) {
     console.warn("[ai-blog-generator] OpenAI call exception, using fallback generator:", err);
@@ -458,6 +486,7 @@ export async function runAutoBlog(maxPosts = 3): Promise<{ created: string[]; sk
         excerpt: post.excerpt,
         content: post.content,
         tags: post.tags,
+        coverImage: post.coverImage,
         published: true, // Auto-publish mode
         date: new Date().toISOString().split("T")[0],
       });

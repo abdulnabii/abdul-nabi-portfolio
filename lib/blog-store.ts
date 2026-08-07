@@ -215,6 +215,8 @@ export async function createBlog(input: BlogInput): Promise<BlogPost> {
     slug = `${slug}-${i}`;
   }
 
+  const tags = (input.tags ?? []).map((t) => t.trim()).filter(Boolean);
+
   const post: BlogPost = {
     slug,
     title: input.title.trim(),
@@ -222,8 +224,10 @@ export async function createBlog(input: BlogInput): Promise<BlogPost> {
     content: input.content.trim(),
     date: input.date || new Date().toISOString().slice(0, 10),
     readTime: estimateReadTime(input.content),
-    tags: (input.tags ?? []).map((t) => t.trim()).filter(Boolean),
-    coverImage: input.coverImage?.trim() || undefined,
+    tags,
+    coverImage:
+      input.coverImage?.trim() ||
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop",
     published: input.published ?? true,
     updatedAt: new Date().toISOString(),
     helpfulCount: input.helpfulCount ?? 0,
