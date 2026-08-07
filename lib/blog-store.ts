@@ -139,14 +139,9 @@ export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
     memoryBlogs.length = 0;
     memoryBlogs.push(...posts);
 
-    // 2. Upsert to Supabase DB blogs table if available
+    // 2. Dual-write to durable site_settings table (guaranteed table in Supabase)
     try {
-      await supabaseDbUpsert("blogs", posts, "slug");
-    } catch {}
-
-    // 3. Dual-write to durable site_settings table (guaranteed table in Supabase)
-    try {
-      await supabaseDbUpsert(
+      const res = await supabaseDbUpsert(
         "site_settings",
         [
           {
@@ -157,14 +152,36 @@ export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
         ],
         "key"
       );
+      if (res) {
+        console.log(`[blog-store] Successfully persisted ${posts.length} blogs to Supabase site_settings.`);
+      }
+    } catch (err) {
+      console.error("[blog-store] Failed to persist to site_settings:", err);
+    }
+
+    // 3. Upsert to Supabase DB blogs table if available (sanitized columns)
+    try {
+      const dbPayload = posts.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt,
+        content: p.content,
+        date: p.date,
+        readTime: p.readTime,
+        tags: p.tags,
+        coverImage: p.coverImage,
+        published: p.published,
+        updatedAt: p.updatedAt,
+      }));
+      await supabaseDbUpsert("blogs", dbPayload, "slug");
     } catch {}
 
     // 4. Write to local disk if filesystem is writeable
     try {
       await ensureBlogsFile();
       await fs.writeFile(BLOGS_FILE, JSON.stringify(posts, null, 2), "utf8");
-    } catch (err) {
-      console.warn("[blog-store] Read-only filesystem detected, saved to memory & Supabase fallback.");
+    } catch {
+      // Read-only filesystem fallback
     }
   } catch (err) {
     console.error("[saveAllBlogs] Exception:", err);

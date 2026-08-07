@@ -379,10 +379,60 @@ export async function runAutoBlog(maxPosts = 3): Promise<{ created: string[]; sk
   }
 
   // Shuffle and pick unique topics not already posted about
-  const candidates = newsItems.filter((item) => {
+  let candidates = newsItems.filter((item) => {
     const potentialSlug = slugify(item.title);
     return !existingSlugs.has(potentialSlug);
   });
+
+  // If top RSS items were already published in previous runs, add fresh unique AI topics
+  if (candidates.length < maxPosts) {
+    console.log("[ai-blog-generator] Top RSS items already published. Generating fresh unique AI topics...");
+    const extraTopics: NewsItem[] = [
+      {
+        title: "Building Agentic AI Workflows with Next.js 14, Python and LangChain",
+        summary: "An practical guide to architecting autonomous agent pipelines, tool-calling loops, and resilient state handling.",
+        source: "AI Engineering Digest",
+        url: "",
+        publishedAt: new Date().toISOString(),
+      },
+      {
+        title: "Optimizing LLM Inference Latency: Speculative Decoding and Continuous Batching",
+        summary: "How modern inference engines achieve sub-20ms token latency through speculative sampling and dynamic memory allocation.",
+        source: "ML Systems Review",
+        url: "",
+        publishedAt: new Date().toISOString(),
+      },
+      {
+        title: "Securing AI Endpoints: Threat Modeling Prompt Injection & Weight Leakage",
+        summary: "AppSec strategies for auditing LLM integration endpoints, sanitizing untrusted inputs, and isolating tool permissions.",
+        source: "AppSec Journal",
+        url: "",
+        publishedAt: new Date().toISOString(),
+      },
+      {
+        title: "Real-Time Predictive Modeling in Healthcare: Lessons from Diabetes Analytics",
+        summary: "Architecting HIPAA-inspired patient prediction systems with scikit-learn, Supabase RLS, and reactive dashboards.",
+        source: "Healthcare AI Insights",
+        url: "",
+        publishedAt: new Date().toISOString(),
+      },
+      {
+        title: "Comparing PyTorch 2.5 vs JAX vs Polars for High-Throughput Feature Pipelines",
+        summary: "A practical benchmarking guide comparing execution speed, GPU memory utilization, and developer ergonomics.",
+        source: "ML Mastery",
+        url: "",
+        publishedAt: new Date().toISOString(),
+      },
+    ];
+
+    for (const item of extraTopics) {
+      if (candidates.length >= maxPosts * 2) break;
+      const potentialSlug = slugify(item.title);
+      if (!existingSlugs.has(potentialSlug)) {
+        candidates.push(item);
+      }
+    }
+  }
 
   let generated = 0;
   for (const topic of candidates) {
