@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { FileText, LayoutDashboard, LogOut, FolderGit2, Inbox, Settings, User, Layers, Briefcase, LayoutTemplate, Trophy, Monitor } from "lucide-react";
+import { FileText, LayoutDashboard, LogOut, FolderGit2, Inbox, Settings, User, Layers, Briefcase, LayoutTemplate, Trophy, Monitor, Bot } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,6 +22,7 @@ const nav = [
   { href: "/admin/achievements", label: "Achievements", icon: Trophy },
   { href: "/admin/sections", label: "Sections", icon: LayoutTemplate },
   { href: "/admin/background-theme", label: "Background", icon: Monitor },
+  { href: "/admin/auto-blog", label: "Auto Blog", icon: Bot },
   { href: "/admin/inbox", label: "Inbox", icon: Inbox },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
