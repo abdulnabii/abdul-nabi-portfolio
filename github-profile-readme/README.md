@@ -6,7 +6,7 @@
 <br/>
 
 <!-- DYNAMIC TYPING TITLE -->
-<a href="https://abdulnabi.vercel.app">
+<a href="https://aiwithab.site">
   <img src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=22&duration=3000&pause=1000&color=818CF8&center=true&vCenter=true&width=600&lines=Full-Stack%20Developer%20(Next.js%20%2B%20TypeScript);Data%20%26%20ML%20Engineer%20(Python%20%2B%20scikit-learn);AppSec%20Practitioner%20%26%20Security%20Learner;Building%20High-Performance%20Web%20Apps" alt="Typing SVG" />
 </a>
 
@@ -80,7 +80,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       <p><b>Final Year Project</b> — Full-stack clinical web app predicting patient glucose levels using a trained ElasticNet ML model. Includes patient dashboard, daily logs, automated risk flags, and PDF/CSV report exports.</p>
       <p align="center">
         <a href="https://github.com/abdulnabii/blood-sugar-tracker-fyp"><b>📂 GitHub Repo</b></a> · 
-        <a href="https://abdulnabi.vercel.app/projects/blood-sugar-tracker"><b>🌐 Portfolio Detail</b></a>
+        <a href="https://aiwithab.site/projects/blood-sugar-tracker"><b>🌐 Portfolio Detail</b></a>
       </p>
     </td>
     <td width="50%" valign="top">
@@ -92,7 +92,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       </p>
       <p>Multi-tenant analytics workspace featuring strict <b>Row-Level Security (RLS)</b> policies, customizable chart widgets, sub-400ms server renders, and dynamic data filtering.</p>
       <p align="center">
-        <a href="https://abdulnabi.vercel.app/projects/aurora-dashboard"><b>🌐 Live Demo</b></a>
+        <a href="https://aiwithab.site/projects/aurora-dashboard"><b>🌐 Live Demo</b></a>
       </p>
     </td>
   </tr>
@@ -106,7 +106,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       </p>
       <p>Headless e-commerce storefront with ISR, Stripe payment processing, instant cart state, 98 Lighthouse performance score, and 0.8s FCP on 4G connections.</p>
       <p align="center">
-        <a href="https://abdulnabi.vercel.app/projects/nova-commerce"><b>🌐 Live Storefront</b></a>
+        <a href="https://aiwithab.site/projects/nova-commerce"><b>🌐 Live Storefront</b></a>
       </p>
     </td>
     <td width="50%" valign="top">
@@ -118,7 +118,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       </p>
       <p>Embeddable real-time customer support chat widget powered by Server-Sent Events (SSE) token streaming, &lt;150ms TTFT, and a lightweight &lt;12KB bundle size.</p>
       <p align="center">
-        <a href="https://abdulnabi.vercel.app/projects/pulse-chat"><b>🌐 Live Chat Demo</b></a>
+        <a href="https://aiwithab.site/projects/pulse-chat"><b>🌐 Live Chat Demo</b></a>
       </p>
     </td>
   </tr>
@@ -156,7 +156,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
 
 | Channel | Link / Handle |
 | :--- | :--- |
-| 🌐 **Live Portfolio** | [abdulnabi.vercel.app](https://abdulnabi.vercel.app) |
+| 🌐 **Live Portfolio** | [aiwithab.site](https://aiwithab.site) |
 | 💼 **LinkedIn** | [linkedin.com/in/abdul-nabi-95391a3b0](https://linkedin.com/in/abdul-nabi-95391a3b0) |
 | 📧 **Email** | [abdulnabi.khaskhely@gmail.com](mailto:abdulnabi.khaskhely@gmail.com) |
 | 💬 **WhatsApp** | [+92 309 3751434](https://wa.me/923093751434) |
