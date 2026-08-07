@@ -3,7 +3,7 @@
 import { GlassCard } from "@/components/ui/glass-card";
 import type { AnalyticsSummary } from "@/lib/analytics-store";
 import { BarChart3, Download, Eye, MousePointerClick, RefreshCw, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface AnalyticsDashboardOverviewProps {
   initialSummary: AnalyticsSummary;
@@ -24,20 +24,28 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
   const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [loading, setLoading] = useState(false);
 
-  async function handleRefresh() {
-    setLoading(true);
+  async function handleRefresh(showSpinner = true) {
+    if (showSpinner) setLoading(true);
     try {
-      const res = await fetch(`/api/analytics/summary?range=${dateRange}`);
+      const res = await fetch(`/api/analytics/summary?range=${dateRange}&t=${Date.now()}`, {
+        cache: "no-store",
+      });
       if (res.ok) {
         const data = await res.json();
-        if (data) setSummary(data);
+        if (data && typeof data.totalViews === "number") setSummary(data);
       }
     } catch (err) {
       console.error("Failed to refresh analytics:", err);
     } finally {
-      setLoading(false);
+      if (showSpinner) setLoading(false);
     }
   }
+
+  useEffect(() => {
+    handleRefresh(true);
+    const timer = setInterval(() => handleRefresh(false), 10000);
+    return () => clearInterval(timer);
+  }, [dateRange]);
 
   function exportCSV() {
     const topBlogs = summary.topBlogs || [];
@@ -109,7 +117,7 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
 
           {/* Refresh button */}
           <button
-            onClick={handleRefresh}
+            onClick={() => handleRefresh(true)}
             disabled={loading}
             className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-white/10 hover:text-white"
           >

@@ -1,10 +1,20 @@
 import { getAnalyticsSummary } from "@/lib/analytics-store";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest) {
   try {
-    const summary = await getAnalyticsSummary();
-    return NextResponse.json(summary);
+    const { searchParams } = new URL(req.url);
+    const range = searchParams.get("range") || "30d";
+
+    const summary = await getAnalyticsSummary(range);
+
+    return NextResponse.json(summary, {
+      headers: {
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+      },
+    });
   } catch (err) {
     console.error("Analytics summary error:", err);
     return NextResponse.json({ error: "Failed to fetch summary" }, { status: 500 });
