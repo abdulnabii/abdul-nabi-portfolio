@@ -17,10 +17,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import seedProjects from "@/data/projects.json";
+
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const project = await getProjectById("blood-sugar-tracker");
+  let project = await getProjectById("blood-sugar-tracker");
+  if (!project) {
+    project = (seedProjects as any[]).find((p) => p.id === "blood-sugar-tracker");
+  }
   if (!project) return { title: "Project not found" };
   return {
     title: `${project.title} — FYP Case Study | Abdul Nabi`,
@@ -101,14 +106,18 @@ function RenderMarkdown({ text }: { text?: string }) {
 }
 
 export default async function BloodSugarTrackerPage() {
-  const project = await getProjectById("blood-sugar-tracker");
+  let project = await getProjectById("blood-sugar-tracker");
+  if (!project) {
+    project = (seedProjects as any[]).find((p) => p.id === "blood-sugar-tracker");
+  }
 
-  if (!project || project.published === false) {
+  if (!project) {
     notFound();
   }
 
   const all = await getPublishedProjects();
-  const related = all.filter((p) => p.id !== project.id).slice(0, 2);
+  const related = all.filter((p) => p.id !== project!.id).slice(0, 2);
+  const tags: string[] = Array.isArray(project.tags) ? project.tags : [];
 
   return (
     <article className="section-padding pt-32 md:pt-36 bg-gradient-to-b from-[#0a0f1e] via-[#050814] to-[#0a0f1e]">
@@ -169,7 +178,7 @@ export default async function BloodSugarTrackerPage() {
                 <div className="col-span-2">
                   <dt className="text-slate-500 font-medium">Tech Stack</dt>
                   <dd className="mt-1.5 flex flex-wrap gap-1.5">
-                    {project.tags.map((tag) => (
+                    {tags.map((tag) => (
                       <Badge key={tag}>{tag}</Badge>
                     ))}
                   </dd>

@@ -10,6 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import seedProjects from "@/data/projects.json";
+
 export const dynamic = "force-dynamic";
 
 interface Props {
@@ -17,7 +19,10 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const project = await getProjectById(params.id);
+  let project = await getProjectById(params.id);
+  if (!project) {
+    project = (seedProjects as any[]).find((p) => p.id === params.id || p.id === decodeURIComponent(params.id));
+  }
   if (!project) return { title: "Project Not Found" };
   return {
     title: `${project.title} | Case Study — Abdul Nabi`,
@@ -31,7 +36,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function DynamicProjectPage({ params }: Props) {
-  const project = await getProjectById(params.id);
+  let project = await getProjectById(params.id);
+  if (!project) {
+    project = (seedProjects as any[]).find((p) => p.id === params.id || p.id === decodeURIComponent(params.id));
+  }
   if (!project) notFound();
 
   const live = isPublicUrl(project.liveUrl);

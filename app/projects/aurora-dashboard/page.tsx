@@ -9,10 +9,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+import seedProjects from "@/data/projects.json";
+
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const project = await getProjectById("aurora-dashboard");
+  let project = await getProjectById("aurora-dashboard");
+  if (!project) {
+    project = (seedProjects as any[]).find((p) => p.id === "aurora-dashboard");
+  }
   if (!project) {
     return { title: "Project not found" };
   }
@@ -86,14 +91,18 @@ function RenderMarkdown({ text }: { text?: string }) {
 }
 
 export default async function AuroraDashboardPage() {
-  const project = await getProjectById("aurora-dashboard");
+  let project = await getProjectById("aurora-dashboard");
+  if (!project) {
+    project = (seedProjects as any[]).find((p) => p.id === "aurora-dashboard");
+  }
 
-  if (!project || project.published === false) {
+  if (!project) {
     notFound();
   }
 
   const all = await getPublishedProjects();
-  const related = all.filter((p) => p.id !== project.id).slice(0, 2);
+  const related = all.filter((p) => p.id !== project!.id).slice(0, 2);
+  const tags: string[] = Array.isArray(project.tags) ? project.tags : [];
 
   const isPrivate = project.status === "in-progress" || !project.liveUrl;
 
@@ -143,12 +152,12 @@ export default async function AuroraDashboardPage() {
                 </div>
                 <div>
                   <dt className="text-slate-500 font-medium">Platform</dt>
-                  <dd className="text-slate-300 mt-0.5">{project.tags[0]}</dd>
+                  <dd className="text-slate-300 mt-0.5">{tags[0] || "Web Application"}</dd>
                 </div>
                 <div className="col-span-2">
                   <dt className="text-slate-500 font-medium">Primary Technologies</dt>
                   <dd className="mt-1.5 flex flex-wrap gap-1.5">
-                    {project.tags.map((tag) => (
+                    {tags.map((tag) => (
                       <Badge key={tag} variant="accent" className="!px-2 !py-0.5 text-[10px]">
                         {tag}
                       </Badge>
