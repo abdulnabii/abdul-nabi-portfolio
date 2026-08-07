@@ -141,18 +141,22 @@ export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
 
     // 2. Upsert to Supabase DB blogs table if available
     try {
-      await supabaseDbUpsert("blogs", posts);
+      await supabaseDbUpsert("blogs", posts, "slug");
     } catch {}
 
     // 3. Dual-write to durable site_settings table (guaranteed table in Supabase)
     try {
-      await supabaseDbUpsert("site_settings", [
-        {
-          key: "blogs_store_json",
-          value: JSON.stringify(posts),
-          updated_at: new Date().toISOString(),
-        },
-      ]);
+      await supabaseDbUpsert(
+        "site_settings",
+        [
+          {
+            key: "blogs_store_json",
+            value: JSON.stringify(posts),
+            updated_at: new Date().toISOString(),
+          },
+        ],
+        "key"
+      );
     } catch {}
 
     // 4. Write to local disk if filesystem is writeable

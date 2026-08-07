@@ -74,13 +74,16 @@ export async function supabaseDbInsert<T = any>(
 
 export async function supabaseDbUpsert<T = any>(
   table: string,
-  payload: Record<string, any> | Record<string, any>[]
+  payload: Record<string, any> | Record<string, any>[],
+  onConflict?: string
 ): Promise<T | null> {
   const { url, key } = getSupabaseConfig();
   if (!url || !key) return null;
 
+  const conflictCol = onConflict || (table === "blogs" ? "slug" : table === "projects" ? "id" : "key");
+
   try {
-    const res = await fetch(`${url}/rest/v1/${table}`, {
+    const res = await fetch(`${url}/rest/v1/${table}?on_conflict=${conflictCol}`, {
       method: "POST",
       headers: {
         apikey: key,
@@ -91,10 +94,15 @@ export async function supabaseDbUpsert<T = any>(
       body: JSON.stringify(payload),
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error(`[supabase] DB upsert failed on ${table} (${res.status}): ${errText}`);
+      return null;
+    }
     const data = await res.json();
     return (Array.isArray(data) ? data[0] : data) as T;
   } catch (err) {
+    console.error(`[supabase] DB upsert exception on ${table}:`, err);
     return null;
   }
 }
