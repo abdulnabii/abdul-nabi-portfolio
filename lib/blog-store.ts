@@ -69,11 +69,23 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
       // Read-only filesystem fallback
     }
 
-    // 3. Overlay Supabase DB if connected
+    // 3a. Overlay Supabase blogs table if connected
     try {
       const dbPosts = await supabaseDbQuery<BlogPost>("blogs", "select=*&order=date.desc");
       if (dbPosts && dbPosts.length > 0) {
         dbPosts.forEach((p) => map.set(p.slug, p));
+      }
+    } catch {}
+
+    // 3b. Overlay site_settings blogs backup table
+    try {
+      const rows = await supabaseDbQuery<{ key: string; value: string }>(
+        "site_settings",
+        "select=*&key=eq.blogs_store_json"
+      );
+      if (rows && rows.length > 0 && rows[0].value) {
+        const backupPosts = JSON.parse(rows[0].value) as BlogPost[];
+        backupPosts.forEach((p) => map.set(p.slug, p));
       }
     } catch {}
 
@@ -127,12 +139,23 @@ export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
     memoryBlogs.length = 0;
     memoryBlogs.push(...posts);
 
-    // 2. Upsert to Supabase DB if available
+    // 2. Upsert to Supabase DB blogs table if available
     try {
       await supabaseDbUpsert("blogs", posts);
     } catch {}
 
-    // 3. Write to local disk if filesystem is writeable
+    // 3. Dual-write to durable site_settings table (guaranteed table in Supabase)
+    try {
+      await supabaseDbUpsert("site_settings", [
+        {
+          key: "blogs_store_json",
+          value: JSON.stringify(posts),
+          updated_at: new Date().toISOString(),
+        },
+      ]);
+    } catch {}
+
+    // 4. Write to local disk if filesystem is writeable
     try {
       await ensureBlogsFile();
       await fs.writeFile(BLOGS_FILE, JSON.stringify(posts, null, 2), "utf8");

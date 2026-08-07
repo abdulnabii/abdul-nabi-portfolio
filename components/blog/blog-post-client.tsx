@@ -100,7 +100,10 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
   const [loading, setLoading] = useState(!initialPost);
 
   useEffect(() => {
-    if (!post && typeof window !== "undefined") {
+    async function loadPost() {
+      if (post) return;
+
+      // 1. Try local storage
       try {
         const raw = localStorage.getItem("an_local_blogs");
         if (raw) {
@@ -108,13 +111,29 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
           const match = localBlogs.find((p) => p.slug === slug);
           if (match) {
             setPost(match);
+            setLoading(false);
+            return;
+          }
+        }
+      } catch {}
+
+      // 2. Fetch from live API backend endpoint
+      try {
+        const res = await fetch(`/api/blogs/${encodeURIComponent(slug)}`);
+        if (res.ok) {
+          const data = (await res.json()) as { post?: BlogPost };
+          if (data.post) {
+            setPost(data.post);
           }
         }
       } catch {
         // Fallback
+      } finally {
+        setLoading(false);
       }
     }
-    setLoading(false);
+
+    loadPost();
   }, [post, slug]);
 
   useEffect(() => {
