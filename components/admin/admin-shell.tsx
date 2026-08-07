@@ -22,7 +22,6 @@ const nav = [
   { href: "/admin/achievements", label: "Achievements", icon: Trophy },
   { href: "/admin/sections", label: "Sections", icon: LayoutTemplate },
   { href: "/admin/background-theme", label: "Background", icon: Monitor },
-  { href: "/admin/auto-blog", label: "Auto Blog", icon: Bot },
   { href: "/admin/inbox", label: "Inbox", icon: Inbox },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];

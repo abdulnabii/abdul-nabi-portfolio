@@ -1,6 +1,5 @@
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AnalyticsDashboardOverview } from "@/components/admin/analytics-dashboard-overview";
-import { AutoBlogPanel } from "@/components/admin/auto-blog-panel";
 import { GlassCard } from "@/components/ui/glass-card";
 import { AnalyticsSummary, getAnalyticsSummary } from "@/lib/analytics-store";
 import { getAdminSession } from "@/lib/auth";
@@ -135,13 +134,6 @@ export default async function AdminDashboardPage() {
         {/* Action Shortcuts */}
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <Link
-            href="/admin/auto-blog"
-            className="inline-flex items-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600/30 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-600/50 hover:shadow-glow-sm"
-          >
-            <Bot className="h-4 w-4 text-indigo-400" />
-            Auto Blog AI
-          </Link>
-          <Link
             href="/admin/blogs/new"
             className="inline-flex items-center gap-2 rounded-xl border border-accent/40 bg-accent/90 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-accent hover:shadow-glow-sm"
           >
@@ -157,10 +149,10 @@ export default async function AdminDashboardPage() {
           </Link>
           <Link
             href="/admin/blogs"
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600/30 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-600/50 hover:shadow-glow-sm"
           >
-            <FileText className="h-4 w-4" />
-            Manage blogs
+            <Bot className="h-4 w-4 text-indigo-400" />
+            Blogs & AI Automation
           </Link>
           <Link
             href="/admin/projects"
@@ -169,11 +161,6 @@ export default async function AdminDashboardPage() {
             <FolderGit2 className="h-4 w-4" />
             Manage projects
           </Link>
-        </div>
-
-        {/* Auto-Blog Quick Panel */}
-        <div className="pt-4 border-t border-white/10">
-          <AutoBlogPanel />
         </div>
       </div>
     </AdminShell>
