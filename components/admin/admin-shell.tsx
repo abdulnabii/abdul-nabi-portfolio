@@ -64,6 +64,24 @@ export function AdminShell({ email, children }: AdminShellProps) {
     };
   }, [pathname]); // Refresh when navigating
 
+  useEffect(() => {
+    // Ensure admin panel remains strictly in dark mode independent of public theme toggle
+    const root = document.documentElement;
+    root.classList.add("dark");
+    root.classList.remove("light");
+
+    return () => {
+      // Restore public theme mode when leaving admin
+      try {
+        const savedTheme = localStorage.getItem("app_theme");
+        if (savedTheme === "light") {
+          root.classList.add("light");
+          root.classList.remove("dark");
+        }
+      } catch {}
+    };
+  }, []);
+
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/admin/login");
