@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { usePathname } from "next/navigation";
 
 import { useSiteSettings } from "@/components/settings-provider";
@@ -202,38 +203,43 @@ export function Navbar() {
             </div>
           )}
 
-          {sectionVisibility?.contact !== false && (
-            <div className="hidden items-center gap-3 md:flex">
-              <LinkButton
-                href="/#contact"
-                variant="primary"
-                size="sm"
-                className="hover:scale-105 transition-transform duration-200"
-                onClick={() => {
-                  setOpen(false);
-                  if (pathname === "/") {
-                    const el = document.getElementById("contact");
-                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                    setActiveSection("contact");
-                  }
-                }}
-              >
-                Hire / Contact
-              </LinkButton>
-            </div>
-          )}
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Desktop & Mobile Theme Toggle */}
+            <ThemeToggle />
 
-          {/* Mobile Hamburger */}
-          <Button
-            variant="icon"
-            size="sm"
-            className="md:hidden !h-9 !w-9 !rounded-full"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </Button>
+            {sectionVisibility?.contact !== false && (
+              <div className="hidden items-center gap-3 md:flex">
+                <LinkButton
+                  href="/#contact"
+                  variant="primary"
+                  size="sm"
+                  className="hover:scale-105 transition-transform duration-200"
+                  onClick={() => {
+                    setOpen(false);
+                    if (pathname === "/") {
+                      const el = document.getElementById("contact");
+                      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                      setActiveSection("contact");
+                    }
+                  }}
+                >
+                  Hire / Contact
+                </LinkButton>
+              </div>
+            )}
+
+            {/* Mobile Hamburger */}
+            <Button
+              variant="icon"
+              size="sm"
+              className="md:hidden !h-9 !w-9 !rounded-full"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </Button>
+          </div>
         </nav>
 
         {/* Mobile Drawer */}
