@@ -8,12 +8,17 @@ import {
   DayThemeId,
   BackgroundThemeDef,
 } from "@/components/effects/background-theme-provider";
-import { ArrowLeft, Check, Loader2, Monitor, Moon, Sun } from "lucide-react";
+import {
+  CURSOR_STYLES,
+  CursorStyleId,
+} from "@/components/effects/custom-cursor";
+import { ArrowLeft, Check, Loader2, Monitor, Moon, MousePointer, Sun } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminBackgroundThemePage() {
   const [activeNight, setActiveNight] = useState<NightThemeId>("quantum-plasma");
   const [activeDay, setActiveDay] = useState<DayThemeId>("day-sunrise-dawn");
+  const [activeCursor, setActiveCursor] = useState<CursorStyleId>("halo-ring");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -25,6 +30,7 @@ export default function AdminBackgroundThemePage() {
         if (d.nightTheme) setActiveNight(d.nightTheme);
         else if (d.theme) setActiveNight(d.theme);
         if (d.dayTheme) setActiveDay(d.dayTheme);
+        if (d.cursorStyle) setActiveCursor(d.cursorStyle);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -37,7 +43,7 @@ export default function AdminBackgroundThemePage() {
       await fetch("/api/admin/background-theme", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nightTheme: id, dayTheme: activeDay }),
+        body: JSON.stringify({ nightTheme: id, dayTheme: activeDay, cursorStyle: activeCursor }),
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -54,7 +60,27 @@ export default function AdminBackgroundThemePage() {
       await fetch("/api/admin/background-theme", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nightTheme: activeNight, dayTheme: id }),
+        body: JSON.stringify({ nightTheme: activeNight, dayTheme: id, cursorStyle: activeCursor }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSelectCursor = async (id: CursorStyleId) => {
+    setActiveCursor(id);
+    setSaving(true);
+    setSaved(false);
+    window.dispatchEvent(
+      new CustomEvent("cursor-style-changed", { detail: { style: id } })
+    );
+    try {
+      await fetch("/api/admin/background-theme", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nightTheme: activeNight, dayTheme: activeDay, cursorStyle: id }),
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -91,8 +117,8 @@ export default function AdminBackgroundThemePage() {
               <Monitor className="h-5 w-5 text-indigo-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Background Themes (Night & Day Mode)</h1>
-              <p className="text-sm text-slate-400">Configure visual themes for both Night (Dark) and Day (Light) modes on the public site</p>
+              <h1 className="text-2xl font-bold text-white">Background & Cursor Customization</h1>
+              <p className="text-sm text-slate-400">Configure visual background themes and interactive cursor styles for the public site</p>
             </div>
           </div>
 
@@ -101,13 +127,13 @@ export default function AdminBackgroundThemePage() {
             {saving && (
               <div className="flex items-center gap-2 text-sm text-amber-400">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Saving theme choices…
+                Saving customization choices…
               </div>
             )}
             {saved && !saving && (
               <div className="flex items-center gap-2 text-sm text-emerald-400">
                 <Check className="h-4 w-4" />
-                Themes saved & live on site!
+                Settings saved & live on site!
               </div>
             )}
           </div>
@@ -119,6 +145,58 @@ export default function AdminBackgroundThemePage() {
           </div>
         ) : (
           <div className="space-y-12">
+            {/* 🖱️ Cursor Styles & Effects */}
+            <div className="rounded-3xl border border-indigo-500/20 bg-indigo-950/10 p-6 backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-indigo-500/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-300">
+                    <MousePointer className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-white">🖱️ Custom Cursor Styles & Interactive Effects</h2>
+                    <p className="text-xs text-slate-400">Choose the mouse pointer animation effect for site visitors</p>
+                  </div>
+                </div>
+                <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-300 border border-indigo-500/30">
+                  5 Styles Available
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {CURSOR_STYLES.map((style) => {
+                  const isActive = activeCursor === style.id;
+                  return (
+                    <button
+                      key={style.id}
+                      onClick={() => handleSelectCursor(style.id)}
+                      disabled={saving}
+                      className={`group relative flex flex-col overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300 focus:outline-none ${
+                        isActive
+                          ? "border-indigo-400/80 shadow-[0_0_20px_rgba(99,102,241,0.3)] bg-indigo-950/30"
+                          : "border-white/10 hover:border-white/25 hover:shadow-lg bg-white/[0.02]"
+                      } ${saving ? "cursor-wait opacity-60" : "cursor-pointer"}`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{style.icon}</span>
+                          <span className="text-sm font-semibold text-white">{style.label}</span>
+                        </div>
+                        {isActive && (
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500 text-white shadow-md">
+                            <Check className="h-3.5 w-3.5 stroke-[3]" />
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs leading-relaxed text-slate-400 mb-4">{style.description}</p>
+                      <div className="mt-auto flex items-center justify-center h-12 w-full rounded-xl border border-white/10 bg-black/40">
+                        <div className={`h-6 w-6 rounded-full transition-all ${style.previewClass}`} />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* 🌙 Night Mode Themes */}
             <div className="rounded-3xl border border-indigo-500/20 bg-indigo-950/10 p-6 backdrop-blur-xl">
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-indigo-500/20">

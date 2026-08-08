@@ -3,15 +3,17 @@ import { supabaseDbQuery, supabaseDbUpsert } from "@/lib/supabase";
 
 const KEY_NIGHT = "background_theme_night";
 const KEY_DAY = "background_theme_day";
+const KEY_CURSOR = "cursor_style";
 
 let memoryNight = "quantum-plasma";
 let memoryDay = "day-sunrise-dawn";
+let memoryCursor = "halo-ring";
 
-async function getThemes() {
+async function getSettings() {
   try {
     const rows = await supabaseDbQuery<{ key: string; value: string }>(
       "site_settings",
-      `select=*&key=in.(${KEY_NIGHT},${KEY_DAY},background_theme)`
+      `select=*&key=in.(${KEY_NIGHT},${KEY_DAY},${KEY_CURSOR},background_theme)`
     );
     if (rows && rows.length > 0) {
       for (const row of rows) {
@@ -21,13 +23,16 @@ async function getThemes() {
         if (row.key === KEY_DAY) {
           memoryDay = row.value;
         }
+        if (row.key === KEY_CURSOR) {
+          memoryCursor = row.value;
+        }
       }
     }
   } catch {}
-  return { nightTheme: memoryNight, dayTheme: memoryDay, theme: memoryNight };
+  return { nightTheme: memoryNight, dayTheme: memoryDay, cursorStyle: memoryCursor, theme: memoryNight };
 }
 
-async function saveThemes(night?: string, day?: string): Promise<void> {
+async function saveSettings(night?: string, day?: string, cursorStyle?: string): Promise<void> {
   const upserts: Array<{ key: string; value: string; updated_at: string }> = [];
   const now = new Date().toISOString();
 
@@ -42,6 +47,11 @@ async function saveThemes(night?: string, day?: string): Promise<void> {
     upserts.push({ key: KEY_DAY, value: day, updated_at: now });
   }
 
+  if (cursorStyle && typeof cursorStyle === "string") {
+    memoryCursor = cursorStyle;
+    upserts.push({ key: KEY_CURSOR, value: cursorStyle, updated_at: now });
+  }
+
   if (upserts.length > 0) {
     try {
       await supabaseDbUpsert("site_settings", upserts);
@@ -50,15 +60,15 @@ async function saveThemes(night?: string, day?: string): Promise<void> {
 }
 
 export async function GET() {
-  const data = await getThemes();
+  const data = await getSettings();
   return NextResponse.json(data);
 }
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { nightTheme, dayTheme, theme } = body;
+  const { nightTheme, dayTheme, cursorStyle, theme } = body;
   const nTheme = nightTheme || (typeof theme === "string" && !theme.startsWith("day-") ? theme : undefined);
   const dTheme = dayTheme || (typeof theme === "string" && theme.startsWith("day-") ? theme : undefined);
-  await saveThemes(nTheme, dTheme);
-  return NextResponse.json({ nightTheme: memoryNight, dayTheme: memoryDay, ok: true });
+  await saveSettings(nTheme, dTheme, cursorStyle);
+  return NextResponse.json({ nightTheme: memoryNight, dayTheme: memoryDay, cursorStyle: memoryCursor, ok: true });
 }
