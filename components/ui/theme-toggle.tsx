@@ -1,6 +1,7 @@
 "use client";
 
 import { useThemeMode } from "@/components/effects/theme-mode-provider";
+import { useSiteSettings } from "@/components/settings-provider";
 import { Sun, Moon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -12,11 +13,16 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) {
   const { theme, toggleTheme } = useThemeMode();
+  const { sectionVisibility } = useSiteSettings();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  if (sectionVisibility?.themeToggle === false) {
+    return null;
+  }
 
   if (!mounted) {
     return (

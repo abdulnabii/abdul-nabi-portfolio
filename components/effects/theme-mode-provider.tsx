@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useSiteSettings } from "@/components/settings-provider";
 
 export type ThemeMode = "dark" | "light";
 
@@ -17,27 +18,8 @@ const ThemeModeContext = createContext<ThemeModeContextType>({
 });
 
 export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
+  const { sectionVisibility } = useSiteSettings();
   const [theme, setThemeState] = useState<ThemeMode>("dark");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const savedTheme = localStorage.getItem("app_theme") as ThemeMode | null;
-      if (savedTheme === "light" || savedTheme === "dark") {
-        setThemeState(savedTheme);
-        applyTheme(savedTheme);
-      } else {
-        // Check system preference if user hasn't set a preference yet
-        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-        const initialMode = prefersLight ? "light" : "dark";
-        setThemeState(initialMode);
-        applyTheme(initialMode);
-      }
-    } catch {
-      applyTheme("dark");
-    }
-  }, []);
 
   const applyTheme = (mode: ThemeMode) => {
     const root = document.documentElement;
@@ -50,7 +32,34 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  useEffect(() => {
+    if (sectionVisibility?.themeToggle === false) {
+      // If admin turned off theme toggle, force Night Mode (Dark Theme) immediately!
+      setThemeState("dark");
+      applyTheme("dark");
+      return;
+    }
+
+    try {
+      const savedTheme = localStorage.getItem("app_theme") as ThemeMode | null;
+      if (savedTheme === "light" || savedTheme === "dark") {
+        setThemeState(savedTheme);
+        applyTheme(savedTheme);
+      } else {
+        setThemeState("dark");
+        applyTheme("dark");
+      }
+    } catch {
+      applyTheme("dark");
+    }
+  }, [sectionVisibility?.themeToggle]);
+
   const setTheme = (mode: ThemeMode) => {
+    if (sectionVisibility?.themeToggle === false) {
+      setThemeState("dark");
+      applyTheme("dark");
+      return;
+    }
     setThemeState(mode);
     applyTheme(mode);
     try {
@@ -59,6 +68,7 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleTheme = () => {
+    if (sectionVisibility?.themeToggle === false) return;
     const nextTheme = theme === "dark" ? "light" : "dark";
     setTheme(nextTheme);
   };
