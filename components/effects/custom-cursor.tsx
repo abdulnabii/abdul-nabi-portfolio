@@ -1,19 +1,21 @@
 "use client";
 
+import { useThemeMode } from "@/components/effects/theme-mode-provider";
 import { useEffect, useRef, useState } from "react";
 
 /**
  * Desktop-only premium custom cursor.
- * Features a single, subtle, downsized custom ring that tracks the pointer rapidly (0.32 lerp).
+ * Adaptive to Day (Light) and Night (Dark) themes for 100% visibility.
  * Auto-disabled on mobile, touch devices, and prefers-reduced-motion.
  */
 export function CustomCursor() {
+  const { theme } = useThemeMode();
   const [enabled, setEnabled] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [visible, setVisible] = useState(false);
-  
+
   const ringRef = useRef<HTMLDivElement>(null);
-  
+
   const target = useRef({ x: -100, y: -100 });
   const current = useRef({ x: -100, y: -100 });
 
@@ -31,16 +33,16 @@ export function CustomCursor() {
     const loop = () => {
       const t = target.current;
       const c = current.current;
-      
+
       // Smoothly lerped outer halo cursor (~0.14 LERP factor)
       c.x += (t.x - c.x) * 0.14;
       c.y += (t.y - c.y) * 0.14;
-      
+
       const ringEl = ringRef.current;
       if (ringEl) {
         ringEl.style.transform = `translate3d(${c.x}px, ${c.y}px, 0)`;
       }
-      
+
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -74,6 +76,8 @@ export function CustomCursor() {
 
   if (!enabled) return null;
 
+  const isLight = theme === "light";
+
   return (
     <div
       ref={ringRef}
@@ -84,15 +88,19 @@ export function CustomCursor() {
         willChange: "transform",
       }}
     >
-      {/* Soft ambient halo ring with LERP 0.14 tracking */}
+      {/* Soft ambient halo ring adaptive to theme */}
       <div
         className={`-translate-x-1/2 -translate-y-1/2 rounded-full border transition-[width,height,background-color,border-color,box-shadow,transform,opacity] duration-300 ease-out ${
-          hovering
-            ? "h-9 w-9 border-indigo-400/80 bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.35)] scale-110"
-            : "h-5 w-5 border-white/40 bg-white/[0.04] shadow-[0_0_10px_rgba(255,255,255,0.08)] scale-100"
+          isLight
+            ? hovering
+              ? "h-9 w-9 border-indigo-600/90 bg-indigo-500/15 shadow-[0_0_20px_rgba(79,70,229,0.25)] scale-110"
+              : "h-5 w-5 border-slate-700/70 bg-slate-900/10 shadow-[0_0_10px_rgba(15,23,42,0.15)] scale-100"
+            : hovering
+              ? "h-9 w-9 border-indigo-400/80 bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.35)] scale-110"
+              : "h-5 w-5 border-white/40 bg-white/[0.04] shadow-[0_0_10px_rgba(255,255,255,0.08)] scale-100"
         }`}
         style={{
-          mixBlendMode: "screen",
+          mixBlendMode: isLight ? "normal" : "screen",
         }}
       />
     </div>
