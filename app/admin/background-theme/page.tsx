@@ -8,7 +8,8 @@ import {
   DayThemeId,
   BackgroundThemeDef,
 } from "@/components/effects/background-theme-provider";
-import { Check, Loader2, Monitor, Moon, Sun } from "lucide-react";
+import { ArrowLeft, Check, Loader2, Monitor, Moon, Sun } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminBackgroundThemePage() {
   const [activeNight, setActiveNight] = useState<NightThemeId>("quantum-plasma");
@@ -65,6 +66,24 @@ export default function AdminBackgroundThemePage() {
   return (
     <div className="min-h-screen bg-[#060b18] text-white p-6 md:p-10">
       <div className="max-w-5xl mx-auto">
+        {/* Top Return Navigation Bar */}
+        <div className="mb-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-xs font-semibold text-indigo-300 transition hover:bg-indigo-500/20"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Admin Dashboard
+          </Link>
+          <Link
+            href="/"
+            target="_blank"
+            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition"
+          >
+            View Public Site →
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">

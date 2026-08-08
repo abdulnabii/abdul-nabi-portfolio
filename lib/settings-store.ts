@@ -205,6 +205,7 @@ export interface SectionVisibility {
   games: boolean;
   achievements: boolean;
   contact: boolean;
+  themeToggle?: boolean;
 }
 
 const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
@@ -218,6 +219,7 @@ const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
   games: true,
   achievements: true,
   contact: true,
+  themeToggle: true,
 };
 
 let memorySectionVisibility: SectionVisibility = { ...DEFAULT_SECTION_VISIBILITY };

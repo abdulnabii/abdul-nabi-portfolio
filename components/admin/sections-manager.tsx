@@ -14,12 +14,13 @@ const SECTIONS: { key: keyof SectionVisibility; label: string; icon: string; des
   { key: "games", label: "Mini Games", icon: "🎮", description: "Interactive playable games section" },
   { key: "blog", label: "Blog Preview", icon: "📝", description: "Latest blog post previews on home page" },
   { key: "contact", label: "Contact", icon: "📬", description: "Contact form and social links" },
+  { key: "themeToggle", label: "Day / Night Theme Switcher", icon: "☀️🌙", description: "Allow public website visitors to toggle between Day & Night modes" },
 ];
 
 const DEFAULT_VISIBILITY: SectionVisibility = {
   hero: true, about: true, skills: true, projects: true,
   experience: true, education: true, blog: true, games: true,
-  achievements: true, contact: true,
+  achievements: true, contact: true, themeToggle: true,
 };
 
 export function SectionsManager() {

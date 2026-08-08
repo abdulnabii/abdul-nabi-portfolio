@@ -205,7 +205,7 @@ export function Navbar() {
 
           <div className="flex items-center gap-2 md:gap-3">
             {/* Desktop & Mobile Theme Toggle */}
-            <ThemeToggle />
+            {sectionVisibility?.themeToggle !== false && <ThemeToggle />}
 
             {sectionVisibility?.contact !== false && (
               <div className="hidden items-center gap-3 md:flex">

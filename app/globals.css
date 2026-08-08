@@ -15,7 +15,7 @@ html.light {
   --background: #f8fafc;
   --foreground: #0f172a;
   --muted: #475569;
-  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-bg: rgba(255, 255, 255, 0.9);
   --glass-border: rgba(203, 213, 225, 0.8);
   --accent: #4f46e5;
 }
@@ -28,7 +28,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Soft custom cursor on capable desktops only */
+/* Custom cursor */
 html.has-custom-cursor,
 html.has-custom-cursor body {
   cursor: none;
@@ -166,24 +166,22 @@ html.light .bg-grid {
    PUBLIC SITE DAY MODE (LIGHT THEME) SURFACES & TYPOGRAPHY
 ───────────────────────────────────────────────────────────────────────────── */
 html.light .glass {
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: #ffffff;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-color: rgba(226, 232, 240, 0.9);
+  border-color: #e2e8f0;
   box-shadow:
-    0 10px 30px rgba(15, 23, 42, 0.04),
-    0 1px 3px rgba(15, 23, 42, 0.02),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 4px 20px rgba(15, 23, 42, 0.04),
+    0 1px 3px rgba(15, 23, 42, 0.02);
 }
 
 html.light .glass-elevated {
   background-color: #ffffff;
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border-color: rgba(203, 213, 225, 0.8);
+  border-color: #cbd5e1;
   box-shadow:
-    0 20px 40px rgba(15, 23, 42, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 1);
+    0 12px 35px rgba(15, 23, 42, 0.06);
 }
 
 html.light .glass-input {
@@ -242,7 +240,8 @@ html.light section .text-slate-500 {
 
 /* Accent colors in Light Mode */
 html.light .text-indigo-400,
-html.light .text-indigo-300 {
+html.light .text-indigo-300,
+html.light .text-accent-soft {
   color: #4f46e5;
 }
 
@@ -286,20 +285,20 @@ html.light code * {
 
 /* Navbar in Day Mode */
 html.light header nav.bg-\[\#050814\]\/85 {
-  background-color: rgba(255, 255, 255, 0.92) !important;
-  border-color: rgba(226, 232, 240, 0.9) !important;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06) !important;
 }
 
 html.light nav ul {
   background-color: rgba(241, 245, 249, 0.9) !important;
-  border-color: rgba(226, 232, 240, 0.95) !important;
+  border-color: #e2e8f0 !important;
 }
 
 /* Mobile Drawer in Day Mode */
 html.light .md\:hidden .bg-\[\#050814\]\/95 {
   background-color: rgba(255, 255, 255, 0.98) !important;
-  border-color: rgba(203, 213, 225, 0.9) !important;
+  border-color: #cbd5e1 !important;
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.1) !important;
 }
 
@@ -314,11 +313,11 @@ html.light .border-white\/20 {
 /* Backgrounds in Day Mode */
 html.light .bg-white\/5,
 html.light .bg-white\/10 {
-  background-color: rgba(241, 245, 249, 0.8);
+  background-color: rgba(241, 245, 249, 0.85);
 }
 
 html.light .hover\:bg-white\/10:hover {
-  background-color: rgba(226, 232, 240, 0.9);
+  background-color: rgba(226, 232, 240, 0.95);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
