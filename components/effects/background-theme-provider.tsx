@@ -117,33 +117,15 @@ export function useBgTheme() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Day Mode Ambient Background
-───────────────────────────────────────────────────────────────────────────── */
-export function DayModeAmbientBackground() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]" />
-      <div className="absolute -top-40 -left-20 h-[700px] w-[700px] rounded-full bg-indigo-200/40 blur-[130px] animate-glass-blob-1" />
-      <div className="absolute top-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-sky-200/50 blur-[120px] animate-glass-blob-2" />
-      <div className="absolute bottom-10 left-1/3 h-[500px] w-[500px] rounded-full bg-violet-200/35 blur-[110px] animate-glass-blob-3" />
-      <div className="absolute top-1/2 left-10 h-[400px] w-[400px] rounded-full bg-blue-100/50 blur-[90px]" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_30%,black,transparent)]" />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
    Renderer — picks the active theme component based on Day/Night theme mode
 ───────────────────────────────────────────────────────────────────────────── */
 export function BackgroundThemeRenderer() {
   const { activeTheme } = useBgTheme();
   const { theme } = useThemeMode();
 
+  // No background theme in day mode
   if (theme === "light") {
-    return <DayModeAmbientBackground />;
+    return null;
   }
 
   switch (activeTheme) {
