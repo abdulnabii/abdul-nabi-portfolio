@@ -1,4 +1,4 @@
-# Abdul Nabu Portfolio
+# Abdul Nabi Portfolio
 
 Premium personal portfolio built with **Next.js 14 (App Router)**, **TypeScript**, and **Tailwind CSS**, featuring a dark glassmorphism design system throughout.
 
