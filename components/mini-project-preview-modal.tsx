@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { MiniProject } from "@/lib/mini-projects-store";
 import {
   ExternalLink,
@@ -9,9 +9,8 @@ import {
   Monitor,
   Smartphone,
   Loader2,
-  Maximize2,
   RefreshCw,
-  Sparkles,
+  AlertCircle,
 } from "lucide-react";
 
 interface MiniProjectPreviewModalProps {
@@ -27,6 +26,14 @@ export function MiniProjectPreviewModal({
   const [loading, setLoading] = useState(true);
   const [iframeKey, setIframeKey] = useState(0);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   if (!project) return null;
 
   const reloadIframe = () => {
@@ -35,10 +42,16 @@ export function MiniProjectPreviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className="relative flex flex-col w-full max-w-7xl h-[94vh] rounded-3xl border border-white/15 bg-[#050814] shadow-2xl overflow-hidden">
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-2xl animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="relative flex flex-col w-full max-w-7xl h-[92vh] rounded-3xl border border-white/20 bg-[#050814] shadow-[0_24px_80px_rgba(0,0,0,0.8)] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Top Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-white/10 bg-white/[0.03]">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 border-b border-white/10 bg-white/[0.04]">
           <div className="flex items-center gap-3 min-w-0">
             <div className="min-w-0">
               <h3 className="text-base font-bold text-white truncate">
@@ -94,7 +107,7 @@ export function MiniProjectPreviewModal({
                 href={project.vercelUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-500/40 bg-indigo-500/20 px-3 py-1.5 text-xs font-semibold text-indigo-200 hover:bg-indigo-500/30 transition"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-500/40 bg-indigo-500/20 px-3.5 py-1.5 text-xs font-semibold text-indigo-200 hover:bg-indigo-500/30 transition"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 <span>Open Full App ↗</span>
@@ -113,7 +126,7 @@ export function MiniProjectPreviewModal({
         </div>
 
         {/* Modal Iframe Main Viewport */}
-        <div className="relative flex-1 w-full bg-[#02040a] overflow-hidden flex items-center justify-center p-2">
+        <div className="relative flex-1 w-full bg-[#02040a] overflow-hidden flex items-center justify-center p-2 sm:p-4">
           {loading && (
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050814]/95 gap-3">
               <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
@@ -140,7 +153,7 @@ export function MiniProjectPreviewModal({
                 src={project.vercelUrl}
                 title={`Live preview of ${project.title}`}
                 onLoad={() => setLoading(false)}
-                className="w-full h-full w-full h-full border-0 block bg-slate-950"
+                className="w-full h-full border-0 block bg-slate-950"
                 style={{ width: "100%", height: "100%" }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
