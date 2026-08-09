@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { usePathname } from "next/navigation";
 
 import { useSiteSettings } from "@/components/settings-provider";
+import { useThemeMode } from "@/components/effects/theme-mode-provider";
 
 const NAV_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   "/#about": User,
@@ -26,12 +27,15 @@ const NAV_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> 
 
 export function Navbar() {
   const { settings, sectionVisibility } = useSiteSettings();
+  const { theme } = useThemeMode();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const name = settings.fullName || siteContent.name;
   const pathname = usePathname();
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const isLight = theme === "light";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -80,7 +84,7 @@ export function Navbar() {
       return;
     }
 
-    const sectionIds = ["about", "projects", "stack", "experience", "achievements", "games", "contact"];
+    const sectionIds = ["about", "projects", "mini-projects", "stack", "experience", "achievements", "games", "contact"];
 
     const tryObserve = () => {
       const sections = sectionIds
@@ -100,7 +104,7 @@ export function Navbar() {
             setActiveSection(visible[0].target.id);
           }
         },
-        { threshold: 0.15, rootMargin: "-64px 0px -40% 0px" }
+        { threshold: 0.15, rootMargin: "-80px 0px -40% 0px" }
       );
 
       sections.forEach((sec) => observerRef.current!.observe(sec));
@@ -118,7 +122,7 @@ export function Navbar() {
     return () => observerRef.current?.disconnect();
   }, [pathname]);
 
-  // Smooth scroll for hash links
+  // Smooth scroll with navbar offset calculation so headers are never cut off
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     setOpen(false);
     if (href.startsWith("/#") && pathname === "/") {
@@ -126,7 +130,8 @@ export function Navbar() {
       const id = href.replace("/#", "");
       const el = document.getElementById(id);
       if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        const targetTop = el.getBoundingClientRect().top + window.scrollY - 85;
+        window.scrollTo({ top: targetTop, behavior: "smooth" });
         setActiveSection(id);
       }
     }
@@ -143,7 +148,7 @@ export function Navbar() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled || open ? "py-3" : "py-5"
+        scrolled || open ? "py-2.5" : "py-4 sm:py-5"
       )}
     >
       <div className="container-narrow px-4 sm:px-6 lg:px-8">
@@ -151,7 +156,9 @@ export function Navbar() {
           className={cn(
             "flex items-center justify-between rounded-full border px-4 py-2 transition-all duration-300 sm:px-6",
             scrolled || open
-              ? "border-white/10 bg-[#050814]/85 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl"
+              ? isLight
+                ? "border-slate-300/80 bg-white/90 shadow-md backdrop-blur-xl text-slate-900"
+                : "border-white/10 bg-[#050814]/85 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-2xl text-white"
               : "border-transparent bg-transparent"
           )}
           aria-label="Primary"
@@ -162,14 +169,26 @@ export function Navbar() {
             onClick={() => setOpen(false)}
           >
             <Logo className="h-8 w-8 shrink-0 transition-transform duration-200 group-hover:scale-105" />
-            <span className="hidden text-sm font-semibold tracking-wide text-white sm:block">
+            <span
+              className={cn(
+                "hidden text-sm font-semibold tracking-wide sm:block transition-colors",
+                isLight && scrolled ? "text-slate-900" : "text-white"
+              )}
+            >
               {name}
             </span>
           </Link>
 
           {/* Desktop Nav Pills (Icon by default, expands text on hover/active) */}
           {visibleNavLinks.length > 0 && (
-            <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.05] p-1.5 backdrop-blur-md">
+            <div
+              className={cn(
+                "hidden md:flex items-center rounded-full border p-1.5 backdrop-blur-md transition-colors",
+                isLight && scrolled
+                  ? "border-slate-300/80 bg-slate-100/80"
+                  : "border-white/10 bg-white/[0.05]"
+              )}
+            >
               <ul className="flex items-center gap-1">
                 {visibleNavLinks.map((link) => {
                   const active = isLinkActive(link.href);
@@ -184,18 +203,32 @@ export function Navbar() {
                         className={cn(
                           "group relative flex items-center gap-1.5 rounded-full p-2 text-xs font-medium transition-all duration-300 ease-out",
                           active
-                            ? "bg-[#6D5EF8]/30 text-white border border-[#6D5EF8]/50 shadow-sm px-3"
-                            : "border border-transparent text-slate-300 hover:bg-white/10 hover:text-white hover:px-3"
+                            ? isLight
+                              ? "bg-indigo-600 text-white shadow-sm px-3 border border-indigo-500"
+                              : "bg-[#6D5EF8]/30 text-white border border-[#6D5EF8]/50 shadow-sm px-3"
+                            : isLight && scrolled
+                              ? "border border-transparent text-slate-700 hover:bg-slate-200/80 hover:text-slate-900 hover:px-3"
+                              : "border border-transparent text-slate-300 hover:bg-white/10 hover:text-white hover:px-3"
                         )}
                       >
-                        <IconComponent className={cn(
-                          "h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110",
-                          active ? "text-indigo-300" : "text-slate-400 group-hover:text-indigo-400"
-                        )} />
-                        <span className={cn(
-                          "overflow-hidden transition-all duration-300 whitespace-nowrap text-xs",
-                          active ? "max-w-xs opacity-100" : "max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100"
-                        )}>
+                        <IconComponent
+                          className={cn(
+                            "h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110",
+                            active
+                              ? isLight
+                                ? "text-white"
+                                : "text-indigo-300"
+                              : isLight && scrolled
+                                ? "text-slate-600 group-hover:text-indigo-600"
+                                : "text-slate-400 group-hover:text-indigo-400"
+                          )}
+                        />
+                        <span
+                          className={cn(
+                            "overflow-hidden transition-all duration-300 whitespace-nowrap text-xs",
+                            active ? "max-w-xs opacity-100" : "max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100"
+                          )}
+                        >
                           {link.label}
                         </span>
                       </Link>
@@ -221,7 +254,10 @@ export function Navbar() {
                     setOpen(false);
                     if (pathname === "/") {
                       const el = document.getElementById("contact");
-                      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                      if (el) {
+                        const targetTop = el.getBoundingClientRect().top + window.scrollY - 85;
+                        window.scrollTo({ top: targetTop, behavior: "smooth" });
+                      }
                       setActiveSection("contact");
                     }
                   }}
@@ -235,7 +271,10 @@ export function Navbar() {
             <Button
               variant="icon"
               size="sm"
-              className="md:hidden !h-9 !w-9 !rounded-full"
+              className={cn(
+                "md:hidden !h-9 !w-9 !rounded-full transition-colors",
+                isLight && scrolled ? "text-slate-900 border-slate-300" : ""
+              )}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
@@ -252,7 +291,14 @@ export function Navbar() {
             open ? "mt-2 max-h-[500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
           )}
         >
-          <div className="rounded-3xl border border-white/10 bg-[#050814]/95 p-4 shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
+          <div
+            className={cn(
+              "rounded-3xl border p-4 shadow-2xl backdrop-blur-2xl transition-colors",
+              isLight
+                ? "border-slate-300 bg-white/95 text-slate-900"
+                : "border-white/10 bg-[#050814]/95 text-white"
+            )}
+          >
             <ul className="flex flex-col gap-1">
               {visibleNavLinks.map((link) => {
                 const active = isLinkActive(link.href);
@@ -264,8 +310,12 @@ export function Navbar() {
                       className={cn(
                         "block rounded-2xl px-4 py-3 text-sm transition-all duration-150",
                         active
-                          ? "bg-[#6D5EF8]/25 text-white border border-[#6D5EF8]/40 font-semibold"
-                          : "text-slate-300 hover:bg-white/10 hover:text-white"
+                          ? isLight
+                            ? "bg-indigo-600 text-white font-semibold shadow-sm"
+                            : "bg-[#6D5EF8]/25 text-white border border-[#6D5EF8]/40 font-semibold"
+                          : isLight
+                            ? "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                            : "text-slate-300 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       {link.label}
@@ -284,7 +334,10 @@ export function Navbar() {
                       setOpen(false);
                       if (pathname === "/") {
                         const el = document.getElementById("contact");
-                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                        if (el) {
+                          const targetTop = el.getBoundingClientRect().top + window.scrollY - 85;
+                          window.scrollTo({ top: targetTop, behavior: "smooth" });
+                        }
                         setActiveSection("contact");
                       }
                     }}
