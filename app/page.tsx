@@ -4,6 +4,7 @@ import { Education } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
 import { Projects } from "@/components/sections/projects";
+import { MiniProjects } from "@/components/sections/mini-projects";
 import { Skills } from "@/components/sections/skills";
 import { Achievements } from "@/components/sections/achievements";
 import { MiniGames } from "@/components/sections/mini-games";
@@ -27,6 +28,7 @@ export default async function HomePage() {
       {vis.about && <About />}
       {vis.skills && <Skills />}
       {vis.projects && <Projects />}
+      {vis.miniProjects !== false && <MiniProjects />}
       {vis.experience && <Experience />}
       {vis.education && <Education />}
       {vis.achievements && <Achievements />}

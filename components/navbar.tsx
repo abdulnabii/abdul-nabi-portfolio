@@ -2,7 +2,7 @@
 
 import { siteContent } from "@/data/content";
 import { cn } from "@/lib/utils";
-import { Menu, X, User, Briefcase, Layers, Trophy, Gamepad2, FileText, Mail, FolderGit2 } from "lucide-react";
+import { Menu, X, User, Briefcase, Layers, Trophy, Gamepad2, FileText, Mail, FolderGit2, Rocket } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { useSiteSettings } from "@/components/settings-provider";
 const NAV_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   "/#about": User,
   "/#projects": FolderGit2,
+  "/mini-projects": Rocket,
   "/#stack": Layers,
   "/#experience": Briefcase,
   "/#achievements": Trophy,
@@ -60,6 +61,7 @@ export function Navbar() {
     if (!sectionVisibility) return true;
     if (href === "/#about") return sectionVisibility.about !== false;
     if (href === "/#projects") return sectionVisibility.projects !== false;
+    if (href === "/mini-projects") return sectionVisibility.miniProjects !== false;
     if (href === "/#stack") return sectionVisibility.skills !== false;
     if (href === "/#experience") return sectionVisibility.experience !== false;
     if (href === "/#achievements") return sectionVisibility.achievements !== false;
@@ -132,6 +134,7 @@ export function Navbar() {
 
   const isLinkActive = (href: string) => {
     if (href === "/blog") return pathname.startsWith("/blog");
+    if (href === "/mini-projects") return pathname.startsWith("/mini-projects");
     const sectionId = href.replace("/#", "").replace("#", "");
     return activeSection === sectionId;
   };

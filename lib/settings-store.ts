@@ -199,6 +199,7 @@ export interface SectionVisibility {
   about: boolean;
   skills: boolean;
   projects: boolean;
+  miniProjects?: boolean;
   experience: boolean;
   education: boolean;
   blog: boolean;
@@ -213,6 +214,7 @@ const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
   about: true,
   skills: true,
   projects: true,
+  miniProjects: true,
   experience: true,
   education: true,
   blog: true,

@@ -7,7 +7,8 @@ const SECTIONS: { key: keyof SectionVisibility; label: string; icon: string; des
   { key: "hero", label: "Hero / Banner", icon: "🏠", description: "Main header with name, tagline, and CTA buttons" },
   { key: "about", label: "About", icon: "👤", description: "Biography and personal stats section" },
   { key: "skills", label: "Tech Stack", icon: "⚡", description: "Skills and technology stack display" },
-  { key: "projects", label: "Projects", icon: "🚀", description: "Featured project showcase cards" },
+  { key: "projects", label: "Featured Projects", icon: "🚀", description: "Featured project showcase cards" },
+  { key: "miniProjects", label: "Mini Projects (30 Days)", icon: "🧪", description: "30 Days 30 Projects mini tools & Vercel deployment links" },
   { key: "experience", label: "Experience", icon: "💼", description: "Work experience and career timeline" },
   { key: "education", label: "Education", icon: "🎓", description: "Academic background and degrees" },
   { key: "achievements", label: "Achievements", icon: "🏆", description: "Milestone badges and achievement wall" },
@@ -18,7 +19,7 @@ const SECTIONS: { key: keyof SectionVisibility; label: string; icon: string; des
 ];
 
 const DEFAULT_VISIBILITY: SectionVisibility = {
-  hero: true, about: true, skills: true, projects: true,
+  hero: true, about: true, skills: true, projects: true, miniProjects: true,
   experience: true, education: true, blog: true, games: true,
   achievements: true, contact: true, themeToggle: true,
 };

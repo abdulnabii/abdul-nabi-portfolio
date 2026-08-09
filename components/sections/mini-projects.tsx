@@ -1,0 +1,135 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { LinkButton } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/glass-card";
+import { Reveal } from "@/components/ui/reveal";
+import { SectionHeading } from "@/components/ui/section-heading";
+import type { MiniProject } from "@/lib/mini-projects-store";
+import { ArrowRight, ExternalLink, Github, Sparkles, Terminal } from "lucide-react";
+
+export function MiniProjects() {
+  const [projects, setProjects] = useState<MiniProject[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/mini-projects")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.miniProjects) setProjects(d.miniProjects);
+      })
+      .catch((err) => console.error("Failed to load mini projects", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const displayProjects = projects.slice(0, 6);
+
+  return (
+    <section
+      id="mini-projects"
+      className="section-padding relative"
+      aria-labelledby="mini-projects-heading"
+    >
+      <div className="container-narrow space-y-10">
+        <Reveal>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+            <SectionHeading
+              eyebrow="30 Days 30 Projects"
+              title="Mini Projects & AI Tools"
+              subtitle="Daily production-grade micro applications, AI tools, and healthcare predictors — deployed live on Vercel subdomains."
+              className="mb-0"
+            />
+            <LinkButton href="/mini-projects" variant="secondary" size="sm" className="shrink-0 cursor-grow">
+              Explore All Mini Projects
+              <ArrowRight className="h-3.5 w-3.5" />
+            </LinkButton>
+          </div>
+        </Reveal>
+
+        {loading ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="h-64 rounded-2xl border border-white/10 bg-white/5 animate-pulse" />
+            ))}
+          </div>
+        ) : displayProjects.length === 0 ? null : (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {displayProjects.map((proj, idx) => (
+              <Reveal key={proj.id} delay={idx * 60}>
+                <GlassCard
+                  interactive
+                  hover
+                  padding="lg"
+                  className="group flex flex-col justify-between h-full cursor-grow transition-all duration-300 hover:border-indigo-500/40"
+                >
+                  <div>
+                    {/* Header badges */}
+                    <div className="flex items-center justify-between gap-2 mb-4">
+                      <span className="rounded-lg bg-indigo-500/20 px-2.5 py-1 text-xs font-bold text-indigo-300 border border-indigo-500/30 font-mono">
+                        Day {String(proj.dayNumber).padStart(2, "0")}
+                      </span>
+                      <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                        🟢 {proj.status}
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                      {proj.category}
+                    </p>
+
+                    <h3 className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors leading-snug">
+                      {proj.title}
+                    </h3>
+
+                    <p className="mt-2 text-xs leading-relaxed text-slate-300 line-clamp-3">
+                      {proj.description}
+                    </p>
+
+                    {/* Tags */}
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {proj.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-md bg-white/5 border border-white/10 px-2 py-0.5 text-[10px] text-slate-300 font-mono"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Vercel & Github Buttons */}
+                  <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between gap-2">
+                    {proj.vercelUrl && (
+                      <a
+                        href={proj.vercelUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-grow inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-md hover:bg-indigo-500 transition"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        Live Vercel Link
+                      </a>
+                    )}
+                    {proj.githubUrl && (
+                      <a
+                        href={proj.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-grow inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/10 hover:text-white transition"
+                      >
+                        <Github className="h-3.5 w-3.5" />
+                        Source
+                      </a>
+                    )}
+                  </div>
+                </GlassCard>
+              </Reveal>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

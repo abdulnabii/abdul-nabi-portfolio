@@ -145,6 +145,7 @@ export const siteContent: SiteContent = {
   navLinks: [
     { label: "About", href: "/#about" },
     { label: "Work", href: "/#projects" },
+    { label: "Mini Projects", href: "/mini-projects" },
     { label: "Stack", href: "/#stack" },
     { label: "Experience", href: "/#experience" },
     { label: "Achievements", href: "/#achievements" },
