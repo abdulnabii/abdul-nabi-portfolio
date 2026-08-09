@@ -7,11 +7,13 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import type { MiniProject } from "@/lib/mini-projects-store";
-import { ArrowRight, ExternalLink, Github } from "lucide-react";
+import { MiniProjectPreviewModal } from "@/components/mini-project-preview-modal";
+import { ArrowRight, ExternalLink, Eye, Github } from "lucide-react";
 
 export function MiniProjects() {
   const [projects, setProjects] = useState<MiniProject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPreview, setSelectedPreview] = useState<MiniProject | null>(null);
 
   useEffect(() => {
     fetch("/api/mini-projects")
@@ -63,7 +65,8 @@ export function MiniProjects() {
                   interactive
                   hover
                   padding="lg"
-                  className="group flex flex-col justify-between h-full cursor-grow transition-all duration-300 hover:border-indigo-500/40"
+                  className="group flex flex-col justify-between h-full cursor-pointer transition-all duration-300 hover:border-indigo-500/40"
+                  onClick={() => setSelectedPreview(proj)}
                 >
                   <div>
                     {/* Header badges */}
@@ -101,28 +104,30 @@ export function MiniProjects() {
                     </div>
                   </div>
 
-                  {/* Vercel Live Demo & Github Buttons */}
+                  {/* Vercel Live Demo & Interactive Preview Buttons */}
                   <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPreview(proj);
+                      }}
+                      className="cursor-grow inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-md hover:bg-indigo-500 transition"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      Preview
+                    </button>
+
                     {proj.vercelUrl && (
                       <a
                         href={proj.vercelUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="cursor-grow inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-md hover:bg-indigo-500 transition"
+                        onClick={(e) => e.stopPropagation()}
+                        className="cursor-grow inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/10 hover:text-white transition"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                         Live Demo
-                      </a>
-                    )}
-                    {proj.githubUrl && (
-                      <a
-                        href={proj.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="cursor-grow inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/10 hover:text-white transition"
-                      >
-                        <Github className="h-3.5 w-3.5" />
-                        Source
                       </a>
                     )}
                   </div>
@@ -132,6 +137,12 @@ export function MiniProjects() {
           </div>
         )}
       </div>
+
+      {/* Interactive Preview Modal */}
+      <MiniProjectPreviewModal
+        project={selectedPreview}
+        onClose={() => setSelectedPreview(null)}
+      />
     </section>
   );
 }
