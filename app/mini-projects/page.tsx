@@ -35,8 +35,7 @@ export default function MiniProjectsPage() {
   const filtered = liveProjects.filter((p) => {
     const matchesSearch =
       p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `day ${p.dayNumber}`.includes(searchTerm.toLowerCase());
+      p.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -78,7 +77,7 @@ export default function MiniProjectsPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search mini projects by Day, Title, or Tech..."
+              placeholder="Search mini projects by Title or Tech..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full rounded-xl border border-white/10 bg-white/5 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none"
@@ -123,19 +122,15 @@ export default function MiniProjectsPage() {
                   onClick={() => setSelectedPreview(proj)}
                 >
                   <div>
-                    {/* Header badges */}
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <span className="rounded-lg bg-indigo-500/20 px-2.5 py-1 text-xs font-bold text-indigo-300 border border-indigo-500/30 font-mono">
-                        Day {String(proj.dayNumber).padStart(2, "0")}
+                    {/* Category & Status badges */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">
+                        {proj.category}
                       </span>
                       <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
                         🟢 Live
                       </span>
                     </div>
-
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
-                      {proj.category}
-                    </p>
 
                     <h2 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-snug">
                       {proj.title}

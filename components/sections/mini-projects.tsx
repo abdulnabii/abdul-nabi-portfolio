@@ -69,19 +69,15 @@ export function MiniProjects() {
                   onClick={() => setSelectedPreview(proj)}
                 >
                   <div>
-                    {/* Header badges */}
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <span className="rounded-lg bg-indigo-500/20 px-2.5 py-1 text-xs font-bold text-indigo-300 border border-indigo-500/30 font-mono">
-                        Day {String(proj.dayNumber).padStart(2, "0")}
+                    {/* Category & Status badges */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">
+                        {proj.category}
                       </span>
                       <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
                         🟢 Live
                       </span>
                     </div>
-
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
-                      {proj.category}
-                    </p>
 
                     <h3 className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors leading-snug">
                       {proj.title}

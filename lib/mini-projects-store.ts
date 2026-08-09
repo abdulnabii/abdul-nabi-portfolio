@@ -21,7 +21,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     title: "AI Symptom Checker & Triage Assistant",
     category: "Healthcare AI",
     description: "Conversational medical NLP symptom evaluator with WHO risk level classification, possible conditions confidence score, and emergency triage recommendations.",
-    vercelUrl: "https://symptom-checker.aiwithab.site",
+    vercelUrl: "https://day-01-ai-symptom-checker.vercel.app",
     githubUrl: "https://github.com/abdulnabii/day-01-ai-symptom-checker",
     tags: ["Next.js 14", "Gemini 1.5 Pro", "TailwindCSS", "Framer Motion"],
     status: "Live",
@@ -34,7 +34,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     title: "AI Code Review & Security Audit Bot",
     category: "Developer Tools",
     description: "Automated static code security auditor that scans pull requests for OWASP vulnerabilities, memory leaks, and performance bottlenecks.",
-    vercelUrl: "https://code-reviewer.aiwithab.site",
+    vercelUrl: "https://day-02-code-reviewer.vercel.app",
     githubUrl: "https://github.com/abdulnabii/day-02-code-reviewer",
     tags: ["Next.js 14", "Claude 3.5 API", "AST Parser", "TypeScript"],
     status: "Live",
@@ -47,7 +47,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     title: "Smart AI Resume Builder & ATS Optimizer",
     category: "AI Productivity",
     description: "ATS keyword optimizer and instant resume builder that converts raw work history into high-scoring PDF resumes tailored to target job descriptions.",
-    vercelUrl: "https://resume-builder.aiwithab.site",
+    vercelUrl: "https://day-03-resume-builder.vercel.app",
     githubUrl: "https://github.com/abdulnabii/day-03-resume-builder",
     tags: ["Next.js 14", "PDFKit", "Gemini AI", "TailwindCSS"],
     status: "Live",
@@ -60,7 +60,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     title: "Diabetes & Glucose Risk Predictor",
     category: "Healthcare ML",
     description: "ML health application evaluating patient vitals (glucose, BMI, blood pressure, insulin) to predict diabetes risk probability with scikit-learn ElasticNet.",
-    vercelUrl: "https://diabetes-risk.aiwithab.site",
+    vercelUrl: "https://day-04-diabetes-predictor.vercel.app",
     githubUrl: "https://github.com/abdulnabii/day-04-diabetes-predictor",
     tags: ["Python Flask", "scikit-learn", "Chart.js", "Next.js"],
     status: "Live",
@@ -73,7 +73,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     title: "AI Meeting Summarizer & Action Extractor",
     category: "AI Productivity",
     description: "Transcript analyzer extracting executive summaries, key decisions, blockers, and assigned action items with deadlines from Zoom/Teams transcripts.",
-    vercelUrl: "https://meeting-ai.aiwithab.site",
+    vercelUrl: "https://day-05-meeting-summarizer.vercel.app",
     githubUrl: "https://github.com/abdulnabii/day-05-meeting-summarizer",
     tags: ["Whisper API", "Gemini 1.5 Flash", "Next.js 14"],
     status: "Live",
@@ -86,7 +86,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     title: "Real-Time Stock Dashboard & Sentiment",
     category: "FinTech & Data",
     description: "Live WebSocket trading dashboard featuring technical indicators (RSI, MACD), portfolio tracker, and AI sentiment analysis of financial news headlines.",
-    vercelUrl: "https://stock-dashboard.aiwithab.site",
+    vercelUrl: "https://day-06-stock-dashboard.vercel.app",
     githubUrl: "https://github.com/abdulnabii/day-06-stock-dashboard",
     tags: ["WebSockets", "Recharts", "FinNHub API", "TailwindCSS"],
     status: "Live",
@@ -106,8 +106,15 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
     if (rows && rows.length > 0 && rows[0].value) {
       const parsed = JSON.parse(rows[0].value) as MiniProject[];
       if (Array.isArray(parsed) && parsed.length > 0) {
-        memoryMiniProjects = parsed;
-        return parsed.sort((a, b) => a.dayNumber - b.dayNumber);
+        // Sanitize Vercel URLs to ensure Vercel domains are prioritized
+        memoryMiniProjects = parsed.map((p) => {
+          if (p.vercelUrl && p.vercelUrl.includes("aiwithab.site")) {
+            const slug = p.vercelUrl.replace("https://", "").replace(".aiwithab.site", "");
+            return { ...p, vercelUrl: `https://day-${String(p.dayNumber).padStart(2, "0")}-${slug}.vercel.app` };
+          }
+          return p;
+        });
+        return memoryMiniProjects.sort((a, b) => a.dayNumber - b.dayNumber);
       }
     }
   } catch (err) {
