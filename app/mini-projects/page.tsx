@@ -25,9 +25,12 @@ export default function MiniProjectsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const categories = ["All", ...Array.from(new Set(projects.map((p) => p.category)))];
+  // Filter ONLY published (Live) projects for public display
+  const liveProjects = projects.filter((p) => p.status === "Live");
 
-  const filtered = projects.filter((p) => {
+  const categories = ["All", ...Array.from(new Set(liveProjects.map((p) => p.category)))];
+
+  const filtered = liveProjects.filter((p) => {
     const matchesSearch =
       p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -49,7 +52,7 @@ export default function MiniProjectsPage() {
             Back to Main Portfolio
           </Link>
           <span className="text-xs font-mono text-indigo-400">
-            {projects.length} Challenge Projects
+            {liveProjects.length} Published Demos
           </span>
         </div>
 
@@ -57,13 +60,13 @@ export default function MiniProjectsPage() {
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3.5 py-1 text-xs font-medium text-indigo-300 mb-4">
             <Rocket className="h-3.5 w-3.5" />
-            30 Days 30 Projects Challenge
+            Interactive Micro Tools & Demos
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
             Live Mini Projects & AI Micro-Tools
           </h1>
           <p className="mt-4 text-base sm:text-lg leading-relaxed text-slate-300 max-w-3xl">
-            Explore daily production-grade web applications, healthcare ML models, developer tools, and real-time dashboards — each deployed live on dedicated Vercel subdomains.
+            Explore production-grade web applications, healthcare ML models, developer tools, and real-time dashboards — each deployed live for instant testing.
           </p>
         </div>
 
@@ -104,7 +107,7 @@ export default function MiniProjectsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-12 text-center">
-            <p className="text-slate-400 text-sm">No mini projects found matching your filters.</p>
+            <p className="text-slate-400 text-sm">No live mini projects found matching your filters.</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -123,7 +126,7 @@ export default function MiniProjectsPage() {
                         Day {String(proj.dayNumber).padStart(2, "0")}
                       </span>
                       <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
-                        🟢 {proj.status}
+                        🟢 Live
                       </span>
                     </div>
 
@@ -152,7 +155,7 @@ export default function MiniProjectsPage() {
                     </div>
                   </div>
 
-                  {/* Vercel & Github Buttons */}
+                  {/* Vercel Live Demo & Github Buttons */}
                   <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between gap-2">
                     {proj.vercelUrl && (
                       <a
@@ -162,7 +165,7 @@ export default function MiniProjectsPage() {
                         className="cursor-grow inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:bg-indigo-500 transition"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
-                        Live Vercel Link
+                        Live Demo
                       </a>
                     )}
                     {proj.githubUrl && (

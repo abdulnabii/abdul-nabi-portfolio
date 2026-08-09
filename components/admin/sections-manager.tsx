@@ -8,7 +8,7 @@ const SECTIONS: { key: keyof SectionVisibility; label: string; icon: string; des
   { key: "about", label: "About", icon: "👤", description: "Biography and personal stats section" },
   { key: "skills", label: "Tech Stack", icon: "⚡", description: "Skills and technology stack display" },
   { key: "projects", label: "Featured Projects", icon: "🚀", description: "Featured project showcase cards" },
-  { key: "miniProjects", label: "Mini Projects (30 Days)", icon: "🧪", description: "30 Days 30 Projects mini tools & Vercel deployment links" },
+  { key: "miniProjects", label: "Mini Projects", icon: "🧪", description: "Interactive mini tools & live demo links" },
   { key: "experience", label: "Experience", icon: "💼", description: "Work experience and career timeline" },
   { key: "education", label: "Education", icon: "🎓", description: "Academic background and degrees" },
   { key: "achievements", label: "Achievements", icon: "🏆", description: "Milestone badges and achievement wall" },

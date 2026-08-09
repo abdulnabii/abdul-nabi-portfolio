@@ -7,7 +7,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import type { MiniProject } from "@/lib/mini-projects-store";
-import { ArrowRight, ExternalLink, Github, Sparkles, Terminal } from "lucide-react";
+import { ArrowRight, ExternalLink, Github } from "lucide-react";
 
 export function MiniProjects() {
   const [projects, setProjects] = useState<MiniProject[]>([]);
@@ -23,7 +23,9 @@ export function MiniProjects() {
       .finally(() => setLoading(false));
   }, []);
 
-  const displayProjects = projects.slice(0, 6);
+  // Show ONLY published (Live) projects on public site
+  const publishedProjects = projects.filter((p) => p.status === "Live");
+  const displayProjects = publishedProjects.slice(0, 6);
 
   return (
     <section
@@ -35,9 +37,9 @@ export function MiniProjects() {
         <Reveal>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <SectionHeading
-              eyebrow="30 Days 30 Projects"
-              title="Mini Projects & AI Tools"
-              subtitle="Daily production-grade micro applications, AI tools, and healthcare predictors — deployed live on Vercel subdomains."
+              eyebrow="Micro Tools & Demos"
+              title="Mini Projects & Interactive Tools"
+              subtitle="Production-grade micro applications, AI tools, and healthcare predictors — deployed live."
               className="mb-0"
             />
             <LinkButton href="/mini-projects" variant="secondary" size="sm" className="shrink-0 cursor-grow">
@@ -70,7 +72,7 @@ export function MiniProjects() {
                         Day {String(proj.dayNumber).padStart(2, "0")}
                       </span>
                       <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
-                        🟢 {proj.status}
+                        🟢 Live
                       </span>
                     </div>
 
@@ -99,7 +101,7 @@ export function MiniProjects() {
                     </div>
                   </div>
 
-                  {/* Vercel & Github Buttons */}
+                  {/* Vercel Live Demo & Github Buttons */}
                   <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between gap-2">
                     {proj.vercelUrl && (
                       <a
@@ -109,7 +111,7 @@ export function MiniProjects() {
                         className="cursor-grow inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-md hover:bg-indigo-500 transition"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
-                        Live Vercel Link
+                        Live Demo
                       </a>
                     )}
                     {proj.githubUrl && (

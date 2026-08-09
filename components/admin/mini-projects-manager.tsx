@@ -150,10 +150,10 @@ export function MiniProjectsManager() {
         <div>
           <div className="flex items-center gap-2">
             <Rocket className="h-6 w-6 text-indigo-400" />
-            <h1 className="text-2xl font-bold text-white">30 Days 30 Projects — Mini Projects</h1>
+            <h1 className="text-2xl font-bold text-white">Mini Projects</h1>
           </div>
           <p className="mt-1 text-sm text-slate-400">
-            Manage your daily mini projects, Vercel sub-domain links, and source code repositories.
+            Manage your mini projects, live demo links, and source code repositories.
           </p>
         </div>
 
