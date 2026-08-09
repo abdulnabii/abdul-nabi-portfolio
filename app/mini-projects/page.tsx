@@ -40,6 +40,13 @@ export default function MiniProjectsPage() {
     return matchesSearch && matchesCategory;
   });
 
+  const handleLiveDemoClick = (e: React.MouseEvent, url: string) => {
+    e.stopPropagation();
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <div className="min-h-screen section-padding pt-28 pb-20">
       <div className="container-narrow space-y-8">
@@ -67,7 +74,7 @@ export default function MiniProjectsPage() {
             Live Mini Projects & AI Micro-Tools
           </h1>
           <p className="mt-4 text-base sm:text-lg leading-relaxed text-slate-300 max-w-3xl">
-            Explore production-grade web applications, healthcare ML models, developer tools, and real-time dashboards — click any project card to open an instant live interactive preview.
+            Explore production-grade web applications, healthcare ML models, developer tools, and real-time dashboards — click Live Demo to launch any project in a new window.
           </p>
         </div>
 
@@ -153,32 +160,32 @@ export default function MiniProjectsPage() {
                     </div>
                   </div>
 
-                  {/* Vercel Live Demo & Interactive Preview Buttons */}
+                  {/* Action Buttons: Primary "Live Demo" opens new window, Secondary "Preview" opens modal */}
                   <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between gap-2">
+                    {proj.vercelUrl ? (
+                      <a
+                        href={proj.vercelUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => handleLiveDemoClick(e, proj.vercelUrl)}
+                        className="cursor-grow inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        Live Demo
+                      </a>
+                    ) : null}
+
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedPreview(proj);
                       }}
-                      className="cursor-grow inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:bg-indigo-500 transition"
+                      className="cursor-grow inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs text-slate-300 hover:bg-white/10 hover:text-white transition"
                     >
                       <Eye className="h-3.5 w-3.5" />
                       Preview
                     </button>
-
-                    {proj.vercelUrl && (
-                      <a
-                        href={proj.vercelUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="cursor-grow inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs text-slate-300 hover:bg-white/10 hover:text-white transition"
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        Live Demo
-                      </a>
-                    )}
                   </div>
                 </GlassCard>
               </Reveal>
