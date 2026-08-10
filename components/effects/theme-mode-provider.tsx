@@ -40,7 +40,10 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const res = await fetch(`/api/admin/background-theme?t=${Date.now()}`, { cache: "no-store" });
+      const res = await fetch(`/api/admin/background-theme?t=${Date.now()}`, {
+        cache: "no-store",
+        headers: { "Pragma": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
         if (data?.defaultMode === "light" || data?.defaultMode === "dark") {
@@ -53,25 +56,6 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    if (sectionVisibility?.themeToggle === false) {
-      setThemeState("dark");
-      applyTheme("dark");
-      return;
-    }
-
-    try {
-      const savedTheme = localStorage.getItem("app_theme") as ThemeMode | null;
-      if (savedTheme === "light" || savedTheme === "dark") {
-        setThemeState(savedTheme);
-        applyTheme(savedTheme);
-      } else {
-        setThemeState("dark");
-        applyTheme("dark");
-      }
-    } catch {
-      applyTheme("dark");
-    }
-
     syncServerThemeMode();
 
     const handleModeChange = (e: Event) => {
@@ -86,9 +70,13 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
 
     window.addEventListener("theme-mode-changed", handleModeChange);
     window.addEventListener("focus", syncServerThemeMode);
+
+    const interval = setInterval(syncServerThemeMode, 4000);
+
     return () => {
       window.removeEventListener("theme-mode-changed", handleModeChange);
       window.removeEventListener("focus", syncServerThemeMode);
+      clearInterval(interval);
     };
   }, [sectionVisibility?.themeToggle]);
 

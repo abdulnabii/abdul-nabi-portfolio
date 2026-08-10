@@ -60,7 +60,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     title: "Diabetes & Glucose Risk Predictor",
     category: "Healthcare ML",
     description: "ML health application evaluating patient vitals (glucose, BMI, blood pressure, insulin) to predict diabetes risk probability with scikit-learn ElasticNet.",
-    vercelUrl: "https://day-04-diabetes-predictor.vercel.app",
+    vercelUrl: "https://day-04-diabetes-risk-predictor.vercel.app",
     githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-04-diabetes-predictor",
     tags: ["Python Flask", "scikit-learn", "Chart.js", "Next.js 14"],
     status: "Live",
@@ -73,7 +73,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     title: "AI Meeting Summarizer & Action Extractor",
     category: "AI Productivity",
     description: "Transcript analyzer extracting executive summaries, key decisions, blockers, and assigned action items with deadlines from Zoom/Teams transcripts.",
-    vercelUrl: "https://day-05-meeting-summarizer.vercel.app",
+    vercelUrl: "https://day-05-ai-meeting-summarizer.vercel.app",
     githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-05-meeting-summarizer",
     tags: ["Whisper API", "Gemini 1.5 Flash", "Next.js 14", "TailwindCSS"],
     status: "Live",
@@ -106,14 +106,13 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
     if (rows && rows.length > 0 && rows[0].value) {
       const parsed = JSON.parse(rows[0].value) as MiniProject[];
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Ensure Vercel URLs point to valid deployment domains
         memoryMiniProjects = parsed.map((p) => {
           let url = p.vercelUrl;
           if (p.dayNumber === 1) url = "https://day-01-ai-symptom-checker.vercel.app";
           else if (p.dayNumber === 2) url = "https://day-02-code-review-bot.vercel.app";
           else if (p.dayNumber === 3) url = "https://day-03-smart-resume-builder.vercel.app";
-          else if (p.dayNumber === 4) url = "https://day-04-diabetes-predictor.vercel.app";
-          else if (p.dayNumber === 5) url = "https://day-05-meeting-summarizer.vercel.app";
+          else if (p.dayNumber === 4) url = "https://day-04-diabetes-risk-predictor.vercel.app";
+          else if (p.dayNumber === 5) url = "https://day-05-ai-meeting-summarizer.vercel.app";
           else if (p.dayNumber === 6) url = "https://day-06-stock-dashboard.vercel.app";
 
           return {
@@ -129,6 +128,9 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
   } catch (err) {
     console.error("[getMiniProjects] Exception:", err);
   }
+
+  // Ensure default fallback items use exact live URLs
+  memoryMiniProjects = INITIAL_MINI_PROJECTS;
   return memoryMiniProjects.sort((a, b) => a.dayNumber - b.dayNumber);
 }
 

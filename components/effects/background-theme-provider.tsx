@@ -161,7 +161,10 @@ export function BackgroundThemeProvider({ children }: { children: React.ReactNod
 
   const syncServerTheme = async () => {
     try {
-      const res = await fetch(`/api/admin/background-theme?t=${Date.now()}`, { cache: "no-store" });
+      const res = await fetch(`/api/admin/background-theme?t=${Date.now()}`, {
+        cache: "no-store",
+        headers: { "Pragma": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
         const nTheme = data?.nightTheme || data?.theme;
@@ -178,22 +181,8 @@ export function BackgroundThemeProvider({ children }: { children: React.ReactNod
   };
 
   useEffect(() => {
-    // 1. Initial quick load from localStorage for zero flickering
-    try {
-      const savedNight = localStorage.getItem("bg_theme_night");
-      if (savedNight && NIGHT_BACKGROUND_THEMES.some((t) => t.id === savedNight)) {
-        setNightThemeState(savedNight as NightThemeId);
-      }
-      const savedDay = localStorage.getItem("bg_theme_day");
-      if (savedDay && DAY_BACKGROUND_THEMES.some((t) => t.id === savedDay)) {
-        setDayThemeState(savedDay as DayThemeId);
-      }
-    } catch {}
-
-    // 2. Authoritative server sync from Supabase DB
     syncServerTheme();
 
-    // 3. Listen for real-time admin updates
     const handleBgChange = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       if (detail?.nightTheme) setNightThemeState(detail.nightTheme);
@@ -203,9 +192,14 @@ export function BackgroundThemeProvider({ children }: { children: React.ReactNod
 
     window.addEventListener("bg-theme-changed", handleBgChange);
     window.addEventListener("focus", syncServerTheme);
+
+    // Poll every 4 seconds for real-time background theme updates
+    const interval = setInterval(syncServerTheme, 4000);
+
     return () => {
       window.removeEventListener("bg-theme-changed", handleBgChange);
       window.removeEventListener("focus", syncServerTheme);
+      clearInterval(interval);
     };
   }, []);
 
