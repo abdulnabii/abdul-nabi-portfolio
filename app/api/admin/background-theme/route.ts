@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseDbQuery, supabaseDbUpsert } from "@/lib/supabase";
+import { revalidatePath } from "next/cache";
 
 const KEY_NIGHT = "background_theme_night";
 const KEY_DAY = "background_theme_day";
@@ -70,5 +71,11 @@ export async function POST(req: NextRequest) {
   const nTheme = nightTheme || (typeof theme === "string" && !theme.startsWith("day-") ? theme : undefined);
   const dTheme = dayTheme || (typeof theme === "string" && theme.startsWith("day-") ? theme : undefined);
   await saveSettings(nTheme, dTheme, cursorStyle);
+
+  try {
+    revalidatePath("/", "layout");
+    revalidatePath("/mini-projects", "layout");
+  } catch {}
+
   return NextResponse.json({ nightTheme: memoryNight, dayTheme: memoryDay, cursorStyle: memoryCursor, ok: true });
 }

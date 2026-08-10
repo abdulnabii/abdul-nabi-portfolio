@@ -37,6 +37,8 @@ export default function AdminBackgroundThemePage() {
 
   const handleSelectNight = async (id: NightThemeId) => {
     setActiveNight(id);
+    try { localStorage.setItem("bg_theme_night", id); } catch {}
+    window.dispatchEvent(new CustomEvent("bg-theme-changed", { detail: { nightTheme: id } }));
     setSaving(true);
     setSaved(false);
     try {
@@ -54,6 +56,8 @@ export default function AdminBackgroundThemePage() {
 
   const handleSelectDay = async (id: DayThemeId) => {
     setActiveDay(id);
+    try { localStorage.setItem("bg_theme_day", id); } catch {}
+    window.dispatchEvent(new CustomEvent("bg-theme-changed", { detail: { dayTheme: id } }));
     setSaving(true);
     setSaved(false);
     try {
@@ -71,6 +75,7 @@ export default function AdminBackgroundThemePage() {
 
   const handleSelectCursor = async (id: CursorStyleId) => {
     setActiveCursor(id);
+    try { localStorage.setItem("cursor_style", id); } catch {}
     setSaving(true);
     setSaved(false);
     window.dispatchEvent(

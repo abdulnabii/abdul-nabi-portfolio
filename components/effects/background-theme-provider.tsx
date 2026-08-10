@@ -39,7 +39,7 @@ export interface BackgroundThemeDef {
   type: "static" | "animated" | "minimal";
   mode: "night" | "day";
   description: string;
-  preview: string; // gradient CSS string for admin preview
+  preview: string;
 }
 
 export const NIGHT_BACKGROUND_THEMES: BackgroundThemeDef[] = [
@@ -141,9 +141,6 @@ export const BACKGROUND_THEMES: BackgroundThemeDef[] = [
   ...DAY_BACKGROUND_THEMES,
 ];
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Context
-───────────────────────────────────────────────────────────────────────────── */
 interface BgThemeCtx {
   nightTheme: NightThemeId;
   dayTheme: DayThemeId;
@@ -162,33 +159,54 @@ export function BackgroundThemeProvider({ children }: { children: React.ReactNod
   const [nightTheme, setNightThemeState] = useState<NightThemeId>("quantum-plasma");
   const [dayTheme, setDayThemeState] = useState<DayThemeId>("day-sunrise-dawn");
 
-  useEffect(() => {
-    // Load active themes from API
-    fetch("/api/admin/background-theme", { cache: "no-store" })
-      .then((r) => r.ok ? r.json() : null)
-      .then((data) => {
-        if (data?.nightTheme && NIGHT_BACKGROUND_THEMES.find((t) => t.id === data.nightTheme)) {
-          setNightThemeState(data.nightTheme as NightThemeId);
-        } else if (data?.theme && NIGHT_BACKGROUND_THEMES.find((t) => t.id === data.theme)) {
-          setNightThemeState(data.theme as NightThemeId);
+  const syncServerTheme = async () => {
+    try {
+      const res = await fetch(`/api/admin/background-theme?t=${Date.now()}`, { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        const nTheme = data?.nightTheme || data?.theme;
+        if (nTheme && NIGHT_BACKGROUND_THEMES.some((t) => t.id === nTheme)) {
+          setNightThemeState(nTheme as NightThemeId);
+          try { localStorage.setItem("bg_theme_night", nTheme); } catch {}
         }
-        if (data?.dayTheme && DAY_BACKGROUND_THEMES.find((t) => t.id === data.dayTheme)) {
+        if (data?.dayTheme && DAY_BACKGROUND_THEMES.some((t) => t.id === data.dayTheme)) {
           setDayThemeState(data.dayTheme as DayThemeId);
+          try { localStorage.setItem("bg_theme_day", data.dayTheme); } catch {}
         }
-      })
-      .catch(() => {});
+      }
+    } catch {}
+  };
 
-    // Also load from localStorage for instant render
+  useEffect(() => {
+    // 1. Initial quick load from localStorage for zero flickering
     try {
       const savedNight = localStorage.getItem("bg_theme_night");
-      if (savedNight && NIGHT_BACKGROUND_THEMES.find((t) => t.id === savedNight)) {
+      if (savedNight && NIGHT_BACKGROUND_THEMES.some((t) => t.id === savedNight)) {
         setNightThemeState(savedNight as NightThemeId);
       }
       const savedDay = localStorage.getItem("bg_theme_day");
-      if (savedDay && DAY_BACKGROUND_THEMES.find((t) => t.id === savedDay)) {
+      if (savedDay && DAY_BACKGROUND_THEMES.some((t) => t.id === savedDay)) {
         setDayThemeState(savedDay as DayThemeId);
       }
     } catch {}
+
+    // 2. Authoritative server sync from Supabase DB
+    syncServerTheme();
+
+    // 3. Listen for real-time admin updates
+    const handleBgChange = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.nightTheme) setNightThemeState(detail.nightTheme);
+      if (detail?.dayTheme) setDayThemeState(detail.dayTheme);
+      syncServerTheme();
+    };
+
+    window.addEventListener("bg-theme-changed", handleBgChange);
+    window.addEventListener("focus", syncServerTheme);
+    return () => {
+      window.removeEventListener("bg-theme-changed", handleBgChange);
+      window.removeEventListener("focus", syncServerTheme);
+    };
   }, []);
 
   const setNightTheme = (id: NightThemeId) => {
@@ -212,9 +230,6 @@ export function useBgTheme() {
   return useContext(BgThemeContext);
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Renderer — picks the active theme component based on Day/Night theme mode
-───────────────────────────────────────────────────────────────────────────── */
 export function BackgroundThemeRenderer() {
   const { nightTheme, dayTheme } = useBgTheme();
   const { theme } = useThemeMode();
