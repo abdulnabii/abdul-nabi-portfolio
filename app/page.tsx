@@ -17,6 +17,7 @@ import { getSectionVisibility } from "@/lib/settings-store";
 import { ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function HomePage() {
   const latestPosts = (await getPublishedBlogs()).slice(0, 2);
@@ -28,44 +29,44 @@ export default async function HomePage() {
       {vis.about && <About />}
       {vis.skills && <Skills />}
       {vis.projects && <Projects />}
-      {vis.miniProjects !== false && <MiniProjects />}
+      {vis.miniProjects && <MiniProjects />}
       {vis.experience && <Experience />}
       {vis.education && <Education />}
       {vis.achievements && <Achievements />}
       {vis.games && <MiniGames />}
 
       {vis.blog && (
-        <section
-          className="section-padding relative"
-          aria-labelledby="blog-preview"
-        >
-          <div className="container-narrow">
+        <section id="blog" className="section-padding relative">
+          <div className="container-narrow space-y-10">
             <Reveal>
-              <div className="mb-12 flex flex-col gap-6 sm:mb-16 sm:flex-row sm:items-end sm:justify-between">
-                <SectionHeading
-                  eyebrow="Writing"
-                  title="From the blog"
-                  subtitle="Practical notes on product UI, application security, App Router architecture, and shipping discipline."
-                  className="mb-0"
-                />
-                <LinkButton href="/blog" variant="secondary" size="sm">
-                  View all posts
+              <SectionHeading
+                eyebrow="Insights & Writing"
+                title="Latest Developer Blog Posts"
+              />
+            </Reveal>
+
+            {latestPosts.length > 0 ? (
+              <div className="grid gap-6 md:grid-cols-2">
+                {latestPosts.map((post, idx) => (
+                  <Reveal key={post.slug} delay={idx * 0.1}>
+                    <BlogCard post={post} />
+                  </Reveal>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-slate-400 text-sm py-8">
+                No blog posts published yet.
+              </div>
+            )}
+
+            <Reveal delay={0.2}>
+              <div className="flex justify-center pt-2">
+                <LinkButton href="/blog" variant="secondary" className="gap-2 text-xs">
+                  View All Blog Posts
                   <ArrowRight className="h-3.5 w-3.5" />
                 </LinkButton>
               </div>
             </Reveal>
-
-            {latestPosts.length > 0 ? (
-              <div className="grid gap-5 md:grid-cols-2">
-                {latestPosts.map((post, index) => (
-                  <BlogCard key={post.slug} post={post} index={index} />
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-slate-500">
-                New articles will appear here soon.
-              </p>
-            )}
           </div>
         </section>
       )}

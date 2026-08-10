@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description: "Official Resume of Abdul Nabi — Full-Stack Developer & Software Engineer based in Karachi, Pakistan.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function ResumePage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 section-padding pt-28 pb-20 print:bg-white print:text-black print:p-0 print:pt-0">

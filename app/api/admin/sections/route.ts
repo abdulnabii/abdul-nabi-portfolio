@@ -25,3 +25,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "Failed to save" }, { status: 500 });
   }
 }
+
+export async function POST(req: NextRequest) {
+  return PUT(req);
+}
