@@ -5,27 +5,40 @@ import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import type { MiniProject } from "@/lib/mini-projects-store";
 import type { SocialPost } from "@/lib/social-bot-store";
+import type { SocialCredentials } from "@/lib/social-credentials-store";
 import {
+  AlertCircle,
   Bot,
   Check,
+  CheckCircle2,
   Copy,
   ExternalLink,
   Image as ImageIcon,
+  Key,
   Linkedin,
   Loader2,
+  Lock,
   MessageSquare,
   Rocket,
+  Send,
   Share2,
   Sparkles,
   Trash2,
   Twitter,
+  X,
 } from "lucide-react";
 
 export function SocialBotManager() {
   const [miniProjects, setMiniProjects] = useState<MiniProject[]>([]);
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>([]);
+  const [creds, setCreds] = useState<SocialCredentials>({});
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [publishing, setPublishing] = useState<string | null>(null);
+
+  const [showCredsModal, setShowCredsModal] = useState(false);
+  const [savingCreds, setSavingCreds] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [customTitle, setCustomTitle] = useState("");
@@ -43,13 +56,15 @@ export function SocialBotManager() {
   async function fetchData() {
     setLoading(true);
     try {
-      const [projRes, postRes] = await Promise.all([
+      const [projRes, postRes, credRes] = await Promise.all([
         fetch("/api/mini-projects"),
         fetch("/api/admin/social-bot"),
+        fetch("/api/admin/social-bot/credentials"),
       ]);
 
       const projData = await projRes.json();
       const postData = await postRes.json();
+      const credData = await credRes.json();
 
       if (projData.miniProjects) {
         setMiniProjects(projData.miniProjects);
@@ -64,6 +79,10 @@ export function SocialBotManager() {
           setActivePost(postData.posts[0]);
         }
       }
+
+      if (credData.creds) {
+        setCreds(credData.creds);
+      }
     } catch (err) {
       console.error("Failed to load Social Bot data", err);
     } finally {
@@ -71,8 +90,33 @@ export function SocialBotManager() {
     }
   }
 
+  async function handleSaveCredentials() {
+    setSavingCreds(true);
+    setStatusMessage(null);
+    try {
+      const res = await fetch("/api/admin/social-bot/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(creds),
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        setStatusMessage({ type: "success", text: "Social API Credentials saved successfully!" });
+        setTimeout(() => setShowCredsModal(false), 1200);
+      } else {
+        setStatusMessage({ type: "error", text: data.error || "Failed to save credentials." });
+      }
+    } catch (err) {
+      setStatusMessage({ type: "error", text: "Exception saving credentials." });
+    } finally {
+      setSavingCreds(false);
+    }
+  }
+
   async function handleGenerate() {
     setGenerating(true);
+    setStatusMessage(null);
     try {
       let payload: { miniProjectId?: string; customProj?: Partial<MiniProject>; imageUrl?: string } = {
         imageUrl: imageUrlInput || "https://www.aiwithab.site/profile.jpg",
@@ -105,6 +149,41 @@ export function SocialBotManager() {
       console.error("Failed to generate social post", err);
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function handleDirectPublish(platform: "linkedin" | "reddit") {
+    if (!activePost) return;
+    setPublishing(platform);
+    setStatusMessage(null);
+
+    try {
+      const res = await fetch("/api/admin/social-bot/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId: activePost.id, targetPlatform: platform }),
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        setStatusMessage({
+          type: "success",
+          text: data.message || `Successfully published directly to ${platform}!`,
+        });
+        setActivePost({ ...activePost, status: "Posted" });
+        setSocialPosts((prev) =>
+          prev.map((p) => (p.id === activePost.id ? { ...p, status: "Posted" } : p))
+        );
+      } else {
+        setStatusMessage({
+          type: "error",
+          text: data.error || `Direct posting to ${platform} failed. Check your API credentials.`,
+        });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: "error", text: err.message || "Failed to publish post." });
+    } finally {
+      setPublishing(null);
     }
   }
 
@@ -155,6 +234,9 @@ export function SocialBotManager() {
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
   }
 
+  const isLinkedInLinked = !!(creds.linkedInAccessToken && creds.linkedInPersonUrn);
+  const isRedditLinked = !!(creds.redditClientId && creds.redditUsername && creds.redditPassword);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-32">
@@ -169,27 +251,55 @@ export function SocialBotManager() {
       <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-r from-indigo-900/30 via-slate-900/60 to-purple-900/30 p-6 md:p-8 backdrop-blur-xl">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-300">
-              <Bot className="h-4 w-4" />
-              Automated Social Content Engine
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-300">
+                <Bot className="h-4 w-4" />
+                Automated Social Content Engine
+              </span>
+
+              {isLinkedInLinked ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                  <CheckCircle2 className="h-3 w-3" /> LinkedIn Linked
+                </span>
+              ) : null}
+
+              {isRedditLinked ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                  <CheckCircle2 className="h-3 w-3" /> Reddit Linked
+                </span>
+              ) : null}
             </div>
+
             <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              LinkedIn & Reddit Automation Bot with Picture Cards
+              Direct Social Bot & Auto-Publisher
             </h2>
             <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-              Auto-generate viral posts with picture banner previews for LinkedIn, Reddit, and Twitter. 1-click launch posts pre-filled with content and visual project banners!
+              Auto-generate viral posts with picture cards for LinkedIn & Reddit. Approve drafts to publish directly to your social accounts automatically!
             </p>
           </div>
 
-          {/* Generator Controls */}
-          <div className="w-full md:w-80 shrink-0 bg-white/5 border border-white/10 p-4 rounded-2xl space-y-3">
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto shrink-0">
+            <Button
+              onClick={() => setShowCredsModal(true)}
+              variant="secondary"
+              className="border-white/10 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2"
+            >
+              <Key className="h-3.5 w-3.5 text-indigo-400" />
+              Link Social Accounts
+            </Button>
+          </div>
+        </div>
+
+        {/* Generator Controls */}
+        <div className="mt-6 pt-6 border-t border-white/10 grid gap-4 md:grid-cols-3 items-end">
+          <div>
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
               Select Mini Project to Promote
             </label>
             <select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
             >
               {miniProjects.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -198,40 +308,23 @@ export function SocialBotManager() {
               ))}
               <option value="custom">✏️ Custom Topic / Custom Project</option>
             </select>
+          </div>
 
-            {selectedProjectId === "custom" && (
-              <div className="space-y-2 pt-1">
-                <input
-                  type="text"
-                  placeholder="Project Title..."
-                  value={customTitle}
-                  onChange={(e) => setCustomTitle(e.target.value)}
-                  className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 text-xs text-white"
-                />
-                <textarea
-                  placeholder="Short Description..."
-                  value={customDesc}
-                  onChange={(e) => setCustomDesc(e.target.value)}
-                  rows={2}
-                  className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 text-xs text-white"
-                />
-              </div>
-            )}
+          <div>
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 flex items-center gap-1">
+              <ImageIcon className="h-3.5 w-3.5 text-indigo-400" />
+              Picture / Banner Image URL
+            </label>
+            <input
+              type="text"
+              value={imageUrlInput}
+              onChange={(e) => setImageUrlInput(e.target.value)}
+              placeholder="https://.../preview.jpg"
+              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
+            />
+          </div>
 
-            <div>
-              <label className="block text-[11px] font-medium text-slate-400 mb-1 flex items-center gap-1">
-                <ImageIcon className="h-3 w-3 text-indigo-400" />
-                Picture / Banner Image URL:
-              </label>
-              <input
-                type="text"
-                value={imageUrlInput}
-                onChange={(e) => setImageUrlInput(e.target.value)}
-                placeholder="https://.../preview.jpg"
-                className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 text-xs text-white"
-              />
-            </div>
-
+          <div>
             <Button
               onClick={handleGenerate}
               disabled={generating}
@@ -245,13 +338,34 @@ export function SocialBotManager() {
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 text-amber-300" />
-                  Auto-Generate Social Posts
+                  Auto-Generate Social Draft
                 </>
               )}
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Global Status Alert Banner */}
+      {statusMessage && (
+        <div
+          className={`rounded-2xl border p-4 flex items-center gap-3 text-xs font-semibold ${
+            statusMessage.type === "success"
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+              : "border-rose-500/30 bg-rose-500/10 text-rose-300"
+          }`}
+        >
+          {statusMessage.type === "success" ? (
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+          ) : (
+            <AlertCircle className="h-4 w-4 shrink-0" />
+          )}
+          <span className="flex-1">{statusMessage.text}</span>
+          <button onClick={() => setStatusMessage(null)} className="opacity-70 hover:opacity-100">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* Main Campaign Workspace */}
       {activePost ? (
@@ -260,9 +374,16 @@ export function SocialBotManager() {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-3 gap-4">
               <div>
-                <span className="text-[11px] font-mono text-indigo-400 uppercase tracking-wider">
-                  Active Campaign
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono text-indigo-400 uppercase tracking-wider">
+                    Active Campaign
+                  </span>
+                  {activePost.status === "Posted" && (
+                    <span className="rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
+                      🟢 Direct Published
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-xl font-bold text-white">{activePost.title}</h3>
               </div>
 
@@ -310,9 +431,30 @@ export function SocialBotManager() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs">
                     <Linkedin className="h-4 w-4" />
-                    LinkedIn Post Blueprint (Includes Banner Picture Card)
+                    LinkedIn Post Blueprint
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Approve & Direct Publish to LinkedIn */}
+                    <Button
+                      onClick={() => handleDirectPublish("linkedin")}
+                      disabled={publishing === "linkedin"}
+                      size="sm"
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30"
+                    >
+                      {publishing === "linkedin" ? (
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          Publishing to LinkedIn...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-3.5 w-3.5" />
+                          Approve & Direct Upload to LinkedIn 🚀
+                        </>
+                      )}
+                    </Button>
+
                     <Button
                       variant="secondary"
                       size="sm"
@@ -320,24 +462,20 @@ export function SocialBotManager() {
                       className="text-xs"
                     >
                       {copiedKey === "linkedin" ? (
-                        <>
-                          <Check className="h-3.5 w-3.5 text-emerald-400" />
-                          Copied!
-                        </>
+                        <Check className="h-3.5 w-3.5 text-emerald-400" />
                       ) : (
-                        <>
-                          <Copy className="h-3.5 w-3.5" />
-                          Copy Text
-                        </>
+                        <Copy className="h-3.5 w-3.5" />
                       )}
                     </Button>
+
                     <Button
                       onClick={() => launchLinkedInShare(activePost)}
+                      variant="secondary"
                       size="sm"
-                      className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold"
+                      className="text-xs"
+                      title="Open Web Share Dialog"
                     >
                       <Share2 className="h-3.5 w-3.5" />
-                      Launch LinkedIn Share 🚀
                     </Button>
                   </div>
                 </div>
@@ -378,7 +516,28 @@ export function SocialBotManager() {
                     <MessageSquare className="h-4 w-4" />
                     Reddit Post Blueprint ({activePost.redditSubreddit})
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Approve & Direct Publish to Reddit */}
+                    <Button
+                      onClick={() => handleDirectPublish("reddit")}
+                      disabled={publishing === "reddit"}
+                      size="sm"
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30"
+                    >
+                      {publishing === "reddit" ? (
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          Submitting to Reddit...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-3.5 w-3.5" />
+                          Approve & Direct Upload to Reddit 🚀
+                        </>
+                      )}
+                    </Button>
+
                     <Button
                       variant="secondary"
                       size="sm"
@@ -386,24 +545,20 @@ export function SocialBotManager() {
                       className="text-xs"
                     >
                       {copiedKey === "reddit" ? (
-                        <>
-                          <Check className="h-3.5 w-3.5 text-emerald-400" />
-                          Copied!
-                        </>
+                        <Check className="h-3.5 w-3.5 text-emerald-400" />
                       ) : (
-                        <>
-                          <Copy className="h-3.5 w-3.5" />
-                          Copy Markdown
-                        </>
+                        <Copy className="h-3.5 w-3.5" />
                       )}
                     </Button>
+
                     <Button
                       onClick={() => launchRedditSubmit(activePost)}
+                      variant="secondary"
                       size="sm"
-                      className="bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold"
+                      className="text-xs"
+                      title="Open Web Submit Dialog"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
-                      Submit to Reddit 🚀
                     </Button>
                   </div>
                 </div>
@@ -452,15 +607,9 @@ export function SocialBotManager() {
                       className="text-xs"
                     >
                       {copiedKey === "twitter" ? (
-                        <>
-                          <Check className="h-3.5 w-3.5 text-emerald-400" />
-                          Copied!
-                        </>
+                        <Check className="h-3.5 w-3.5 text-emerald-400" />
                       ) : (
-                        <>
-                          <Copy className="h-3.5 w-3.5" />
-                          Copy Tweet
-                        </>
+                        <Copy className="h-3.5 w-3.5" />
                       )}
                     </Button>
                     <Button
@@ -503,7 +652,12 @@ export function SocialBotManager() {
                   }`}
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-white truncate">{post.title}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold text-white truncate">{post.title}</p>
+                      {post.status === "Posted" && (
+                        <span className="text-[10px] text-emerald-400 font-semibold">✓</span>
+                      )}
+                    </div>
                     <p className="text-[10px] text-slate-400 mt-0.5">
                       {new Date(post.createdAt).toLocaleDateString()} • {post.category}
                     </p>
@@ -528,8 +682,123 @@ export function SocialBotManager() {
           <Bot className="h-10 w-10 text-indigo-400 mx-auto mb-3 opacity-60" />
           <p className="text-white font-semibold text-base">No social post campaigns generated yet.</p>
           <p className="text-slate-400 text-xs mt-1 max-w-md mx-auto">
-            Select a project above and click &quot;Auto-Generate Social Posts&quot; to instantly draft LinkedIn and Reddit posts with pictures!
+            Select a project above and click &quot;Auto-Generate Social Draft&quot; to draft posts for LinkedIn and Reddit!
           </p>
+        </div>
+      )}
+
+      {/* Account Linking & OAuth Modal */}
+      {showCredsModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+          <div className="w-full max-w-xl rounded-3xl border border-white/10 bg-slate-900 p-6 sm:p-8 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2">
+                <Lock className="h-5 w-5 text-indigo-400" />
+                <h3 className="text-xl font-bold text-white">Link Social API Credentials</h3>
+              </div>
+              <button
+                onClick={() => setShowCredsModal(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-6 max-h-[460px] overflow-y-auto pr-1 text-xs">
+              {/* LinkedIn Section */}
+              <div className="space-y-3 p-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/5">
+                <div className="flex items-center gap-2 font-bold text-indigo-300">
+                  <Linkedin className="h-4 w-4" />
+                  LinkedIn REST API Credentials
+                </div>
+                <div>
+                  <label className="block text-slate-400 mb-1">LinkedIn Access Token</label>
+                  <input
+                    type="password"
+                    value={creds.linkedInAccessToken || ""}
+                    onChange={(e) => setCreds({ ...creds, linkedInAccessToken: e.target.value })}
+                    placeholder="AQV..."
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 mb-1">LinkedIn Person URN (Member ID)</label>
+                  <input
+                    type="text"
+                    value={creds.linkedInPersonUrn || ""}
+                    onChange={(e) => setCreds({ ...creds, linkedInPersonUrn: e.target.value })}
+                    placeholder="urn:li:person:12345678"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Reddit Section */}
+              <div className="space-y-3 p-4 rounded-2xl border border-orange-500/20 bg-orange-500/5">
+                <div className="flex items-center gap-2 font-bold text-orange-300">
+                  <MessageSquare className="h-4 w-4" />
+                  Reddit API Credentials (OAuth2 App)
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Reddit Client ID</label>
+                    <input
+                      type="text"
+                      value={creds.redditClientId || ""}
+                      onChange={(e) => setCreds({ ...creds, redditClientId: e.target.value })}
+                      placeholder="e.g. k9X_Ab1..."
+                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Reddit Client Secret</label>
+                    <input
+                      type="password"
+                      value={creds.redditClientSecret || ""}
+                      onChange={(e) => setCreds({ ...creds, redditClientSecret: e.target.value })}
+                      placeholder="Secret key..."
+                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
+                    />
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Reddit Username</label>
+                    <input
+                      type="text"
+                      value={creds.redditUsername || ""}
+                      onChange={(e) => setCreds({ ...creds, redditUsername: e.target.value })}
+                      placeholder="Your Reddit Username"
+                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">Reddit Password</label>
+                    <input
+                      type="password"
+                      value={creds.redditPassword || ""}
+                      onChange={(e) => setCreds({ ...creds, redditPassword: e.target.value })}
+                      placeholder="Your Reddit Password"
+                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+              <Button variant="secondary" onClick={() => setShowCredsModal(false)} className="text-xs">
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveCredentials}
+                disabled={savingCreds}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30"
+              >
+                {savingCreds ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save API Credentials"}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
