@@ -8,6 +8,10 @@ export interface SocialCredentials {
   redditUsername?: string;
   redditPassword?: string;
   autoApprove?: boolean;
+  autoPosterActive?: boolean;
+  autoPosterFrequencyHours?: number;
+  lastAutoPostAt?: string;
+  nextAutoPostIndex?: number;
 }
 
 let memoryCredentials: SocialCredentials = {};
@@ -133,7 +137,6 @@ export async function publishDirectToReddit(
   }
 
   try {
-    // 1. Obtain Reddit OAuth Token
     const authHeader = `Basic ${Buffer.from(`${c.redditClientId}:${c.redditClientSecret}`).toString("base64")}`;
     const tokenRes = await fetch("https://www.reddit.com/api/v1/access_token", {
       method: "POST",
@@ -160,7 +163,6 @@ export async function publishDirectToReddit(
     const token = tokenData.access_token;
     const subClean = subreddit.replace(/^r\//, "").trim();
 
-    // 2. Submit Post to Reddit
     const postRes = await fetch("https://oauth.reddit.com/api/submit", {
       method: "POST",
       headers: {

@@ -9,6 +9,7 @@ import type { SocialCredentials } from "@/lib/social-credentials-store";
 import {
   AlertCircle,
   Bot,
+  Calendar,
   Check,
   CheckCircle2,
   Copy,
@@ -19,6 +20,9 @@ import {
   Loader2,
   Lock,
   MessageSquare,
+  Play,
+  PlayCircle,
+  Power,
   Rocket,
   Send,
   Share2,
@@ -35,6 +39,7 @@ export function SocialBotManager() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [publishing, setPublishing] = useState<string | null>(null);
+  const [runningAutoCycle, setRunningAutoCycle] = useState(false);
 
   const [showCredsModal, setShowCredsModal] = useState(false);
   const [savingCreds, setSavingCreds] = useState(false);
@@ -87,6 +92,48 @@ export function SocialBotManager() {
       console.error("Failed to load Social Bot data", err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleToggleAutoPoster(active: boolean) {
+    const nextCreds = { ...creds, autoPosterActive: active };
+    setCreds(nextCreds);
+    try {
+      await fetch("/api/admin/social-bot/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nextCreds),
+      });
+      setStatusMessage({
+        type: "success",
+        text: active ? "🤖 Auto-Poster Bot Activated! Will post automatically on schedule." : "⏸️ Auto-Poster Bot Paused.",
+      });
+    } catch {}
+  }
+
+  async function handleRunAutoCycleNow() {
+    setRunningAutoCycle(true);
+    setStatusMessage(null);
+    try {
+      const res = await fetch("/api/cron/auto-social-post?force=true", { cache: "no-store" });
+      const data = await res.json();
+      if (data.ok && data.log) {
+        setStatusMessage({
+          type: "success",
+          text: `⚡ Auto-Poster Cycle Finished! Target: ${data.log.projectTitle}. LinkedIn: ${data.log.linkedInStatus}. Reddit: ${data.log.redditStatus}`,
+        });
+        if (data.post) {
+          setSocialPosts((prev) => [data.post, ...prev]);
+          setActivePost(data.post);
+        }
+        fetchData();
+      } else {
+        setStatusMessage({ type: "error", text: data.error || "Auto-poster cycle returned an error." });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: "error", text: err.message || "Failed to trigger auto-post cycle." });
+    } finally {
+      setRunningAutoCycle(false);
     }
   }
 
@@ -248,7 +295,7 @@ export function SocialBotManager() {
   return (
     <div className="space-y-8">
       {/* Header Banner */}
-      <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-r from-indigo-900/30 via-slate-900/60 to-purple-900/30 p-6 md:p-8 backdrop-blur-xl">
+      <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-r from-indigo-900/30 via-slate-900/60 to-purple-900/30 p-6 md:p-8 backdrop-blur-xl space-y-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
@@ -257,24 +304,22 @@ export function SocialBotManager() {
                 Automated Social Content Engine
               </span>
 
-              {isLinkedInLinked ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
-                  <CheckCircle2 className="h-3 w-3" /> LinkedIn Linked
+              {creds.autoPosterActive ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 text-xs font-bold text-emerald-300 animate-pulse">
+                  <Power className="h-3.5 w-3.5" /> Auto-Poster Bot ACTIVE
                 </span>
-              ) : null}
-
-              {isRedditLinked ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
-                  <CheckCircle2 className="h-3 w-3" /> Reddit Linked
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 border border-white/10 px-3 py-1 text-xs font-medium text-slate-400">
+                  <Power className="h-3.5 w-3.5" /> Auto-Poster Paused
                 </span>
-              ) : null}
+              )}
             </div>
 
             <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              Direct Social Bot & Auto-Publisher
+              Automated Work Content & Social Bot Scheduler
             </h2>
             <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-              Auto-generate viral posts with picture cards for LinkedIn & Reddit. Approve drafts to publish directly to your social accounts automatically!
+              Auto-generate and auto-publish content related to your mini projects & portfolio builds with picture banners to LinkedIn and Reddit on a scheduled cycle!
             </p>
           </div>
 
@@ -290,8 +335,54 @@ export function SocialBotManager() {
           </div>
         </div>
 
+        {/* Auto-Poster Control Bar */}
+        <div className="rounded-2xl border border-indigo-500/30 bg-black/40 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-4 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 font-medium">Auto-Poster Status:</span>
+              <button
+                onClick={() => handleToggleAutoPoster(!creds.autoPosterActive)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  creds.autoPosterActive ? "bg-emerald-600" : "bg-slate-700"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    creds.autoPosterActive ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {creds.lastAutoPostAt && (
+              <div className="text-slate-400 flex items-center gap-1 font-mono">
+                <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                Last Posted: {new Date(creds.lastAutoPostAt).toLocaleDateString()} {new Date(creds.lastAutoPostAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            )}
+          </div>
+
+          <Button
+            onClick={handleRunAutoCycleNow}
+            disabled={runningAutoCycle}
+            className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2"
+          >
+            {runningAutoCycle ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Running Auto-Post Cycle...
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4 fill-white" />
+                ⚡ Run Auto-Post Cycle Now
+              </>
+            )}
+          </Button>
+        </div>
+
         {/* Generator Controls */}
-        <div className="mt-6 pt-6 border-t border-white/10 grid gap-4 md:grid-cols-3 items-end">
+        <div className="pt-2 grid gap-4 md:grid-cols-3 items-end">
           <div>
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
               Select Mini Project to Promote
@@ -435,7 +526,6 @@ export function SocialBotManager() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    {/* Approve & Direct Publish to LinkedIn */}
                     <Button
                       onClick={() => handleDirectPublish("linkedin")}
                       disabled={publishing === "linkedin"}
@@ -518,7 +608,6 @@ export function SocialBotManager() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    {/* Approve & Direct Publish to Reddit */}
                     <Button
                       onClick={() => handleDirectPublish("reddit")}
                       disabled={publishing === "reddit"}
