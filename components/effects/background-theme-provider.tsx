@@ -7,11 +7,19 @@ import {
   ThemeQuantumPlasma,
   ThemeMatrixRain,
   ThemeCosmicFireflies,
+  ThemeCyberpunkGrid,
+  ThemeEmeraldMatrix,
+  ThemeSolarFlare,
+  ThemeObsidianGlass,
+  ThemeVelvetNight,
   ThemeDaySunriseDawn,
   ThemeDaySkyBreeze,
   ThemeDayMintFresh,
   ThemeDaySunsetPastel,
   ThemeDayCyberLight,
+  ThemeDayGoldenHour,
+  ThemeDayNordicFrost,
+  ThemeDayMinimalTitanium,
 } from "@/components/effects/background-themes";
 
 import { useThemeMode } from "@/components/effects/theme-mode-provider";
@@ -21,7 +29,12 @@ export type NightThemeId =
   | "midnight-aurora"
   | "quantum-plasma"
   | "matrix-rain"
-  | "cosmic-fireflies";
+  | "cosmic-fireflies"
+  | "cyberpunk-grid"
+  | "emerald-matrix"
+  | "solar-flare"
+  | "obsidian-glass"
+  | "velvet-night";
 
 export type DayThemeId =
   | "day-sunrise-dawn"
@@ -29,6 +42,9 @@ export type DayThemeId =
   | "day-mint-fresh"
   | "day-sunset-pastel"
   | "day-cyber-light"
+  | "day-golden-hour"
+  | "day-nordic-frost"
+  | "day-minimal-titanium"
   | "day-clean-minimal";
 
 export type BackgroundThemeId = NightThemeId | DayThemeId;
@@ -43,6 +59,54 @@ export interface BackgroundThemeDef {
 }
 
 export const NIGHT_BACKGROUND_THEMES: BackgroundThemeDef[] = [
+  {
+    id: "quantum-plasma",
+    label: "Quantum Plasma",
+    mode: "night",
+    type: "animated",
+    description: "Interactive plasma cursor halo, magnetic particle field, spark trails, and aurora wave ribbons.",
+    preview: "linear-gradient(135deg, #030511 0%, #1a0a3a 40%, #0a1a2a 100%)",
+  },
+  {
+    id: "cyberpunk-grid",
+    label: "Cyberpunk Synthwave Grid",
+    mode: "night",
+    type: "animated",
+    description: "Holographic synthwave cyber grid floor with floating magenta-cyan data nodes and horizon beam.",
+    preview: "linear-gradient(135deg, #070210 0%, #2e0854 50%, #06b6d4 100%)",
+  },
+  {
+    id: "emerald-matrix",
+    label: "Emerald Matrix Stream",
+    mode: "night",
+    type: "animated",
+    description: "High-density digital matrix rain & cascading green telemetry nodes with soft emerald glow.",
+    preview: "linear-gradient(135deg, #02120a 0%, #041a0f 50%, #10b981 100%)",
+  },
+  {
+    id: "solar-flare",
+    label: "Solar Corona Flare",
+    mode: "night",
+    type: "animated",
+    description: "Warm solar corona aura with golden ember sparks floating across a deep volcanic cosmos.",
+    preview: "linear-gradient(135deg, #0c0402 0%, #2a0c04 50%, #d97706 100%)",
+  },
+  {
+    id: "matrix-rain",
+    label: "Classic Matrix Code Rain",
+    mode: "night",
+    type: "animated",
+    description: "Cascading Japanese katakana & alphanumeric characters falling in neon green — hacker aesthetic.",
+    preview: "linear-gradient(135deg, #000000 0%, #001a00 50%, #000800 100%)",
+  },
+  {
+    id: "cosmic-fireflies",
+    label: "Cosmic Fireflies",
+    mode: "night",
+    type: "animated",
+    description: "Glowing cyan-violet fireflies floating through a dark cosmos with constellation connections.",
+    preview: "linear-gradient(135deg, #080b1a 0%, #0a0e25 50%, #060810 100%)",
+  },
   {
     id: "deep-space-nebula",
     label: "Deep Space Nebula",
@@ -60,28 +124,20 @@ export const NIGHT_BACKGROUND_THEMES: BackgroundThemeDef[] = [
     preview: "linear-gradient(135deg, #010a08 0%, #0d3d2a 40%, #051520 80%, #020808 100%)",
   },
   {
-    id: "quantum-plasma",
-    label: "Quantum Plasma",
+    id: "obsidian-glass",
+    label: "Obsidian Minimal Glass",
     mode: "night",
-    type: "animated",
-    description: "Interactive plasma cursor halo, magnetic particle field, spark trails, and aurora wave ribbons.",
-    preview: "linear-gradient(135deg, #030511 0%, #1a0a3a 40%, #0a1a2a 100%)",
+    type: "static",
+    description: "Minimalist obsidian dark backdrop with dark indigo glass ambient orbs and fine geometry lines.",
+    preview: "linear-gradient(135deg, #05060b 0%, #0f172a 50%, #020617 100%)",
   },
   {
-    id: "matrix-rain",
-    label: "Matrix Rain",
+    id: "velvet-night",
+    label: "Velvet Violet Night",
     mode: "night",
-    type: "animated",
-    description: "Cascading Japanese katakana & alphanumeric characters falling in neon green — hacker aesthetic.",
-    preview: "linear-gradient(135deg, #000000 0%, #001a00 50%, #000800 100%)",
-  },
-  {
-    id: "cosmic-fireflies",
-    label: "Cosmic Fireflies",
-    mode: "night",
-    type: "animated",
-    description: "Glowing cyan-violet fireflies floating through a dark cosmos with constellation connections.",
-    preview: "linear-gradient(135deg, #080b1a 0%, #0a0e25 50%, #060810 100%)",
+    type: "static",
+    description: "Deep midnight-violet velvet dark theme with soft radial ambient purple lighting.",
+    preview: "linear-gradient(135deg, #0c061a 0%, #2e1065 50%, #1e1b4b 100%)",
   },
 ];
 
@@ -93,6 +149,22 @@ export const DAY_BACKGROUND_THEMES: BackgroundThemeDef[] = [
     type: "animated",
     description: "Warm golden morning sunbeam flares, peach clouds, and rising amber sun dust.",
     preview: "linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #f8fafc 100%)",
+  },
+  {
+    id: "day-golden-hour",
+    label: "Golden Hour Amber",
+    mode: "day",
+    type: "animated",
+    description: "Luminous warm amber & honey gold daylight gradient with floating golden dust particles.",
+    preview: "linear-gradient(135deg, #fffbeb 0%, #fde68a 50%, #fbbf24 100%)",
+  },
+  {
+    id: "day-nordic-frost",
+    label: "Nordic Arctic Frost",
+    mode: "day",
+    type: "animated",
+    description: "Crisp ice-blue & icy cyan glass aesthetic with drifting crystalline frost particles.",
+    preview: "linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 50%, #99f6e4 100%)",
   },
   {
     id: "day-sky-breeze",
@@ -125,6 +197,14 @@ export const DAY_BACKGROUND_THEMES: BackgroundThemeDef[] = [
     type: "animated",
     description: "Crisp light-gray background with a subtle slate technical grid and floating data nodes.",
     preview: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)",
+  },
+  {
+    id: "day-minimal-titanium",
+    label: "Minimal Titanium Silver",
+    mode: "day",
+    type: "minimal",
+    description: "Professional corporate titanium silver light background with subtle slate accent grid lines.",
+    preview: "linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 50%, #e2e8f0 100%)",
   },
   {
     id: "day-clean-minimal",
@@ -193,7 +273,6 @@ export function BackgroundThemeProvider({ children }: { children: React.ReactNod
     window.addEventListener("bg-theme-changed", handleBgChange);
     window.addEventListener("focus", syncServerTheme);
 
-    // Poll every 4 seconds for real-time background theme updates
     const interval = setInterval(syncServerTheme, 4000);
 
     return () => {
@@ -230,17 +309,25 @@ export function BackgroundThemeRenderer() {
 
   if (theme === "light") {
     switch (dayTheme) {
-      case "day-sunrise-dawn": return <ThemeDaySunriseDawn />;
-      case "day-sky-breeze":   return <ThemeDaySkyBreeze />;
-      case "day-mint-fresh":   return <ThemeDayMintFresh />;
-      case "day-sunset-pastel":return <ThemeDaySunsetPastel />;
-      case "day-cyber-light":  return <ThemeDayCyberLight />;
+      case "day-sunrise-dawn":     return <ThemeDaySunriseDawn />;
+      case "day-golden-hour":      return <ThemeDayGoldenHour />;
+      case "day-nordic-frost":     return <ThemeDayNordicFrost />;
+      case "day-sky-breeze":       return <ThemeDaySkyBreeze />;
+      case "day-mint-fresh":       return <ThemeDayMintFresh />;
+      case "day-sunset-pastel":    return <ThemeDaySunsetPastel />;
+      case "day-cyber-light":      return <ThemeDayCyberLight />;
+      case "day-minimal-titanium": return <ThemeDayMinimalTitanium />;
       case "day-clean-minimal":
-      default:                 return null;
+      default:                     return null;
     }
   }
 
   switch (nightTheme) {
+    case "cyberpunk-grid":    return <ThemeCyberpunkGrid />;
+    case "emerald-matrix":    return <ThemeEmeraldMatrix />;
+    case "solar-flare":       return <ThemeSolarFlare />;
+    case "obsidian-glass":    return <ThemeObsidianGlass />;
+    case "velvet-night":      return <ThemeVelvetNight />;
     case "deep-space-nebula": return <ThemeDeepSpaceNebula />;
     case "midnight-aurora":   return <ThemeMidnightAurora />;
     case "matrix-rain":       return <ThemeMatrixRain />;

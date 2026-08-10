@@ -8,7 +8,10 @@ export type CursorStyleId =
   | "cyber-dot"
   | "tech-crosshair"
   | "spotlight-aura"
-  | "orbital-particles";
+  | "orbital-particles"
+  | "laser-pointer"
+  | "magnetic-pulse"
+  | "spark-trail";
 
 export interface CursorStyleDef {
   id: CursorStyleId;
@@ -32,6 +35,27 @@ export const CURSOR_STYLES: CursorStyleDef[] = [
     description: "Instant precision center dot with a lagging cyber pulse ring",
     icon: "🎯",
     previewClass: "bg-cyan-400 shadow-[0_0_15px_#22d3ee]",
+  },
+  {
+    id: "laser-pointer",
+    label: "Laser Precision Reticle",
+    description: "High-precision red/emerald laser targeting reticle with aura pulse ring",
+    icon: "🔴",
+    previewClass: "bg-rose-500 shadow-[0_0_18px_#f43f5e]",
+  },
+  {
+    id: "magnetic-pulse",
+    label: "Magnetic Wave Ripple",
+    description: "Pulsating magnetic wave ring that expands and contracts dynamically on movement",
+    icon: "🌊",
+    previewClass: "border-emerald-400 bg-emerald-500/10 shadow-[0_0_15px_#10b981]",
+  },
+  {
+    id: "spark-trail",
+    label: "Luminous Ember Trail",
+    description: "Gold/cyan magic spark emitter with trailing light energy particles",
+    icon: "✨",
+    previewClass: "bg-amber-400 shadow-[0_0_15px_#fbbf24]",
   },
   {
     id: "tech-crosshair",
@@ -71,8 +95,8 @@ export function CustomCursor() {
   const current = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
-    // Load saved cursor style from API or localStorage
-    fetch("/api/admin/background-theme", { cache: "no-store" })
+    // Load saved cursor style from API
+    fetch("/api/admin/background-theme?t=" + Date.now(), { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         if (d.cursorStyle) setCursorStyle(d.cursorStyle as CursorStyleId);
@@ -158,8 +182,12 @@ export function CustomCursor() {
 
   return (
     <>
-      {/* Instant Precision Dot (used in cyber-dot, tech-crosshair, orbital-particles) */}
-      {(cursorStyle === "cyber-dot" || cursorStyle === "tech-crosshair" || cursorStyle === "orbital-particles") && (
+      {/* Instant Precision Dot (used in cyber-dot, tech-crosshair, laser-pointer, spark-trail, orbital-particles) */}
+      {(cursorStyle === "cyber-dot" ||
+        cursorStyle === "tech-crosshair" ||
+        cursorStyle === "laser-pointer" ||
+        cursorStyle === "spark-trail" ||
+        cursorStyle === "orbital-particles") && (
         <div
           ref={dotRef}
           aria-hidden
@@ -168,7 +196,11 @@ export function CustomCursor() {
         >
           <div
             className={`-translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-150 ${
-              isLight
+              cursorStyle === "laser-pointer"
+                ? "h-2.5 w-2.5 bg-rose-500 shadow-[0_0_12px_#f43f5e]"
+                : cursorStyle === "spark-trail"
+                ? "h-2.5 w-2.5 bg-amber-400 shadow-[0_0_12px_#fbbf24]"
+                : isLight
                 ? "h-2 w-2 bg-indigo-600 shadow-[0_0_8px_#4f46e5]"
                 : "h-2 w-2 bg-cyan-400 shadow-[0_0_8px_#22d3ee]"
             } ${hovering ? "scale-150" : "scale-100"}`}
@@ -213,7 +245,40 @@ export function CustomCursor() {
           />
         )}
 
-        {/* Style 3: Precision Tech Crosshair */}
+        {/* Style 3: Laser Reticle Pointer */}
+        {cursorStyle === "laser-pointer" && (
+          <div
+            className={`-translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition-all duration-200 ${
+              hovering
+                ? "h-10 w-10 border-rose-500 bg-rose-500/20 shadow-[0_0_25px_#f43f5e] scale-125"
+                : "h-6 w-6 border-rose-500/70 bg-rose-500/10 shadow-[0_0_15px_#f43f5e] scale-100"
+            }`}
+          />
+        )}
+
+        {/* Style 4: Magnetic Pulse Ripple */}
+        {cursorStyle === "magnetic-pulse" && (
+          <div
+            className={`-translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition-all duration-300 animate-pulse ${
+              hovering
+                ? "h-12 w-12 border-emerald-400 bg-emerald-500/20 shadow-[0_0_30px_#10b981] scale-125"
+                : "h-8 w-8 border-emerald-400/70 bg-emerald-500/10 shadow-[0_0_15px_#10b981] scale-100"
+            }`}
+          />
+        )}
+
+        {/* Style 5: Spark Ember Trail */}
+        {cursorStyle === "spark-trail" && (
+          <div
+            className={`-translate-x-1/2 -translate-y-1/2 rounded-full blur-sm transition-all duration-300 ${
+              hovering
+                ? "h-12 w-12 bg-gradient-to-r from-amber-400/60 to-orange-500/60 shadow-[0_0_30px_#fbbf24] scale-125"
+                : "h-8 w-8 bg-gradient-to-r from-amber-400/35 to-orange-500/35 shadow-[0_0_15px_#fbbf24] scale-100"
+            }`}
+          />
+        )}
+
+        {/* Style 6: Precision Tech Crosshair */}
         {cursorStyle === "tech-crosshair" && (
           <div
             className={`-translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-all duration-300 ${
@@ -231,7 +296,7 @@ export function CustomCursor() {
           </div>
         )}
 
-        {/* Style 4: Fluid Glow Spotlight Aura */}
+        {/* Style 7: Fluid Glow Spotlight Aura */}
         {cursorStyle === "spotlight-aura" && (
           <div
             className={`-translate-x-1/2 -translate-y-1/2 rounded-full blur-xl transition-all duration-300 ${
@@ -243,7 +308,7 @@ export function CustomCursor() {
           />
         )}
 
-        {/* Style 5: Dual Orbital Satellites */}
+        {/* Style 8: Dual Orbital Satellites */}
         {cursorStyle === "orbital-particles" && (
           <div className="relative -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
             <div

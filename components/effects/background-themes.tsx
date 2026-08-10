@@ -51,7 +51,6 @@ export function ThemeMidnightAurora() {
       <div className="absolute top-[18%] left-[-10%] w-[120%] h-[180px] bg-gradient-to-r from-transparent via-teal-400/12 to-transparent blur-[35px] rotate-[2deg]" />
       <div className="absolute top-[30%] left-[-10%] w-[120%] h-[150px] bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent blur-[40px] rotate-[-1deg]" />
       <div className="absolute bottom-0 left-0 w-full h-[30%] bg-gradient-to-t from-[#010a08] to-transparent" />
-      <div className="absolute bottom-[15%] left-[10%] w-[80%] h-[100px] bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent blur-[20px] rotate-[1deg]" />
       <div className="absolute inset-0 bg-grid opacity-10 mix-blend-overlay" />
     </div>
   );
@@ -91,17 +90,8 @@ export function ThemeQuantumPlasma() {
       phase: Math.random() * Math.PI * 2,
     }));
 
-    interface Trail { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; r: number; hue: number; }
-    const trail: Trail[] = [];
-    let mx = w / 2, my = h / 2, tmx = w / 2, tmy = h / 2, lastSpawn = 0;
-    const onMouse = (e: MouseEvent) => {
-      tmx = e.clientX; tmy = e.clientY;
-      const now = performance.now();
-      if (now - lastSpawn > 25) {
-        lastSpawn = now;
-        trail.push({ x: e.clientX, y: e.clientY, vx: (Math.random()-0.5)*1.5, vy: (Math.random()-0.5)*1.5-0.5, life: 1, maxLife: Math.random()*25+20, r: Math.random()*3.5+1.5, hue: (Math.random()*60+200)%360 });
-      }
-    };
+    let mx = w / 2, my = h / 2, tmx = w / 2, tmy = h / 2;
+    const onMouse = (e: MouseEvent) => { tmx = e.clientX; tmy = e.clientY; };
     window.addEventListener("mousemove", onMouse);
     const t0 = performance.now();
 
@@ -129,29 +119,17 @@ export function ThemeQuantumPlasma() {
       const mhue = (t*30)%360;
       const pulse = 1 + Math.sin(t*4)*0.08;
       const og = ctx.createRadialGradient(mx,my,0,mx,my,420*pulse);
-      og.addColorStop(0,`hsla(${mhue},90%,65%,0.30)`); og.addColorStop(0.35,`hsla(${(mhue+40)%360},85%,55%,0.18)`); og.addColorStop(0.7,`hsla(${(mhue+90)%360},80%,45%,0.07)`); og.addColorStop(1,"transparent");
+      og.addColorStop(0,`hsla(${mhue},90%,65%,0.30)`); og.addColorStop(0.35,`hsla(${(mhue+40)%360},85%,55%,0.18)`); og.addColorStop(1,"transparent");
       ctx.fillStyle=og; ctx.beginPath(); ctx.arc(mx,my,420*pulse,0,Math.PI*2); ctx.fill();
 
       particles.forEach(p => {
-        const dx=mx-p.x, dy=my-p.y, dist=Math.sqrt(dx*dx+dy*dy);
-        if (dist<260&&dist>1) { const pull=(1-dist/260)*0.4; p.x+=(dx/dist)*pull; p.y+=(dy/dist)*pull; }
         p.y+=p.vy; p.x+=p.vx+Math.sin(t*1.2+p.phase)*0.3;
         if (p.y<-10) { p.y=h+10; p.x=Math.random()*w; }
-        if (p.x<-10) p.x=w+10; if (p.x>w+10) p.x=-10;
         const a=p.alpha*(0.65+0.35*Math.sin(t*3.5+p.phase));
         const pg=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3);
-        pg.addColorStop(0,`rgba(224,231,255,${a})`); pg.addColorStop(0.5,`rgba(129,140,248,${a*0.5})`); pg.addColorStop(1,"transparent");
+        pg.addColorStop(0,`rgba(224,231,255,${a})`); pg.addColorStop(1,"transparent");
         ctx.fillStyle=pg; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2); ctx.fill();
       });
-
-      for (let i=trail.length-1;i>=0;i--) {
-        const tp=trail[i]; tp.x+=tp.vx; tp.y+=tp.vy; tp.life++;
-        const lr=1-tp.life/tp.maxLife;
-        if (lr<=0) { trail.splice(i,1); continue; }
-        const tg=ctx.createRadialGradient(tp.x,tp.y,0,tp.x,tp.y,tp.r*2.5);
-        tg.addColorStop(0,`hsla(${tp.hue},90%,75%,${lr*0.8})`); tg.addColorStop(0.6,`hsla(${tp.hue+30},80%,60%,${lr*0.4})`); tg.addColorStop(1,"transparent");
-        ctx.fillStyle=tg; ctx.beginPath(); ctx.arc(tp.x,tp.y,tp.r*2.5*lr,0,Math.PI*2); ctx.fill();
-      }
 
       raf = requestAnimationFrame(render);
     };
@@ -275,12 +253,8 @@ export function ThemeCosmicFireflies() {
         const alpha = 0.4 + 0.6*pulse;
         const radius = f.r * (0.7 + 0.3*pulse);
 
-        const og = ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,radius*8);
-        og.addColorStop(0,`hsla(${f.hue},90%,70%,${alpha*0.3})`); og.addColorStop(1,"transparent");
-        ctx.fillStyle = og; ctx.beginPath(); ctx.arc(f.x,f.y,radius*8,0,Math.PI*2); ctx.fill();
-
         const ig = ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,radius);
-        ig.addColorStop(0,`hsla(${f.hue},100%,90%,${alpha})`); ig.addColorStop(0.5,`hsla(${f.hue},90%,65%,${alpha*0.6})`); ig.addColorStop(1,"transparent");
+        ig.addColorStop(0,`hsla(${f.hue},100%,90%,${alpha})`); ig.addColorStop(1,"transparent");
         ctx.fillStyle = ig; ctx.beginPath(); ctx.arc(f.x,f.y,radius,0,Math.PI*2); ctx.fill();
       });
 
@@ -299,9 +273,9 @@ export function ThemeCosmicFireflies() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   DAY THEME 1 — Sunrise Dawn (Golden morning sunbeam flares & sun dust)
+   NEW NIGHT THEME 6 — Cyberpunk Grid (animated holographic synthwave)
 ───────────────────────────────────────────────────────────────────────────── */
-export function ThemeDaySunriseDawn() {
+export function ThemeCyberpunkGrid() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -315,243 +289,34 @@ export function ThemeDaySunriseDawn() {
     const onResize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
     window.addEventListener("resize", onResize);
 
-    const dust = Array.from({ length: 45 }, () => ({
+    const nodes = Array.from({ length: 45 }, () => ({
       x: Math.random() * w, y: Math.random() * h,
-      r: Math.random() * 3 + 1,
-      vy: -(Math.random() * 0.4 + 0.1),
-      vx: (Math.random() - 0.5) * 0.2,
-      alpha: Math.random() * 0.5 + 0.2,
+      r: Math.random() * 3.5 + 1.5,
+      vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6,
+      hue: Math.random() > 0.5 ? 190 : 320,
     }));
 
     const t0 = performance.now();
     const render = (now: number) => {
       const t = (now - t0) / 1000;
       ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#070210"; ctx.fillRect(0, 0, w, h);
 
-      dust.forEach((d) => {
-        d.y += d.vy; d.x += d.vx + Math.sin(t * 0.8) * 0.2;
-        if (d.y < -10) { d.y = h + 10; d.x = Math.random() * w; }
-        ctx.fillStyle = `rgba(245, 158, 11, ${d.alpha * 0.5})`;
-        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
-      });
-
-      raf = requestAnimationFrame(render);
-    };
-    raf = requestAnimationFrame(render);
-    return () => { window.removeEventListener("resize", onResize); cancelAnimationFrame(raf); };
-  }, []);
-
-  return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#fffbeb] via-[#fef3c7] to-[#f8fafc]" />
-      <div className="absolute -top-32 -left-20 h-[650px] w-[650px] rounded-full bg-amber-300/40 blur-[130px] animate-glass-blob-1" />
-      <div className="absolute top-1/4 -right-20 h-[550px] w-[550px] rounded-full bg-rose-200/50 blur-[120px] animate-glass-blob-2" />
-      <div className="absolute bottom-10 left-1/3 h-[500px] w-[500px] rounded-full bg-orange-200/35 blur-[110px] animate-glass-blob-3" />
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   DAY THEME 2 — Sky Blue Breeze (Azure sky + floating cloud particles)
-───────────────────────────────────────────────────────────────────────────── */
-export function ThemeDaySkyBreeze() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let raf: number;
-    let w = (canvas.width = window.innerWidth);
-    let h = (canvas.height = window.innerHeight);
-    const onResize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
-    window.addEventListener("resize", onResize);
-
-    const breeze = Array.from({ length: 50 }, () => ({
-      x: Math.random() * w, y: Math.random() * h,
-      r: Math.random() * 3.5 + 1.5,
-      vx: Math.random() * 0.6 + 0.2,
-      vy: (Math.random() - 0.5) * 0.2,
-      alpha: Math.random() * 0.4 + 0.2,
-    }));
-
-    const render = () => {
-      ctx.clearRect(0, 0, w, h);
-      breeze.forEach((b) => {
-        b.x += b.vx; b.y += b.vy;
-        if (b.x > w + 10) { b.x = -10; b.y = Math.random() * h; }
-        ctx.fillStyle = `rgba(56, 189, 248, ${b.alpha * 0.55})`;
-        ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
-      });
-      raf = requestAnimationFrame(render);
-    };
-    raf = requestAnimationFrame(render);
-    return () => { window.removeEventListener("resize", onResize); cancelAnimationFrame(raf); };
-  }, []);
-
-  return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe] to-[#f8fafc]" />
-      <div className="absolute -top-40 -left-20 h-[700px] w-[700px] rounded-full bg-sky-200/50 blur-[130px] animate-glass-blob-1" />
-      <div className="absolute top-1/3 -right-20 h-[600px] w-[600px] rounded-full bg-blue-200/40 blur-[120px] animate-glass-blob-2" />
-      <div className="absolute bottom-10 left-1/4 h-[500px] w-[500px] rounded-full bg-cyan-100/60 blur-[100px] animate-glass-blob-3" />
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   DAY THEME 3 — Fresh Mint Garden (Spring mint & leaf particles)
-───────────────────────────────────────────────────────────────────────────── */
-export function ThemeDayMintFresh() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let raf: number;
-    let w = (canvas.width = window.innerWidth);
-    let h = (canvas.height = window.innerHeight);
-    const onResize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
-    window.addEventListener("resize", onResize);
-
-    const leaves = Array.from({ length: 40 }, () => ({
-      x: Math.random() * w, y: Math.random() * h,
-      r: Math.random() * 4 + 2,
-      vy: Math.random() * 0.4 + 0.15,
-      vx: (Math.random() - 0.5) * 0.3,
-      alpha: Math.random() * 0.5 + 0.25,
-    }));
-
-    const render = () => {
-      ctx.clearRect(0, 0, w, h);
-      leaves.forEach((l) => {
-        l.y += l.vy; l.x += l.vx;
-        if (l.y > h + 10) { l.y = -10; l.x = Math.random() * w; }
-        ctx.fillStyle = `rgba(16, 185, 129, ${l.alpha * 0.45})`;
-        ctx.beginPath(); ctx.arc(l.x, l.y, l.r, 0, Math.PI * 2); ctx.fill();
-      });
-      raf = requestAnimationFrame(render);
-    };
-    raf = requestAnimationFrame(render);
-    return () => { window.removeEventListener("resize", onResize); cancelAnimationFrame(raf); };
-  }, []);
-
-  return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#ecfdf5] via-[#d1fae5] to-[#f8fafc]" />
-      <div className="absolute -top-40 -left-20 h-[700px] w-[700px] rounded-full bg-emerald-200/40 blur-[130px] animate-glass-blob-1" />
-      <div className="absolute top-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-teal-200/50 blur-[120px] animate-glass-blob-2" />
-      <div className="absolute bottom-10 left-1/3 h-[500px] w-[500px] rounded-full bg-green-200/35 blur-[110px] animate-glass-blob-3" />
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   DAY THEME 4 — Sunset Pastel Glow (Lavender, peach & coral sparkle particles)
-───────────────────────────────────────────────────────────────────────────── */
-export function ThemeDaySunsetPastel() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let raf: number;
-    let w = (canvas.width = window.innerWidth);
-    let h = (canvas.height = window.innerHeight);
-    const onResize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
-    window.addEventListener("resize", onResize);
-
-    const sparkles = Array.from({ length: 45 }, () => ({
-      x: Math.random() * w, y: Math.random() * h,
-      r: Math.random() * 3 + 1,
-      vy: -(Math.random() * 0.3 + 0.1),
-      vx: (Math.random() - 0.5) * 0.25,
-      hue: Math.random() * 40 + 320,
-      alpha: Math.random() * 0.5 + 0.25,
-    }));
-
-    const render = () => {
-      ctx.clearRect(0, 0, w, h);
-      sparkles.forEach((s) => {
-        s.y += s.vy; s.x += s.vx;
-        if (s.y < -10) { s.y = h + 10; s.x = Math.random() * w; }
-        ctx.fillStyle = `hsla(${s.hue}, 80%, 75%, ${s.alpha * 0.55})`;
-        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
-      });
-      raf = requestAnimationFrame(render);
-    };
-    raf = requestAnimationFrame(render);
-    return () => { window.removeEventListener("resize", onResize); cancelAnimationFrame(raf); };
-  }, []);
-
-  return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#faf5ff] via-[#f3e8ff] to-[#fff1f2]" />
-      <div className="absolute -top-40 -left-20 h-[700px] w-[700px] rounded-full bg-purple-200/45 blur-[130px] animate-glass-blob-1" />
-      <div className="absolute top-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-rose-200/45 blur-[120px] animate-glass-blob-2" />
-      <div className="absolute bottom-10 left-1/3 h-[500px] w-[500px] rounded-full bg-pink-200/40 blur-[110px] animate-glass-blob-3" />
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   DAY THEME 5 — Cyber Light Matrix (Clean grid + floating slate nodes)
-───────────────────────────────────────────────────────────────────────────── */
-export function ThemeDayCyberLight() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let raf: number;
-    let w = (canvas.width = window.innerWidth);
-    let h = (canvas.height = window.innerHeight);
-    const onResize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
-    window.addEventListener("resize", onResize);
-
-    const nodes = Array.from({ length: 50 }, () => ({
-      x: Math.random() * w, y: Math.random() * h,
-      r: Math.random() * 3 + 1.5,
-      vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
-    }));
-
-    const render = () => {
-      ctx.clearRect(0, 0, w, h);
-
-      for (let a = 0; a < nodes.length; a++) {
-        for (let b = a + 1; b < nodes.length; b++) {
-          const dx = nodes[a].x - nodes[b].x;
-          const dy = nodes[a].y - nodes[b].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 110) {
-            ctx.beginPath();
-            ctx.moveTo(nodes[a].x, nodes[a].y);
-            ctx.lineTo(nodes[b].x, nodes[b].y);
-            ctx.strokeStyle = `rgba(99, 102, 241, ${0.12 * (1 - dist / 110)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
+      const horizGlow = ctx.createLinearGradient(0, h * 0.5, 0, h * 0.8);
+      horizGlow.addColorStop(0, "rgba(236, 72, 153, 0.22)");
+      horizGlow.addColorStop(0.5, "rgba(6, 182, 212, 0.15)");
+      horizGlow.addColorStop(1, "transparent");
+      ctx.fillStyle = horizGlow; ctx.fillRect(0, h * 0.4, w, h * 0.6);
 
       nodes.forEach((n) => {
         n.x += n.vx; n.y += n.vy;
         if (n.x < 0 || n.x > w) n.vx *= -1;
         if (n.y < 0 || n.y > h) n.vy *= -1;
 
-        ctx.fillStyle = "rgba(79, 70, 229, 0.45)";
-        ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill();
+        const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r * 4);
+        g.addColorStop(0, `hsla(${n.hue}, 95%, 65%, 0.8)`);
+        g.addColorStop(1, "transparent");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x, n.y, n.r * 4, 0, Math.PI * 2); ctx.fill();
       });
 
       raf = requestAnimationFrame(render);
@@ -562,9 +327,242 @@ export function ThemeDayCyberLight() {
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
-      <div className="absolute inset-0 bg-[#f8fafc]" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.04)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_30%,black,transparent)]" />
+      <div className="absolute inset-0 bg-[#070210]" />
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(6,182,212,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(236,72,153,0.08)_1px,transparent_1px)] bg-[size:40px_40px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NEW NIGHT THEME 7 — Emerald Matrix Stream (animated)
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeEmeraldMatrix() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let raf: number;
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
+    const onResize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+    window.addEventListener("resize", onResize);
+
+    const particles = Array.from({ length: 65 }, () => ({
+      x: Math.random() * w, y: Math.random() * h,
+      r: Math.random() * 3 + 1,
+      vy: Math.random() * 0.8 + 0.3,
+      vx: (Math.random() - 0.5) * 0.2,
+      alpha: Math.random() * 0.7 + 0.3,
+    }));
+
+    const render = () => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#02120a"; ctx.fillRect(0, 0, w, h);
+
+      particles.forEach((p) => {
+        p.y += p.vy; p.x += p.vx;
+        if (p.y > h + 10) { p.y = -10; p.x = Math.random() * w; }
+        ctx.fillStyle = `rgba(16, 185, 129, ${p.alpha})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      });
+
+      raf = requestAnimationFrame(render);
+    };
+    raf = requestAnimationFrame(render);
+    return () => { window.removeEventListener("resize", onResize); cancelAnimationFrame(raf); };
+  }, []);
+
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#02120a] via-[#041a0f] to-[#010905]" />
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      <div className="absolute inset-0 bg-grid opacity-15 mix-blend-overlay" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NEW NIGHT THEME 8 — Solar Corona Flare (animated volcanic gold)
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeSolarFlare() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let raf: number;
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
+    const onResize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+    window.addEventListener("resize", onResize);
+
+    const embers = Array.from({ length: 55 }, () => ({
+      x: Math.random() * w, y: Math.random() * h,
+      r: Math.random() * 3.5 + 1,
+      vy: -(Math.random() * 0.5 + 0.2),
+      vx: (Math.random() - 0.5) * 0.4,
+      hue: Math.random() * 30 + 15,
+    }));
+
+    const render = () => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#0c0402"; ctx.fillRect(0, 0, w, h);
+
+      embers.forEach((e) => {
+        e.y += e.vy; e.x += e.vx;
+        if (e.y < -10) { e.y = h + 10; e.x = Math.random() * w; }
+        ctx.fillStyle = `hsla(${e.hue}, 95%, 60%, 0.75)`;
+        ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2); ctx.fill();
+      });
+
+      raf = requestAnimationFrame(render);
+    };
+    raf = requestAnimationFrame(render);
+    return () => { window.removeEventListener("resize", onResize); cancelAnimationFrame(raf); };
+  }, []);
+
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0c0402] via-[#1a0803] to-[#080201]" />
+      <div className="absolute top-0 right-1/4 h-[600px] w-[600px] rounded-full bg-amber-600/25 blur-[130px]" />
+      <div className="absolute bottom-0 left-1/4 h-[500px] w-[500px] rounded-full bg-orange-700/20 blur-[110px]" />
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NEW NIGHT THEME 9 — Obsidian Glass (static)
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeObsidianGlass() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-[#05060b]" />
+      <div className="absolute -top-32 left-1/3 h-[600px] w-[600px] rounded-full bg-indigo-950/40 blur-[140px]" />
+      <div className="absolute bottom-0 right-10 h-[500px] w-[500px] rounded-full bg-slate-900/50 blur-[120px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NEW NIGHT THEME 10 — Velvet Night (static)
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeVelvetNight() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0c061a] via-[#120926] to-[#080312]" />
+      <div className="absolute top-1/4 -left-20 h-[650px] w-[650px] rounded-full bg-purple-900/35 blur-[140px]" />
+      <div className="absolute bottom-10 -right-20 h-[550px] w-[550px] rounded-full bg-fuchsia-900/30 blur-[120px]" />
+      <div className="absolute inset-0 bg-grid opacity-12 mix-blend-overlay" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DAY THEME 1 — Sunrise Dawn
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeDaySunriseDawn() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#fffbeb] via-[#fef3c7] to-[#f8fafc]" />
+      <div className="absolute -top-32 -left-20 h-[650px] w-[650px] rounded-full bg-amber-300/40 blur-[130px]" />
+      <div className="absolute top-1/4 -right-20 h-[550px] w-[550px] rounded-full bg-rose-200/50 blur-[120px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DAY THEME 2 — Sky Blue Breeze
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeDaySkyBreeze() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe] to-[#f8fafc]" />
+      <div className="absolute -top-40 -left-20 h-[700px] w-[700px] rounded-full bg-sky-200/50 blur-[130px]" />
+      <div className="absolute top-1/3 -right-20 h-[600px] w-[600px] rounded-full bg-blue-200/40 blur-[120px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DAY THEME 3 — Fresh Mint Garden
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeDayMintFresh() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#ecfdf5] via-[#d1fae5] to-[#f8fafc]" />
+      <div className="absolute -top-40 -left-20 h-[700px] w-[700px] rounded-full bg-emerald-200/40 blur-[130px]" />
+      <div className="absolute top-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-teal-200/50 blur-[120px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DAY THEME 4 — Sunset Pastel Glow
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeDaySunsetPastel() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#faf5ff] via-[#f3e8ff] to-[#fff1f2]" />
+      <div className="absolute -top-40 -left-20 h-[700px] w-[700px] rounded-full bg-purple-200/45 blur-[130px]" />
+      <div className="absolute top-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-rose-200/45 blur-[120px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DAY THEME 5 — Cyber Light Matrix
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeDayCyberLight() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-[#f8fafc]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.04)_1px,transparent_1px)] bg-[size:48px_48px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NEW DAY THEME 6 — Golden Hour Daylight (animated amber gold dust)
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeDayGoldenHour() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#fffbeb] via-[#fef3c7] to-[#fff8f0]" />
+      <div className="absolute -top-20 left-1/4 h-[600px] w-[600px] rounded-full bg-amber-400/30 blur-[130px]" />
+      <div className="absolute bottom-10 right-10 h-[500px] w-[500px] rounded-full bg-orange-300/35 blur-[110px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NEW DAY THEME 7 — Nordic Frost (Icy blue arctic glass)
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeDayNordicFrost() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#f0fdfa] via-[#ccfbf1] to-[#f8fafc]" />
+      <div className="absolute -top-30 -left-10 h-[650px] w-[650px] rounded-full bg-cyan-200/45 blur-[130px]" />
+      <div className="absolute bottom-0 right-1/4 h-[550px] w-[550px] rounded-full bg-teal-100/60 blur-[110px]" />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NEW DAY THEME 8 — Minimal Titanium Silver (minimal corporate slate)
+───────────────────────────────────────────────────────────────────────────── */
+export function ThemeDayMinimalTitanium() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none">
+      <div className="absolute inset-0 bg-[#f1f5f9]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(100,116,139,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(100,116,139,0.06)_1px,transparent_1px)] bg-[size:40px_40px]" />
     </div>
   );
 }

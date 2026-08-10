@@ -251,7 +251,7 @@ export default function AdminBackgroundThemePage() {
                   </div>
                 </div>
                 <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-300 border border-indigo-500/30">
-                  5 Available
+                  10 Available
                 </span>
               </div>
 
@@ -281,7 +281,7 @@ export default function AdminBackgroundThemePage() {
                   </div>
                 </div>
                 <span className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-300 border border-amber-500/30">
-                  6 Available
+                  9 Available
                 </span>
               </div>
 
@@ -311,7 +311,7 @@ export default function AdminBackgroundThemePage() {
                   </div>
                 </div>
                 <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-300 border border-indigo-500/30">
-                  5 Styles Available
+                  8 Styles Available
                 </span>
               </div>
 
