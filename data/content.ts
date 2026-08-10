@@ -141,11 +141,12 @@ export const siteContent: SiteContent = {
   availability: "Open to full-time engineering / security roles and focused freelance projects",
   portraitUrl: "/profile.jpg",
   portraitAlt: "Professional portrait of Abdul Nabi",
-  resumeUrl: "/ab_resume.pdf",
+  resumeUrl: "/resume",
   navLinks: [
     { label: "About", href: "/#about" },
     { label: "Work", href: "/#projects" },
     { label: "Mini Projects", href: "/mini-projects" },
+    { label: "Resume", href: "/resume" },
     { label: "Stack", href: "/#stack" },
     { label: "Experience", href: "/#experience" },
     { label: "Achievements", href: "/#achievements" },
@@ -188,13 +189,13 @@ export const siteContent: SiteContent = {
   about: {
     title: "About",
     paragraphs: [
-      "I'm a full-stack developer with 1+ years of experience building web applications. My core engineering focus spans responsive Next.js interfaces, RESTful backends, and data/ML projects in Python.",
+      "I'm a full-stack developer with 2+ years of experience building web applications. My core engineering focus spans responsive Next.js interfaces, RESTful backends, and data/ML projects in Python.",
       "I have a strong interest in Application Security (AppSec) as an active learner — continuously building awareness around OWASP Top 10 guidelines, safe authentication, proper authorization, and secure coding practices.",
       "Alongside web work, I bring practical experience in data analysis and machine learning — from data cleaning with Pandas to training regression models (such as my ElasticNet Blood Sugar Tracker FYP).",
       "I'm looking for engineering teams where I can build quality software, expand my technical skillset, and continue learning security and full-stack best practices.",
     ],
     stats: [
-      { label: "Years building web products", value: "1+" },
+      { label: "Years building web products", value: "2+" },
       { label: "Primary identity", value: "Full-Stack Developer" },
       { label: "Learning & Interests", value: "Data/ML & AppSec" },
     ],
