@@ -371,10 +371,10 @@ export const siteContent: SiteContent = {
   education: [
     {
       id: "edu-1",
-      degree: "Computer Science studies",
-      institution: "Self-directed learning & applied project work",
-      location: "Karachi, Sindh, Pakistan",
-      period: "Ongoing foundation",
+      degree: "Bachelor of Science in Computer Science (BSCS)",
+      institution: "University of Sindh",
+      location: "Jamshoro / Sindh, Pakistan",
+      period: "2022 — 2026",
       description:
         "Core CS fundamentals paired with continuous practice across full-stack development, application security, and applied data science.",
       highlights: [

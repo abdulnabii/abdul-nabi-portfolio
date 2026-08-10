@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Globe, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { ArrowLeft, Globe, Github, Linkedin, Mail, MapPin } from "lucide-react";
 import { Metadata } from "next";
 import { ResumePrintButton } from "@/components/resume-print-button";
 
 export const metadata: Metadata = {
-  title: "ATS Resume · Abdul Nabi — Full-Stack Developer",
-  description: "90+ ATS Compatibility Optimized Resume of Abdul Nabi — Full-Stack Developer & Software Engineer based in Karachi, Pakistan.",
+  title: "Resume · Abdul Nabi — Full-Stack Developer",
+  description: "Official Resume of Abdul Nabi — Full-Stack Developer & Software Engineer based in Karachi, Pakistan.",
 };
 
 export default function ResumePage() {
@@ -24,15 +24,11 @@ export default function ResumePage() {
           </Link>
 
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 text-xs font-semibold text-emerald-300">
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              90+ ATS Score Verified
-            </span>
             <ResumePrintButton />
           </div>
         </div>
 
-        {/* Printable ATS Resume Card */}
+        {/* Printable Resume Card */}
         <div className="rounded-3xl border border-white/10 bg-slate-900/90 p-8 sm:p-12 shadow-2xl space-y-8 font-sans print:border-none print:bg-white print:p-0 print:shadow-none print:text-black print:space-y-6">
           {/* Header Block */}
           <div className="border-b border-white/10 print:border-slate-300 pb-6 text-center space-y-3">
@@ -214,9 +210,9 @@ export default function ResumePage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs">
               <div>
                 <h3 className="font-bold text-white print:text-slate-900">Bachelor of Science in Computer Science (BSCS)</h3>
-                <p className="text-indigo-300 print:text-slate-700 font-medium">Shah Abdul Latif University (or Affiliated HEI) • Karachi / Sindh, Pakistan</p>
+                <p className="text-indigo-300 print:text-slate-700 font-medium">University of Sindh • Jamshoro / Sindh, Pakistan</p>
               </div>
-              <span className="font-mono text-slate-400 print:text-slate-600">Graduation: 2025 (Expected / Ongoing)</span>
+              <span className="font-mono text-slate-400 print:text-slate-600">2022 – 2026</span>
             </div>
             <p className="text-xs text-slate-300 print:text-slate-800 pt-1">
               <strong>Core Coursework:</strong> Data Structures & Algorithms, Database Systems, Software Engineering, Web Application Security, Artificial Intelligence & Machine Learning.
