@@ -5,16 +5,18 @@ import { revalidatePath } from "next/cache";
 const KEY_NIGHT = "background_theme_night";
 const KEY_DAY = "background_theme_day";
 const KEY_CURSOR = "cursor_style";
+const KEY_DEFAULT_MODE = "default_theme_mode";
 
 let memoryNight = "quantum-plasma";
 let memoryDay = "day-sunrise-dawn";
 let memoryCursor = "halo-ring";
+let memoryDefaultMode = "dark";
 
 async function getSettings() {
   try {
     const rows = await supabaseDbQuery<{ key: string; value: string }>(
       "site_settings",
-      `select=*&key=in.(${KEY_NIGHT},${KEY_DAY},${KEY_CURSOR},background_theme)`
+      `select=*&key=in.(${KEY_NIGHT},${KEY_DAY},${KEY_CURSOR},${KEY_DEFAULT_MODE},background_theme)`
     );
     if (rows && rows.length > 0) {
       for (const row of rows) {
@@ -27,13 +29,27 @@ async function getSettings() {
         if (row.key === KEY_CURSOR) {
           memoryCursor = row.value;
         }
+        if (row.key === KEY_DEFAULT_MODE) {
+          memoryDefaultMode = row.value;
+        }
       }
     }
   } catch {}
-  return { nightTheme: memoryNight, dayTheme: memoryDay, cursorStyle: memoryCursor, theme: memoryNight };
+  return {
+    nightTheme: memoryNight,
+    dayTheme: memoryDay,
+    cursorStyle: memoryCursor,
+    defaultMode: memoryDefaultMode,
+    theme: memoryNight,
+  };
 }
 
-async function saveSettings(night?: string, day?: string, cursorStyle?: string): Promise<void> {
+async function saveSettings(
+  night?: string,
+  day?: string,
+  cursorStyle?: string,
+  defaultMode?: string
+): Promise<void> {
   const upserts: Array<{ key: string; value: string; updated_at: string }> = [];
   const now = new Date().toISOString();
 
@@ -53,6 +69,11 @@ async function saveSettings(night?: string, day?: string, cursorStyle?: string):
     upserts.push({ key: KEY_CURSOR, value: cursorStyle, updated_at: now });
   }
 
+  if (defaultMode && typeof defaultMode === "string") {
+    memoryDefaultMode = defaultMode;
+    upserts.push({ key: KEY_DEFAULT_MODE, value: defaultMode, updated_at: now });
+  }
+
   if (upserts.length > 0) {
     try {
       await supabaseDbUpsert("site_settings", upserts);
@@ -67,15 +88,21 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { nightTheme, dayTheme, cursorStyle, theme } = body;
+  const { nightTheme, dayTheme, cursorStyle, defaultMode, theme } = body;
   const nTheme = nightTheme || (typeof theme === "string" && !theme.startsWith("day-") ? theme : undefined);
   const dTheme = dayTheme || (typeof theme === "string" && theme.startsWith("day-") ? theme : undefined);
-  await saveSettings(nTheme, dTheme, cursorStyle);
+  await saveSettings(nTheme, dTheme, cursorStyle, defaultMode);
 
   try {
     revalidatePath("/", "layout");
     revalidatePath("/mini-projects", "layout");
   } catch {}
 
-  return NextResponse.json({ nightTheme: memoryNight, dayTheme: memoryDay, cursorStyle: memoryCursor, ok: true });
+  return NextResponse.json({
+    nightTheme: memoryNight,
+    dayTheme: memoryDay,
+    cursorStyle: memoryCursor,
+    defaultMode: memoryDefaultMode,
+    ok: true,
+  });
 }

@@ -32,9 +32,31 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const syncServerThemeMode = async () => {
+    if (sectionVisibility?.themeToggle === false) {
+      setThemeState("dark");
+      applyTheme("dark");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/background-theme?t=${Date.now()}`, { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.defaultMode === "light" || data?.defaultMode === "dark") {
+          const userExplicit = localStorage.getItem("app_theme_explicit");
+          if (!userExplicit) {
+            setThemeState(data.defaultMode as ThemeMode);
+            applyTheme(data.defaultMode as ThemeMode);
+            try { localStorage.setItem("app_theme", data.defaultMode); } catch {}
+          }
+        }
+      }
+    } catch {}
+  };
+
   useEffect(() => {
     if (sectionVisibility?.themeToggle === false) {
-      // If admin turned off theme toggle, force Night Mode (Dark Theme) immediately!
       setThemeState("dark");
       applyTheme("dark");
       return;
@@ -52,6 +74,19 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     } catch {
       applyTheme("dark");
     }
+
+    syncServerThemeMode();
+
+    const handleModeChange = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.mode === "light" || detail?.mode === "dark") {
+        setThemeState(detail.mode);
+        applyTheme(detail.mode);
+      }
+    };
+
+    window.addEventListener("theme-mode-changed", handleModeChange);
+    return () => window.removeEventListener("theme-mode-changed", handleModeChange);
   }, [sectionVisibility?.themeToggle]);
 
   const setTheme = (mode: ThemeMode) => {
@@ -64,7 +99,15 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     applyTheme(mode);
     try {
       localStorage.setItem("app_theme", mode);
+      localStorage.setItem("app_theme_explicit", "true");
     } catch {}
+
+    // Save to server DB via API
+    fetch("/api/admin/background-theme", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ defaultMode: mode }),
+    }).catch(() => {});
   };
 
   const toggleTheme = () => {
