@@ -95,17 +95,21 @@ export function AdminShell({ email, children }: AdminShellProps) {
     }
 
     return () => {
-      // Restore public theme mode when leaving admin
-      try {
-        const savedTheme = localStorage.getItem("app_theme");
-        if (savedTheme === "light") {
-          root.classList.add("light");
-          root.classList.remove("dark");
-        } else {
-          root.classList.add("dark");
-          root.classList.remove("light");
-        }
-      } catch {}
+      // Restore public theme mode from Supabase DB when leaving admin
+      fetch(`/api/admin/background-theme?t=${Date.now()}`, { cache: "no-store" })
+        .then((r) => r.json())
+        .then((d) => {
+          const mode = d?.defaultMode || "dark";
+          if (mode === "light") {
+            root.classList.add("light");
+            root.classList.remove("dark");
+          } else {
+            root.classList.add("dark");
+            root.classList.remove("light");
+          }
+          try { localStorage.setItem("app_theme", mode); } catch {}
+        })
+        .catch(() => {});
     };
   }, [adminTheme]);
 
