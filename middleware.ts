@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * Keep a true one-page portfolio while preventing 404s on common paths.
- * /about → /#about, /projects → /#projects, etc.
+ * One-page section redirects and Auth Middleware.
  */
 const SESSION_COOKIE = "an_admin_session";
 
@@ -15,6 +14,19 @@ const SECTION_REDIRECTS: Record<string, string> = {
   "/education": "/#education",
   "/contact": "/#contact",
 };
+
+// Public GET routes under /api/admin/ that site visitors need to load public theme, settings & section visibility
+const PUBLIC_READ_API_ROUTES = [
+  "/api/admin/background-theme",
+  "/api/admin/settings",
+  "/api/admin/sections",
+  "/api/admin/about",
+  "/api/admin/stack",
+  "/api/admin/experience",
+  "/api/admin/education",
+  "/api/admin/achievements",
+  "/api/admin/mini-projects",
+];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -30,18 +42,27 @@ export function middleware(request: NextRequest) {
   const isAdminPage = pathname.startsWith("/admin") && pathname !== "/admin/login";
 
   if (isApiAdmin || isAdminPage) {
-    const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
-    const hasValidToken = Boolean(sessionToken && sessionToken.includes(".") && sessionToken.length > 20);
+    // Allow public GET access for public site settings & background theme APIs
+    const isPublicRead =
+      request.method === "GET" &&
+      PUBLIC_READ_API_ROUTES.some((route) => pathname.startsWith(route));
 
-    if (!hasValidToken) {
-      if (isApiAdmin) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isPublicRead) {
+      const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
+      const hasValidToken = Boolean(
+        sessionToken && sessionToken.includes(".") && sessionToken.length > 20
+      );
+
+      if (!hasValidToken) {
+        if (isApiAdmin) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        return NextResponse.redirect(new URL("/admin/login", request.url));
       }
-      return NextResponse.redirect(new URL("/admin/login", request.url));
     }
   }
 
-  // 3. Prevent logged-in admin from visiting login page
+  // 3. Prevent logged-in admin from visiting login page unnecessarily
   if (pathname === "/admin/login") {
     const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
     if (sessionToken && sessionToken.includes(".") && sessionToken.length > 20) {
