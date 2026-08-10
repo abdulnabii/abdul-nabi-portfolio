@@ -19,6 +19,7 @@ export default function AdminBackgroundThemePage() {
   const [activeNight, setActiveNight] = useState<NightThemeId>("quantum-plasma");
   const [activeDay, setActiveDay] = useState<DayThemeId>("day-sunrise-dawn");
   const [activeCursor, setActiveCursor] = useState<CursorStyleId>("halo-ring");
+  const [defaultMode, setDefaultMode] = useState<"dark" | "light">("dark");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -31,21 +32,34 @@ export default function AdminBackgroundThemePage() {
         else if (d.theme) setActiveNight(d.theme);
         if (d.dayTheme) setActiveDay(d.dayTheme);
         if (d.cursorStyle) setActiveCursor(d.cursorStyle);
+        if (d.defaultMode) setDefaultMode(d.defaultMode);
       })
       .finally(() => setLoading(false));
   }, []);
 
   const handleSelectNight = async (id: NightThemeId) => {
     setActiveNight(id);
-    try { localStorage.setItem("bg_theme_night", id); } catch {}
+    setDefaultMode("dark");
+    try {
+      localStorage.setItem("bg_theme_night", id);
+      localStorage.setItem("app_theme", "dark");
+      localStorage.removeItem("app_theme_explicit");
+    } catch {}
     window.dispatchEvent(new CustomEvent("bg-theme-changed", { detail: { nightTheme: id } }));
+    window.dispatchEvent(new CustomEvent("theme-mode-changed", { detail: { mode: "dark" } }));
+
     setSaving(true);
     setSaved(false);
     try {
       await fetch("/api/admin/background-theme", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nightTheme: id, dayTheme: activeDay, cursorStyle: activeCursor }),
+        body: JSON.stringify({
+          nightTheme: id,
+          dayTheme: activeDay,
+          cursorStyle: activeCursor,
+          defaultMode: "dark",
+        }),
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -56,15 +70,55 @@ export default function AdminBackgroundThemePage() {
 
   const handleSelectDay = async (id: DayThemeId) => {
     setActiveDay(id);
-    try { localStorage.setItem("bg_theme_day", id); } catch {}
+    setDefaultMode("light");
+    try {
+      localStorage.setItem("bg_theme_day", id);
+      localStorage.setItem("app_theme", "light");
+      localStorage.removeItem("app_theme_explicit");
+    } catch {}
     window.dispatchEvent(new CustomEvent("bg-theme-changed", { detail: { dayTheme: id } }));
+    window.dispatchEvent(new CustomEvent("theme-mode-changed", { detail: { mode: "light" } }));
+
     setSaving(true);
     setSaved(false);
     try {
       await fetch("/api/admin/background-theme", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nightTheme: activeNight, dayTheme: id, cursorStyle: activeCursor }),
+        body: JSON.stringify({
+          nightTheme: activeNight,
+          dayTheme: id,
+          cursorStyle: activeCursor,
+          defaultMode: "light",
+        }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggleDefaultMode = async (mode: "dark" | "light") => {
+    setDefaultMode(mode);
+    try {
+      localStorage.setItem("app_theme", mode);
+      localStorage.removeItem("app_theme_explicit");
+    } catch {}
+    window.dispatchEvent(new CustomEvent("theme-mode-changed", { detail: { mode } }));
+
+    setSaving(true);
+    setSaved(false);
+    try {
+      await fetch("/api/admin/background-theme", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nightTheme: activeNight,
+          dayTheme: activeDay,
+          cursorStyle: activeCursor,
+          defaultMode: mode,
+        }),
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -85,7 +139,12 @@ export default function AdminBackgroundThemePage() {
       await fetch("/api/admin/background-theme", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nightTheme: activeNight, dayTheme: activeDay, cursorStyle: id }),
+        body: JSON.stringify({
+          nightTheme: activeNight,
+          dayTheme: activeDay,
+          cursorStyle: id,
+          defaultMode,
+        }),
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -109,36 +168,65 @@ export default function AdminBackgroundThemePage() {
           <Link
             href="/"
             target="_blank"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition"
+            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition font-medium"
           >
-            View Public Site →
+            View Public Site (aiwithab.site) →
           </Link>
         </div>
 
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 border border-indigo-500/30">
-              <Monitor className="h-5 w-5 text-indigo-400" />
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 border border-indigo-500/30">
+                <Monitor className="h-5 w-5 text-indigo-400" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Background & Theme Customization</h1>
+                <p className="text-sm text-slate-400">Configure visual themes, Day/Night mode, and cursor styles for aiwithab.site</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">Background & Cursor Customization</h1>
-              <p className="text-sm text-slate-400">Configure visual background themes and interactive cursor styles for the public site</p>
+
+            {/* Public Mode Switcher */}
+            <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-1.5 rounded-2xl">
+              <span className="text-xs text-slate-400 font-semibold px-2">Public Site Mode:</span>
+              <button
+                onClick={() => handleToggleDefaultMode("dark")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                  defaultMode === "dark"
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <Moon className="h-3.5 w-3.5" />
+                Night (Dark)
+              </button>
+              <button
+                onClick={() => handleToggleDefaultMode("light")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                  defaultMode === "light"
+                    ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <Sun className="h-3.5 w-3.5" />
+                Day (Light)
+              </button>
             </div>
           </div>
 
           {/* Status bar */}
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-2 flex items-center gap-3">
             {saving && (
-              <div className="flex items-center gap-2 text-sm text-amber-400">
+              <div className="flex items-center gap-2 text-sm text-amber-400 font-medium">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Saving customization choices…
+                Saving customization choices & updating public site live...
               </div>
             )}
             {saved && !saving && (
-              <div className="flex items-center gap-2 text-sm text-emerald-400">
-                <Check className="h-4 w-4" />
-                Settings saved & live on site!
+              <div className="flex items-center gap-2 text-sm text-emerald-400 font-bold">
+                <Check className="h-4 w-4 stroke-[3]" />
+                Settings saved & live on aiwithab.site!
               </div>
             )}
           </div>
@@ -150,6 +238,66 @@ export default function AdminBackgroundThemePage() {
           </div>
         ) : (
           <div className="space-y-12">
+            {/* 🌙 Night Mode Themes */}
+            <div className="rounded-3xl border border-indigo-500/20 bg-indigo-950/10 p-6 backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-indigo-500/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/20 text-amber-300">
+                    <Moon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-white">🌙 Night Mode Themes (Dark Site)</h2>
+                    <p className="text-xs text-slate-400">Selecting a Night Theme automatically sets aiwithab.site to Night Mode</p>
+                  </div>
+                </div>
+                <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-300 border border-indigo-500/30">
+                  5 Available
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {NIGHT_BACKGROUND_THEMES.map((theme) => (
+                  <ThemeCard
+                    key={theme.id}
+                    theme={theme}
+                    isActive={activeNight === theme.id && defaultMode === "dark"}
+                    onSelect={(id) => handleSelectNight(id as NightThemeId)}
+                    disabled={saving}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* ☀️ Day Mode Themes */}
+            <div className="rounded-3xl border border-amber-500/20 bg-amber-950/10 p-6 backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-amber-500/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400">
+                    <Sun className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-white">☀️ Day Mode Themes (Light Site)</h2>
+                    <p className="text-xs text-slate-400">Selecting a Day Theme automatically sets aiwithab.site to Day Mode</p>
+                  </div>
+                </div>
+                <span className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-300 border border-amber-500/30">
+                  6 Available
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {DAY_BACKGROUND_THEMES.map((theme) => (
+                  <ThemeCard
+                    key={theme.id}
+                    theme={theme}
+                    isActive={activeDay === theme.id && defaultMode === "light"}
+                    onSelect={(id) => handleSelectDay(id as DayThemeId)}
+                    disabled={saving}
+                  />
+                ))}
+              </div>
+            </div>
+
             {/* 🖱️ Cursor Styles & Effects */}
             <div className="rounded-3xl border border-indigo-500/20 bg-indigo-950/10 p-6 backdrop-blur-xl">
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-indigo-500/20">
@@ -201,72 +349,12 @@ export default function AdminBackgroundThemePage() {
                 })}
               </div>
             </div>
-
-            {/* 🌙 Night Mode Themes */}
-            <div className="rounded-3xl border border-indigo-500/20 bg-indigo-950/10 p-6 backdrop-blur-xl">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-indigo-500/20">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/20 text-amber-300">
-                    <Moon className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-white">🌙 Night Mode Themes (Dark Site)</h2>
-                    <p className="text-xs text-slate-400">Active when public site is in Night Mode</p>
-                  </div>
-                </div>
-                <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-300 border border-indigo-500/30">
-                  5 Available
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {NIGHT_BACKGROUND_THEMES.map((theme) => (
-                  <ThemeCard
-                    key={theme.id}
-                    theme={theme}
-                    isActive={activeNight === theme.id}
-                    onSelect={(id) => handleSelectNight(id as NightThemeId)}
-                    disabled={saving}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* ☀️ Day Mode Themes */}
-            <div className="rounded-3xl border border-amber-500/20 bg-amber-950/10 p-6 backdrop-blur-xl">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-amber-500/20">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400">
-                    <Sun className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-white">☀️ Day Mode Themes (Light Site)</h2>
-                    <p className="text-xs text-slate-400">Active when public site is in Day Mode</p>
-                  </div>
-                </div>
-                <span className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-300 border border-amber-500/30">
-                  6 Available
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {DAY_BACKGROUND_THEMES.map((theme) => (
-                  <ThemeCard
-                    key={theme.id}
-                    theme={theme}
-                    isActive={activeDay === theme.id}
-                    onSelect={(id) => handleSelectDay(id as DayThemeId)}
-                    disabled={saving}
-                  />
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
         {/* Note */}
         <p className="mt-10 text-xs text-slate-500">
-          Changes are saved immediately and updated in real-time. The admin panel maintains its dedicated dark interface and is unaffected by public theme toggles.
+          Changes are saved immediately to Supabase and updated in real-time. The admin panel maintains its dedicated dark interface and is unaffected by public theme toggles.
         </p>
       </div>
     </div>

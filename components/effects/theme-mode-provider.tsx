@@ -44,12 +44,9 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
       if (res.ok) {
         const data = await res.json();
         if (data?.defaultMode === "light" || data?.defaultMode === "dark") {
-          const userExplicit = localStorage.getItem("app_theme_explicit");
-          if (!userExplicit) {
-            setThemeState(data.defaultMode as ThemeMode);
-            applyTheme(data.defaultMode as ThemeMode);
-            try { localStorage.setItem("app_theme", data.defaultMode); } catch {}
-          }
+          setThemeState(data.defaultMode as ThemeMode);
+          applyTheme(data.defaultMode as ThemeMode);
+          try { localStorage.setItem("app_theme", data.defaultMode); } catch {}
         }
       }
     } catch {}
@@ -82,11 +79,17 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
       if (detail?.mode === "light" || detail?.mode === "dark") {
         setThemeState(detail.mode);
         applyTheme(detail.mode);
+      } else {
+        syncServerThemeMode();
       }
     };
 
     window.addEventListener("theme-mode-changed", handleModeChange);
-    return () => window.removeEventListener("theme-mode-changed", handleModeChange);
+    window.addEventListener("focus", syncServerThemeMode);
+    return () => {
+      window.removeEventListener("theme-mode-changed", handleModeChange);
+      window.removeEventListener("focus", syncServerThemeMode);
+    };
   }, [sectionVisibility?.themeToggle]);
 
   const setTheme = (mode: ThemeMode) => {
@@ -99,10 +102,8 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     applyTheme(mode);
     try {
       localStorage.setItem("app_theme", mode);
-      localStorage.setItem("app_theme_explicit", "true");
     } catch {}
 
-    // Save to server DB via API
     fetch("/api/admin/background-theme", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
