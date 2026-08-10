@@ -62,7 +62,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     description: "ML health application evaluating patient vitals (glucose, BMI, blood pressure, insulin) to predict diabetes risk probability with scikit-learn ElasticNet.",
     vercelUrl: "https://diabetes-predictor.vercel.app",
     githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-04-diabetes-predictor",
-    tags: ["Python Flask", "scikit-learn", "Chart.js", "Next.js"],
+    tags: ["Python Flask", "scikit-learn", "Chart.js", "Next.js 14"],
     status: "Live",
     featured: true,
     createdAt: "2026-08-08T00:00:00Z",
@@ -75,9 +75,9 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     description: "Transcript analyzer extracting executive summaries, key decisions, blockers, and assigned action items with deadlines from Zoom/Teams transcripts.",
     vercelUrl: "https://meeting-summarizer.vercel.app",
     githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-05-meeting-summarizer",
-    tags: ["Whisper API", "Gemini 1.5 Flash", "Next.js 14"],
+    tags: ["Whisper API", "Gemini 1.5 Flash", "Next.js 14", "TailwindCSS"],
     status: "Live",
-    featured: false,
+    featured: true,
     createdAt: "2026-08-08T00:00:00Z",
   },
   {
@@ -90,7 +90,7 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-06-stock-dashboard",
     tags: ["WebSockets", "Recharts", "FinNHub API", "TailwindCSS"],
     status: "Live",
-    featured: false,
+    featured: true,
     createdAt: "2026-08-08T00:00:00Z",
   },
 ];
@@ -106,12 +106,15 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
     if (rows && rows.length > 0 && rows[0].value) {
       const parsed = JSON.parse(rows[0].value) as MiniProject[];
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Sanitize Vercel URLs to ensure clean Vercel links without day-XX prefixes
+        // Sanitize Vercel URLs to ensure clean Vercel links without day-XX prefixes for Days 1-6
         memoryMiniProjects = parsed.map((p) => {
           let cleanUrl = p.vercelUrl;
           if (p.dayNumber === 1) cleanUrl = "https://ai-symptom-checker.vercel.app";
           else if (p.dayNumber === 2) cleanUrl = "https://code-review-bot.vercel.app";
           else if (p.dayNumber === 3) cleanUrl = "https://smart-resume-builder.vercel.app";
+          else if (p.dayNumber === 4) cleanUrl = "https://diabetes-predictor.vercel.app";
+          else if (p.dayNumber === 5) cleanUrl = "https://meeting-summarizer.vercel.app";
+          else if (p.dayNumber === 6) cleanUrl = "https://stock-dashboard.vercel.app";
           else if (cleanUrl && (cleanUrl.includes("day-") || cleanUrl.includes("aiwithab.site"))) {
             cleanUrl = cleanUrl
               ? cleanUrl.replace(/^https:\/\/day-\d+-/, "https://").replace(".aiwithab.site", ".vercel.app")
@@ -119,6 +122,7 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
           }
           return {
             ...p,
+            status: "Live" as const,
             vercelUrl: cleanUrl,
             githubUrl: p.githubUrl || `https://github.com/abdulnabii/mini-projects/tree/main/day-${String(p.dayNumber).padStart(2, "0")}`,
           };
