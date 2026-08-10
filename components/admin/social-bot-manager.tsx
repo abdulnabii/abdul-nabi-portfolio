@@ -10,6 +10,7 @@ import {
   Check,
   Copy,
   ExternalLink,
+  Image as ImageIcon,
   Linkedin,
   Loader2,
   MessageSquare,
@@ -29,6 +30,7 @@ export function SocialBotManager() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [customTitle, setCustomTitle] = useState("");
   const [customDesc, setCustomDesc] = useState("");
+  const [imageUrlInput, setImageUrlInput] = useState("https://www.aiwithab.site/profile.jpg");
 
   const [activeTab, setActiveTab] = useState<"linkedin" | "reddit" | "twitter">("linkedin");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -72,7 +74,9 @@ export function SocialBotManager() {
   async function handleGenerate() {
     setGenerating(true);
     try {
-      let payload: { miniProjectId?: string; customProj?: Partial<MiniProject> } = {};
+      let payload: { miniProjectId?: string; customProj?: Partial<MiniProject>; imageUrl?: string } = {
+        imageUrl: imageUrlInput || "https://www.aiwithab.site/profile.jpg",
+      };
 
       if (selectedProjectId === "custom") {
         payload.customProj = {
@@ -132,7 +136,6 @@ export function SocialBotManager() {
   }
 
   function launchRedditSubmit(post: SocialPost) {
-    // Parse title & body from redditContent
     const lines = post.redditContent.split("\n");
     let title = post.title;
     if (lines[0] && lines[0].startsWith("Title: ")) {
@@ -171,15 +174,15 @@ export function SocialBotManager() {
               Automated Social Content Engine
             </div>
             <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              Reddit & LinkedIn Social Automation Bot
+              LinkedIn & Reddit Automation Bot with Picture Cards
             </h2>
             <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-              Auto-generate viral, high-converting posts for LinkedIn, Reddit, and Twitter with 1-click publishing. Build your personal brand and drive thousands of developers to your portfolio!
+              Auto-generate viral posts with picture banner previews for LinkedIn, Reddit, and Twitter. 1-click launch posts pre-filled with content and visual project banners!
             </p>
           </div>
 
           {/* Generator Controls */}
-          <div className="w-full md:w-auto shrink-0 bg-white/5 border border-white/10 p-4 rounded-2xl space-y-3">
+          <div className="w-full md:w-80 shrink-0 bg-white/5 border border-white/10 p-4 rounded-2xl space-y-3">
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
               Select Mini Project to Promote
             </label>
@@ -215,6 +218,20 @@ export function SocialBotManager() {
               </div>
             )}
 
+            <div>
+              <label className="block text-[11px] font-medium text-slate-400 mb-1 flex items-center gap-1">
+                <ImageIcon className="h-3 w-3 text-indigo-400" />
+                Picture / Banner Image URL:
+              </label>
+              <input
+                type="text"
+                value={imageUrlInput}
+                onChange={(e) => setImageUrlInput(e.target.value)}
+                placeholder="https://.../preview.jpg"
+                className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 text-xs text-white"
+              />
+            </div>
+
             <Button
               onClick={handleGenerate}
               disabled={generating}
@@ -241,7 +258,7 @@ export function SocialBotManager() {
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           {/* Active Post Studio */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-3 gap-4">
               <div>
                 <span className="text-[11px] font-mono text-indigo-400 uppercase tracking-wider">
                   Active Campaign
@@ -290,10 +307,10 @@ export function SocialBotManager() {
             {/* Platform Content Studio */}
             {activeTab === "linkedin" && (
               <GlassCard padding="lg" className="space-y-4 border-indigo-500/30">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs">
                     <Linkedin className="h-4 w-4" />
-                    LinkedIn Post Blueprint
+                    LinkedIn Post Blueprint (Includes Banner Picture Card)
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -325,6 +342,24 @@ export function SocialBotManager() {
                   </div>
                 </div>
 
+                {/* Picture Banner Card */}
+                {activePost.imageUrl && (
+                  <div className="rounded-2xl border border-white/10 bg-slate-900/90 p-3 flex items-center gap-4">
+                    <img
+                      src={activePost.imageUrl}
+                      alt="LinkedIn Post Preview Graphic"
+                      className="h-16 w-28 object-cover rounded-xl border border-white/10"
+                    />
+                    <div className="text-xs space-y-1">
+                      <p className="font-bold text-white flex items-center gap-1.5">
+                        <ImageIcon className="h-3.5 w-3.5 text-indigo-400" />
+                        Attached Image Preview
+                      </p>
+                      <p className="text-[11px] text-slate-400 truncate max-w-xs">{activePost.imageUrl}</p>
+                    </div>
+                  </div>
+                )}
+
                 <textarea
                   value={activePost.linkedInContent}
                   onChange={(e) =>
@@ -338,7 +373,7 @@ export function SocialBotManager() {
 
             {activeTab === "reddit" && (
               <GlassCard padding="lg" className="space-y-4 border-orange-500/30">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-orange-400 font-semibold text-xs">
                     <MessageSquare className="h-4 w-4" />
                     Reddit Post Blueprint ({activePost.redditSubreddit})
@@ -373,6 +408,24 @@ export function SocialBotManager() {
                   </div>
                 </div>
 
+                {/* Picture Banner Card */}
+                {activePost.imageUrl && (
+                  <div className="rounded-2xl border border-white/10 bg-slate-900/90 p-3 flex items-center gap-4">
+                    <img
+                      src={activePost.imageUrl}
+                      alt="Reddit Post Embedded Graphic"
+                      className="h-16 w-28 object-cover rounded-xl border border-white/10"
+                    />
+                    <div className="text-xs space-y-1">
+                      <p className="font-bold text-white flex items-center gap-1.5">
+                        <ImageIcon className="h-3.5 w-3.5 text-orange-400" />
+                        Embedded Markdown Banner Image
+                      </p>
+                      <p className="text-[11px] text-slate-400 font-mono">![Project Preview Banner]({activePost.imageUrl})</p>
+                    </div>
+                  </div>
+                )}
+
                 <textarea
                   value={activePost.redditContent}
                   onChange={(e) =>
@@ -386,7 +439,7 @@ export function SocialBotManager() {
 
             {activeTab === "twitter" && (
               <GlassCard padding="lg" className="space-y-4 border-sky-500/30">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-sky-400 font-semibold text-xs">
                     <Twitter className="h-4 w-4" />
                     Twitter / X Thread Blueprint
@@ -475,7 +528,7 @@ export function SocialBotManager() {
           <Bot className="h-10 w-10 text-indigo-400 mx-auto mb-3 opacity-60" />
           <p className="text-white font-semibold text-base">No social post campaigns generated yet.</p>
           <p className="text-slate-400 text-xs mt-1 max-w-md mx-auto">
-            Select a project above and click &quot;Auto-Generate Social Posts&quot; to instantly draft LinkedIn and Reddit posts!
+            Select a project above and click &quot;Auto-Generate Social Posts&quot; to instantly draft LinkedIn and Reddit posts with pictures!
           </p>
         </div>
       )}

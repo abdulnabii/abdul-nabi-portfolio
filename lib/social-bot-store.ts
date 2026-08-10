@@ -12,16 +12,18 @@ export interface SocialPost {
   twitterContent: string;
   vercelUrl: string;
   githubUrl?: string;
+  imageUrl?: string;
   status: "Draft" | "Posted" | "Scheduled";
   createdAt: string;
 }
 
-export function generateLinkedInPost(proj: Partial<MiniProject>): string {
+export function generateLinkedInPost(proj: Partial<MiniProject>, imageUrl?: string): string {
   const dayStr = proj.dayNumber ? `Day ${String(proj.dayNumber).padStart(2, "0")}` : "New AI Project";
   const title = proj.title || "AI Micro Tool";
   const category = proj.category || "Full-Stack AI";
   const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
   const portfolioUrl = "https://www.aiwithab.site/mini-projects";
+  const img = imageUrl || "https://www.aiwithab.site/profile.jpg";
 
   return `🚀 ${dayStr} of my 30 Days 30 AI Projects Challenge: ${title}!
 
@@ -38,18 +40,20 @@ ${proj.description || "Building full-stack AI web applications with Next.js 14 a
 🔗 Test the live application here:
 👉 Live App: ${vercelUrl}
 🌐 Full Portfolio & Micro Tools Explorer: ${portfolioUrl}
+📸 Project Preview Image: ${img}
 
 I'd love your feedback! What feature should I add next?
 
 #BuildInPublic #NextJS #TypeScript #ArtificialIntelligence #SoftwareEngineering #30Days30AIProjects #FullStackDeveloper`;
 }
 
-export function generateRedditPost(proj: Partial<MiniProject>): { title: string; body: string; subreddit: string } {
+export function generateRedditPost(proj: Partial<MiniProject>, imageUrl?: string): { title: string; body: string; subreddit: string } {
   const dayStr = proj.dayNumber ? `Day ${String(proj.dayNumber).padStart(2, "0")}` : "Day XX";
   const title = proj.title || "AI Micro Tool";
   const category = proj.category || "Full-Stack AI";
   const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
   const githubUrl = proj.githubUrl || "https://github.com/abdulnabii/mini-projects";
+  const img = imageUrl || "https://www.aiwithab.site/profile.jpg";
 
   const subreddit = category.toLowerCase().includes("health")
     ? "r/SideProject"
@@ -64,6 +68,8 @@ export function generateRedditPost(proj: Partial<MiniProject>): { title: string;
 I'm currently undertaking a challenge to build and deploy 30 production-grade AI micro-tools in 30 days.
 
 Today I finished **${title}** (${category}).
+
+![Project Preview Banner](${img})
 
 ### 📌 Overview
 ${proj.description || "An AI-powered web application built to solve real-world workflows."}
@@ -94,7 +100,7 @@ export function generateTwitterPost(proj: Partial<MiniProject>): string {
 Built with Next.js 14, TypeScript & Gemini API.
 
 ✨ Feature Highlights:
-${proj.description?.slice(0, 140) || "AI-powered micro tool."}
+${proj.description?.slice(0, 130) || "AI-powered micro tool."}
 
 Try it live: ${vercelUrl}
 Explorer: https://www.aiwithab.site/mini-projects
@@ -139,21 +145,23 @@ export async function saveSocialPosts(posts: SocialPost[]): Promise<SocialPost[]
   return memorySocialPosts;
 }
 
-export async function createSocialPost(proj: Partial<MiniProject>): Promise<SocialPost> {
+export async function createSocialPost(proj: Partial<MiniProject>, imageUrl?: string): Promise<SocialPost> {
   const current = await getSocialPosts();
-  const redditData = generateRedditPost(proj);
+  const img = imageUrl || "https://www.aiwithab.site/profile.jpg";
+  const redditData = generateRedditPost(proj, img);
 
   const newPost: SocialPost = {
     id: `post-${Date.now()}`,
     miniProjectId: proj.id,
     title: proj.title || "Social Post Campaign",
     category: proj.category || "AI Project",
-    linkedInContent: generateLinkedInPost(proj),
+    linkedInContent: generateLinkedInPost(proj, img),
     redditContent: `Title: ${redditData.title}\n\n${redditData.body}`,
     redditSubreddit: redditData.subreddit,
     twitterContent: generateTwitterPost(proj),
     vercelUrl: proj.vercelUrl || "https://www.aiwithab.site/mini-projects",
     githubUrl: proj.githubUrl,
+    imageUrl: img,
     status: "Draft",
     createdAt: new Date().toISOString(),
   };

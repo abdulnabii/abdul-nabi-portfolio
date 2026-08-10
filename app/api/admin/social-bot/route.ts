@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { miniProjectId, customProj } = body;
+    const { miniProjectId, customProj, imageUrl } = body;
 
     let targetProject = customProj;
     if (miniProjectId) {
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No target project found" }, { status: 400 });
     }
 
-    const created = await createSocialPost(targetProject);
+    const created = await createSocialPost(targetProject, imageUrl);
     return NextResponse.json({ post: created, ok: true });
   } catch (err) {
     console.error("POST /api/admin/social-bot error:", err);
