@@ -1,5 +1,6 @@
 import { getAllBlogs } from "@/lib/blog-store";
 import { getAllProjects } from "@/lib/project-store";
+import { getMiniProjects } from "@/lib/mini-projects-store";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -12,6 +13,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/mini-projects`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.95,
     },
     {
       url: `${baseUrl}/blog`,
