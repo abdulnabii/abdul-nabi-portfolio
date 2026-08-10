@@ -1,7 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Download, FileText, CheckCircle2, Globe, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Globe, Github, Linkedin, Mail, MapPin } from "lucide-react";
 import { Metadata } from "next";
+import { ResumePrintButton } from "@/components/resume-print-button";
 
 export const metadata: Metadata = {
   title: "ATS Resume · Abdul Nabi — Full-Stack Developer",
@@ -27,13 +28,7 @@ export default function ResumePage() {
               <CheckCircle2 className="h-3.5 w-3.5" />
               90+ ATS Score Verified
             </span>
-            <button
-              onClick={() => window.print()}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition cursor-pointer"
-            >
-              <Download className="h-4 w-4" />
-              Print / Save as PDF
-            </button>
+            <ResumePrintButton />
           </div>
         </div>
 
