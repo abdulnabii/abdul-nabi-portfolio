@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { FileText, LayoutDashboard, LogOut, FolderGit2, Inbox, Settings, User, Layers, Briefcase, LayoutTemplate, Trophy, Monitor, Sun, Moon, Rocket } from "lucide-react";
+import { FileText, LayoutDashboard, LogOut, FolderGit2, Inbox, Settings, User, Layers, Briefcase, LayoutTemplate, Trophy, Monitor, Sun, Moon, Rocket, Share2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ interface AdminShellProps {
 
 const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/social-bot", label: "Social Bot", icon: Share2 },
   { href: "/admin/blogs", label: "Blogs", icon: FileText },
   { href: "/admin/projects", label: "Projects", icon: FolderGit2 },
   { href: "/admin/mini-projects", label: "Mini Projects", icon: Rocket },
