@@ -32,14 +32,15 @@ export async function executeAutoPosterCycle(): Promise<{
   const currentIndex = creds.nextAutoPostIndex || 0;
   const project = miniProjects[currentIndex % miniProjects.length];
 
-  // Determine appropriate picture banner for the project
-  let bannerUrl = "https://www.aiwithab.site/profile.jpg";
-  if (project.dayNumber === 4 || project.title.toLowerCase().includes("diabetes") || project.title.toLowerCase().includes("glucose") || project.title.toLowerCase().includes("blood sugar")) {
+  // Determine appropriate project dashboard picture banner (never profile.jpg)
+  let bannerUrl = `https://www.aiwithab.site/api/project-banner?day=${project.dayNumber}`;
+  if (
+    project.dayNumber === 4 ||
+    project.title.toLowerCase().includes("diabetes") ||
+    project.title.toLowerCase().includes("glucose") ||
+    project.title.toLowerCase().includes("blood sugar")
+  ) {
     bannerUrl = "https://www.aiwithab.site/blood_sugar_banner.jpg";
-  } else if (project.dayNumber === 1) {
-    bannerUrl = "https://www.aiwithab.site/profile.jpg";
-  } else {
-    bannerUrl = "https://www.aiwithab.site/profile.jpg";
   }
 
   // 1. Generate Social Campaign

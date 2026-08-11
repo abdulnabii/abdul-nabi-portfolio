@@ -48,7 +48,7 @@ export function SocialBotManager() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [customTitle, setCustomTitle] = useState("");
   const [customDesc, setCustomDesc] = useState("");
-  const [imageUrlInput, setImageUrlInput] = useState("https://www.aiwithab.site/profile.jpg");
+  const [imageUrlInput, setImageUrlInput] = useState("https://www.aiwithab.site/api/project-banner?day=1");
 
   const [activeTab, setActiveTab] = useState<"linkedin" | "reddit" | "twitter">("linkedin");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -389,7 +389,20 @@ export function SocialBotManager() {
             </label>
             <select
               value={selectedProjectId}
-              onChange={(e) => setSelectedProjectId(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedProjectId(val);
+                if (val !== "custom") {
+                  const proj = miniProjects.find((p) => p.id === val);
+                  if (proj) {
+                    const banner =
+                      proj.dayNumber === 4
+                        ? "https://www.aiwithab.site/blood_sugar_banner.jpg"
+                        : `https://www.aiwithab.site/api/project-banner?day=${proj.dayNumber}`;
+                    setImageUrlInput(banner);
+                  }
+                }
+              }}
               className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
             >
               {miniProjects.map((p) => (
@@ -796,12 +809,25 @@ export function SocialBotManager() {
             <div className="space-y-6 max-h-[460px] overflow-y-auto pr-1 text-xs">
               {/* LinkedIn Section */}
               <div className="space-y-3 p-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/5">
-                <div className="flex items-center gap-2 font-bold text-indigo-300">
-                  <Linkedin className="h-4 w-4" />
-                  LinkedIn REST API Credentials
+                <div className="flex items-center justify-between font-bold text-indigo-300">
+                  <div className="flex items-center gap-2">
+                    <Linkedin className="h-4 w-4" />
+                    LinkedIn REST API Credentials
+                  </div>
+                  <a
+                    href="https://www.linkedin.com/developers/apps"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-indigo-400 hover:underline flex items-center gap-1 font-normal"
+                  >
+                    LinkedIn Developer Portal <ExternalLink className="h-3 w-3" />
+                  </a>
                 </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Connect your LinkedIn account (<strong className="text-white">abdul-nabi-khaskhely</strong>) to enable 1-click &amp; scheduled auto-posting with project dashboard banners:
+                </p>
                 <div>
-                  <label className="block text-slate-400 mb-1">LinkedIn Access Token</label>
+                  <label className="block text-slate-400 mb-1">LinkedIn Access Token (OAuth 2.0 Token)</label>
                   <input
                     type="password"
                     value={creds.linkedInAccessToken || ""}
