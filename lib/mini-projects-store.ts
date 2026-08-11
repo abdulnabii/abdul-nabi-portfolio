@@ -93,6 +93,32 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     featured: true,
     createdAt: "2026-08-08T00:00:00Z",
   },
+  {
+    id: "mini-07",
+    dayNumber: 7,
+    title: "AI Logo Generator & Brand Identity Studio",
+    category: "AI Creative Tools",
+    description: "AI brand vector generator creating custom SVG logos, color mood palettes, typography pairings, and downloadable brand guideline asset packages.",
+    vercelUrl: "https://day-07-ai-logo-generator.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-07-ai-logo-generator",
+    tags: ["Next.js 16", "Replicate API", "SVG Canvas", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-11T00:00:00Z",
+  },
+  {
+    id: "mini-08",
+    dayNumber: 8,
+    title: "Smart Expense Tracker & AI Receipt Scanner",
+    category: "FinTech & OCR AI",
+    description: "Automated personal finance tracker extracting line items from receipt photos via OCR, auto-categorizing expenses, and analyzing spending habits with an AI financial coach.",
+    vercelUrl: "https://day-08-smart-expense-tracker.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-08-smart-expense-tracker",
+    tags: ["Tesseract OCR", "Gemini 1.5 Flash", "Recharts", "Next.js 16"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-11T00:00:00Z",
+  },
 ];
 
 let memoryMiniProjects: MiniProject[] = [...INITIAL_MINI_PROJECTS];
@@ -114,6 +140,8 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
           else if (p.dayNumber === 4) url = "https://day-04-diabetes-risk-predictor.vercel.app";
           else if (p.dayNumber === 5) url = "https://day-05-ai-meeting-summarizer.vercel.app";
           else if (p.dayNumber === 6) url = "https://day-06-stock-dashboard.vercel.app";
+          else if (p.dayNumber === 7) url = "https://day-07-ai-logo-generator.vercel.app";
+          else if (p.dayNumber === 8) url = "https://day-08-smart-expense-tracker.vercel.app";
 
           return {
             ...p,
