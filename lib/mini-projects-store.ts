@@ -119,6 +119,32 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     featured: true,
     createdAt: "2026-08-11T00:00:00Z",
   },
+  {
+    id: "mini-09",
+    dayNumber: 9,
+    title: "GitHub Profile Visual Analyzer & Impact Card",
+    category: "Developer Tools",
+    description: "Visual developer metric dashboard calculating language proficiency radar, commit heatmaps, repository impact scores, and shareable developer cards.",
+    vercelUrl: "https://day-09-github-profile-analyzer.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-09-github-profile-analyzer",
+    tags: ["Next.js 16", "GitHub REST API", "Recharts", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-12T00:00:00Z",
+  },
+  {
+    id: "mini-10",
+    dayNumber: 10,
+    title: "AI Email Composer & Subject Line Optimizer",
+    category: "AI Productivity",
+    description: "Multi-tone AI email generator with tone selector (formal, casual, persuasive), A/B email variation generator, and open-rate predictor.",
+    vercelUrl: "https://day-10-ai-email-composer.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-10-ai-email-composer",
+    tags: ["Next.js 16", "Gemini 1.5 Flash", "Framer Motion", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-12T00:00:00Z",
+  },
 ];
 
 let memoryMiniProjects: MiniProject[] = [...INITIAL_MINI_PROJECTS];
@@ -142,6 +168,8 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
           else if (p.dayNumber === 6) url = "https://day-06-stock-dashboard.vercel.app";
           else if (p.dayNumber === 7) url = "https://day-07-ai-logo-generator.vercel.app";
           else if (p.dayNumber === 8) url = "https://day-08-smart-expense-tracker.vercel.app";
+          else if (p.dayNumber === 9) url = "https://day-09-github-profile-analyzer.vercel.app";
+          else if (p.dayNumber === 10) url = "https://day-10-ai-email-composer.vercel.app";
 
           return {
             ...p,
