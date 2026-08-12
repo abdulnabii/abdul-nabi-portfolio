@@ -88,10 +88,11 @@ export async function publishDirectToLinkedIn(
   if (!c.linkedInAccessToken) {
     return {
       success: false,
-      message: "LinkedIn Access Token Missing. Please link your LinkedIn Access Token in Social Bot Settings.",
+      message: "LinkedIn Access Token Missing. Please add your token in Link Social Accounts.",
     };
   }
 
+  // ── Resolve Person URN if not cached ──────────────────────────────────────
   let personUrn = c.linkedInPersonUrn;
   if (!personUrn) {
     const fetched = await fetchLinkedInPersonUrn(c.linkedInAccessToken);
@@ -104,32 +105,28 @@ export async function publishDirectToLinkedIn(
   if (!personUrn) {
     return {
       success: false,
-      message: "Could not resolve LinkedIn Person URN. Please enter your LinkedIn Person URN (e.g. urn:li:person:XXXX) in Social Settings.",
+      message: "Could not resolve LinkedIn Person URN. Paste your token and click 'Test Connection' in Link Social Accounts — the URN will be auto-fetched.",
     };
   }
 
   const authorUrn = personUrn.startsWith("urn:li:person:") ? personUrn : `urn:li:person:${personUrn}`;
 
-  // Attempt 1: Standard UGC Posts API (/v2/ugcPosts)
+  // ── Build post text: append article URL inline so it shows as a link ──────
+  // LinkedIn sandbox/basic apps CANNOT post ARTICLE-type media — only NONE.
+  // Appending the URL as text still creates a clickable link in the feed.
+  const postText = articleUrl
+    ? `${content}\n\n🔗 ${articleUrl}`
+    : content;
+
+  // ── Attempt 1: UGC Posts API (/v2/ugcPosts) — text-only NONE category ─────
   try {
     const ugcPayload = {
       author: authorUrn,
       lifecycleState: "PUBLISHED",
       specificContent: {
         "com.linkedin.ugc.ShareContent": {
-          shareCommentary: {
-            text: content,
-          },
-          shareMediaCategory: articleUrl ? "ARTICLE" : "NONE",
-          media: articleUrl
-            ? [
-                {
-                  status: "READY",
-                  originalUrl: articleUrl,
-                  title: { text: "Abdul Nabi — Portfolio & AI Micro Tools" },
-                },
-              ]
-            : undefined,
+          shareCommentary: { text: postText },
+          shareMediaCategory: "NONE",
         },
       },
       visibility: {
@@ -147,58 +144,76 @@ export async function publishDirectToLinkedIn(
       body: JSON.stringify(ugcPayload),
     });
 
-    const data1 = await res1.json();
-    if (res1.ok && data1.id) {
-      return { success: true, message: "Successfully published post directly to LinkedIn feed!", id: data1.id };
-    }
+    const data1 = await res1.json().catch(() => ({}));
+    console.log("[linkedin] ugcPosts response:", res1.status, JSON.stringify(data1));
 
-    if (res1.status === 401) {
+    if (res1.ok && data1.id) {
       return {
-        success: false,
-        message: "LinkedIn Access Token expired or invalid. Please generate a new OAuth Token in LinkedIn Developer Tools.",
+        success: true,
+        message: "✅ Successfully published to LinkedIn feed via ugcPosts!",
+        id: data1.id,
       };
     }
 
-    // Attempt 2: Modern Rest Posts API (/v2/posts)
+    if (res1.status === 401 || res1.status === 403) {
+      return {
+        success: false,
+        message: `LinkedIn Access Token expired or invalid (HTTP ${res1.status}). Please generate a new OAuth token from the LinkedIn Developer Portal → Tools → OAuth Token Generator.`,
+      };
+    }
+
+    // ── Attempt 2: Modern REST Posts API (/v2/posts) — text-only ─────────────
     const restPayload = {
       author: authorUrn,
-      commentary: content,
+      commentary: postText,
       visibility: "PUBLIC",
       distribution: {
         feedDistribution: "MAIN_FEED",
         targetEntities: [],
         thirdPartyDistributionChannels: [],
       },
-      content: articleUrl
-        ? {
-            article: {
-              source: articleUrl,
-              title: "Abdul Nabi — Portfolio & AI Micro Tools",
-            },
-          }
-        : undefined,
       lifecycleState: "PUBLISHED",
     };
 
-    const res2 = await fetch("https://api.linkedin.com/v2/posts", {
+    const res2 = await fetch("https://api.linkedin.com/rest/posts", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${c.linkedInAccessToken}`,
         "Content-Type": "application/json",
+        "LinkedIn-Version": "202401",
         "X-Restli-Protocol-Version": "2.0.0",
       },
       body: JSON.stringify(restPayload),
     });
 
-    const data2 = await res2.json();
-    if (res2.ok && (data2.id || res2.headers.get("x-restli-id"))) {
-      const postId = data2.id || res2.headers.get("x-restli-id") || "OK";
-      return { success: true, message: "Successfully published post directly to LinkedIn feed!", id: postId };
+    const restId = res2.headers.get("x-restli-id") || res2.headers.get("x-linkedin-id");
+    const data2 = await res2.json().catch(() => ({}));
+    console.log("[linkedin] rest/posts response:", res2.status, JSON.stringify(data2));
+
+    if ((res2.ok || res2.status === 201) && (data2.id || restId)) {
+      return {
+        success: true,
+        message: "✅ Successfully published to LinkedIn feed via REST posts!",
+        id: data2.id || restId || "OK",
+      };
     }
 
-    const errMessage =
-      data1.message || data1.error_description || data2.message || data2.error_description || "LinkedIn API error.";
-    return { success: false, message: `LinkedIn API Error: ${errMessage}` };
+    if (res2.status === 401 || res2.status === 403) {
+      return {
+        success: false,
+        message: `LinkedIn Access Token expired or invalid (HTTP ${res2.status}). Please regenerate a fresh token.`,
+      };
+    }
+
+    // Return the most useful error message from either attempt
+    const errMsg =
+      data1?.message ||
+      data1?.error_description ||
+      data2?.message ||
+      data2?.error_description ||
+      `LinkedIn API returned ${res1.status} / ${res2.status}. Check that your app has the w_member_social scope.`;
+
+    return { success: false, message: `LinkedIn API Error: ${errMsg}` };
   } catch (err: any) {
     console.error("publishDirectToLinkedIn error:", err);
     return { success: false, message: err.message || "Failed to publish to LinkedIn." };

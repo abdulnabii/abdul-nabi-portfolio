@@ -44,6 +44,8 @@ export function SocialBotManager() {
   const [showCredsModal, setShowCredsModal] = useState(false);
   const [savingCreds, setSavingCreds] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [testingToken, setTestingToken] = useState(false);
+  const [tokenTestResult, setTokenTestResult] = useState<{ valid: boolean; name?: string; urn?: string; error?: string } | null>(null);
 
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [customTitle, setCustomTitle] = useState("");
@@ -158,6 +160,28 @@ export function SocialBotManager() {
       setStatusMessage({ type: "error", text: "Exception saving credentials." });
     } finally {
       setSavingCreds(false);
+    }
+  }
+
+  async function handleTestConnection() {
+    setTestingToken(true);
+    setTokenTestResult(null);
+    try {
+      const res = await fetch("/api/admin/social-bot/test-connection");
+      const data = await res.json();
+      setTokenTestResult(data);
+      if (data.valid) {
+        // URN was auto-fetched — refresh credentials
+        setCreds((prev) => ({ ...prev, linkedInPersonUrn: data.urn }));
+        await fetchData();
+        setStatusMessage({ type: "success", text: `✅ LinkedIn token is valid! Connected as ${data.name || data.urn}` });
+      } else {
+        setStatusMessage({ type: "error", text: `❌ ${data.error}` });
+      }
+    } catch (err: any) {
+      setTokenTestResult({ valid: false, error: err.message });
+    } finally {
+      setTestingToken(false);
     }
   }
 
@@ -281,7 +305,10 @@ export function SocialBotManager() {
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
   }
 
+  // Token is "linked" when it exists AND either hasn't been tested yet, or the test passed
   const isLinkedInLinked = !!(creds.linkedInAccessToken && creds.linkedInPersonUrn);
+  const isTokenVerified = tokenTestResult?.valid === true;
+  const isTokenFailed = tokenTestResult?.valid === false;
   const isRedditLinked = !!(creds.redditClientId && creds.redditUsername && creds.redditPassword);
 
   if (loading) {
@@ -304,12 +331,20 @@ export function SocialBotManager() {
                 Automated Social Content Engine
               </span>
 
-              {isLinkedInLinked ? (
+              {isLinkedInLinked && isTokenVerified ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 text-xs font-bold text-emerald-300">
-                  <Linkedin className="h-3.5 w-3.5" /> 🟢 LinkedIn Connected
+                  <Linkedin className="h-3.5 w-3.5" /> ✅ LinkedIn Verified — {tokenTestResult?.name || "Connected"}
+                </span>
+              ) : isLinkedInLinked && isTokenFailed ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/20 border border-rose-500/40 px-3 py-1 text-xs font-bold text-rose-300 cursor-pointer" onClick={() => setShowCredsModal(true)}>
+                  <Linkedin className="h-3.5 w-3.5" /> ❌ Token Expired — Click to Fix
+                </span>
+              ) : isLinkedInLinked ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 px-3 py-1 text-xs font-bold text-amber-300 cursor-pointer" onClick={handleTestConnection}>
+                  <Linkedin className="h-3.5 w-3.5" /> {testingToken ? "Testing..." : "⚠️ Token Unverified — Click to Test"}
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/20 border border-rose-500/40 px-3 py-1 text-xs font-bold text-rose-300">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/20 border border-rose-500/40 px-3 py-1 text-xs font-bold text-rose-300 cursor-pointer" onClick={() => setShowCredsModal(true)}>
                   <Linkedin className="h-3.5 w-3.5" /> 🔴 LinkedIn Token Required
                 </span>
               )}
@@ -877,20 +912,58 @@ export function SocialBotManager() {
                   <input
                     type="password"
                     value={creds.linkedInAccessToken || ""}
-                    onChange={(e) => setCreds({ ...creds, linkedInAccessToken: e.target.value })}
+                    onChange={(e) => {
+                      setCreds({ ...creds, linkedInAccessToken: e.target.value });
+                      setTokenTestResult(null); // reset test when token changes
+                    }}
                     placeholder="AQV..."
                     className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">LinkedIn Person URN (Member ID)</label>
+                  <label className="block text-slate-400 mb-1">LinkedIn Person URN (auto-fetched on Test)</label>
                   <input
                     type="text"
                     value={creds.linkedInPersonUrn || ""}
                     onChange={(e) => setCreds({ ...creds, linkedInPersonUrn: e.target.value })}
-                    placeholder="urn:li:person:12345678"
+                    placeholder="urn:li:person:12345678  (auto-filled on Test Connection)"
                     className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
                   />
+                </div>
+
+                {/* Test Connection Button + Result */}
+                <div className="space-y-2">
+                  <button
+                    onClick={handleTestConnection}
+                    disabled={testingToken || !creds.linkedInAccessToken}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-600/20 px-3 py-2 text-xs font-bold text-indigo-300 hover:bg-indigo-600/40 transition disabled:opacity-40"
+                  >
+                    {testingToken ? (
+                      <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Testing LinkedIn Token...</>
+                    ) : (
+                      <><CheckCircle2 className="h-3.5 w-3.5" /> Test Connection &amp; Auto-Fetch URN</>
+                    )}
+                  </button>
+
+                  {tokenTestResult && (
+                    <div className={`rounded-xl border px-3 py-2 text-[11px] font-medium ${
+                      tokenTestResult.valid
+                        ? "border-emerald-500/30 bg-emerald-950/40 text-emerald-300"
+                        : "border-rose-500/30 bg-rose-950/40 text-rose-300"
+                    }`}>
+                      {tokenTestResult.valid ? (
+                        <>
+                          ✅ <strong>Token Valid!</strong> Connected as <strong>{tokenTestResult.name}</strong><br/>
+                          URN: <code className="text-emerald-200">{tokenTestResult.urn}</code>
+                        </>
+                      ) : (
+                        <>
+                          ❌ <strong>Token Invalid:</strong> {tokenTestResult.error}<br/>
+                          <a href="https://www.linkedin.com/developers/tools/oauth" target="_blank" rel="noopener noreferrer" className="underline text-rose-400">Generate a new token ↗</a>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
