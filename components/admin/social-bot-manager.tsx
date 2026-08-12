@@ -58,6 +58,20 @@ export function SocialBotManager() {
 
   useEffect(() => {
     fetchData();
+    // Read OAuth result from URL params (set by callback redirect)
+    const params = new URLSearchParams(window.location.search);
+    const oauthSuccess = params.get("oauth_success");
+    const oauthError = params.get("oauth_error");
+    if (oauthSuccess) {
+      setStatusMessage({ type: "success", text: decodeURIComponent(oauthSuccess) });
+      // Also auto-verify token
+      setTimeout(() => handleTestConnection(), 1500);
+      // Clean URL
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (oauthError) {
+      setStatusMessage({ type: "error", text: decodeURIComponent(oauthError) });
+      window.history.replaceState({}, "", window.location.pathname);
+    }
   }, []);
 
   async function fetchData() {
@@ -861,7 +875,7 @@ export function SocialBotManager() {
               </button>
             </div>
 
-            <div className="space-y-6 max-h-[460px] overflow-y-auto pr-1 text-xs">
+            <div className="space-y-6 max-h-[500px] overflow-y-auto pr-1 text-xs">
               {/* LinkedIn Section */}
               <div className="space-y-3 p-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/5">
                 <div className="flex items-center justify-between font-bold text-indigo-300">
@@ -878,13 +892,29 @@ export function SocialBotManager() {
                     LinkedIn Developer Portal <ExternalLink className="h-3 w-3" />
                   </a>
                 </div>
+
+                {/* ── ONE-CLICK OAUTH BUTTON ── */}
+                <a
+                  href="/api/admin/social-bot/oauth/linkedin"
+                  className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#0a66c2] hover:bg-[#004182] px-4 py-3 text-sm font-bold text-white transition shadow-lg shadow-blue-900/40"
+                >
+                  <Linkedin className="h-4 w-4" />
+                  Connect with LinkedIn (One-Click OAuth)
+                </a>
+
+                <div className="flex items-center gap-2 my-1">
+                  <div className="flex-1 h-px bg-white/10" />
+                  <span className="text-[11px] text-slate-500">or enter token manually</span>
+                  <div className="flex-1 h-px bg-white/10" />
+                </div>
+
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Connect your LinkedIn account (<strong className="text-white">abdul-nabi-khaskhely</strong>) to enable 1-click &amp; scheduled auto-posting with project dashboard banners:
+                  Connect your LinkedIn account (<strong className="text-white">aiwithab</strong>) to enable 1-click &amp; scheduled auto-posting with project dashboard banners:
                 </p>
 
                 <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/40 p-3 space-y-1.5 text-[11px] text-indigo-200">
                   <p className="font-bold flex items-center gap-1 text-indigo-300">
-                    <Sparkles className="h-3.5 w-3.5" /> How to get your 60-day LinkedIn Token (30 seconds):
+                    <Sparkles className="h-3.5 w-3.5" /> How to get your 60-day LinkedIn Token manually:
                   </p>
                   <ol className="list-decimal list-inside space-y-1 text-slate-300">
                     <li>
@@ -902,7 +932,7 @@ export function SocialBotManager() {
                       Select your Developer App &amp; check scope <code className="bg-slate-900 px-1 py-0.5 rounded text-indigo-300">w_member_social</code>
                     </li>
                     <li>
-                      Click <strong>Request Access Token</strong>, copy token <code className="bg-slate-900 px-1 py-0.5 rounded text-slate-200">AQV...</code> &amp; paste below! *(Person URN is auto-fetched on Save)*
+                      Click <strong>Request Access Token</strong>, copy token <code className="bg-slate-900 px-1 py-0.5 rounded text-slate-200">AQV...</code> &amp; paste below!
                     </li>
                   </ol>
                 </div>
