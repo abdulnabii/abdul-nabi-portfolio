@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth";
-import { getSocialCredentials, saveSocialCredentials } from "@/lib/social-credentials-store";
+import { fetchLinkedInPersonUrn, getSocialCredentials, saveSocialCredentials } from "@/lib/social-credentials-store";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +18,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+
+    // Auto-resolve Person URN if missing
+    if (body.linkedInAccessToken && !body.linkedInPersonUrn) {
+      const fetchedUrn = await fetchLinkedInPersonUrn(body.linkedInAccessToken);
+      if (fetchedUrn) {
+        body.linkedInPersonUrn = fetchedUrn;
+      }
+    }
+
     const updated = await saveSocialCredentials(body);
     return NextResponse.json({ creds: updated, ok: true });
   } catch (err) {

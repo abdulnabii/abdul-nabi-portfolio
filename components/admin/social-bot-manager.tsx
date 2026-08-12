@@ -304,9 +304,29 @@ export function SocialBotManager() {
                 Automated Social Content Engine
               </span>
 
+              {isLinkedInLinked ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 text-xs font-bold text-emerald-300">
+                  <Linkedin className="h-3.5 w-3.5" /> 🟢 LinkedIn Connected
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/20 border border-rose-500/40 px-3 py-1 text-xs font-bold text-rose-300">
+                  <Linkedin className="h-3.5 w-3.5" /> 🔴 LinkedIn Token Required
+                </span>
+              )}
+
+              {isRedditLinked ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-500/20 border border-orange-500/40 px-3 py-1 text-xs font-bold text-orange-300">
+                  <MessageSquare className="h-3.5 w-3.5" /> 🟢 Reddit Connected
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 border border-white/10 px-3 py-1 text-xs font-medium text-slate-400">
+                  <MessageSquare className="h-3.5 w-3.5" /> Reddit Unlinked
+                </span>
+              )}
+
               {creds.autoPosterActive ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 text-xs font-bold text-emerald-300 animate-pulse">
-                  <Power className="h-3.5 w-3.5" /> Auto-Poster Bot ACTIVE
+                  <Power className="h-3.5 w-3.5" /> Auto-Poster ACTIVE
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 border border-white/10 px-3 py-1 text-xs font-medium text-slate-400">
@@ -826,6 +846,32 @@ export function SocialBotManager() {
                 <p className="text-[11px] text-slate-400 leading-relaxed">
                   Connect your LinkedIn account (<strong className="text-white">abdul-nabi-khaskhely</strong>) to enable 1-click &amp; scheduled auto-posting with project dashboard banners:
                 </p>
+
+                <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/40 p-3 space-y-1.5 text-[11px] text-indigo-200">
+                  <p className="font-bold flex items-center gap-1 text-indigo-300">
+                    <Sparkles className="h-3.5 w-3.5" /> How to get your 60-day LinkedIn Token (30 seconds):
+                  </p>
+                  <ol className="list-decimal list-inside space-y-1 text-slate-300">
+                    <li>
+                      Open{" "}
+                      <a
+                        href="https://www.linkedin.com/developers/tools/oauth"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-400 font-semibold underline"
+                      >
+                        LinkedIn OAuth Token Generator ↗
+                      </a>
+                    </li>
+                    <li>
+                      Select your Developer App &amp; check scope <code className="bg-slate-900 px-1 py-0.5 rounded text-indigo-300">w_member_social</code>
+                    </li>
+                    <li>
+                      Click <strong>Request Access Token</strong>, copy token <code className="bg-slate-900 px-1 py-0.5 rounded text-slate-200">AQV...</code> &amp; paste below! *(Person URN is auto-fetched on Save)*
+                    </li>
+                  </ol>
+                </div>
+
                 <div>
                   <label className="block text-slate-400 mb-1">LinkedIn Access Token (OAuth 2.0 Token)</label>
                   <input

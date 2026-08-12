@@ -51,6 +51,32 @@ export async function saveSocialCredentials(creds: SocialCredentials): Promise<S
   return memoryCredentials;
 }
 
+/** Helper to fetch Person URN using Access Token if missing */
+export async function fetchLinkedInPersonUrn(token: string): Promise<string | null> {
+  try {
+    // Try standard v2/me endpoint
+    const res1 = await fetch("https://api.linkedin.com/v2/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res1.ok) {
+      const data1 = await res1.json();
+      if (data1.id) return `urn:li:person:${data1.id}`;
+    }
+
+    // Try OpenID userinfo endpoint
+    const res2 = await fetch("https://api.linkedin.com/v2/userinfo", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res2.ok) {
+      const data2 = await res2.json();
+      if (data2.sub) return `urn:li:person:${data2.sub}`;
+    }
+  } catch (e) {
+    console.error("fetchLinkedInPersonUrn error:", e);
+  }
+  return null;
+}
+
 /** Direct API Publishing to LinkedIn REST API */
 export async function publishDirectToLinkedIn(
   content: string,
@@ -59,19 +85,34 @@ export async function publishDirectToLinkedIn(
   creds?: SocialCredentials
 ): Promise<{ success: boolean; message: string; id?: string }> {
   const c = creds || (await getSocialCredentials());
-  if (!c.linkedInAccessToken || !c.linkedInPersonUrn) {
+  if (!c.linkedInAccessToken) {
     return {
       success: false,
-      message: "LinkedIn Credentials Missing. Please link your LinkedIn Access Token and Person URN in Social Bot Settings.",
+      message: "LinkedIn Access Token Missing. Please link your LinkedIn Access Token in Social Bot Settings.",
     };
   }
 
-  try {
-    const authorUrn = c.linkedInPersonUrn.startsWith("urn:li:person:")
-      ? c.linkedInPersonUrn
-      : `urn:li:person:${c.linkedInPersonUrn}`;
+  let personUrn = c.linkedInPersonUrn;
+  if (!personUrn) {
+    const fetched = await fetchLinkedInPersonUrn(c.linkedInAccessToken);
+    if (fetched) {
+      personUrn = fetched;
+      await saveSocialCredentials({ ...c, linkedInPersonUrn: fetched });
+    }
+  }
 
-    const bodyPayload = {
+  if (!personUrn) {
+    return {
+      success: false,
+      message: "Could not resolve LinkedIn Person URN. Please enter your LinkedIn Person URN (e.g. urn:li:person:XXXX) in Social Settings.",
+    };
+  }
+
+  const authorUrn = personUrn.startsWith("urn:li:person:") ? personUrn : `urn:li:person:${personUrn}`;
+
+  // Attempt 1: Standard UGC Posts API (/v2/ugcPosts)
+  try {
+    const ugcPayload = {
       author: authorUrn,
       lifecycleState: "PUBLISHED",
       specificContent: {
@@ -96,25 +137,68 @@ export async function publishDirectToLinkedIn(
       },
     };
 
-    const res = await fetch("https://api.linkedin.com/v2/ugcPosts", {
+    const res1 = await fetch("https://api.linkedin.com/v2/ugcPosts", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${c.linkedInAccessToken}`,
         "Content-Type": "application/json",
         "X-Restli-Protocol-Version": "2.0.0",
       },
-      body: JSON.stringify(bodyPayload),
+      body: JSON.stringify(ugcPayload),
     });
 
-    const data = await res.json();
-    if (res.ok && data.id) {
-      return { success: true, message: "Successfully published post directly to LinkedIn feed!", id: data.id };
-    } else {
+    const data1 = await res1.json();
+    if (res1.ok && data1.id) {
+      return { success: true, message: "Successfully published post directly to LinkedIn feed!", id: data1.id };
+    }
+
+    if (res1.status === 401) {
       return {
         success: false,
-        message: data.message || data.error_description || "LinkedIn API returned an error.",
+        message: "LinkedIn Access Token expired or invalid. Please generate a new OAuth Token in LinkedIn Developer Tools.",
       };
     }
+
+    // Attempt 2: Modern Rest Posts API (/v2/posts)
+    const restPayload = {
+      author: authorUrn,
+      commentary: content,
+      visibility: "PUBLIC",
+      distribution: {
+        feedDistribution: "MAIN_FEED",
+        targetEntities: [],
+        thirdPartyDistributionChannels: [],
+      },
+      content: articleUrl
+        ? {
+            article: {
+              source: articleUrl,
+              title: "Abdul Nabi — Portfolio & AI Micro Tools",
+            },
+          }
+        : undefined,
+      lifecycleState: "PUBLISHED",
+    };
+
+    const res2 = await fetch("https://api.linkedin.com/v2/posts", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${c.linkedInAccessToken}`,
+        "Content-Type": "application/json",
+        "X-Restli-Protocol-Version": "2.0.0",
+      },
+      body: JSON.stringify(restPayload),
+    });
+
+    const data2 = await res2.json();
+    if (res2.ok && (data2.id || res2.headers.get("x-restli-id"))) {
+      const postId = data2.id || res2.headers.get("x-restli-id") || "OK";
+      return { success: true, message: "Successfully published post directly to LinkedIn feed!", id: postId };
+    }
+
+    const errMessage =
+      data1.message || data1.error_description || data2.message || data2.error_description || "LinkedIn API error.";
+    return { success: false, message: `LinkedIn API Error: ${errMessage}` };
   } catch (err: any) {
     console.error("publishDirectToLinkedIn error:", err);
     return { success: false, message: err.message || "Failed to publish to LinkedIn." };
