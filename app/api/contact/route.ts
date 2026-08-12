@@ -13,6 +13,15 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json().catch(() => ({}))) as ContactPayload;
@@ -45,6 +54,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sanitize for email template
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safeCompany = escapeHtml(company);
+    const safeSubject = escapeHtml(subject);
+    const safeMessage = escapeHtml(message);
+
     // 1. Store in inbox store (Supabase DB + Memory store fallback, ZERO filesystem operations)
     try {
       const { addInboxItem } = await import("@/lib/inbox-store");
@@ -72,13 +88,13 @@ export async function POST(request: NextRequest) {
         html: `
           <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px;">
             <h2 style="color: #4338ca; margin-top: 0;">New Portfolio Message</h2>
-            <p><strong>From Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-            <p><strong>Company:</strong> ${company || "N/A"}</p>
-            <p><strong>Subject:</strong> ${subject}</p>
+            <p><strong>From Name:</strong> ${safeName}</p>
+            <p><strong>Email:</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
+            <p><strong>Company:</strong> ${safeCompany || "N/A"}</p>
+            <p><strong>Subject:</strong> ${safeSubject}</p>
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
             <p><strong>Message:</strong></p>
-            <div style="white-space: pre-wrap; background: #f8fafc; padding: 15px; border-radius: 8px; font-size: 14px; line-height: 1.6;">${message}</div>
+            <div style="white-space: pre-wrap; background: #f8fafc; padding: 15px; border-radius: 8px; font-size: 14px; line-height: 1.6;">${safeMessage}</div>
           </div>
         `,
       });

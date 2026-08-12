@@ -29,10 +29,12 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 export function verifyCredentials(email: string, password: string): boolean {
-  return (
-    email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase() &&
-    password === ADMIN_PASSWORD
+  const emailMatches = safeEqual(
+    email.trim().toLowerCase(),
+    ADMIN_EMAIL.toLowerCase()
   );
+  const passMatches = safeEqual(password, ADMIN_PASSWORD);
+  return emailMatches && passMatches;
 }
 
 export function createSessionToken(email: string): string {
