@@ -178,17 +178,25 @@ export function SocialBotManager() {
   }
 
   async function handleTestConnection() {
+    if (!creds.linkedInAccessToken) {
+      setTokenTestResult({ valid: false, error: "Please paste your LinkedIn Access Token in the box first." });
+      return;
+    }
     setTestingToken(true);
     setTokenTestResult(null);
     try {
-      const res = await fetch("/api/admin/social-bot/test-connection");
+      const res = await fetch("/api/admin/social-bot/test-connection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: creds.linkedInAccessToken }),
+      });
       const data = await res.json();
       setTokenTestResult(data);
       if (data.valid) {
-        // URN was auto-fetched — refresh credentials
+        // URN was auto-fetched & auto-saved
         setCreds((prev) => ({ ...prev, linkedInPersonUrn: data.urn }));
         await fetchData();
-        setStatusMessage({ type: "success", text: `✅ LinkedIn token is valid! Connected as ${data.name || data.urn}` });
+        setStatusMessage({ type: "success", text: `✅ LinkedIn token verified & saved! Connected as ${data.name || data.urn}` });
       } else {
         setStatusMessage({ type: "error", text: `❌ ${data.error}` });
       }
