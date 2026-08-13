@@ -111,12 +111,14 @@ export async function publishDirectToLinkedIn(
 
   const authorUrn = personUrn.startsWith("urn:li:person:") ? personUrn : `urn:li:person:${personUrn}`;
 
-  // ── Build post text: append article URL inline so it shows as a link ──────
-  // LinkedIn sandbox/basic apps CANNOT post ARTICLE-type media — only NONE.
-  // Appending the URL as text still creates a clickable link in the feed.
-  const postText = articleUrl
-    ? `${content}\n\n🔗 ${articleUrl}`
-    : content;
+  // ── Build post text: append article URL & image URL inline ───────────────
+  let postText = content;
+  if (imageUrl && !postText.includes(imageUrl)) {
+    postText = `${postText}\n\n📸 Banner Image: ${imageUrl}`;
+  }
+  if (articleUrl && !postText.includes(articleUrl)) {
+    postText = `${postText}\n\n🔗 Live App: ${articleUrl}`;
+  }
 
   // ── Attempt 1: UGC Posts API (/v2/ugcPosts) — text-only NONE category ─────
   try {

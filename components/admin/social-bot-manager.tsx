@@ -225,7 +225,22 @@ export function SocialBotManager() {
       const data = await res.json();
       if (data.url) {
         setImageUrlInput(data.url);
-        setStatusMessage({ type: "success", text: "📷 Image uploaded and applied to banner!" });
+        if (activePost) {
+          const newImg = data.url;
+          const updatedPost: SocialPost = {
+            ...activePost,
+            imageUrl: newImg,
+            linkedInContent: activePost.linkedInContent.includes("📸 Project Preview Image:")
+              ? activePost.linkedInContent.replace(/📸 Project Preview Image: .*/g, `📸 Project Preview Image: ${newImg}`)
+              : `${activePost.linkedInContent}\n📸 Project Preview Image: ${newImg}`,
+            redditContent: activePost.redditContent.includes("![Project Preview Banner](")
+              ? activePost.redditContent.replace(/!\[Project Preview Banner\]\(.*\)/g, `![Project Preview Banner](${newImg})`)
+              : activePost.redditContent.replace(/### 📌 Overview/g, `![Project Preview Banner](${newImg})\n\n### 📌 Overview`),
+          };
+          setActivePost(updatedPost);
+          setSocialPosts((prev) => prev.map((p) => (p.id === activePost.id ? updatedPost : p)));
+        }
+        setStatusMessage({ type: "success", text: "📷 Image uploaded and applied to active campaign!" });
       } else {
         setStatusMessage({ type: "error", text: data.error || "Failed to upload image." });
       }
@@ -559,14 +574,27 @@ export function SocialBotManager() {
                 />
               </label>
             </div>
-            <input
-              type="text"
-              value={imageUrlInput}
-              onChange={(e) => setImageUrlInput(e.target.value)}
-              onPaste={handleInputPaste}
-              placeholder="Paste URL or paste image directly from clipboard (Ctrl+V)..."
-              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={imageUrlInput}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setImageUrlInput(val);
+                  if (activePost) {
+                    const updatedPost: SocialPost = {
+                      ...activePost,
+                      imageUrl: val,
+                    };
+                    setActivePost(updatedPost);
+                    setSocialPosts((prev) => prev.map((p) => (p.id === activePost.id ? updatedPost : p)));
+                  }
+                }}
+                onPaste={handleInputPaste}
+                placeholder="Paste URL or paste image directly from clipboard (Ctrl+V)..."
+                className="flex-1 rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
+              />
+            </div>
           </div>
 
           <div>
@@ -887,7 +915,10 @@ export function SocialBotManager() {
               {socialPosts.map((post) => (
                 <div
                   key={post.id}
-                  onClick={() => setActivePost(post)}
+                  onClick={() => {
+                    setActivePost(post);
+                    if (post.imageUrl) setImageUrlInput(post.imageUrl);
+                  }}
                   className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between gap-3 ${
                     activePost?.id === post.id
                       ? "border-indigo-500 bg-indigo-500/10 shadow-md"
