@@ -6,7 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
 const SESSION_COOKIE = "an_admin_session";
 
 async function hasValidAdminSession(token: string | undefined): Promise<boolean> {
-  const secret = process.env.SESSION_SECRET;
+  // Must use the same fallback as lib/auth.ts so the HMAC signatures match.
+  const secret = process.env.SESSION_SECRET ?? "an-portfolio-admin-secret-key-2025-secure-random-value-here";
   if (!token || !secret || secret.length < 32) return false;
 
   const [payloadB64, signature] = token.split(".");
