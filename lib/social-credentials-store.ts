@@ -117,16 +117,15 @@ export async function publishDirectToLinkedIn(
     else authorUrn = `urn:li:person:${authorUrn}`;
   }
 
-  // ── Build post text: append article URL & image URL inline ───────────────
-  let postText = content;
-  if (imageUrl && !imageUrl.startsWith("data:") && !postText.includes(imageUrl)) {
-    postText = `${postText}\n\n📸 Banner Image: ${imageUrl}`;
-  }
-  if (articleUrl && !postText.includes(articleUrl)) {
-    postText = `${postText}\n\n🔗 Live App: ${articleUrl}`;
-  }
+  // ── Resolve clean absolute URLs for media attachments ───────────────────
+  const postText = content;
+  const cleanImage = imageUrl && !imageUrl.startsWith("data:")
+    ? (imageUrl.startsWith("http") ? imageUrl : `https://www.aiwithab.site${imageUrl}`)
+    : "https://www.aiwithab.site/blood_sugar_banner.jpg";
 
-  // ── Attempt 1: UGC Posts API (/v2/ugcPosts) — text-only NONE category ─────
+  const cleanArticle = articleUrl || "https://www.aiwithab.site/mini-projects";
+
+  // ── Attempt 1: UGC Posts API (/v2/ugcPosts) — ARTICLE category with Image Banner ─
   try {
     const ugcPayload = {
       author: authorUrn,
@@ -134,7 +133,20 @@ export async function publishDirectToLinkedIn(
       specificContent: {
         "com.linkedin.ugc.ShareContent": {
           shareCommentary: { text: postText },
-          shareMediaCategory: "NONE",
+          shareMediaCategory: "ARTICLE",
+          media: [
+            {
+              status: "READY",
+              description: { text: "AI & Web Application Showcase — Abdul Nabi Portfolio" },
+              originalUrl: cleanArticle,
+              title: { text: "30 Days 30 AI Projects Showcase 🚀" },
+              thumbnails: [
+                {
+                  url: cleanImage,
+                },
+              ],
+            },
+          ],
         },
       },
       visibility: {
@@ -153,12 +165,12 @@ export async function publishDirectToLinkedIn(
     });
 
     const data1 = await res1.json().catch(() => ({}));
-    console.log("[linkedin] ugcPosts response:", res1.status, JSON.stringify(data1));
+    console.log("[linkedin] ugcPosts (ARTICLE) response:", res1.status, JSON.stringify(data1));
 
-    if (res1.ok && data1.id) {
+    if ((res1.ok || res1.status === 201) && data1.id) {
       return {
         success: true,
-        message: "✅ Successfully published to LinkedIn feed via ugcPosts!",
+        message: "✅ Successfully published to LinkedIn with Attached Picture Banner!",
         id: data1.id,
       };
     }
@@ -170,7 +182,41 @@ export async function publishDirectToLinkedIn(
       };
     }
 
-    // ── Attempt 2: Modern REST Posts API (/v2/posts) — text-only ─────────────
+    // ── Attempt 1b: Fallback to text-only ugcPosts if ARTICLE is rejected ────
+    const ugcTextPayload = {
+      author: authorUrn,
+      lifecycleState: "PUBLISHED",
+      specificContent: {
+        "com.linkedin.ugc.ShareContent": {
+          shareCommentary: { text: postText },
+          shareMediaCategory: "NONE",
+        },
+      },
+      visibility: {
+        "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC",
+      },
+    };
+
+    const res1b = await fetch("https://api.linkedin.com/v2/ugcPosts", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${c.linkedInAccessToken}`,
+        "Content-Type": "application/json",
+        "X-Restli-Protocol-Version": "2.0.0",
+      },
+      body: JSON.stringify(ugcTextPayload),
+    });
+
+    const data1b = await res1b.json().catch(() => ({}));
+    if ((res1b.ok || res1b.status === 201) && data1b.id) {
+      return {
+        success: true,
+        message: "✅ Successfully published to LinkedIn feed!",
+        id: data1b.id,
+      };
+    }
+
+    // ── Attempt 2: Modern REST Posts API (/rest/posts) — with Article Content ──
     const restPayload = {
       author: authorUrn,
       commentary: postText,
@@ -179,6 +225,14 @@ export async function publishDirectToLinkedIn(
         feedDistribution: "MAIN_FEED",
         targetEntities: [],
         thirdPartyDistributionChannels: [],
+      },
+      content: {
+        article: {
+          source: cleanArticle,
+          thumbnail: cleanImage,
+          title: "30 Days 30 AI Projects Showcase 🚀",
+          description: "AI & Web Application Showcase — Abdul Nabi Portfolio",
+        },
       },
       lifecycleState: "PUBLISHED",
     };
@@ -213,7 +267,7 @@ export async function publishDirectToLinkedIn(
       };
     }
 
-    // Return the most useful error message from either attempt
+    // Return the most useful error message from attempts
     const errMsg =
       data1?.message ||
       data1?.error_description ||
