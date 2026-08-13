@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import type { SiteSettings, AboutData, SectionVisibility } from "@/lib/settings-store";
 import type { SkillCategory, ExperienceItem, EducationItem } from "@/data/content";
 
@@ -57,13 +57,6 @@ export function SettingsProvider({
     initialSectionVisibility ?? DEFAULT_VISIBILITY
   );
 
-  useEffect(() => { if (initialSettings) setSettings(initialSettings); }, [initialSettings]);
-  useEffect(() => { if (initialAbout) setAbout(initialAbout); }, [initialAbout]);
-  useEffect(() => { if (initialSkills) setSkills(initialSkills); }, [initialSkills]);
-  useEffect(() => { if (initialExperience) setExperience(initialExperience); }, [initialExperience]);
-  useEffect(() => { if (initialEducation) setEducation(initialEducation); }, [initialEducation]);
-  useEffect(() => { if (initialSectionVisibility) setSectionVisibility(initialSectionVisibility); }, [initialSectionVisibility]);
-
   const refreshAll = async () => {
     try {
       const res = await fetch(`/api/admin/settings?t=${Date.now()}`, { cache: "no-store" });
@@ -84,13 +77,6 @@ export function SettingsProvider({
       }
     } catch {}
   };
-
-  useEffect(() => {
-    refreshAll();
-    const handleFocus = () => refreshAll();
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
-  }, []);
 
   return (
     <SettingsContext.Provider

@@ -271,14 +271,8 @@ export function BackgroundThemeProvider({ children }: { children: React.ReactNod
     };
 
     window.addEventListener("bg-theme-changed", handleBgChange);
-    window.addEventListener("focus", syncServerTheme);
-
-    const interval = setInterval(syncServerTheme, 4000);
-
     return () => {
       window.removeEventListener("bg-theme-changed", handleBgChange);
-      window.removeEventListener("focus", syncServerTheme);
-      clearInterval(interval);
     };
   }, []);
 

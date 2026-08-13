@@ -1,27 +1,12 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
 import { LinkButton } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
-import type { MiniProject } from "@/lib/mini-projects-store";
+import { getMiniProjects } from "@/lib/mini-projects-store";
 import { ArrowRight, ExternalLink, Github } from "lucide-react";
 
-export function MiniProjects() {
-  const [projects, setProjects] = useState<MiniProject[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/mini-projects")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.miniProjects) setProjects(d.miniProjects);
-      })
-      .catch((err) => console.error("Failed to load mini projects", err))
-      .finally(() => setLoading(false));
-  }, []);
-
+export async function MiniProjects() {
+  const projects = await getMiniProjects();
   // Show ONLY published (Live) and visible (non-hidden) projects on public site
   const publishedProjects = projects.filter((p) => p.status === "Live" && !p.hidden);
   const displayProjects = publishedProjects.slice(0, 9);
@@ -42,19 +27,13 @@ export function MiniProjects() {
               className="mb-0"
             />
             <LinkButton href="/mini-projects" variant="secondary" size="sm" className="shrink-0 cursor-grow">
-              Explore All {publishedProjects.length || 30} Mini Projects
+              Explore All {publishedProjects.length} Mini Projects
               <ArrowRight className="h-3.5 w-3.5" />
             </LinkButton>
           </div>
         </Reveal>
 
-        {loading ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-64 rounded-2xl border border-white/10 bg-white/5 animate-pulse" />
-            ))}
-          </div>
-        ) : displayProjects.length === 0 ? null : (
+        {displayProjects.length === 0 ? null : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {displayProjects.map((proj, idx) => (
               <Reveal key={proj.id} delay={idx * 60}>

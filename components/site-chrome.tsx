@@ -15,8 +15,9 @@ import { usePathname } from "next/navigation";
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
+  const isResume = pathname === "/resume";
 
-  if (isAdmin) {
+  if (isAdmin || isResume) {
     return <>{children}</>;
   }
 

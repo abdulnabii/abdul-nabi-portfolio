@@ -4,19 +4,15 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { siteContent } from "@/data/content";
-import { getFeaturedProjects, getAllProjects } from "@/lib/project-store";
+import { getFeaturedProjects } from "@/lib/project-store";
 import { isPublicUrl } from "@/lib/links";
 import { ArrowRight, ArrowUpRight, Github, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export async function Projects() {
-  const [featured, all] = await Promise.all([
-    getFeaturedProjects(),
-    getAllProjects(),
-  ]);
+  const featured = await getFeaturedProjects();
   const { projectsIntro } = siteContent;
-  const totalCount = all.length;
 
   return (
     <section

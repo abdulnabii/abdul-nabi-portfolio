@@ -69,14 +69,8 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     };
 
     window.addEventListener("theme-mode-changed", handleModeChange);
-    window.addEventListener("focus", syncServerThemeMode);
-
-    const interval = setInterval(syncServerThemeMode, 4000);
-
     return () => {
       window.removeEventListener("theme-mode-changed", handleModeChange);
-      window.removeEventListener("focus", syncServerThemeMode);
-      clearInterval(interval);
     };
   }, [sectionVisibility?.themeToggle]);
 
@@ -92,11 +86,6 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("app_theme", mode);
     } catch {}
 
-    fetch("/api/admin/background-theme", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ defaultMode: mode }),
-    }).catch(() => {});
   };
 
   const toggleTheme = () => {
