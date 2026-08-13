@@ -17,13 +17,22 @@ export interface SocialPost {
   createdAt: string;
 }
 
+function getCleanImageTextUrl(imageUrl?: string, dayNumber?: number): string {
+  if (!imageUrl || imageUrl.startsWith("data:")) {
+    return `https://www.aiwithab.site/api/project-banner?day=${dayNumber || 1}`;
+  }
+  if (imageUrl.startsWith("/")) {
+    return `https://www.aiwithab.site${imageUrl}`;
+  }
+  return imageUrl;
+}
+
 export function generateLinkedInPost(proj: Partial<MiniProject>, imageUrl?: string): string {
   const dayStr = proj.dayNumber ? `Day ${String(proj.dayNumber).padStart(2, "0")}` : "New AI Project";
   const title = proj.title || "AI Micro Tool";
   const category = proj.category || "Full-Stack AI";
   const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
   const portfolioUrl = "https://www.aiwithab.site/mini-projects";
-  const img = imageUrl || "https://www.aiwithab.site/profile.jpg";
 
   return `🚀 ${dayStr} of my 30 Days 30 AI Projects Challenge: ${title}!
 
@@ -40,7 +49,6 @@ ${proj.description || "Building full-stack AI web applications with Next.js 14 a
 🔗 Test the live application here:
 👉 Live App: ${vercelUrl}
 🌐 Full Portfolio & Micro Tools Explorer: ${portfolioUrl}
-📸 Project Preview Image: ${img}
 
 I'd love your feedback! What feature should I add next?
 
@@ -53,7 +61,7 @@ export function generateRedditPost(proj: Partial<MiniProject>, imageUrl?: string
   const category = proj.category || "Full-Stack AI";
   const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
   const githubUrl = proj.githubUrl || "https://github.com/abdulnabii/mini-projects";
-  const img = imageUrl || "https://www.aiwithab.site/profile.jpg";
+  const img = getCleanImageTextUrl(imageUrl, proj.dayNumber);
 
   const subreddit = category.toLowerCase().includes("health")
     ? "r/SideProject"
@@ -110,6 +118,26 @@ Explorer: https://www.aiwithab.site/mini-projects
 
 let memorySocialPosts: SocialPost[] = [];
 
+function sanitizeSocialPost(p: SocialPost): SocialPost {
+  const cleanLinkedIn = p.linkedInContent
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("📸 Project Preview Image:") && !line.trim().startsWith("📸 Banner Image:"))
+    .join("\n")
+    .trim();
+
+  const cleanReddit = p.redditContent
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("![Project Preview Banner]"))
+    .join("\n")
+    .trim();
+
+  return {
+    ...p,
+    linkedInContent: cleanLinkedIn,
+    redditContent: cleanReddit,
+  };
+}
+
 export async function getSocialPosts(): Promise<SocialPost[]> {
   try {
     const rows = await supabaseDbQuery<{ key: string; value: string }>(
@@ -119,14 +147,14 @@ export async function getSocialPosts(): Promise<SocialPost[]> {
     if (rows && rows.length > 0 && rows[0].value) {
       const parsed = JSON.parse(rows[0].value) as SocialPost[];
       if (Array.isArray(parsed)) {
-        memorySocialPosts = parsed;
+        memorySocialPosts = parsed.map(sanitizeSocialPost);
         return memorySocialPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       }
     }
   } catch (err) {
     console.error("[getSocialPosts] Exception:", err);
   }
-  return memorySocialPosts;
+  return memorySocialPosts.map(sanitizeSocialPost);
 }
 
 export async function saveSocialPosts(posts: SocialPost[]): Promise<SocialPost[]> {

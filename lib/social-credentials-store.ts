@@ -119,7 +119,7 @@ export async function publishDirectToLinkedIn(
 
   // ── Build post text: append article URL & image URL inline ───────────────
   let postText = content;
-  if (imageUrl && !postText.includes(imageUrl)) {
+  if (imageUrl && !imageUrl.startsWith("data:") && !postText.includes(imageUrl)) {
     postText = `${postText}\n\n📸 Banner Image: ${imageUrl}`;
   }
   if (articleUrl && !postText.includes(articleUrl)) {
