@@ -5,6 +5,38 @@ import { NextRequest, NextResponse } from "next/server";
  */
 const SESSION_COOKIE = "an_admin_session";
 
+async function hasValidAdminSession(token: string | undefined): Promise<boolean> {
+  const secret = process.env.SESSION_SECRET;
+  if (!token || !secret || secret.length < 32) return false;
+
+  const [payloadB64, signature] = token.split(".");
+  if (!payloadB64 || !signature) return false;
+
+  try {
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+    const signed = await crypto.subtle.sign("HMAC", key, encoder.encode(payloadB64));
+    const expected = Array.from(new Uint8Array(signed))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+
+    if (signature !== expected) return false;
+
+    const base64 = payloadB64.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "="));
+    const payload = JSON.parse(decoded) as { role?: string; exp?: number };
+    return payload.role === "admin" && typeof payload.exp === "number" && payload.exp > Date.now();
+  } catch {
+    return false;
+  }
+}
+
 const SECTION_REDIRECTS: Record<string, string> = {
   "/about": "/#about",
   "/work": "/#projects",
@@ -28,7 +60,7 @@ const PUBLIC_READ_API_ROUTES = [
   "/api/admin/mini-projects",
 ];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. One-page section redirects
@@ -48,9 +80,8 @@ export function middleware(request: NextRequest) {
       PUBLIC_READ_API_ROUTES.some((route) => pathname.startsWith(route));
 
     if (!isPublicRead) {
-      const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
-      const hasValidToken = Boolean(
-        sessionToken && sessionToken.includes(".") && sessionToken.length > 20
+      const hasValidToken = await hasValidAdminSession(
+        request.cookies.get(SESSION_COOKIE)?.value
       );
 
       if (!hasValidToken) {
@@ -64,8 +95,10 @@ export function middleware(request: NextRequest) {
 
   // 3. Prevent logged-in admin from visiting login page unnecessarily
   if (pathname === "/admin/login") {
-    const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
-    if (sessionToken && sessionToken.includes(".") && sessionToken.length > 20) {
+    const hasValidToken = await hasValidAdminSession(
+      request.cookies.get(SESSION_COOKIE)?.value
+    );
+    if (hasValidToken) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
   }

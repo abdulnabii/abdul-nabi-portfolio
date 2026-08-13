@@ -532,3 +532,65 @@ html.light ::-webkit-scrollbar-thumb:hover {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PRINT STYLESHEET (CLEAN A4 PORTRAIT RESUME & PDF EXPORT)
+───────────────────────────────────────────────────────────────────────────── */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm 8mm 10mm;
+  }
+
+  /* Hide all non-printable UI elements: navbar, floating buttons, chat widget, ambient layers */
+  header,
+  nav,
+  footer,
+  aside,
+  .print\:hidden,
+  [class*="fixed"],
+  button:not(.print-keep),
+  a[href^="#"],
+  .bg-ambient,
+  .bg-grid,
+  [class*="glass-blob"],
+  [class*="scanline"] {
+    display: none !important;
+  }
+
+  body,
+  html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+    line-height: 1.35 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Force clean resume container print layout */
+  .section-padding {
+    padding: 0 !important;
+  }
+
+  .container-narrow {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Prevent page breaks inside section blocks */
+  section,
+  tr,
+  li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h1, h2, h3, h4 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}
