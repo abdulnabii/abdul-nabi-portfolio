@@ -127,21 +127,31 @@ export function Navbar() {
   // Smooth scroll with navbar offset calculation so headers are never cut off
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     setOpen(false);
-    if (href.startsWith("/#") && pathname === "/") {
-      e.preventDefault();
-      const id = href.replace("/#", "");
-      const el = document.getElementById(id);
+    if (pathname === "/") {
+      const targetId =
+        href === "/mini-projects"
+          ? "mini-projects"
+          : href === "/blog"
+          ? "blog"
+          : href.replace("/#", "").replace("#", "");
+
+      const el = document.getElementById(targetId);
       if (el) {
+        e.preventDefault();
         const targetTop = el.getBoundingClientRect().top + window.scrollY - 85;
         window.scrollTo({ top: targetTop, behavior: "smooth" });
-        setActiveSection(id);
+        setActiveSection(targetId);
       }
     }
   };
 
   const isLinkActive = (href: string) => {
-    if (href === "/blog") return pathname.startsWith("/blog");
-    if (href === "/mini-projects") return pathname.startsWith("/mini-projects");
+    if (href === "/blog") {
+      return pathname.startsWith("/blog") || (pathname === "/" && activeSection === "blog");
+    }
+    if (href === "/mini-projects") {
+      return pathname.startsWith("/mini-projects") || (pathname === "/" && activeSection === "mini-projects");
+    }
     const sectionId = href.replace("/#", "").replace("#", "");
     return activeSection === sectionId;
   };
