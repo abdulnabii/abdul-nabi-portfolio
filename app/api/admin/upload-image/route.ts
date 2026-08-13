@@ -48,7 +48,12 @@ export async function POST(req: NextRequest) {
       file.type || "image/jpeg"
     );
 
-    const finalUrl = publicUrl || `/projects/${slug}.${extension}`;
+    let finalUrl = publicUrl;
+    if (!finalUrl) {
+      const mime = file.type || "image/png";
+      const base64 = buffer.toString("base64");
+      finalUrl = `data:${mime};base64,${base64}`;
+    }
 
     return NextResponse.json({
       success: true,

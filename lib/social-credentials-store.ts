@@ -3,6 +3,8 @@ import { supabaseDbQuery, supabaseDbUpsert } from "./supabase";
 export interface SocialCredentials {
   linkedInAccessToken?: string;
   linkedInPersonUrn?: string; // e.g. urn:li:person:12345
+  linkedInTargetType?: "person" | "organization" | "group";
+  linkedInTargetUrn?: string; // e.g. urn:li:group:12345 or urn:li:organization:12345
   redditClientId?: string;
   redditClientSecret?: string;
   redditUsername?: string;
@@ -92,24 +94,28 @@ export async function publishDirectToLinkedIn(
     };
   }
 
-  // ── Resolve Person URN if not cached ──────────────────────────────────────
-  let personUrn = c.linkedInPersonUrn;
-  if (!personUrn) {
+  // ── Resolve Author URN (Group, Organization, or Person) ─────────────────
+  let authorUrn = c.linkedInTargetUrn || c.linkedInPersonUrn;
+  if (!authorUrn) {
     const fetched = await fetchLinkedInPersonUrn(c.linkedInAccessToken);
     if (fetched) {
-      personUrn = fetched;
+      authorUrn = fetched;
       await saveSocialCredentials({ ...c, linkedInPersonUrn: fetched });
     }
   }
 
-  if (!personUrn) {
+  if (!authorUrn) {
     return {
       success: false,
-      message: "Could not resolve LinkedIn Person URN. Paste your token and click 'Test Connection' in Link Social Accounts — the URN will be auto-fetched.",
+      message: "Could not resolve LinkedIn URN. Enter your Person, Group, or Organization URN in Link Social Accounts.",
     };
   }
 
-  const authorUrn = personUrn.startsWith("urn:li:person:") ? personUrn : `urn:li:person:${personUrn}`;
+  if (!authorUrn.startsWith("urn:li:")) {
+    if (c.linkedInTargetType === "group") authorUrn = `urn:li:group:${authorUrn}`;
+    else if (c.linkedInTargetType === "organization") authorUrn = `urn:li:organization:${authorUrn}`;
+    else authorUrn = `urn:li:person:${authorUrn}`;
+  }
 
   // ── Build post text: append article URL & image URL inline ───────────────
   let postText = content;

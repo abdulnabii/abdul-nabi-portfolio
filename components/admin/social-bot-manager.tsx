@@ -756,16 +756,23 @@ export function SocialBotManager() {
                 {activePost.imageUrl && (
                   <div className="rounded-2xl border border-white/10 bg-slate-900/90 p-3 flex items-center gap-4">
                     <img
-                      src={activePost.imageUrl}
+                      src={
+                        activePost.imageUrl.startsWith("http") || activePost.imageUrl.startsWith("data:") || activePost.imageUrl.startsWith("/api/")
+                          ? activePost.imageUrl
+                          : "https://www.aiwithab.site/api/project-banner?day=1"
+                      }
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "https://www.aiwithab.site/api/project-banner?day=1";
+                      }}
                       alt="LinkedIn Post Preview Graphic"
-                      className="h-16 w-28 object-cover rounded-xl border border-white/10"
+                      className="h-16 w-28 object-cover rounded-xl border border-white/10 bg-slate-950"
                     />
-                    <div className="text-xs space-y-1">
+                    <div className="text-xs space-y-1 min-w-0 flex-1">
                       <p className="font-bold text-white flex items-center gap-1.5">
                         <ImageIcon className="h-3.5 w-3.5 text-indigo-400" />
                         Attached Image Preview
                       </p>
-                      <p className="text-[11px] text-slate-400 truncate max-w-xs">{activePost.imageUrl}</p>
+                      <p className="text-[11px] text-slate-400 truncate max-w-xs font-mono">{activePost.imageUrl}</p>
                     </div>
                   </div>
                 )}
@@ -838,16 +845,23 @@ export function SocialBotManager() {
                 {activePost.imageUrl && (
                   <div className="rounded-2xl border border-white/10 bg-slate-900/90 p-3 flex items-center gap-4">
                     <img
-                      src={activePost.imageUrl}
+                      src={
+                        activePost.imageUrl.startsWith("http") || activePost.imageUrl.startsWith("data:") || activePost.imageUrl.startsWith("/api/")
+                          ? activePost.imageUrl
+                          : "https://www.aiwithab.site/api/project-banner?day=1"
+                      }
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "https://www.aiwithab.site/api/project-banner?day=1";
+                      }}
                       alt="Reddit Post Embedded Graphic"
-                      className="h-16 w-28 object-cover rounded-xl border border-white/10"
+                      className="h-16 w-28 object-cover rounded-xl border border-white/10 bg-slate-950"
                     />
-                    <div className="text-xs space-y-1">
+                    <div className="text-xs space-y-1 min-w-0 flex-1">
                       <p className="font-bold text-white flex items-center gap-1.5">
                         <ImageIcon className="h-3.5 w-3.5 text-orange-400" />
                         Embedded Markdown Banner Image
                       </p>
-                      <p className="text-[11px] text-slate-400 font-mono">![Project Preview Banner]({activePost.imageUrl})</p>
+                      <p className="text-[11px] text-slate-400 font-mono truncate">![Project Preview Banner]({activePost.imageUrl})</p>
                     </div>
                   </div>
                 )}
@@ -1053,15 +1067,48 @@ export function SocialBotManager() {
                     className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
                   />
                 </div>
-                <div>
-                  <label className="block text-slate-400 mb-1">LinkedIn Person URN (auto-fetched on Test)</label>
-                  <input
-                    type="text"
-                    value={creds.linkedInPersonUrn || ""}
-                    onChange={(e) => setCreds({ ...creds, linkedInPersonUrn: e.target.value })}
-                    placeholder="urn:li:person:12345678  (auto-filled on Test Connection)"
-                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
-                  />
+
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-400 mb-1">Post Destination / Target</label>
+                    <select
+                      value={creds.linkedInTargetType || "person"}
+                      onChange={(e) => setCreds({ ...creds, linkedInTargetType: e.target.value as any })}
+                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white"
+                    >
+                      <option value="person">👤 Personal Profile Feed</option>
+                      <option value="group">👥 LinkedIn Group</option>
+                      <option value="organization">🏢 Company / Organization Page</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 mb-1">
+                      {creds.linkedInTargetType === "group"
+                        ? "LinkedIn Group URN"
+                        : creds.linkedInTargetType === "organization"
+                        ? "Organization Page URN"
+                        : "Person URN"}
+                    </label>
+                    <input
+                      type="text"
+                      value={creds.linkedInTargetUrn || creds.linkedInPersonUrn || ""}
+                      onChange={(e) =>
+                        setCreds({
+                          ...creds,
+                          linkedInTargetUrn: e.target.value,
+                          linkedInPersonUrn: e.target.value,
+                        })
+                      }
+                      placeholder={
+                        creds.linkedInTargetType === "group"
+                          ? "urn:li:group:12345678"
+                          : creds.linkedInTargetType === "organization"
+                          ? "urn:li:organization:12345678"
+                          : "urn:li:person:12345678"
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-white font-mono"
+                    />
+                  </div>
                 </div>
 
                 {/* Test Connection Button + Result */}
