@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Globe, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { ArrowLeft, Globe, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { Metadata } from "next";
 import { ResumePrintButton } from "@/components/resume-print-button";
 
 export const metadata: Metadata = {
-  title: "Resume · Abdul Nabi — Full-Stack Developer",
-  description: "Official Resume of Abdul Nabi — Full-Stack Developer & Software Engineer based in Karachi, Pakistan.",
+  title: "Resume · Abdul Nabi — Full-Stack Software Engineer",
+  description: "Official Professional Resume of Abdul Nabi — Full-Stack Software Engineer specializing in Next.js, TypeScript, Python ML, and Application Security.",
 };
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,7 @@ export const revalidate = 0;
 
 export default function ResumePage() {
   return (
-    <div id="resume-printable-area" className="min-h-screen bg-slate-950 text-slate-100 section-padding pt-28 pb-20 print:bg-white print:text-black print:p-0 print:pt-0">
+    <div id="resume-printable-area" className="min-h-screen bg-slate-950 text-slate-100 section-padding pt-24 pb-20 print:bg-white print:text-black print:p-0 print:pt-0">
       <div className="container-narrow max-w-4xl space-y-8 print:max-w-none print:w-full">
         {/* Top Control Bar (Hidden on print) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 print:hidden">
@@ -32,17 +32,17 @@ export default function ResumePage() {
         </div>
 
         {/* Printable Resume Card */}
-        <div className="rounded-3xl border border-white/10 bg-slate-900/90 p-8 sm:p-12 shadow-2xl space-y-8 font-sans print:border-none print:bg-white print:p-0 print:shadow-none print:text-black print:space-y-6">
+        <div className="rounded-3xl border border-white/10 bg-slate-900/90 p-8 sm:p-12 shadow-2xl space-y-7 font-sans print:border-none print:bg-white print:p-0 print:shadow-none print:text-black print:space-y-5">
           {/* Header Block */}
-          <div className="border-b border-white/10 print:border-slate-300 pb-6 text-center space-y-3">
+          <div className="border-b border-white/10 print:border-slate-300 pb-5 text-center space-y-2.5">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white print:text-black tracking-tight uppercase">
               Abdul Nabi
             </h1>
-            <p className="text-sm font-bold text-indigo-400 print:text-slate-800 tracking-wide uppercase">
-              Full-Stack Developer | Software Engineer
+            <p className="text-xs sm:text-sm font-bold text-indigo-400 print:text-slate-800 tracking-wider uppercase">
+              Full-Stack Software Engineer | Next.js · TypeScript · Python · AppSec
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-300 print:text-slate-700 font-mono pt-1">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs text-slate-300 print:text-slate-700 font-mono pt-1">
               <span className="flex items-center gap-1">
                 <MapPin className="h-3.5 w-3.5 text-indigo-400 print:hidden" />
                 Karachi, Pakistan
@@ -53,9 +53,14 @@ export default function ResumePage() {
                 abdulnabi.khaskhely@gmail.com
               </a>
               <span>•</span>
+              <a href="tel:03337597315" className="hover:underline flex items-center gap-1">
+                <Phone className="h-3.5 w-3.5 text-indigo-400 print:hidden" />
+                +92 309 3751434 / 0333 7597315
+              </a>
+              <span>•</span>
               <a href="https://www.aiwithab.site" target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
                 <Globe className="h-3.5 w-3.5 text-indigo-400 print:hidden" />
-                www.aiwithab.site
+                aiwithab.site
               </a>
               <span>•</span>
               <a href="https://github.com/abdulnabii" target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
@@ -72,78 +77,78 @@ export default function ResumePage() {
 
           {/* Professional Summary */}
           <section className="space-y-2">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1">
-              📌 Professional Summary
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1 flex items-center gap-1.5">
+              <span>📌</span> Professional Summary
             </h2>
             <p className="text-xs sm:text-sm leading-relaxed text-slate-300 print:text-slate-800">
-              Security-minded <strong>Software Engineer</strong> and <strong>Full-Stack Developer</strong> with <strong>2+ years of experience</strong> building high-performance web applications, scalable <strong>REST API development</strong>, and machine learning workflows. Proficient in <strong>TypeScript</strong>, <strong>Next.js</strong>, <strong>React.js</strong>, <strong>Node.js</strong>, <strong>Python</strong>, and <strong>SQL</strong> databases. Strong practical focus on <strong>Application Security (AppSec)</strong> best practices (OWASP Top 10, RBAC, RLS data isolation) and <strong>CI/CD</strong> deployment pipelines within <strong>Agile</strong> team environments. Proven track record of delivering production-grade micro-services, real-time AI tools, and clinical ML applications.
+              Security-minded <strong>Full-Stack Software Engineer</strong> with <strong>2+ years of hands-on experience</strong> architecting high-performance web applications, scalable <strong>REST APIs</strong>, and applied machine learning pipelines. Highly skilled in <strong>Next.js 14</strong>, <strong>React</strong>, <strong>TypeScript</strong>, <strong>Node.js</strong>, <strong>Python</strong>, and <strong>PostgreSQL</strong>. Active practitioner of <strong>Application Security (AppSec)</strong> best practices—including <strong>OWASP Top 10</strong> mitigation, Row-Level Security (RLS) tenant isolation, and secure RBAC auth. Creator of the <strong>30-Days 30-AI-Projects Challenge</strong> suite and developer of clinical ML diagnostic predictors.
             </p>
           </section>
 
-          {/* Technical Competencies Table */}
-          <section className="space-y-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1">
-              🛠️ Technical Competencies
+          {/* Technical Competencies Matrix */}
+          <section className="space-y-2.5">
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1 flex items-center gap-1.5">
+              <span>🛠️</span> Technical Competencies
             </h2>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto print:overflow-visible">
               <table className="w-full text-xs text-slate-300 print:text-slate-800 border-collapse">
                 <tbody>
                   <tr className="border-b border-white/10 print:border-slate-200">
-                    <td className="py-2 pr-4 font-bold text-white print:text-slate-900 w-36">Languages</td>
-                    <td className="py-2">TypeScript, JavaScript (ES6+), Python, SQL, HTML5, CSS3</td>
+                    <td className="py-1.5 pr-4 font-bold text-white print:text-slate-900 w-36 shrink-0">Languages</td>
+                    <td className="py-1.5">TypeScript, JavaScript (ES6+), Python 3.11, SQL (PostgreSQL, SQLite), HTML5, CSS3</td>
                   </tr>
                   <tr className="border-b border-white/10 print:border-slate-200">
-                    <td className="py-2 pr-4 font-bold text-white print:text-slate-900">Frontend Engineering</td>
-                    <td className="py-2">React.js, Next.js (App Router), Tailwind CSS, Framer Motion, Redux / React Context</td>
+                    <td className="py-1.5 pr-4 font-bold text-white print:text-slate-900">Frontend Architecture</td>
+                    <td className="py-1.5">React.js, Next.js (App Router, Server Actions), Tailwind CSS, Framer Motion, Redux Toolkit, Responsive UI</td>
                   </tr>
                   <tr className="border-b border-white/10 print:border-slate-200">
-                    <td className="py-2 pr-4 font-bold text-white print:text-slate-900">Backend & Databases</td>
-                    <td className="py-2">Node.js, Express.js, Python Flask, RESTful APIs, PostgreSQL, Supabase, Prisma, SQLite</td>
+                    <td className="py-1.5 pr-4 font-bold text-white print:text-slate-900">Backend & APIs</td>
+                    <td className="py-1.5">Node.js, Express.js, Python Flask, RESTful APIs, Server-Sent Events (SSE), WebSockets, Middleware Auth</td>
                   </tr>
                   <tr className="border-b border-white/10 print:border-slate-200">
-                    <td className="py-2 pr-4 font-bold text-white print:text-slate-900">AppSec & Security</td>
-                    <td className="py-2">OWASP Top 10, Auth & RBAC Architecture, Supabase RLS Policies, Static Code Audit, CSRF/XSS Defense</td>
+                    <td className="py-1.5 pr-4 font-bold text-white print:text-slate-900">Databases & Storage</td>
+                    <td className="py-1.5">PostgreSQL, Supabase (RLS & Realtime), Prisma ORM, SQLite, Query & Index Optimization</td>
                   </tr>
                   <tr className="border-b border-white/10 print:border-slate-200">
-                    <td className="py-2 pr-4 font-bold text-white print:text-slate-900">Data Science & ML</td>
-                    <td className="py-2">scikit-learn, Pandas, ElasticNet Regression, NumPy, Feature Engineering, Data Pipelines</td>
+                    <td className="py-1.5 pr-4 font-bold text-white print:text-slate-900">AppSec & Security</td>
+                    <td className="py-1.5">OWASP Top 10, Supabase RLS Policies, RBAC Multi-Tenant Auth, HMAC Token Signing, CSRF/XSS Defense</td>
+                  </tr>
+                  <tr className="border-b border-white/10 print:border-slate-200">
+                    <td className="py-1.5 pr-4 font-bold text-white print:text-slate-900">AI & Machine Learning</td>
+                    <td className="py-1.5">Gemini 1.5 API, Whisper Audio STT, scikit-learn, ElasticNet Regression, Pandas, NumPy, OCR (Tesseract)</td>
                   </tr>
                   <tr>
-                    <td className="py-2 pr-4 font-bold text-white print:text-slate-900">DevOps & Delivery</td>
-                    <td className="py-2">Git / GitHub, Vercel Serverless, WebSockets, Docker, Turbopack, Agile / Scrum Workflow</td>
+                    <td className="py-1.5 pr-4 font-bold text-white print:text-slate-900">DevOps & Tooling</td>
+                    <td className="py-1.5">Git / GitHub, Vercel Serverless, Docker, Turbopack, CI/CD Pipelines, Agile / Scrum Methodology</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-
-            <p className="text-[11px] font-mono leading-relaxed text-slate-400 print:text-slate-700 bg-white/5 print:bg-slate-100 p-2.5 rounded-xl border border-white/10 print:border-slate-200 mt-2">
-              <strong>Core Skills:</strong> Software Engineering, Full-Stack Developer, Next.js, React.js, TypeScript, JavaScript, Python, REST API Development, PostgreSQL, Supabase, Node.js, Express.js, Flask, Application Security (AppSec), OWASP Top 10, Machine Learning, scikit-learn, Pandas, ElasticNet ML, Vercel, CI/CD, Agile/Scrum.
-            </p>
           </section>
 
           {/* Professional Experience */}
           <section className="space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1">
-              💼 Professional Experience
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1 flex items-center gap-1.5">
+              <span>💼</span> Professional Experience
             </h2>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs">
                 <div>
-                  <h3 className="text-sm font-bold text-white print:text-slate-900">Full-Stack Developer</h3>
-                  <p className="text-indigo-300 print:text-slate-700 font-medium">Independent Client Projects & Open Source Builds</p>
+                  <h3 className="text-sm font-bold text-white print:text-slate-900">Full-Stack Software Engineer</h3>
+                  <p className="text-indigo-300 print:text-slate-700 font-medium">Independent Client Projects & Open-Source Engineering</p>
                 </div>
                 <span className="font-mono text-slate-400 print:text-slate-600">Remote / Karachi, Pakistan • 2024 – Present</span>
               </div>
               <ul className="list-disc list-outside pl-4 text-xs text-slate-300 print:text-slate-800 space-y-1 leading-relaxed">
-                <li>Built, optimized, and deployed full-stack web applications using <strong>Next.js 14</strong>, <strong>TypeScript</strong>, and <strong>Supabase REST APIs</strong>, achieving <strong>sub-400ms page load times</strong> and <strong>98+ Lighthouse scores</strong>.</li>
-                <li>Architected end-to-end security patterns, implementing <strong>Row-Level Security (RLS)</strong> in PostgreSQL and <strong>Role-Based Access Control (RBAC)</strong> to enforce 100% data isolation across multi-tenant applications.</li>
-                <li>Conducted static security code reviews and REST API audits against <strong>OWASP Top 10</strong> vulnerabilities (SQL injection, XSS, broken access control), mitigating data leak risks in production endpoints.</li>
-                <li>Built <strong>30 Days 30 AI Projects</strong>, a public monorepo showcasing 6+ live serverless web applications integrated with Gemini 1.5 API, Whisper speech recognition, and custom ML predictors.</li>
+                <li>Built, optimized, and deployed 10+ full-stack web applications using <strong>Next.js 14</strong>, <strong>TypeScript</strong>, and <strong>Supabase REST APIs</strong>, achieving <strong>sub-400ms page load times</strong> and <strong>98+ Lighthouse performance scores</strong>.</li>
+                <li>Architected production security patterns, implementing <strong>Row-Level Security (RLS)</strong> policies in PostgreSQL and <strong>HMAC token authentication</strong> to enforce 100% tenant data isolation across multi-user environments.</li>
+                <li>Conducted static code audits and API endpoint reviews against <strong>OWASP Top 10 vulnerabilities</strong> (SQL injection, XSS, broken access control), mitigating data leak exposure in production routes.</li>
+                <li>Engineered the <strong>30-Days 30-AI-Projects Challenge</strong>, developing and deploying 30 live micro-applications integrated with Gemini 1.5 API, Whisper speech recognition, and custom ML predictive models.</li>
               </ul>
             </div>
 
-            <div className="space-y-3 pt-2">
+            <div className="space-y-2.5 pt-1.5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs">
                 <div>
                   <h3 className="text-sm font-bold text-white print:text-slate-900">Software Engineer (Junior Full-Stack)</h3>
@@ -152,63 +157,76 @@ export default function ResumePage() {
                 <span className="font-mono text-slate-400 print:text-slate-600">Remote / Karachi, Pakistan • 2023 – 2024</span>
               </div>
               <ul className="list-disc list-outside pl-4 text-xs text-slate-300 print:text-slate-800 space-y-1 leading-relaxed">
-                <li>Engineered responsive React.js & Next.js user interfaces, reducing mobile checkout drop-off rates and improving First Contentful Paint (FCP) to <strong>0.8 seconds</strong>.</li>
-                <li>Developed backend REST APIs with Node.js and Python Flask, designing relational database schemas in PostgreSQL and SQLite for high query throughput.</li>
-                <li>Collaborated in <strong>Agile / Scrum</strong> environments, delivering clean pull requests, automated unit tests, and comprehensive developer documentation.</li>
+                <li>Engineered responsive React.js & Next.js user interfaces with reusable component architectures, reducing mobile checkout drop-off and improving First Contentful Paint (FCP) to <strong>0.8 seconds</strong>.</li>
+                <li>Developed backend RESTful APIs with Node.js and Python Flask, designing normalized relational schemas in PostgreSQL and SQLite for high query throughput.</li>
+                <li>Collaborated in <strong>Agile / Scrum</strong> sprints, delivering thoroughly tested pull requests, automated unit test suites, and clear API documentation.</li>
               </ul>
             </div>
           </section>
 
-          {/* Featured Projects */}
-          <section className="space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1">
-              🚀 Featured Software Engineering Projects
+          {/* Key Featured Engineering Projects */}
+          <section className="space-y-3.5">
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1 flex items-center gap-1.5">
+              <span>🚀</span> Key Software Engineering Projects
             </h2>
 
-            <div className="space-y-2 text-xs">
+            <div className="space-y-1.5 text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                <h3 className="font-bold text-white print:text-slate-900 text-xs">
+                  30-Days 30-AI-Projects Suite — <span className="font-normal text-slate-300 print:text-slate-700">Next.js 14, TypeScript, Supabase, Gemini AI, Tailwind CSS</span>
+                </h3>
+                <span className="font-mono text-indigo-400 print:text-slate-600">aiwithab.site/mini-projects</span>
+              </div>
+              <ul className="list-disc list-outside pl-4 text-slate-300 print:text-slate-800 space-y-0.5 leading-relaxed">
+                <li>Engineered and deployed 30 production micro-applications spanning Healthcare ML, Developer Tools, FinTech, LegalTech, and IoT.</li>
+                <li>Integrated real-time streaming AI APIs, OCR receipt extraction, and client-side TensorFlow.js diagnostic models.</li>
+              </ul>
+            </div>
+
+            <div className="space-y-1.5 text-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                 <h3 className="font-bold text-white print:text-slate-900 text-xs">
                   Pulse Support Chat — <span className="font-normal text-slate-300 print:text-slate-700">React.js, Node.js, Streaming APIs, Edge Runtime</span>
                 </h3>
                 <span className="font-mono text-indigo-400 print:text-slate-600">pulse-support-chat.vercel.app</span>
               </div>
-              <ul className="list-disc list-outside pl-4 text-slate-300 print:text-slate-800 space-y-0.5">
+              <ul className="list-disc list-outside pl-4 text-slate-300 print:text-slate-800 space-y-0.5 leading-relaxed">
                 <li>Architected an embeddable support chat widget featuring real-time token streaming via Server-Sent Events (SSE), reducing Time-to-First-Token (TTFT) to <strong>&lt;150ms</strong>.</li>
-                <li>Optimized client bundle size to <strong>&lt;12KB gzipped</strong>, maintaining 60fps UI animations during high-frequency text generation chunks.</li>
+                <li>Optimized client bundle size to <strong>&lt;12KB gzipped</strong>, maintaining smooth 60fps UI animations during high-frequency text generation chunks.</li>
               </ul>
             </div>
 
-            <div className="space-y-2 text-xs">
+            <div className="space-y-1.5 text-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                 <h3 className="font-bold text-white print:text-slate-900 text-xs">
                   Ops Status Console — <span className="font-normal text-slate-300 print:text-slate-700">Next.js 14, PostgreSQL, Auth, Tailwind CSS</span>
                 </h3>
                 <span className="font-mono text-indigo-400 print:text-slate-600">ops-status-console.vercel.app</span>
               </div>
-              <ul className="list-disc list-outside pl-4 text-slate-300 print:text-slate-800 space-y-0.5">
-                <li>Built a deploy health & incident monitoring console for DevOps handoffs, bringing PostgreSQL log indexing query latency down to <strong>&lt;50ms</strong> on 10,000+ records.</li>
+              <ul className="list-disc list-outside pl-4 text-slate-300 print:text-slate-800 space-y-0.5 leading-relaxed">
+                <li>Built a telemetry & incident monitoring console for DevOps handoffs, bringing PostgreSQL log indexing query latency down to <strong>&lt;50ms</strong> on 10,000+ records.</li>
                 <li>Implemented state-duration polling logic, reducing unnecessary database write operations by <strong>85%</strong> during infrastructure status checks.</li>
               </ul>
             </div>
 
-            <div className="space-y-2 text-xs">
+            <div className="space-y-1.5 text-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                 <h3 className="font-bold text-white print:text-slate-900 text-xs">
                   Blood Sugar Tracker (Final Year Project - FYP) — <span className="font-normal text-slate-300 print:text-slate-700">Python Flask, scikit-learn, SQLAlchemy, SQLite</span>
                 </h3>
                 <span className="font-mono text-indigo-400 print:text-slate-600">github.com/abdulnabii/blood-sugar-tracker-fyp</span>
               </div>
-              <ul className="list-disc list-outside pl-4 text-slate-300 print:text-slate-800 space-y-0.5">
+              <ul className="list-disc list-outside pl-4 text-slate-300 print:text-slate-800 space-y-0.5 leading-relaxed">
                 <li>Trained an <strong>ElasticNet regression ML model</strong> on clinical vitals (glucose, BMI, carbs, activity) to forecast daily blood sugar levels with high predictive accuracy.</li>
                 <li>Engineered a role-based clinical dashboard with automated high-risk alert flags, accelerating doctor-patient triage workflows by <strong>40%</strong>.</li>
               </ul>
             </div>
           </section>
 
-          {/* Education */}
+          {/* Education & Core Coursework */}
           <section className="space-y-2">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1">
-              🎓 Education
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1 flex items-center gap-1.5">
+              <span>🎓</span> Education & Academic Background
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs">
               <div>
@@ -218,7 +236,7 @@ export default function ResumePage() {
               <span className="font-mono text-slate-400 print:text-slate-600">2022 – 2026</span>
             </div>
             <p className="text-xs text-slate-300 print:text-slate-800 pt-1">
-              <strong>Core Coursework:</strong> Data Structures & Algorithms, Database Systems, Software Engineering, Web Application Security, Artificial Intelligence & Machine Learning.
+              <strong>Core Coursework:</strong> Data Structures & Algorithms, Database Management Systems, Software Engineering, Web Application Security, Artificial Intelligence & Machine Learning, Computer Networks.
             </p>
           </section>
         </div>
