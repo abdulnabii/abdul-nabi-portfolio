@@ -15,35 +15,6 @@ export const revalidate = 0;
 export default function ResumePage() {
   return (
     <div id="resume-printable-area" className="min-h-screen bg-slate-950 text-slate-100 section-padding pt-28 pb-20 print:bg-white print:text-black print:p-0 print:pt-0">
-      {/* Inline beforeprint handler — fixes Reveal opacity:0 / translate-y-8 when Ctrl+P is used directly */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-(function() {
-  function fixForPrint() {
-    document.querySelectorAll('.opacity-0').forEach(function(el) {
-      el.classList.remove('opacity-0');
-      el.classList.add('opacity-100');
-      el.setAttribute('data-print-fixed','1');
-    });
-    document.querySelectorAll('.translate-y-8').forEach(function(el) {
-      el.classList.remove('translate-y-8');
-      el.classList.add('translate-y-0');
-    });
-  }
-  function restoreAfterPrint() {
-    document.querySelectorAll('[data-print-fixed]').forEach(function(el) {
-      el.classList.remove('opacity-100');
-      el.classList.add('opacity-0');
-      el.removeAttribute('data-print-fixed');
-    });
-  }
-  window.addEventListener('beforeprint', fixForPrint);
-  window.addEventListener('afterprint', restoreAfterPrint);
-})();
-`,
-        }}
-      />
       <div className="container-narrow max-w-4xl space-y-8 print:max-w-none print:w-full">
         {/* Top Control Bar (Hidden on print) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 print:hidden">

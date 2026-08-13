@@ -542,37 +542,52 @@ html.light ::-webkit-scrollbar-thumb:hover {
     margin: 8mm 10mm 8mm 10mm;
   }
 
-  /* Hide specific non-printable UI elements */
+  /* Hide non-printable global website chrome */
   header,
   nav,
   footer,
   aside,
+  canvas,
   .print\:hidden,
-  .bg-ambient,
-  .bg-grid,
+  [class*="custom-cursor"],
   [class*="glass-blob"],
   [class*="scanline"] {
     display: none !important;
   }
 
-  body,
-  html {
+  /* Force html and body to display cleanly in black and white */
+  html,
+  body {
+    display: block !important;
+    visibility: visible !important;
     background: #ffffff !important;
-    color: #000000 !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #0f172a !important;
     font-size: 10pt !important;
     line-height: 1.35 !important;
-    padding: 0 !important;
     margin: 0 !important;
+    padding: 0 !important;
     width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
   }
 
-  /* Ensure resume printable area is 100% visible */
+  main {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure resume printable area is 100% visible and crisp */
   #resume-printable-area {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     background: #ffffff !important;
-    color: #000000 !important;
+    color: #0f172a !important;
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
@@ -583,25 +598,38 @@ html.light ::-webkit-scrollbar-thumb:hover {
     opacity: 1 !important;
   }
 
-  /*
-   * CRITICAL: Force Reveal animation components to their fully-visible end state.
-   * The Reveal component starts at opacity-0 + translate-y-8 and waits for
-   * IntersectionObserver to trigger. During print the observer never fires, so
-   * without these overrides every Reveal-wrapped element renders as blank.
-   */
-  .opacity-0 {
-    opacity: 1 !important;
+  #resume-printable-area h1,
+  #resume-printable-area h2,
+  #resume-printable-area h3,
+  #resume-printable-area strong,
+  #resume-printable-area td.font-bold {
+    color: #000000 !important;
   }
-  .translate-y-8 {
-    transform: none !important;
+
+  #resume-printable-area p,
+  #resume-printable-area li,
+  #resume-printable-area td,
+  #resume-printable-area span {
+    color: #1e293b !important;
   }
-  /* Cancel all running CSS transitions / animations during print */
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-    transform: none !important;
+
+  #resume-printable-area a {
+    color: #1e293b !important;
+    text-decoration: none !important;
+  }
+
+  #resume-printable-area .border-white\/10,
+  #resume-printable-area .border-white\/5,
+  #resume-printable-area table,
+  #resume-printable-area tr {
+    border-color: #cbd5e1 !important;
+  }
+
+  #resume-printable-area .bg-slate-900\/90,
+  #resume-printable-area .bg-white\/5 {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
   }
 
   /* Force clean resume container print layout */
@@ -629,3 +657,4 @@ html.light ::-webkit-scrollbar-thumb:hover {
     page-break-after: avoid;
   }
 }
+
