@@ -13,6 +13,8 @@ import {
   Loader2,
   Rocket,
   Search,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 export function MiniProjectsManager() {
@@ -34,6 +36,7 @@ export function MiniProjectsManager() {
   const [formTags, setFormTags] = useState("");
   const [formStatus, setFormStatus] = useState<"Live" | "In Progress" | "Planned">("Live");
   const [formFeatured, setFormFeatured] = useState(false);
+  const [formHidden, setFormHidden] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -66,6 +69,7 @@ export function MiniProjectsManager() {
     setFormTags("Next.js 14, TailwindCSS, TypeScript");
     setFormStatus("Live");
     setFormFeatured(false);
+    setFormHidden(false);
     setIsModalOpen(true);
   }
 
@@ -80,6 +84,7 @@ export function MiniProjectsManager() {
     setFormTags(project.tags.join(", "));
     setFormStatus(project.status);
     setFormFeatured(Boolean(project.featured));
+    setFormHidden(Boolean(project.hidden));
     setIsModalOpen(true);
   }
 
@@ -98,6 +103,7 @@ export function MiniProjectsManager() {
       tags: formTags.split(",").map((t) => t.trim()).filter(Boolean),
       status: formStatus,
       featured: formFeatured,
+      hidden: formHidden,
     };
 
     try {
@@ -116,6 +122,23 @@ export function MiniProjectsManager() {
       console.error("Failed to save mini project", err);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleToggleHidden(id: string, currentHidden: boolean) {
+    const nextHidden = !currentHidden;
+    setProjects((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, hidden: nextHidden } : p))
+    );
+    try {
+      await fetch("/api/admin/mini-projects", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, hidden: nextHidden }),
+      });
+    } catch (err) {
+      console.error("Failed to toggle hidden state", err);
+      fetchProjects();
     }
   }
 
@@ -213,19 +236,23 @@ export function MiniProjectsManager() {
                     Day {String(project.dayNumber).padStart(2, "0")}
                   </span>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleToggleHidden(project.id, Boolean(project.hidden))}
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold border transition ${
+                        project.hidden
+                          ? "bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30"
+                          : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30"
+                      }`}
+                      title={project.hidden ? "Click to Show on Public Site" : "Click to Hide from Public Site"}
+                    >
+                      {project.hidden ? (
+                        <><EyeOff className="h-3 w-3" /> Hidden</>
+                      ) : (
+                        <><Eye className="h-3 w-3" /> Visible</>
+                      )}
+                    </button>
                     <span className="rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-medium text-slate-300">
                       {project.category}
-                    </span>
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold border ${
-                        project.status === "Live"
-                          ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                          : project.status === "In Progress"
-                          ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
-                          : "bg-slate-700/50 text-slate-400 border-slate-600"
-                      }`}
-                    >
-                      {project.status === "Live" ? "🟢 Live" : project.status}
                     </span>
                   </div>
                 </div>
@@ -442,17 +469,33 @@ export function MiniProjectsManager() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="formFeatured"
-                  checked={formFeatured}
-                  onChange={(e) => setFormFeatured(e.target.checked)}
-                  className="rounded border-white/10 text-indigo-600 focus:ring-indigo-500"
-                />
-                <label htmlFor="formFeatured" className="text-xs text-slate-300 cursor-pointer">
-                  Feature this mini project on main homepage showcase
-                </label>
+              <div className="space-y-2 pt-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="formFeatured"
+                    checked={formFeatured}
+                    onChange={(e) => setFormFeatured(e.target.checked)}
+                    className="rounded border-white/10 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <label htmlFor="formFeatured" className="text-xs text-slate-300 cursor-pointer">
+                    Feature this mini project on main homepage showcase
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="formHidden"
+                    checked={formHidden}
+                    onChange={(e) => setFormHidden(e.target.checked)}
+                    className="rounded border-white/10 text-rose-600 focus:ring-rose-500"
+                  />
+                  <label htmlFor="formHidden" className="text-xs text-slate-300 cursor-pointer flex items-center gap-1.5">
+                    <EyeOff className="h-3.5 w-3.5 text-rose-400" />
+                    Hide this mini project from public site (Draft mode)
+                  </label>
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">

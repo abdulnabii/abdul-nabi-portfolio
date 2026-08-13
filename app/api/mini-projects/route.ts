@@ -5,7 +5,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const miniProjects = await getMiniProjects();
+    const all = await getMiniProjects();
+    const miniProjects = all.filter((p) => !p.hidden);
     return NextResponse.json({ miniProjects });
   } catch (err) {
     console.error("GET /api/mini-projects error:", err);

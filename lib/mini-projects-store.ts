@@ -11,6 +11,7 @@ export interface MiniProject {
   tags: string[];
   status: "Live" | "In Progress" | "Planned";
   featured?: boolean;
+  hidden?: boolean;
   createdAt?: string;
 }
 
