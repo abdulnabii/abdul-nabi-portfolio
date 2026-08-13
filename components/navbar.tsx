@@ -77,49 +77,51 @@ export function Navbar() {
 
   const visibleNavLinks = siteContent.navLinks.filter((link) => isNavVisible(link.href));
 
-  // Scroll-Spy IntersectionObserver for active section highlight
+  // Smooth Scroll-Spy for active section highlight following exact page DOM flow
   useEffect(() => {
     if (pathname !== "/") {
       setActiveSection("");
       return;
     }
 
-    const sectionIds = ["about", "projects", "mini-projects", "stack", "experience", "achievements", "games", "contact"];
+    const sectionIds = [
+      "about",
+      "stack",
+      "projects",
+      "mini-projects",
+      "experience",
+      "achievements",
+      "games",
+      "blog",
+      "contact",
+    ];
 
-    const tryObserve = () => {
-      const sections = sectionIds
-        .map((id) => document.getElementById(id))
-        .filter(Boolean) as HTMLElement[];
+    const handleScrollSpy = () => {
+      const scrollPosition = window.scrollY + 140;
 
-      if (sections.length === 0) return false;
-
-      if (observerRef.current) observerRef.current.disconnect();
-
-      observerRef.current = new IntersectionObserver(
-        (entries) => {
-          const visible = entries
-            .filter((e) => e.isIntersecting)
-            .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-          if (visible.length > 0) {
-            setActiveSection(visible[0].target.id);
+      let currentSection = "";
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const id = sectionIds[i];
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          if (scrollPosition >= top) {
+            currentSection = id;
+            break;
           }
-        },
-        { threshold: 0.15, rootMargin: "-80px 0px -40% 0px" }
-      );
+        }
+      }
 
-      sections.forEach((sec) => observerRef.current!.observe(sec));
-      return true;
+      if (currentSection) {
+        setActiveSection(currentSection);
+      } else if (window.scrollY < 200) {
+        setActiveSection("");
+      }
     };
 
-    if (!tryObserve()) {
-      const timer = setTimeout(tryObserve, 500);
-      return () => {
-        clearTimeout(timer);
-        observerRef.current?.disconnect();
-      };
-    }
-
-    return () => observerRef.current?.disconnect();
+    handleScrollSpy();
+    window.addEventListener("scroll", handleScrollSpy, { passive: true });
+    return () => window.removeEventListener("scroll", handleScrollSpy);
   }, [pathname]);
 
   // Smooth scroll with navbar offset calculation so headers are never cut off

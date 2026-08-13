@@ -144,9 +144,9 @@ export const siteContent: SiteContent = {
   resumeUrl: "/resume",
   navLinks: [
     { label: "About", href: "/#about" },
+    { label: "Stack", href: "/#stack" },
     { label: "Work", href: "/#projects" },
     { label: "Mini Projects", href: "/mini-projects" },
-    { label: "Stack", href: "/#stack" },
     { label: "Experience", href: "/#experience" },
     { label: "Achievements", href: "/#achievements" },
     { label: "Games", href: "/#games" },
