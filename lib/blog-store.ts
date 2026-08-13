@@ -82,17 +82,41 @@ async function ensureBlogsFile(): Promise<void> {
 
 export async function getAllBlogs(): Promise<BlogPost[]> {
   const map = new Map<string, BlogPost>();
+  let deletedSet = new Set<string>();
 
   try {
+    // 0. Fetch deleted_blog_slugs list from site_settings
+    try {
+      const rows = await supabaseDbQuery<{ key: string; value: string }>(
+        "site_settings",
+        "select=*&key=eq.deleted_blog_slugs"
+      );
+      if (rows && rows.length > 0 && rows[0].value) {
+        const parsed = JSON.parse(rows[0].value) as string[];
+        if (Array.isArray(parsed)) {
+          deletedSet = new Set(parsed);
+        }
+      }
+    } catch {}
+
+    const isDeleted = (slug: string) =>
+      deletedSet.has(slug) ||
+      deletedSet.has(slugify(slug)) ||
+      deletedSet.has(decodeURIComponent(slug));
+
     // 1. Static seed blogs from bundled JSON
-    (seedBlogs as BlogPost[]).forEach((p) => map.set(p.slug, p));
+    (seedBlogs as BlogPost[]).forEach((p) => {
+      if (!isDeleted(p.slug)) map.set(p.slug, p);
+    });
 
     // 2. Read from disk if writeable/readable
     try {
       await ensureBlogsFile();
       const raw = await fs.readFile(BLOGS_FILE, "utf8");
       const posts = JSON.parse(raw) as BlogPost[];
-      posts.forEach((p) => map.set(p.slug, p));
+      posts.forEach((p) => {
+        if (!isDeleted(p.slug)) map.set(p.slug, p);
+      });
     } catch {
       // Read-only filesystem fallback
     }
@@ -101,7 +125,9 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
     try {
       const dbPosts = await supabaseDbQuery<BlogPost>("blogs", "select=*&order=date.desc");
       if (dbPosts && dbPosts.length > 0) {
-        dbPosts.forEach((p) => map.set(p.slug, p));
+        dbPosts.forEach((p) => {
+          if (!isDeleted(p.slug)) map.set(p.slug, p);
+        });
       }
     } catch {}
 
@@ -113,12 +139,16 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
       );
       if (rows && rows.length > 0 && rows[0].value) {
         const backupPosts = JSON.parse(rows[0].value) as BlogPost[];
-        backupPosts.forEach((p) => map.set(p.slug, p));
+        backupPosts.forEach((p) => {
+          if (!isDeleted(p.slug)) map.set(p.slug, p);
+        });
       }
     } catch {}
 
     // 4. Overlay in-memory cache LAST
-    memoryBlogs.forEach((p) => map.set(p.slug, p));
+    memoryBlogs.forEach((p) => {
+      if (!isDeleted(p.slug)) map.set(p.slug, p);
+    });
   } catch (err) {
     console.error("[getAllBlogs] Exception:", err);
   }
@@ -327,7 +357,32 @@ export async function deleteBlog(slug: string): Promise<void> {
   const decoded = decodeURIComponent(slug);
   const targetSlug = slugify(slug);
 
-  // 1. Delete from Supabase DB
+  // 1. Save slug to deleted_blog_slugs in site_settings so seed/cached blogs are suppressed forever
+  try {
+    const rows = await supabaseDbQuery<{ key: string; value: string }>(
+      "site_settings",
+      "select=*&key=eq.deleted_blog_slugs"
+    );
+    let deletedList: string[] = [];
+    if (rows && rows.length > 0 && rows[0].value) {
+      deletedList = JSON.parse(rows[0].value) as string[];
+    }
+    if (!deletedList.includes(slug)) deletedList.push(slug);
+    if (!deletedList.includes(targetSlug)) deletedList.push(targetSlug);
+    if (decoded !== slug && !deletedList.includes(decoded)) deletedList.push(decoded);
+
+    await supabaseDbUpsert("site_settings", [
+      {
+        key: "deleted_blog_slugs",
+        value: JSON.stringify(deletedList),
+        updated_at: new Date().toISOString(),
+      },
+    ]);
+  } catch (err) {
+    console.error("[deleteBlog] Error recording deleted_blog_slugs:", err);
+  }
+
+  // 2. Delete from Supabase DB blogs table
   try {
     await supabaseDbDelete("blogs", `slug=eq.${encodeURIComponent(slug)}`);
     if (decoded !== slug) {
@@ -335,7 +390,7 @@ export async function deleteBlog(slug: string): Promise<void> {
     }
   } catch {}
 
-  // 2. Filter from memory & local array
+  // 3. Filter current blog list and SAVE via saveAllBlogs
   const posts = await getAllBlogs();
   const next = posts.filter(
     (p) =>
@@ -344,12 +399,5 @@ export async function deleteBlog(slug: string): Promise<void> {
       slugify(p.slug) !== targetSlug
   );
 
-  memoryBlogs.length = 0;
-  memoryBlogs.push(...next);
-
-  // 3. Persist to disk if writable
-  try {
-    await ensureBlogsFile();
-    await fs.writeFile(BLOGS_FILE, JSON.stringify(next, null, 2), "utf8");
-  } catch {}
+  await saveAllBlogs(next);
 }
