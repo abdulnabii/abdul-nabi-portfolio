@@ -1,15 +1,24 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 
-export const ADMIN_EMAIL =
-  process.env.ADMIN_EMAIL ?? "abdulnabi.khaskhely@gmail.com";
-export const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD ?? "abkhaskheli";
-
 const SESSION_COOKIE = "an_admin_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-const SECRET =
-  process.env.SESSION_SECRET ?? "dev-only-secret-key-do-not-use-in-prod";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim();
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const SECRET = process.env.SESSION_SECRET;
+
+// Fail fast in production: if any required auth env var is missing the admin
+// panel would be inaccessible (503) rather than open, but an explicit crash at
+// startup is clearer than a silent misconfiguration.
+if (
+  process.env.NODE_ENV === "production" &&
+  (!ADMIN_EMAIL || !ADMIN_PASSWORD || !SECRET || SECRET.length < 32)
+) {
+  throw new Error(
+    "[auth] Missing or invalid admin auth environment variables. " +
+    "Set ADMIN_EMAIL, ADMIN_PASSWORD, and SESSION_SECRET (≥32 chars) before deploying."
+  );
+}
 
 interface SessionPayload {
   role: "admin";
@@ -18,6 +27,9 @@ interface SessionPayload {
 }
 
 function sign(payloadB64: string): string {
+  if (!SECRET) {
+    throw new Error("Admin authentication is not configured.");
+  }
   return createHmac("sha256", SECRET).update(payloadB64).digest("hex");
 }
 
@@ -29,15 +41,25 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 export function verifyCredentials(email: string, password: string): boolean {
+  if (!isAdminAuthConfigured()) return false;
   const emailMatches = safeEqual(
     email.trim().toLowerCase(),
-    ADMIN_EMAIL.toLowerCase()
+    ADMIN_EMAIL!.toLowerCase()
   );
-  const passMatches = safeEqual(password, ADMIN_PASSWORD);
+  const passMatches = safeEqual(password, ADMIN_PASSWORD!);
   return emailMatches && passMatches;
 }
 
+export function isAdminAuthConfigured(): boolean {
+  return Boolean(
+    ADMIN_EMAIL && ADMIN_PASSWORD && SECRET && SECRET.length >= 32
+  );
+}
+
 export function createSessionToken(email: string): string {
+  if (!isAdminAuthConfigured()) {
+    throw new Error("Admin authentication is not configured.");
+  }
   const payload: SessionPayload = {
     role: "admin",
     email,
@@ -50,7 +72,7 @@ export function createSessionToken(email: string): string {
 export function parseSessionToken(
   token: string | undefined | null
 ): SessionPayload | null {
-  if (!token) return null;
+  if (!token || !isAdminAuthConfigured()) return null;
   const [payloadB64, signature] = token.split(".");
   if (!payloadB64 || !signature) return null;
   if (!safeEqual(sign(payloadB64), signature)) return null;

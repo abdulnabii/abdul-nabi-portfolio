@@ -311,62 +311,72 @@ export function Contact() {
                   </p>
 
                   <div className="grid gap-5 sm:grid-cols-2">
-                    <Input
-                      label="Your name"
-                      name="name"
-                      autoComplete="name"
-                      required
-                      placeholder="Jane Doe"
-                      value={form.name}
-                      onChange={(e) => {
-                        updateField("name", e.target.value);
-                        if (e.target.value.trim().length >= 2) clearFieldError("name");
-                      }}
-                    />
-                    {fieldErrors.name && (
-                      <p className="mt-1 text-xs text-red-400" role="alert">{fieldErrors.name}</p>
-                    )}
-                    <Input
-                      label="Work email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      placeholder="jane@company.com"
-                      value={form.email}
-                      onChange={(e) => {
-                        updateField("email", e.target.value);
-                        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) clearFieldError("email");
-                      }}
-                    />
-                    {fieldErrors.email && (
-                      <p className="mt-1 text-xs text-red-400" role="alert">{fieldErrors.email}</p>
-                    )}
+                    <div>
+                      <Input
+                        label="Your name"
+                        name="name"
+                        autoComplete="name"
+                        required
+                        placeholder="Jane Doe"
+                        value={form.name}
+                        onChange={(e) => {
+                          updateField("name", e.target.value);
+                          if (e.target.value.trim().length >= 2) clearFieldError("name");
+                        }}
+                      />
+                      {fieldErrors.name && (
+                        <p className="mt-1 text-xs text-red-400" role="alert">{fieldErrors.name}</p>
+                      )}
+                    </div>
+                    <div>
+                      <Input
+                        label="Work email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        placeholder="jane@company.com"
+                        value={form.email}
+                        onChange={(e) => {
+                          updateField("email", e.target.value);
+                          if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) clearFieldError("email");
+                        }}
+                      />
+                      {fieldErrors.email && (
+                        <p className="mt-1 text-xs text-red-400" role="alert">{fieldErrors.email}</p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="grid gap-5 sm:grid-cols-2">
-                    <Input
-                      label="Company / team"
-                      name="company"
-                      autoComplete="organization"
-                      placeholder="Optional"
-                      value={form.company}
-                      onChange={(e) => updateField("company", e.target.value)}
-                    />
-                    <Input
-                      label="Subject"
-                      name="subject"
-                      required
-                      placeholder="Role, project, or intro"
-                      value={form.subject}
-                      onChange={(e) => {
-                        updateField("subject", e.target.value);
-                        if (e.target.value.trim()) clearFieldError("subject");
-                      }}
-                    />
-                    {fieldErrors.subject && (
-                      <p className="mt-1 text-xs text-red-400" role="alert">{fieldErrors.subject}</p>
-                    )}
+                    <div>
+                      <Input
+                        label="Company / team"
+                        name="company"
+                        autoComplete="organization"
+                        placeholder="Optional"
+                        value={form.company}
+                        onChange={(e) => updateField("company", e.target.value)}
+                      />
+                      {/* Spacer so this column height matches its sibling when Subject has an error */}
+                      {fieldErrors.subject && <div className="mt-1 h-[1.25rem]" aria-hidden />}
+                    </div>
+                    <div>
+                      <Input
+                        label="Subject"
+                        name="subject"
+                        required
+                        placeholder="Role, project, or intro"
+                        value={form.subject}
+                        onChange={(e) => {
+                          updateField("subject", e.target.value);
+                          if (e.target.value.trim()) clearFieldError("subject");
+                        }}
+                      />
+                      {fieldErrors.subject && (
+                        <p className="mt-1 text-xs text-red-400" role="alert">{fieldErrors.subject}</p>
+                      )}
+                    </div>
                   </div>
 
                   <Textarea

@@ -260,7 +260,7 @@ export const siteContent: SiteContent = {
   projectsIntro: {
     title: "Selected work",
     subtitle:
-      "Four projects that show different problems: product UI, commerce, AI assist, and internal tooling.",
+      "Three concept builds and one real-world tool — each showing a distinct engineering problem and how I approached it.",
   },
   projects: [
     {
