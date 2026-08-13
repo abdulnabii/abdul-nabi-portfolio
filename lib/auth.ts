@@ -7,16 +7,17 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim();
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const SECRET = process.env.SESSION_SECRET;
 
-// Fail fast in production: if any required auth env var is missing the admin
-// panel would be inaccessible (503) rather than open, but an explicit crash at
-// startup is clearer than a silent misconfiguration.
+// Warn at startup if required auth env vars are missing in production.
+// We use console.error rather than throw to avoid crashing the module import
+// chain — the per-function isAdminAuthConfigured() checks already return 503
+// on every auth route when variables are absent.
 if (
   process.env.NODE_ENV === "production" &&
   (!ADMIN_EMAIL || !ADMIN_PASSWORD || !SECRET || SECRET.length < 32)
 ) {
-  throw new Error(
-    "[auth] Missing or invalid admin auth environment variables. " +
-    "Set ADMIN_EMAIL, ADMIN_PASSWORD, and SESSION_SECRET (≥32 chars) before deploying."
+  console.error(
+    "[auth] CRITICAL: Missing or invalid admin auth env vars. " +
+    "Set ADMIN_EMAIL, ADMIN_PASSWORD, and SESSION_SECRET (>=32 chars) in Vercel."
   );
 }
 

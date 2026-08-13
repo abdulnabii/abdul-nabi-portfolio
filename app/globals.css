@@ -583,6 +583,27 @@ html.light ::-webkit-scrollbar-thumb:hover {
     opacity: 1 !important;
   }
 
+  /*
+   * CRITICAL: Force Reveal animation components to their fully-visible end state.
+   * The Reveal component starts at opacity-0 + translate-y-8 and waits for
+   * IntersectionObserver to trigger. During print the observer never fires, so
+   * without these overrides every Reveal-wrapped element renders as blank.
+   */
+  .opacity-0 {
+    opacity: 1 !important;
+  }
+  .translate-y-8 {
+    transform: none !important;
+  }
+  /* Cancel all running CSS transitions / animations during print */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+
   /* Force clean resume container print layout */
   .section-padding {
     padding: 0 !important;
