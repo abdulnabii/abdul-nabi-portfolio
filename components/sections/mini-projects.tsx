@@ -24,7 +24,7 @@ export function MiniProjects() {
 
   // Show ONLY published (Live) and visible (non-hidden) projects on public site
   const publishedProjects = projects.filter((p) => p.status === "Live" && !p.hidden);
-  const displayProjects = publishedProjects.slice(0, 6);
+  const displayProjects = publishedProjects.slice(0, 9);
 
   return (
     <section
@@ -36,13 +36,13 @@ export function MiniProjects() {
         <Reveal>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <SectionHeading
-              eyebrow="Micro Tools & Demos"
+              eyebrow="30 Days 30 AI Projects Challenge"
               title="Mini Projects & Interactive Tools"
-              subtitle="Production-grade micro applications, AI tools, and healthcare predictors — deployed live."
+              subtitle="Explore 30 production-grade micro applications, AI tools, healthcare predictors, and developer utilities — built and deployed live."
               className="mb-0"
             />
             <LinkButton href="/mini-projects" variant="secondary" size="sm" className="shrink-0 cursor-grow">
-              Explore All Mini Projects
+              Explore All {publishedProjects.length || 30} Mini Projects
               <ArrowRight className="h-3.5 w-3.5" />
             </LinkButton>
           </div>

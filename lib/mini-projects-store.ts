@@ -146,6 +146,266 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
     featured: true,
     createdAt: "2026-08-12T00:00:00Z",
   },
+  {
+    id: "mini-11",
+    dayNumber: 11,
+    title: "Medical Image Classifier & Diagnostic Assistant",
+    category: "Healthcare AI",
+    description: "Browser-based computer vision web application for classifying diagnostic medical scans (Chest X-ray pneumonia vs normal, skin lesion benign vs malignant) with Grad-CAM heatmap overlay.",
+    vercelUrl: "https://day-11-medical-image-classifier.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-11-medical-image-classifier",
+    tags: ["TensorFlow.js", "Computer Vision", "Next.js 16", "Grad-CAM"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-12",
+    dayNumber: 12,
+    title: "AI Coding Interview Coach & Simulator",
+    category: "AI EdTech",
+    description: "Interactive technical coding interview simulator providing real-time problem presentation, progressive hint generation, time/space complexity analysis, and communication quality scoring.",
+    vercelUrl: "https://day-12-coding-interview-coach.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-12-coding-interview-coach",
+    tags: ["Next.js 16", "Gemini 1.5 Pro", "Monaco Editor", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-13",
+    dayNumber: 13,
+    title: "Personal Finance AI & Health Dashboard",
+    category: "FinTech & Data",
+    description: "Financial health analytics platform evaluating bank statement CSV exports to compute net worth trajectory, monthly burn rate, 12-month projections, and debt payoff optimization.",
+    vercelUrl: "https://day-13-personal-finance-ai.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-13-personal-finance-ai",
+    tags: ["PapaParse", "Recharts", "Gemini 1.5 Flash", "Next.js 16"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-14",
+    dayNumber: 14,
+    title: "AI Language Flashcard & Spaced Repetition App",
+    category: "AI EdTech",
+    description: "Language acquisition platform using SuperMemo SM-2 spaced-repetition algorithms with contextual sentence generation, Web Speech audio pronunciation, and gamified streak tracking.",
+    vercelUrl: "https://day-14-language-flashcard-ai.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-14-language-flashcard-ai",
+    tags: ["SM-2 Algorithm", "Web Speech API", "Next.js 16", "Framer Motion"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-15",
+    dayNumber: 15,
+    title: "AI-Powered Blog SEO & Readability Auditor",
+    category: "Developer Tools",
+    description: "Comprehensive blog SEO auditor computing Flesch-Kincaid readability scores, keyword density distribution, meta description optimization, and heading structural hierarchy.",
+    vercelUrl: "https://day-15-blog-seo-optimizer.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-15-blog-seo-optimizer",
+    tags: ["NLP Engine", "Gemini 1.5 Pro", "Next.js 16", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-16",
+    dayNumber: 16,
+    title: "AI Portfolio Roaster & UX Feedback Engine",
+    category: "AI Creative Tools",
+    description: "Instant portfolio audit application analyzing UI ergonomics, typography scaling, CTA friction, and landing page messaging with constructive AI recommendations.",
+    vercelUrl: "https://day-16-ai-portfolio-roaster.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-16-portfolio-roaster",
+    tags: ["Next.js 16", "Claude 3.5 API", "Puppeteer", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-17",
+    dayNumber: 17,
+    title: "Smart Job Application & Outreach Tracker",
+    category: "AI Productivity",
+    description: "Kanban job application management board with automated follow-up reminders, cold email outreach generator, and recruiter response tracking.",
+    vercelUrl: "https://day-17-job-application-tracker.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-17-job-tracker",
+    tags: ["Next.js 16", "dnd-kit", "Supabase", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-18",
+    dayNumber: 18,
+    title: "AI Mental Health & Emotion Tracking Journal",
+    category: "Healthcare AI",
+    description: "Encrypted daily reflection journal utilizing sentiment analysis to map mood trends, cognitive distortion detection, and personalized mindfulness suggestions.",
+    vercelUrl: "https://day-18-mental-health-journal.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-18-mental-health-journal",
+    tags: ["Next.js 16", "Vader Sentiment", "AES-256", "Recharts"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-19",
+    dayNumber: 19,
+    title: "Real-Time Collaborative Canvas & Whiteboard",
+    category: "Developer Tools",
+    description: "Multi-user vector drawing whiteboard supporting live cursor tracking, shape tools, real-time WebSocket sync, and SVG asset export.",
+    vercelUrl: "https://day-19-collaborative-whiteboard.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-19-collaborative-whiteboard",
+    tags: ["HTML5 Canvas", "WebSockets", "Liveblocks", "Next.js 16"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-20",
+    dayNumber: 20,
+    title: "AI Meal & Personal Nutrition Planner",
+    category: "Healthcare AI",
+    description: "Personalized dietary planning app generating weekly macronutrient balance, automated grocery shopping lists, and AI recipe adaptation based on dietary constraints.",
+    vercelUrl: "https://day-20-ai-nutrition-planner.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-20-nutrition-planner",
+    tags: ["Next.js 16", "Gemini 1.5 Flash", "Spoonacular API", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-21",
+    dayNumber: 21,
+    title: "Distributed API Load Testing Dashboard",
+    category: "DevOps & Testing",
+    description: "Performance load testing suite executing concurrency stress tests against REST/GraphQL endpoints with real-time latency graphs and status code telemetry.",
+    vercelUrl: "https://day-21-api-load-testing-dashboard.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-21-load-testing-dashboard",
+    tags: ["Next.js 16", "Worker Threads", "Chart.js", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-22",
+    dayNumber: 22,
+    title: "AI Legal Document & Contract Analyzer",
+    category: "LegalTech & NLP",
+    description: "Contract analysis engine identifying risk clauses, non-compete duration, indemnity liabilities, and key renewal deadlines from PDF agreements.",
+    vercelUrl: "https://day-22-legal-document-analyzer.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-22-legal-document-analyzer",
+    tags: ["PDF.js", "Gemini 1.5 Pro", "Next.js 16", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-23",
+    dayNumber: 23,
+    title: "IoT Smart Home Energy & Device Dashboard",
+    category: "IoT & Hardware",
+    description: "Interactive smart home telemetry console tracking kilowatt power consumption, temperature sensors, automated lighting schedules, and device health.",
+    vercelUrl: "https://day-23-smart-home-dashboard.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-23-smart-home-dashboard",
+    tags: ["MQTT Protocol", "Recharts", "Next.js 16", "Framer Motion"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-24",
+    dayNumber: 24,
+    title: "Open-Source Discovery & Impact Engine",
+    category: "Developer Tools",
+    description: "GitHub repository recommendation tool analyzing developer skill stacks to surface trending open-source projects seeking first-time contributors.",
+    vercelUrl: "https://day-24-opensource-discovery-engine.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-24-opensource-discovery-engine",
+    tags: ["GitHub REST API", "Algolia Search", "Next.js 16", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-25",
+    dayNumber: 25,
+    title: "Multi-Channel AI Content Studio & Copywriter",
+    category: "AI Productivity",
+    description: "Unified social publishing engine transforming long-form blog posts into optimized LinkedIn articles, Twitter/X threads, and Reddit discussions.",
+    vercelUrl: "https://day-25-ai-content-studio.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-25-ai-content-studio",
+    tags: ["Next.js 16", "Gemini 1.5 Flash", "LinkedIn API", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-26",
+    dayNumber: 26,
+    title: "Medical Prescription & Medication Reminder Bot",
+    category: "Healthcare AI",
+    description: "Patient compliance web app parsing prescription bottle labels via OCR, scheduling dosage notifications, and warning of potential drug-drug interactions.",
+    vercelUrl: "https://day-26-medication-reminder-system.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-26-medication-reminder-system",
+    tags: ["Tesseract OCR", "RxNorm API", "Next.js 16", "PWA Web Push"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-27",
+    dayNumber: 27,
+    title: "AI Natural Language Database Query Builder",
+    category: "Data & SQL AI",
+    description: "SQL query generator converting plain English questions into optimized PostgreSQL/MySQL queries with schema visualization and safety validation.",
+    vercelUrl: "https://day-27-ai-database-query-builder.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-27-ai-database-query-builder",
+    tags: ["Next.js 16", "Gemini 1.5 Pro", "SQL Parser", "Monaco Editor"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-28",
+    dayNumber: 28,
+    title: "Interactive 3D WebGL Data Visualization Terminal",
+    category: "Data Science",
+    description: "3D particle matrix visualizer rendering multi-dimensional data clusters, PCA dimensional reduction, and interactive camera orbital controls in WebGL.",
+    vercelUrl: "https://day-28-3d-data-visualization.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-28-3d-data-visualization",
+    tags: ["Three.js", "React Three Fiber", "WebGL", "Next.js 16"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-29",
+    dayNumber: 29,
+    title: "DevOps Incident Responder & Log Diagnostics Bot",
+    category: "DevOps & Systems",
+    description: "Automated root cause analysis tool inspecting Kubernetes server log streams to identify stack trace exceptions, memory pressure, and deployment failures.",
+    vercelUrl: "https://day-29-devops-incident-assistant.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-29-devops-incident-assistant",
+    tags: ["Next.js 16", "Gemini 1.5 Pro", "RegEx Parser", "TailwindCSS"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
+  {
+    id: "mini-30",
+    dayNumber: 30,
+    title: "Production AI SaaS Starter Boilerplate",
+    category: "SaaS Framework",
+    description: "Production-ready full-stack AI SaaS template featuring Supabase Auth, Stripe subscription billing, rate-limited API routes, and glassmorphism design system.",
+    vercelUrl: "https://day-30-ai-saas-boilerplate.vercel.app",
+    githubUrl: "https://github.com/abdulnabii/mini-projects/tree/main/day-30-ai-saas-boilerplate",
+    tags: ["Next.js 16", "Stripe Billing", "Supabase Auth", "TypeScript"],
+    status: "Live",
+    featured: true,
+    createdAt: "2026-08-13T00:00:00Z",
+  },
 ];
 
 let memoryMiniProjects: MiniProject[] = [...INITIAL_MINI_PROJECTS];
@@ -159,24 +419,22 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
     if (rows && rows.length > 0 && rows[0].value) {
       const parsed = JSON.parse(rows[0].value) as MiniProject[];
       if (Array.isArray(parsed) && parsed.length > 0) {
-        memoryMiniProjects = parsed.map((p) => {
-          let url = p.vercelUrl;
-          if (p.dayNumber === 1) url = "https://day-01-ai-symptom-checker.vercel.app";
-          else if (p.dayNumber === 2) url = "https://day-02-code-review-bot.vercel.app";
-          else if (p.dayNumber === 3) url = "https://day-03-smart-resume-builder.vercel.app";
-          else if (p.dayNumber === 4) url = "https://day-04-diabetes-risk-predictor.vercel.app";
-          else if (p.dayNumber === 5) url = "https://day-05-ai-meeting-summarizer.vercel.app";
-          else if (p.dayNumber === 6) url = "https://day-06-stock-dashboard.vercel.app";
-          else if (p.dayNumber === 7) url = "https://day-07-ai-logo-generator.vercel.app";
-          else if (p.dayNumber === 8) url = "https://day-08-smart-expense-tracker.vercel.app";
-          else if (p.dayNumber === 9) url = "https://day-09-github-profile-analyzer.vercel.app";
-          else if (p.dayNumber === 10) url = "https://day-10-ai-email-composer.vercel.app";
+        const map = new Map<number, MiniProject>();
+        parsed.forEach((p) => map.set(p.dayNumber, p));
 
+        // Auto-merge any missing days from INITIAL_MINI_PROJECTS
+        INITIAL_MINI_PROJECTS.forEach((initP) => {
+          if (!map.has(initP.dayNumber)) {
+            map.set(initP.dayNumber, initP);
+          }
+        });
+
+        memoryMiniProjects = Array.from(map.values()).map((p) => {
           return {
             ...p,
             status: p.status || "Live",
             hidden: Boolean(p.hidden),
-            vercelUrl: url,
+            vercelUrl: p.vercelUrl || `https://day-${String(p.dayNumber).padStart(2, "0")}-project.vercel.app`,
             githubUrl: p.githubUrl || `https://github.com/abdulnabii/mini-projects/tree/main/day-${String(p.dayNumber).padStart(2, "0")}`,
           };
         });
@@ -187,8 +445,8 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
     console.error("[getMiniProjects] Exception:", err);
   }
 
-  // Ensure default fallback items use exact live URLs
-  memoryMiniProjects = INITIAL_MINI_PROJECTS;
+  // Fallback to initial 30 items
+  memoryMiniProjects = [...INITIAL_MINI_PROJECTS];
   return memoryMiniProjects.sort((a, b) => a.dayNumber - b.dayNumber);
 }
 

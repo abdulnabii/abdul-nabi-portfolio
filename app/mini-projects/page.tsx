@@ -111,7 +111,7 @@ export default function MiniProjectsPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((proj, idx) => (
-              <Reveal key={proj.id} delay={idx * 50}>
+              <Reveal key={proj.id} delay={Math.min(idx * 25, 300)}>
                 <GlassCard
                   interactive
                   hover
