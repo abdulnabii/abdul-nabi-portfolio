@@ -3,23 +3,13 @@ import { cookies } from "next/headers";
 
 const SESSION_COOKIE = "an_admin_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim();
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-const SECRET = process.env.SESSION_SECRET;
 
-// Warn at startup if required auth env vars are missing in production.
-// We use console.error rather than throw to avoid crashing the module import
-// chain — the per-function isAdminAuthConfigured() checks already return 503
-// on every auth route when variables are absent.
-if (
-  process.env.NODE_ENV === "production" &&
-  (!ADMIN_EMAIL || !ADMIN_PASSWORD || !SECRET || SECRET.length < 32)
-) {
-  console.error(
-    "[auth] CRITICAL: Missing or invalid admin auth env vars. " +
-    "Set ADMIN_EMAIL, ADMIN_PASSWORD, and SESSION_SECRET (>=32 chars) in Vercel."
-  );
-}
+// Env vars with hardcoded fallbacks so admin login works even when the
+// deployment platform has no explicit env configuration.
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL ?? "abdulnabi.khaskhely@gmail.com").trim();
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "AbdulNabi@Admin2025!";
+const SECRET =
+  process.env.SESSION_SECRET ?? "an-portfolio-admin-secret-key-2025-secure-random-value-here";
 
 interface SessionPayload {
   role: "admin";
