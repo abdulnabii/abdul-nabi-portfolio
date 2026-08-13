@@ -542,15 +542,12 @@ html.light ::-webkit-scrollbar-thumb:hover {
     margin: 8mm 10mm 8mm 10mm;
   }
 
-  /* Hide all non-printable UI elements: navbar, floating buttons, chat widget, ambient layers */
+  /* Hide specific non-printable UI elements */
   header,
   nav,
   footer,
   aside,
   .print\:hidden,
-  [class*="fixed"],
-  button:not(.print-keep),
-  a[href^="#"],
   .bg-ambient,
   .bg-grid,
   [class*="glass-blob"],
@@ -567,6 +564,23 @@ html.light ::-webkit-scrollbar-thumb:hover {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
+  }
+
+  /* Ensure resume printable area is 100% visible */
+  #resume-printable-area {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  #resume-printable-area * {
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Force clean resume container print layout */

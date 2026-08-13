@@ -14,7 +14,7 @@ export const revalidate = 0;
 
 export default function ResumePage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 section-padding pt-28 pb-20 print:bg-white print:text-black print:p-0 print:pt-0">
+    <div id="resume-printable-area" className="min-h-screen bg-slate-950 text-slate-100 section-padding pt-28 pb-20 print:bg-white print:text-black print:p-0 print:pt-0">
       <div className="container-narrow max-w-4xl space-y-8 print:max-w-none print:w-full">
         {/* Top Control Bar (Hidden on print) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 print:hidden">
