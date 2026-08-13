@@ -46,6 +46,7 @@ export function SocialBotManager() {
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [testingToken, setTestingToken] = useState(false);
   const [tokenTestResult, setTokenTestResult] = useState<{ valid: boolean; name?: string; urn?: string; error?: string } | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [customTitle, setCustomTitle] = useState("");
@@ -204,6 +205,50 @@ export function SocialBotManager() {
       setTokenTestResult({ valid: false, error: err.message });
     } finally {
       setTestingToken(false);
+    }
+  }
+
+  async function handleImageFileUpload(file: File) {
+    if (!file) return;
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "social-banners");
+      formData.append("slug", `banner_${Date.now()}`);
+
+      const res = await fetch("/api/admin/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        setImageUrlInput(data.url);
+        setStatusMessage({ type: "success", text: "📷 Image uploaded and applied to banner!" });
+      } else {
+        setStatusMessage({ type: "error", text: data.error || "Failed to upload image." });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: "error", text: err.message || "Failed to upload image file." });
+    } finally {
+      setUploadingImage(false);
+    }
+  }
+
+  function handleInputPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const blob = items[i].getAsFile();
+        if (blob) {
+          e.preventDefault();
+          handleImageFileUpload(blob);
+          return;
+        }
+      }
     }
   }
 
@@ -492,15 +537,34 @@ export function SocialBotManager() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 flex items-center gap-1">
-              <ImageIcon className="h-3.5 w-3.5 text-indigo-400" />
-              Picture / Banner Image URL
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
+                <ImageIcon className="h-3.5 w-3.5 text-indigo-400" />
+                Picture / Banner Image URL
+              </label>
+              <label className="cursor-pointer text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-500/10 hover:bg-indigo-500/20 px-2 py-0.5 rounded-md border border-indigo-500/30 transition">
+                {uploadingImage ? (
+                  <><Loader2 className="h-3 w-3 animate-spin" /> Uploading...</>
+                ) : (
+                  <><ImageIcon className="h-3 w-3" /> Upload / Paste Image</>
+                )}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleImageFileUpload(f);
+                  }}
+                />
+              </label>
+            </div>
             <input
               type="text"
               value={imageUrlInput}
               onChange={(e) => setImageUrlInput(e.target.value)}
-              placeholder="https://.../preview.jpg"
+              onPaste={handleInputPaste}
+              placeholder="Paste URL or paste image directly from clipboard (Ctrl+V)..."
               className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
             />
           </div>

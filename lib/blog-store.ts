@@ -29,6 +29,26 @@ function estimateReadTime(content: string): string {
   return `${minutes} min read`;
 }
 
+function getDefaultBlogCoverImage(tags: string[] = []): string {
+  const t = tags.map((s) => s.toLowerCase());
+  if (t.some((x) => x.includes("health") || x.includes("glucose") || x.includes("medical"))) {
+    return "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1600&q=80";
+  }
+  if (t.some((x) => x.includes("security") || x.includes("appsec") || x.includes("auth"))) {
+    return "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1600&q=80";
+  }
+  if (t.some((x) => x.includes("ui") || x.includes("css") || x.includes("design"))) {
+    return "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?auto=format&fit=crop&w=1600&q=80";
+  }
+  if (t.some((x) => x.includes("performance") || x.includes("speed"))) {
+    return "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=80";
+  }
+  if (t.some((x) => x.includes("next") || x.includes("architecture") || x.includes("react"))) {
+    return "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=1600&q=80";
+  }
+  return "https://images.unsplash.com/photo-1639322537504-642750d53c29?auto=format&fit=crop&w=1600&q=80";
+}
+
 export function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -227,7 +247,7 @@ export async function createBlog(input: BlogInput): Promise<BlogPost> {
     tags,
     coverImage:
       input.coverImage?.trim() ||
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop",
+      getDefaultBlogCoverImage(tags),
     published: input.published ?? true,
     updatedAt: new Date().toISOString(),
     helpfulCount: input.helpfulCount ?? 0,
