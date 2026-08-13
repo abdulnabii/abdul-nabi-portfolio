@@ -188,26 +188,68 @@ export async function fetchTrendingAiNews(): Promise<NewsItem[]> {
   return deduped.slice(0, 6);
 }
 
+const TECH_COVER_POOLS: Record<string, string[]> = {
+  health: [
+    "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1504813184591-01572f98c85f?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=1200&auto=format&fit=crop",
+  ],
+  security: [
+    "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop",
+  ],
+  coding: [
+    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1200&auto=format&fit=crop",
+  ],
+  ai: [
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1639322537504-642750d53c29?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1535378917042-10a22c95931a?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1200&auto=format&fit=crop",
+  ],
+  general: [
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+  ],
+};
+
+function hashTitle(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
 export function selectTopicCoverImage(title: string, tags: string[] = []): string {
   const text = `${title} ${tags.join(" ")}`.toLowerCase();
+  const index = hashTitle(title);
 
+  let pool = TECH_COVER_POOLS.general;
   if (text.includes("health") || text.includes("medical") || text.includes("patient") || text.includes("diabetes") || text.includes("clinical")) {
-    return "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200&auto=format&fit=crop";
-  }
-  if (text.includes("security") || text.includes("appsec") || text.includes("threat") || text.includes("injection") || text.includes("hack")) {
-    return "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1200&auto=format&fit=crop";
-  }
-  if (text.includes("python") || text.includes("code") || text.includes("pipeline") || text.includes("polars") || text.includes("pytorch")) {
-    return "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop";
-  }
-  if (text.includes("agent") || text.includes("llm") || text.includes("transformer") || text.includes("gpt") || text.includes("claude") || text.includes("gemini")) {
-    return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop";
-  }
-  if (text.includes("neural") || text.includes("deep learning") || text.includes("model")) {
-    return "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=1200&auto=format&fit=crop";
+    pool = TECH_COVER_POOLS.health;
+  } else if (text.includes("security") || text.includes("appsec") || text.includes("threat") || text.includes("injection") || text.includes("hack")) {
+    pool = TECH_COVER_POOLS.security;
+  } else if (text.includes("python") || text.includes("code") || text.includes("pipeline") || text.includes("polars") || text.includes("pytorch")) {
+    pool = TECH_COVER_POOLS.coding;
+  } else if (text.includes("agent") || text.includes("llm") || text.includes("transformer") || text.includes("gpt") || text.includes("claude") || text.includes("gemini") || text.includes("ai")) {
+    pool = TECH_COVER_POOLS.ai;
   }
 
-  return "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop";
+  return pool[index % pool.length];
 }
 
 /**
