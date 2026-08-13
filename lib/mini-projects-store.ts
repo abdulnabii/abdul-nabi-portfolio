@@ -174,7 +174,8 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
 
           return {
             ...p,
-            status: "Live" as const,
+            status: p.status || "Live",
+            hidden: Boolean(p.hidden),
             vercelUrl: url,
             githubUrl: p.githubUrl || `https://github.com/abdulnabii/mini-projects/tree/main/day-${String(p.dayNumber).padStart(2, "0")}`,
           };

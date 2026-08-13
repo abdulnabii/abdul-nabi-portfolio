@@ -25,8 +25,8 @@ export default function MiniProjectsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Filter ONLY published (Live) projects for public display
-  const liveProjects = projects.filter((p) => p.status === "Live");
+  // Filter ONLY published (Live) and visible (non-hidden) projects for public display
+  const liveProjects = projects.filter((p) => p.status === "Live" && !p.hidden);
 
   const categories = ["All", ...Array.from(new Set(liveProjects.map((p) => p.category)))];
 

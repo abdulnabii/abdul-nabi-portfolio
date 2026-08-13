@@ -22,8 +22,8 @@ export function MiniProjects() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Show ONLY published (Live) projects on public site
-  const publishedProjects = projects.filter((p) => p.status === "Live");
+  // Show ONLY published (Live) and visible (non-hidden) projects on public site
+  const publishedProjects = projects.filter((p) => p.status === "Live" && !p.hidden);
   const displayProjects = publishedProjects.slice(0, 6);
 
   return (
