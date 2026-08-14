@@ -14,6 +14,8 @@ export interface SocialPost {
   githubUrl?: string;
   imageUrl?: string;
   status: "Draft" | "Posted" | "Scheduled";
+  scheduledAt?: string; // ISO Date string for future scheduled publication
+  postedAt?: string;    // ISO Date string when published
   createdAt: string;
 }
 
@@ -173,10 +175,16 @@ export async function saveSocialPosts(posts: SocialPost[]): Promise<SocialPost[]
   return memorySocialPosts;
 }
 
-export async function createSocialPost(proj: Partial<MiniProject>, imageUrl?: string): Promise<SocialPost> {
+export async function createSocialPost(
+  proj: Partial<MiniProject>,
+  imageUrl?: string,
+  options?: { scheduledAt?: string; status?: "Draft" | "Posted" | "Scheduled" }
+): Promise<SocialPost> {
   const current = await getSocialPosts();
   const img = imageUrl || "https://www.aiwithab.site/profile.jpg";
   const redditData = generateRedditPost(proj, img);
+
+  const isScheduled = !!options?.scheduledAt && new Date(options.scheduledAt).getTime() > Date.now();
 
   const newPost: SocialPost = {
     id: `post-${Date.now()}`,
@@ -190,13 +198,52 @@ export async function createSocialPost(proj: Partial<MiniProject>, imageUrl?: st
     vercelUrl: proj.vercelUrl || "https://www.aiwithab.site/mini-projects",
     githubUrl: proj.githubUrl,
     imageUrl: img,
-    status: "Draft",
+    status: isScheduled ? "Scheduled" : (options?.status || "Draft"),
+    scheduledAt: isScheduled ? options?.scheduledAt : undefined,
     createdAt: new Date().toISOString(),
   };
 
   const updated = [newPost, ...current];
   await saveSocialPosts(updated);
   return newPost;
+}
+
+export async function scheduleSocialPost(id: string, scheduledAt: string): Promise<SocialPost> {
+  const posts = await getSocialPosts();
+  const index = posts.findIndex((p) => p.id === id);
+  if (index === -1) throw new Error("Social post not found");
+
+  posts[index] = {
+    ...posts[index],
+    status: "Scheduled",
+    scheduledAt,
+  };
+
+  await saveSocialPosts(posts);
+  return posts[index];
+}
+
+export async function cancelSocialPostSchedule(id: string): Promise<SocialPost> {
+  const posts = await getSocialPosts();
+  const index = posts.findIndex((p) => p.id === id);
+  if (index === -1) throw new Error("Social post not found");
+
+  posts[index] = {
+    ...posts[index],
+    status: "Draft",
+    scheduledAt: undefined,
+  };
+
+  await saveSocialPosts(posts);
+  return posts[index];
+}
+
+export async function getDueScheduledSocialPosts(): Promise<SocialPost[]> {
+  const posts = await getSocialPosts();
+  const now = Date.now();
+  return posts.filter(
+    (p) => p.status === "Scheduled" && p.scheduledAt && new Date(p.scheduledAt).getTime() <= now
+  );
 }
 
 export async function deleteSocialPost(id: string): Promise<boolean> {

@@ -13,6 +13,7 @@ export interface BlogPost {
   tags: string[];
   coverImage?: string;
   published: boolean;
+  scheduledAt?: string; // ISO Date string for future scheduled publication
   updatedAt: string;
   helpfulCount?: number;
   notHelpfulCount?: number;
@@ -153,15 +154,49 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
     console.error("[getAllBlogs] Exception:", err);
   }
 
-  return Array.from(map.values()).sort(
+  const allList = Array.from(map.values()).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+
+  // Auto-promote any scheduled blogs whose scheduledAt time has passed
+  const now = Date.now();
+  let needsPersist = false;
+  const updatedList = allList.map((post) => {
+    if (post.scheduledAt && new Date(post.scheduledAt).getTime() <= now) {
+      needsPersist = true;
+      return {
+        ...post,
+        published: true,
+        date: post.scheduledAt.slice(0, 10),
+        scheduledAt: undefined,
+        updatedAt: new Date().toISOString(),
+      };
+    }
+    return post;
+  });
+
+  if (needsPersist) {
+    // Background async persist without blocking read
+    saveAllBlogs(updatedList).catch((err) =>
+      console.warn("[getAllBlogs] Auto-promote persist notice:", err)
+    );
+  }
+
+  return updatedList;
 }
 
 export async function getPublishedBlogs(): Promise<BlogPost[]> {
   try {
     const posts = await getAllBlogs();
-    return posts.filter((p) => p.published !== false);
+    const now = Date.now();
+    return posts.filter((p) => {
+      if (p.published === false) return false;
+      // If scheduled in the future, don't show on public blog list
+      if (p.scheduledAt && new Date(p.scheduledAt).getTime() > now) {
+        return false;
+      }
+      return true;
+    });
   } catch {
     return [];
   }
@@ -175,6 +210,7 @@ export async function getBlogBySlug(
     const posts = await getAllBlogs();
     const decoded = decodeURIComponent(slug);
     const targetSlug = slugify(slug);
+    const now = Date.now();
 
     const post = posts.find(
       (p) =>
@@ -184,7 +220,12 @@ export async function getBlogBySlug(
     );
 
     if (!post) return undefined;
-    if (!options?.includeDrafts && post.published === false) return undefined;
+    if (!options?.includeDrafts) {
+      if (post.published === false) return undefined;
+      if (post.scheduledAt && new Date(post.scheduledAt).getTime() > now) {
+        return undefined;
+      }
+    }
     return post;
   } catch {
     return undefined;
@@ -229,6 +270,7 @@ export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
         tags: p.tags,
         coverImage: p.coverImage,
         published: p.published,
+        scheduledAt: p.scheduledAt,
         updatedAt: p.updatedAt,
       }));
       await supabaseDbUpsert("blogs", dbPayload, "slug");
@@ -254,6 +296,7 @@ export interface BlogInput {
   tags?: string[];
   coverImage?: string;
   published?: boolean;
+  scheduledAt?: string;
   slug?: string;
   helpfulCount?: number;
   notHelpfulCount?: number;
@@ -275,18 +318,21 @@ export async function createBlog(input: BlogInput): Promise<BlogPost> {
 
   const tags = (input.tags ?? []).map((t) => t.trim()).filter(Boolean);
 
+  const isScheduled = !!input.scheduledAt && new Date(input.scheduledAt).getTime() > Date.now();
+
   const post: BlogPost = {
     slug,
     title: input.title.trim(),
     excerpt: input.excerpt.trim(),
     content: input.content.trim(),
-    date: input.date || new Date().toISOString().slice(0, 10),
+    date: isScheduled && input.scheduledAt ? input.scheduledAt.slice(0, 10) : input.date || new Date().toISOString().slice(0, 10),
     readTime: estimateReadTime(input.content),
     tags,
     coverImage:
       input.coverImage?.trim() ||
       getDefaultBlogCoverImage(input.title, tags),
-    published: input.published ?? true,
+    published: isScheduled ? false : (input.published ?? true),
+    scheduledAt: isScheduled ? input.scheduledAt : undefined,
     updatedAt: new Date().toISOString(),
     helpfulCount: input.helpfulCount ?? 0,
     notHelpfulCount: input.notHelpfulCount ?? 0,
@@ -323,13 +369,17 @@ export async function updateBlog(
   }
 
   const content = input.content?.trim() ?? current.content;
+  const isScheduled = input.scheduledAt !== undefined
+    ? (!!input.scheduledAt && new Date(input.scheduledAt).getTime() > Date.now())
+    : (!!current.scheduledAt && new Date(current.scheduledAt).getTime() > Date.now());
+
   const updated: BlogPost = {
     ...current,
     slug: nextSlug,
     title: input.title?.trim() ?? current.title,
     excerpt: input.excerpt?.trim() ?? current.excerpt,
     content,
-    date: input.date ?? current.date,
+    date: input.date ?? (isScheduled && input.scheduledAt ? input.scheduledAt.slice(0, 10) : current.date),
     tags:
       input.tags !== undefined
         ? input.tags.map((t) => t.trim()).filter(Boolean)
@@ -338,8 +388,12 @@ export async function updateBlog(
       input.coverImage !== undefined
         ? input.coverImage.trim() || undefined
         : current.coverImage,
-    published:
-      input.published !== undefined ? input.published : current.published,
+    published: isScheduled
+      ? false
+      : input.published !== undefined
+        ? input.published
+        : current.published,
+    scheduledAt: input.scheduledAt !== undefined ? input.scheduledAt : current.scheduledAt,
     readTime: estimateReadTime(content),
     updatedAt: new Date().toISOString(),
     helpfulCount: input.helpfulCount !== undefined ? input.helpfulCount : current.helpfulCount ?? 0,
@@ -351,6 +405,56 @@ export async function updateBlog(
   posts[index] = updated;
   await saveAllBlogs(posts);
   return updated;
+}
+
+export async function scheduleBlog(slug: string, scheduledAt: string): Promise<BlogPost> {
+  return updateBlog(slug, {
+    scheduledAt,
+    published: false,
+  });
+}
+
+export async function cancelBlogSchedule(slug: string): Promise<BlogPost> {
+  return updateBlog(slug, {
+    scheduledAt: undefined,
+    published: false, // Remains draft
+  });
+}
+
+export async function publishBlogNow(slug: string): Promise<BlogPost> {
+  return updateBlog(slug, {
+    scheduledAt: undefined,
+    published: true,
+    date: new Date().toISOString().slice(0, 10),
+  });
+}
+
+export async function publishScheduledBlogs(): Promise<{ publishedCount: number; publishedSlugs: string[] }> {
+  const posts = await getAllBlogs();
+  const now = Date.now();
+  const publishedSlugs: string[] = [];
+
+  let changed = false;
+  const updated = posts.map((p) => {
+    if (p.scheduledAt && new Date(p.scheduledAt).getTime() <= now) {
+      changed = true;
+      publishedSlugs.push(p.slug);
+      return {
+        ...p,
+        published: true,
+        scheduledAt: undefined,
+        date: new Date().toISOString().slice(0, 10),
+        updatedAt: new Date().toISOString(),
+      };
+    }
+    return p;
+  });
+
+  if (changed) {
+    await saveAllBlogs(updated);
+  }
+
+  return { publishedCount: publishedSlugs.length, publishedSlugs };
 }
 
 export async function deleteBlog(slug: string): Promise<void> {

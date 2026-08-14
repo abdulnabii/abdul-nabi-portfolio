@@ -3,12 +3,14 @@ import {
   deleteBlog,
   getBlogBySlug,
   updateBlog,
+  scheduleBlog,
+  cancelBlogSchedule,
+  publishBlogNow,
 } from "@/lib/blog-store";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
-
-import { revalidatePath } from "next/cache";
 
 interface RouteContext {
   params: { slug: string };
@@ -55,8 +57,33 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       tags?: string[] | string;
       coverImage?: string;
       published?: boolean;
+      scheduledAt?: string | null;
       slug?: string;
+      action?: "schedule" | "cancel-schedule" | "publish-now";
     };
+
+    // Quick actions support
+    if (body.action === "schedule" && body.scheduledAt) {
+      const post = await scheduleBlog(context.params.slug, body.scheduledAt);
+      revalidatePath("/", "layout");
+      revalidatePath("/blog", "layout");
+      return NextResponse.json({ post });
+    }
+
+    if (body.action === "cancel-schedule") {
+      const post = await cancelBlogSchedule(context.params.slug);
+      revalidatePath("/", "layout");
+      revalidatePath("/blog", "layout");
+      return NextResponse.json({ post });
+    }
+
+    if (body.action === "publish-now") {
+      const post = await publishBlogNow(context.params.slug);
+      revalidatePath("/", "layout");
+      revalidatePath("/blog", "layout");
+      revalidatePath(`/blog/${context.params.slug}`, "layout");
+      return NextResponse.json({ post });
+    }
 
     const tags =
       body.tags === undefined
@@ -73,6 +100,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       tags,
       coverImage: body.coverImage,
       published: body.published,
+      scheduledAt: body.scheduledAt === null ? undefined : body.scheduledAt,
       newSlug: body.slug,
     });
 

@@ -3,6 +3,7 @@ import {
   createBlog,
   getAllBlogs,
   getPublishedBlogs,
+  publishScheduledBlogs,
 } from "@/lib/blog-store";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
@@ -22,6 +23,9 @@ export async function GET(request: NextRequest) {
       const posts = await getAllBlogs();
       return NextResponse.json({ posts });
     }
+
+    // Auto-promote any due scheduled posts on public GET
+    await publishScheduledBlogs();
 
     const posts = await getPublishedBlogs();
     return NextResponse.json({ posts });
@@ -48,6 +52,7 @@ export async function POST(request: NextRequest) {
       tags?: string[] | string;
       coverImage?: string;
       published?: boolean;
+      scheduledAt?: string;
       slug?: string;
     };
 
@@ -72,6 +77,7 @@ export async function POST(request: NextRequest) {
       tags,
       coverImage: body.coverImage,
       published: body.published,
+      scheduledAt: body.scheduledAt,
       slug: body.slug,
     });
 

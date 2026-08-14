@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { runAutoBlog } from "@/lib/ai-blog-generator";
+import { publishScheduledBlogs } from "@/lib/blog-store";
 import { supabaseDbQuery, supabaseDbUpsert } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -34,15 +35,29 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if automation is enabled
+    // 1. First publish any scheduled blog posts that have reached their scheduledAt time
+    const scheduledResult = await publishScheduledBlogs();
+    if (scheduledResult.publishedCount > 0) {
+      console.log(`[auto-blog-cron] Auto-published ${scheduledResult.publishedCount} scheduled posts:`, scheduledResult.publishedSlugs);
+      revalidatePath("/", "layout");
+      revalidatePath("/blog", "layout");
+      scheduledResult.publishedSlugs.forEach((slug) => revalidatePath(`/blog/${slug}`, "layout"));
+    }
+
+    // 2. Check if auto-generator automation is enabled
     const enabled = await isAutoBlogEnabled();
     if (!enabled) {
-      console.log("[auto-blog-cron] Automation is disabled — skipping run.");
-      return NextResponse.json({ ok: true, skipped: true, reason: "Automation disabled by admin" });
+      console.log("[auto-blog-cron] Automation generator is disabled — skipping new post generation.");
+      return NextResponse.json({
+        ok: true,
+        skipped: true,
+        scheduledPublished: scheduledResult.publishedCount,
+        reason: "Automation generator disabled by admin",
+      });
     }
 
     const startTime = Date.now();
-    console.log("[auto-blog-cron] Starting daily auto-blog run...");
+    console.log("[auto-blog-cron] Starting daily auto-blog generation run...");
 
     // Run the auto-blog generator (up to 3 posts)
     const result = await runAutoBlog(3);
@@ -66,6 +81,7 @@ export async function GET(req: NextRequest) {
         value: JSON.stringify({
           lastRun: new Date().toISOString(),
           created: result.created,
+          scheduledPublished: scheduledResult.publishedCount,
           skipped: result.skipped,
           errors: result.errors,
           durationSeconds: duration,
@@ -78,6 +94,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       ok: true,
       created: result.created,
+      scheduledPublished: scheduledResult.publishedCount,
       skipped: result.skipped,
       errors: result.errors,
       durationSeconds: duration,

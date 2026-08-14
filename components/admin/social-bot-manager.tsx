@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import type { MiniProject } from "@/lib/mini-projects-store";
@@ -12,6 +12,7 @@ import {
   Calendar,
   Check,
   CheckCircle2,
+  Clock,
   Copy,
   ExternalLink,
   Image as ImageIcon,
@@ -21,16 +22,30 @@ import {
   Lock,
   MessageSquare,
   Play,
-  PlayCircle,
   Power,
-  Rocket,
   Send,
   Share2,
   Sparkles,
   Trash2,
   Twitter,
   X,
+  FileText,
 } from "lucide-react";
+
+type CampaignTab = "all" | "drafts" | "scheduled" | "posted";
+
+function formatRelativeTime(targetIso: string): string {
+  const diffMs = new Date(targetIso).getTime() - Date.now();
+  if (diffMs <= 0) return "due now";
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  if (diffMinutes < 60) return `in ${diffMinutes}m`;
+  const diffHours = Math.floor(diffMinutes / 60);
+  const remMinutes = diffMinutes % 60;
+  if (diffHours < 24) return `in ${diffHours}h ${remMinutes > 0 ? `${remMinutes}m` : ""}`;
+  const diffDays = Math.floor(diffHours / 24);
+  const remHours = diffHours % 24;
+  return `in ${diffDays}d ${remHours > 0 ? `${remHours}h` : ""}`;
+}
 
 export function SocialBotManager() {
   const [miniProjects, setMiniProjects] = useState<MiniProject[]>([]);
@@ -53,21 +68,36 @@ export function SocialBotManager() {
   const [customDesc, setCustomDesc] = useState("");
   const [imageUrlInput, setImageUrlInput] = useState("https://www.aiwithab.site/api/project-banner?day=1");
 
+  // Scheduling state for Generator
+  const [genActionType, setGenActionType] = useState<"draft" | "schedule" | "immediate">("draft");
+  const [genScheduledDateTime, setGenScheduledDateTime] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(10, 0, 0, 0);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}T10:00`;
+  });
+
+  // Scheduling Modal state for Existing Post
+  const [schedulingTarget, setSchedulingTarget] = useState<SocialPost | null>(null);
+  const [modalScheduledDateTime, setModalScheduledDateTime] = useState("");
+  const [savingPostSchedule, setSavingPostSchedule] = useState(false);
+
   const [activeTab, setActiveTab] = useState<"linkedin" | "reddit" | "twitter">("linkedin");
+  const [campaignTab, setCampaignTab] = useState<CampaignTab>("all");
+  const [campaignSearch, setCampaignSearch] = useState("");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [activePost, setActivePost] = useState<SocialPost | null>(null);
 
   useEffect(() => {
     fetchData();
-    // Read OAuth result from URL params (set by callback redirect)
+    // Read OAuth result from URL params
     const params = new URLSearchParams(window.location.search);
     const oauthSuccess = params.get("oauth_success");
     const oauthError = params.get("oauth_error");
     if (oauthSuccess) {
       setStatusMessage({ type: "success", text: decodeURIComponent(oauthSuccess) });
-      // Also auto-verify token
       setTimeout(() => handleTestConnection(), 1500);
-      // Clean URL
       window.history.replaceState({}, "", window.location.pathname);
     } else if (oauthError) {
       setStatusMessage({ type: "error", text: decodeURIComponent(oauthError) });
@@ -112,6 +142,36 @@ export function SocialBotManager() {
     }
   }
 
+  // Derived counts for tabs
+  const draftCount = useMemo(
+    () => socialPosts.filter((p) => p.status === "Draft").length,
+    [socialPosts]
+  );
+  const scheduledCount = useMemo(
+    () => socialPosts.filter((p) => p.status === "Scheduled").length,
+    [socialPosts]
+  );
+  const postedCount = useMemo(
+    () => socialPosts.filter((p) => p.status === "Posted").length,
+    [socialPosts]
+  );
+
+  const filteredCampaigns = useMemo(() => {
+    return socialPosts.filter((post) => {
+      const matchesSearch =
+        post.title.toLowerCase().includes(campaignSearch.toLowerCase()) ||
+        post.category.toLowerCase().includes(campaignSearch.toLowerCase());
+
+      const matchesTab =
+        campaignTab === "all" ||
+        (campaignTab === "drafts" && post.status === "Draft") ||
+        (campaignTab === "scheduled" && post.status === "Scheduled") ||
+        (campaignTab === "posted" && post.status === "Posted");
+
+      return matchesSearch && matchesTab;
+    });
+  }, [socialPosts, campaignSearch, campaignTab]);
+
   async function handleToggleAutoPoster(active: boolean) {
     const nextCreds = { ...creds, autoPosterActive: active };
     setCreds(nextCreds);
@@ -123,7 +183,7 @@ export function SocialBotManager() {
       });
       setStatusMessage({
         type: "success",
-        text: active ? "🤖 Auto-Poster Bot Activated! Will post automatically on schedule." : "⏸️ Auto-Poster Bot Paused.",
+        text: active ? "🤖 Auto-Poster Bot Activated! Will execute scheduled posts and rotations automatically." : "⏸️ Auto-Poster Bot Paused.",
       });
     } catch {}
   }
@@ -140,7 +200,7 @@ export function SocialBotManager() {
           text: `⚡ Auto-Poster Cycle Finished! Target: ${data.log.projectTitle}. LinkedIn: ${data.log.linkedInStatus}. Reddit: ${data.log.redditStatus}`,
         });
         if (data.post) {
-          setSocialPosts((prev) => [data.post, ...prev]);
+          setSocialPosts((prev) => [data.post, ...prev.filter((p) => p.id !== data.post.id)]);
           setActivePost(data.post);
         }
         fetchData();
@@ -194,7 +254,6 @@ export function SocialBotManager() {
       const data = await res.json();
       setTokenTestResult(data);
       if (data.valid) {
-        // URN was auto-fetched & auto-saved
         setCreds((prev) => ({ ...prev, linkedInPersonUrn: data.urn }));
         await fetchData();
         setStatusMessage({ type: "success", text: `✅ LinkedIn token verified & saved! Connected as ${data.name || data.urn}` });
@@ -271,9 +330,33 @@ export function SocialBotManager() {
     setGenerating(true);
     setStatusMessage(null);
     try {
-      let payload: { miniProjectId?: string; customProj?: Partial<MiniProject>; imageUrl?: string } = {
+      let payload: {
+        miniProjectId?: string;
+        customProj?: Partial<MiniProject>;
+        imageUrl?: string;
+        scheduledAt?: string;
+        status?: "Draft" | "Scheduled" | "Posted";
+      } = {
         imageUrl: imageUrlInput || "https://www.aiwithab.site/profile.jpg",
       };
+
+      if (genActionType === "schedule") {
+        if (!genScheduledDateTime) {
+          setStatusMessage({ type: "error", text: "Please pick a scheduled date & time." });
+          setGenerating(false);
+          return;
+        }
+        const schedDate = new Date(genScheduledDateTime);
+        if (isNaN(schedDate.getTime()) || schedDate.getTime() <= Date.now()) {
+          setStatusMessage({ type: "error", text: "Scheduled date must be in the future." });
+          setGenerating(false);
+          return;
+        }
+        payload.scheduledAt = schedDate.toISOString();
+        payload.status = "Scheduled";
+      } else {
+        payload.status = "Draft";
+      }
 
       if (selectedProjectId === "custom") {
         payload.customProj = {
@@ -297,6 +380,12 @@ export function SocialBotManager() {
       if (data.ok && data.post) {
         setSocialPosts([data.post, ...socialPosts]);
         setActivePost(data.post);
+        setStatusMessage({
+          type: "success",
+          text: genActionType === "schedule"
+            ? `⏰ Post campaign drafted and scheduled for ${new Date(data.post.scheduledAt!).toLocaleString()}!`
+            : "✨ AI social campaign draft generated successfully!",
+        });
       }
     } catch (err) {
       console.error("Failed to generate social post", err);
@@ -323,9 +412,10 @@ export function SocialBotManager() {
           type: "success",
           text: data.message || `Successfully published directly to ${platform}!`,
         });
-        setActivePost({ ...activePost, status: "Posted" });
+        const updated = { ...activePost, status: "Posted" as const, postedAt: new Date().toISOString(), scheduledAt: undefined };
+        setActivePost(updated);
         setSocialPosts((prev) =>
-          prev.map((p) => (p.id === activePost.id ? { ...p, status: "Posted" } : p))
+          prev.map((p) => (p.id === activePost.id ? updated : p))
         );
       } else {
         setStatusMessage({
@@ -337,6 +427,85 @@ export function SocialBotManager() {
       setStatusMessage({ type: "error", text: err.message || "Failed to publish post." });
     } finally {
       setPublishing(null);
+    }
+  }
+
+  function openPostScheduleModal(post: SocialPost) {
+    setSchedulingTarget(post);
+    if (post.scheduledAt) {
+      try {
+        const d = new Date(post.scheduledAt);
+        const pad = (n: number) => String(n).padStart(2, "0");
+        setModalScheduledDateTime(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+        return;
+      } catch {}
+    }
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(10, 0, 0, 0);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    setModalScheduledDateTime(`${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}T10:00`);
+  }
+
+  async function handleConfirmPostSchedule() {
+    if (!schedulingTarget || !modalScheduledDateTime) return;
+    const schedDate = new Date(modalScheduledDateTime);
+    if (isNaN(schedDate.getTime()) || schedDate.getTime() <= Date.now()) {
+      setStatusMessage({ type: "error", text: "Please select a future date and time." });
+      return;
+    }
+
+    setSavingPostSchedule(true);
+    try {
+      const res = await fetch("/api/admin/social-bot/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          postId: schedulingTarget.id,
+          scheduledAt: schedDate.toISOString(),
+        }),
+      });
+      const data = await res.json();
+      if (data.ok && data.post) {
+        setSocialPosts((prev) => prev.map((p) => (p.id === schedulingTarget.id ? data.post : p)));
+        if (activePost?.id === schedulingTarget.id) {
+          setActivePost(data.post);
+        }
+        setStatusMessage({
+          type: "success",
+          text: `⏰ Post scheduled for ${schedDate.toLocaleString()}!`,
+        });
+        setSchedulingTarget(null);
+      } else {
+        setStatusMessage({ type: "error", text: data.error || "Failed to schedule post." });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: "error", text: err.message || "Failed to schedule post." });
+    } finally {
+      setSavingPostSchedule(false);
+    }
+  }
+
+  async function handleCancelPostSchedule(post: SocialPost) {
+    try {
+      const res = await fetch("/api/admin/social-bot/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          postId: post.id,
+          action: "cancel",
+        }),
+      });
+      const data = await res.json();
+      if (data.ok && data.post) {
+        setSocialPosts((prev) => prev.map((p) => (p.id === post.id ? data.post : p)));
+        if (activePost?.id === post.id) {
+          setActivePost(data.post);
+        }
+        setStatusMessage({ type: "success", text: "Schedule cancelled — reverted to draft." });
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: "error", text: "Failed to cancel schedule." });
     }
   }
 
@@ -387,7 +556,6 @@ export function SocialBotManager() {
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
   }
 
-  // Token is "linked" when it exists AND either hasn't been tested yet, or the test passed
   const isLinkedInLinked = !!(creds.linkedInAccessToken && creds.linkedInPersonUrn);
   const isTokenVerified = tokenTestResult?.valid === true;
   const isTokenFailed = tokenTestResult?.valid === false;
@@ -410,7 +578,7 @@ export function SocialBotManager() {
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-300">
                 <Bot className="h-4 w-4" />
-                Automated Social Content Engine
+                Automated Social Content &amp; Scheduler
               </span>
 
               {isLinkedInLinked && isTokenVerified ? (
@@ -453,10 +621,10 @@ export function SocialBotManager() {
             </div>
 
             <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              Automated Work Content & Social Bot Scheduler
+              Social Content Studio &amp; Auto-Scheduler
             </h2>
             <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-              Auto-generate and auto-publish content related to your mini projects & portfolio builds with picture banners to LinkedIn and Reddit on a scheduled cycle!
+              Draft, schedule, and automatically publish promotion campaigns for your mini projects with picture banners to LinkedIn and Reddit on your exact timetable!
             </p>
           </div>
 
@@ -476,7 +644,7 @@ export function SocialBotManager() {
         <div className="rounded-2xl border border-indigo-500/30 bg-black/40 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-4 text-xs">
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-medium">Auto-Poster Status:</span>
+              <span className="text-slate-400 font-medium">Auto-Poster Cron Engine:</span>
               <button
                 onClick={() => handleToggleAutoPoster(!creds.autoPosterActive)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -494,7 +662,7 @@ export function SocialBotManager() {
             {creds.lastAutoPostAt && (
               <div className="text-slate-400 flex items-center gap-1 font-mono">
                 <Calendar className="h-3.5 w-3.5 text-indigo-400" />
-                Last Posted: {new Date(creds.lastAutoPostAt).toLocaleDateString()} {new Date(creds.lastAutoPostAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                Last Triggered: {new Date(creds.lastAutoPostAt).toLocaleDateString()} {new Date(creds.lastAutoPostAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
             )}
           </div>
@@ -507,74 +675,74 @@ export function SocialBotManager() {
             {runningAutoCycle ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Running Auto-Post Cycle...
+                Executing Cron Cycle...
               </>
             ) : (
               <>
                 <Play className="h-4 w-4 fill-white" />
-                ⚡ Run Auto-Post Cycle Now
+                ⚡ Run Auto-Poster &amp; Process Due Posts Now
               </>
             )}
           </Button>
         </div>
 
         {/* Generator Controls */}
-        <div className="pt-2 grid gap-4 md:grid-cols-3 items-end">
-          <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              Select Mini Project to Promote
-            </label>
-            <select
-              value={selectedProjectId}
-              onChange={(e) => {
-                const val = e.target.value;
-                setSelectedProjectId(val);
-                if (val !== "custom") {
-                  const proj = miniProjects.find((p) => p.id === val);
-                  if (proj) {
-                    const banner =
-                      proj.dayNumber === 4
-                        ? "https://www.aiwithab.site/blood_sugar_banner.jpg"
-                        : `https://www.aiwithab.site/api/project-banner?day=${proj.dayNumber}`;
-                    setImageUrlInput(banner);
+        <div className="pt-2 space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 items-end">
+            <div>
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                1. Select Project to Promote
+              </label>
+              <select
+                value={selectedProjectId}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedProjectId(val);
+                  if (val !== "custom") {
+                    const proj = miniProjects.find((p) => p.id === val);
+                    if (proj) {
+                      const banner =
+                        proj.dayNumber === 4
+                          ? "https://www.aiwithab.site/blood_sugar_banner.jpg"
+                          : `https://www.aiwithab.site/api/project-banner?day=${proj.dayNumber}`;
+                      setImageUrlInput(banner);
+                    }
                   }
-                }
-              }}
-              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
-            >
-              {miniProjects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  Day {String(p.dayNumber).padStart(2, "0")} — {p.title}
-                </option>
-              ))}
-              <option value="custom">✏️ Custom Topic / Custom Project</option>
-            </select>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                <ImageIcon className="h-3.5 w-3.5 text-indigo-400" />
-                Picture / Banner Image URL
-              </label>
-              <label className="cursor-pointer text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-500/10 hover:bg-indigo-500/20 px-2 py-0.5 rounded-md border border-indigo-500/30 transition">
-                {uploadingImage ? (
-                  <><Loader2 className="h-3 w-3 animate-spin" /> Uploading...</>
-                ) : (
-                  <><ImageIcon className="h-3 w-3" /> Upload / Paste Image</>
-                )}
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  className="hidden"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) handleImageFileUpload(f);
-                  }}
-                />
-              </label>
+                }}
+                className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
+              >
+                {miniProjects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    Day {String(p.dayNumber).padStart(2, "0")} — {p.title} ({p.category})
+                  </option>
+                ))}
+                <option value="custom">✏️ Custom Topic / Custom Project</option>
+              </select>
             </div>
-            <div className="flex items-center gap-2">
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
+                  <ImageIcon className="h-3.5 w-3.5 text-indigo-400" />
+                  2. Picture / Banner Image URL
+                </label>
+                <label className="cursor-pointer text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-500/10 hover:bg-indigo-500/20 px-2 py-0.5 rounded-md border border-indigo-500/30 transition">
+                  {uploadingImage ? (
+                    <><Loader2 className="h-3 w-3 animate-spin" /> Uploading...</>
+                  ) : (
+                    <><ImageIcon className="h-3 w-3" /> Upload / Paste Image</>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleImageFileUpload(f);
+                    }}
+                  />
+                </label>
+              </div>
               <input
                 type="text"
                 value={imageUrlInput}
@@ -582,26 +750,92 @@ export function SocialBotManager() {
                   const val = e.target.value;
                   setImageUrlInput(val);
                   if (activePost) {
-                    const updatedPost: SocialPost = {
-                      ...activePost,
-                      imageUrl: val,
-                    };
+                    const updatedPost: SocialPost = { ...activePost, imageUrl: val };
                     setActivePost(updatedPost);
                     setSocialPosts((prev) => prev.map((p) => (p.id === activePost.id ? updatedPost : p)));
                   }
                 }}
                 onPaste={handleInputPaste}
-                placeholder="Paste URL or paste image directly from clipboard (Ctrl+V)..."
-                className="flex-1 rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
+                placeholder="Paste URL or image directly (Ctrl+V)..."
+                className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"
               />
             </div>
           </div>
 
-          <div>
+          {/* Generator Action Selector */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-3">
+            <label className="block text-xs font-bold uppercase tracking-wider text-indigo-300">
+              3. Generation &amp; Scheduling Action:
+            </label>
+            <div className="flex flex-wrap gap-2 sm:gap-4 items-center">
+              <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="genAction"
+                  value="draft"
+                  checked={genActionType === "draft"}
+                  onChange={() => setGenActionType("draft")}
+                  className="text-indigo-600"
+                />
+                <span>📝 Generate as Draft</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-indigo-300 font-semibold cursor-pointer">
+                <input
+                  type="radio"
+                  name="genAction"
+                  value="schedule"
+                  checked={genActionType === "schedule"}
+                  onChange={() => setGenActionType("schedule")}
+                  className="text-indigo-600"
+                />
+                <span className="flex items-center gap-1">⏰ Auto-Schedule for Future Date &amp; Time</span>
+              </label>
+            </div>
+
+            {genActionType === "schedule" && (
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-3 border-t border-white/10 animate-fade-in">
+                <label className="text-xs text-slate-400">Scheduled Date &amp; Time:</label>
+                <input
+                  type="datetime-local"
+                  value={genScheduledDateTime}
+                  onChange={(e) => setGenScheduledDateTime(e.target.value)}
+                  className="rounded-xl border border-indigo-500/40 bg-slate-950 px-3 py-1.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
+                />
+                <div className="flex flex-wrap gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setHours(d.getHours() + 2);
+                      const pad = (n: number) => String(n).padStart(2, "0");
+                      setGenScheduledDateTime(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+                    }}
+                    className="rounded bg-white/5 px-2 py-0.5 text-[10px] text-slate-300 hover:bg-white/10"
+                  >
+                    +2h
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 1);
+                      d.setHours(10, 0, 0, 0);
+                      const pad = (n: number) => String(n).padStart(2, "0");
+                      setGenScheduledDateTime(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T10:00`);
+                    }}
+                    className="rounded bg-white/5 px-2 py-0.5 text-[10px] text-slate-300 hover:bg-white/10"
+                  >
+                    Tomorrow 10 AM
+                  </button>
+                </div>
+              </div>
+            )}
+
             <Button
               onClick={handleGenerate}
               disabled={generating}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
             >
               {generating ? (
                 <>
@@ -611,7 +845,7 @@ export function SocialBotManager() {
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 text-amber-300" />
-                  Auto-Generate Social Draft
+                  {genActionType === "schedule" ? "Generate & Schedule Campaign ⏰" : "Auto-Generate Social Draft ✨"}
                 </>
               )}
             </Button>
@@ -622,7 +856,7 @@ export function SocialBotManager() {
       {/* Global Status Alert Banner */}
       {statusMessage && (
         <div
-          className={`rounded-2xl border p-4 flex items-center gap-3 text-xs font-semibold ${
+          className={`rounded-2xl border p-4 flex items-center gap-3 text-xs font-semibold animate-fade-in ${
             statusMessage.type === "success"
               ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
               : "border-rose-500/30 bg-rose-500/10 text-rose-300"
@@ -642,7 +876,7 @@ export function SocialBotManager() {
 
       {/* Main Campaign Workspace */}
       {activePost ? (
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
           {/* Active Post Studio */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-3 gap-4">
@@ -656,8 +890,23 @@ export function SocialBotManager() {
                       🟢 Direct Published
                     </span>
                   )}
+                  {activePost.status === "Scheduled" && (
+                    <span className="rounded-full bg-indigo-500/20 border border-indigo-500/40 px-2 py-0.5 text-[10px] font-bold text-indigo-300 flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Scheduled {activePost.scheduledAt ? `(${formatRelativeTime(activePost.scheduledAt)})` : ""}
+                    </span>
+                  )}
+                  {activePost.status === "Draft" && (
+                    <span className="rounded-full bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                      📝 Draft
+                    </span>
+                  )}
                 </div>
-                <h3 className="text-xl font-bold text-white">{activePost.title}</h3>
+                <h3 className="text-xl font-bold text-white mt-1">{activePost.title}</h3>
+                {activePost.scheduledAt && (
+                  <p className="text-xs text-indigo-300 font-mono mt-0.5">
+                    ⏰ Auto-Publishes on: {new Date(activePost.scheduledAt).toLocaleString()}
+                  </p>
+                )}
               </div>
 
               {/* Platform Switcher Tabs */}
@@ -698,6 +947,43 @@ export function SocialBotManager() {
               </div>
             </div>
 
+            {/* Quick Post Scheduling Bar */}
+            <div className="rounded-xl border border-indigo-500/20 bg-indigo-950/20 p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-indigo-400" />
+                <span className="text-slate-300">
+                  {activePost.status === "Scheduled"
+                    ? `Post is scheduled to auto-publish in ${formatRelativeTime(activePost.scheduledAt!)}.`
+                    : activePost.status === "Posted"
+                    ? "This post campaign has already been published."
+                    : "Draft post. You can schedule it to publish automatically."}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {activePost.status !== "Posted" && (
+                  <Button
+                    size="sm"
+                    onClick={() => openPostScheduleModal(activePost)}
+                    className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold"
+                  >
+                    <Clock className="h-3.5 w-3.5" />
+                    {activePost.status === "Scheduled" ? "Reschedule" : "Schedule Post"}
+                  </Button>
+                )}
+                {activePost.status === "Scheduled" && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleCancelPostSchedule(activePost)}
+                    className="text-slate-400 hover:text-white text-xs"
+                  >
+                    Cancel Schedule
+                  </Button>
+                )}
+              </div>
+            </div>
+
             {/* Platform Content Studio */}
             {activeTab === "linkedin" && (
               <GlassCard padding="lg" className="space-y-4 border-indigo-500/30">
@@ -722,7 +1008,7 @@ export function SocialBotManager() {
                       ) : (
                         <>
                           <Send className="h-3.5 w-3.5" />
-                          Approve & Direct Upload to LinkedIn 🚀
+                          Approve &amp; Direct Upload to LinkedIn 🚀
                         </>
                       )}
                     </Button>
@@ -811,7 +1097,7 @@ export function SocialBotManager() {
                       ) : (
                         <>
                           <Send className="h-3.5 w-3.5" />
-                          Approve & Direct Upload to Reddit 🚀
+                          Approve &amp; Direct Upload to Reddit 🚀
                         </>
                       )}
                     </Button>
@@ -922,44 +1208,118 @@ export function SocialBotManager() {
 
           {/* Saved Campaigns Sidebar */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Saved Campaigns ({socialPosts.length})
-            </h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                Campaigns ({socialPosts.length})
+              </h4>
+            </div>
+
+            {/* Campaign Category Filter Tabs */}
+            <div className="grid grid-cols-4 gap-1 p-1 bg-white/[0.03] border border-white/10 rounded-xl text-[10px] font-bold">
+              <button
+                onClick={() => setCampaignTab("all")}
+                className={`py-1 rounded-lg transition ${
+                  campaignTab === "all" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                All ({socialPosts.length})
+              </button>
+              <button
+                onClick={() => setCampaignTab("drafts")}
+                className={`py-1 rounded-lg transition ${
+                  campaignTab === "drafts" ? "bg-amber-600 text-white" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                Draft ({draftCount})
+              </button>
+              <button
+                onClick={() => setCampaignTab("scheduled")}
+                className={`py-1 rounded-lg transition ${
+                  campaignTab === "scheduled" ? "bg-indigo-500 text-white" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                Sched ({scheduledCount})
+              </button>
+              <button
+                onClick={() => setCampaignTab("posted")}
+                className={`py-1 rounded-lg transition ${
+                  campaignTab === "posted" ? "bg-emerald-600 text-white" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                Posted ({postedCount})
+              </button>
+            </div>
+
+            {/* Search */}
+            <input
+              type="text"
+              placeholder="Filter campaigns..."
+              value={campaignSearch}
+              onChange={(e) => setCampaignSearch(e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none"
+            />
+
             <div className="space-y-2.5 max-h-[600px] overflow-y-auto pr-1">
-              {socialPosts.map((post) => (
+              {filteredCampaigns.map((post) => (
                 <div
                   key={post.id}
                   onClick={() => {
                     setActivePost(post);
                     if (post.imageUrl) setImageUrlInput(post.imageUrl);
                   }}
-                  className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between gap-3 ${
+                  className={`p-3.5 rounded-2xl border transition cursor-pointer flex flex-col gap-2 ${
                     activePost?.id === post.id
                       ? "border-indigo-500 bg-indigo-500/10 shadow-md"
                       : "border-white/10 bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold text-white truncate">{post.title}</p>
-                      {post.status === "Posted" && (
-                        <span className="text-[10px] text-emerald-400 font-semibold">✓</span>
-                      )}
+                      <p className="text-[10px] text-slate-400 mt-0.5">
+                        {post.category}
+                      </p>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-0.5">
-                      {new Date(post.createdAt).toLocaleDateString()} • {post.category}
-                    </p>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(post.id);
+                      }}
+                      className="text-slate-500 hover:text-rose-400 p-1 rounded-lg transition"
+                      title="Delete post"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(post.id);
-                    }}
-                    className="text-slate-500 hover:text-rose-400 p-1 rounded-lg transition"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  <div className="flex items-center justify-between border-t border-white/5 pt-2 text-[10px]">
+                    {post.status === "Posted" ? (
+                      <span className="text-emerald-400 font-bold flex items-center gap-1">
+                        🟢 Direct Published
+                      </span>
+                    ) : post.status === "Scheduled" ? (
+                      <span className="text-indigo-300 font-bold flex items-center gap-1">
+                        <Clock className="h-3 w-3" /> {formatRelativeTime(post.scheduledAt!)}
+                      </span>
+                    ) : (
+                      <span className="text-amber-300 font-bold flex items-center gap-1">
+                        📝 Draft
+                      </span>
+                    )}
+
+                    {post.status !== "Posted" && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openPostScheduleModal(post);
+                        }}
+                        className="text-indigo-400 hover:text-indigo-300 underline font-semibold"
+                      >
+                        {post.status === "Scheduled" ? "Reschedule" : "Schedule"}
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -972,6 +1332,103 @@ export function SocialBotManager() {
           <p className="text-slate-400 text-xs mt-1 max-w-md mx-auto">
             Select a project above and click &quot;Auto-Generate Social Draft&quot; to draft posts for LinkedIn and Reddit!
           </p>
+        </div>
+      )}
+
+      {/* Post Scheduling Modal */}
+      {schedulingTarget && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+          <div className="w-full max-w-md rounded-3xl border border-indigo-500/30 bg-slate-900 p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-indigo-400" />
+                <h3 className="text-base font-bold text-white">Schedule Social Campaign</h3>
+              </div>
+              <button
+                onClick={() => setSchedulingTarget(null)}
+                className="text-slate-400 hover:text-white p-1"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300">
+              Target Campaign: <strong className="text-white">&ldquo;{schedulingTarget.title}&rdquo;</strong>
+            </p>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-indigo-200">
+                Choose Scheduled Publication Date &amp; Time:
+              </label>
+              <input
+                type="datetime-local"
+                value={modalScheduledDateTime}
+                onChange={(e) => setModalScheduledDateTime(e.target.value)}
+                className="w-full rounded-xl border border-indigo-500/40 bg-slate-950 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  const d = new Date();
+                  d.setHours(d.getHours() + 2);
+                  const pad = (n: number) => String(n).padStart(2, "0");
+                  setModalScheduledDateTime(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+                }}
+                className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-medium text-slate-300 hover:bg-white/10 transition"
+              >
+                +2 Hours
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const d = new Date();
+                  d.setDate(d.getDate() + 1);
+                  d.setHours(10, 0, 0, 0);
+                  const pad = (n: number) => String(n).padStart(2, "0");
+                  setModalScheduledDateTime(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T10:00`);
+                }}
+                className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-medium text-slate-300 hover:bg-white/10 transition"
+              >
+                Tomorrow 10:00 AM
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const d = new Date();
+                  d.setDate(d.getDate() + 1);
+                  d.setHours(16, 0, 0, 0);
+                  const pad = (n: number) => String(n).padStart(2, "0");
+                  setModalScheduledDateTime(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T16:00`);
+                }}
+                className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-medium text-slate-300 hover:bg-white/10 transition"
+              >
+                Tomorrow 4:00 PM
+              </button>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+              <Button
+                variant="secondary"
+                size="sm"
+                type="button"
+                onClick={() => setSchedulingTarget(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                type="button"
+                disabled={savingPostSchedule}
+                onClick={handleConfirmPostSchedule}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white"
+              >
+                {savingPostSchedule ? "Scheduling..." : "Confirm Schedule"}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
