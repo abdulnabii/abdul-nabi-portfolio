@@ -26,6 +26,9 @@ import {
 } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
+// Feature flag: set to true to re-enable the Voice Receptionist Agent
+const ENABLE_VOICE_AGENT = false;
+
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -43,7 +46,7 @@ const WELCOME: Message = {
   id: "welcome",
   role: "assistant",
   content:
-    "Hi! I'm **AB Assistant** — Abdul Nabi's portfolio AI 👋\n\nAsk me about his projects, skills, the 30-day challenge, how to hire him, or privacy & data policy.\n\nYou can also click **📞 Voice Call** at the top to speak directly with **Abdul Nabi's AI Receptionist**!",
+    "Hi! I'm **AB Assistant** — Abdul Nabi's portfolio AI 👋\n\nAsk me about his projects, skills, the 30-day challenge, how to hire him, or privacy & data policy.\n\nWhat would you like to know?",
 };
 
 const RECEPTIONIST_GREETING =
@@ -133,12 +136,17 @@ export function Chatbot() {
   const transcriptListRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  // Listen to external custom events (e.g. from Contact section "Call AI Receptionist")
+  // Listen to external custom events
   useEffect(() => {
     const handleOpenCall = () => {
-      setOpen(true);
-      setAssistantMode("call");
-      startCall();
+      if (ENABLE_VOICE_AGENT) {
+        setOpen(true);
+        setAssistantMode("call");
+        startCall();
+      } else {
+        setOpen(true);
+        setAssistantMode("chat");
+      }
     };
 
     const handleOpenChat = () => {
@@ -186,7 +194,7 @@ export function Chatbot() {
 
   // Initialize Speech Recognition if supported
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && ENABLE_VOICE_AGENT) {
       const SpeechRecognition =
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
@@ -230,7 +238,6 @@ export function Chatbot() {
       utterance.pitch = 1.05;
       utterance.lang = "en-US";
 
-      // Select natural or female receptionist voice if available
       const voices = window.speechSynthesis.getVoices();
       const preferred = voices.find(
         (v) =>
@@ -275,7 +282,6 @@ export function Chatbot() {
     setIsSpeaking(false);
     setIsListening(false);
 
-    // Auto-log the call inquiry to admin inbox if transcript has meaningful caller turns
     const callerTurns = callTranscript.filter((t) => t.role === "caller");
     if (callerTurns.length > 0 && !callLogged) {
       logCallSummary();
@@ -369,7 +375,6 @@ export function Chatbot() {
       setCallTranscript((prev) => [...prev, repTurn]);
       speakReceptionistText(reply);
 
-      // Check if call completed
       if (reply.toLowerCase().includes("have a great day") || reply.toLowerCase().includes("thanks for calling")) {
         setTimeout(() => {
           logCallSummary();
@@ -478,39 +483,26 @@ export function Chatbot() {
       {open && (
         <div
           className={cn(
-            "flex w-[min(100vw-2rem,430px)] flex-col overflow-hidden",
-            "rounded-3xl border border-white/15 bg-[#070c1b]/95 shadow-2xl backdrop-blur-2xl",
+            "flex w-[min(100vw-2rem,400px)] flex-col overflow-hidden",
+            "rounded-2xl border border-white/10 bg-[#070c1b]/95 shadow-2xl backdrop-blur-2xl",
             "animate-fade-up"
           )}
           role="dialog"
-          aria-label="Portfolio AI assistant and voice receptionist"
+          aria-label="Portfolio chat assistant"
         >
-          {/* ── Top Header & Mode Switcher ── */}
-          <div className="border-b border-white/[0.08] bg-[#0a0f1e]/90 p-3 space-y-2.5">
+          {/* ── Top Header ── */}
+          <div className="border-b border-white/[0.08] bg-[#0a0f1e]/90 p-3 space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-indigo-500/30 bg-gradient-to-br from-indigo-600/30 to-purple-600/20 text-indigo-300 shadow-md">
-                  {assistantMode === "call" ? (
-                    <PhoneCall className="h-4 w-4 text-emerald-400 animate-pulse" />
-                  ) : (
-                    <Bot className="h-4 w-4" />
-                  )}
+                <div className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-accent/30 bg-gradient-to-br from-accent/20 to-accent/5 text-accent-soft shadow-md">
+                  <Bot className="h-4 w-4" />
                   <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#070c1b] bg-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-white flex items-center gap-1.5">
-                    {assistantMode === "call" ? "Abdul Nabi Receptionist" : "AB Portfolio Assistant"}
-                    <span className="rounded bg-indigo-500/20 text-indigo-300 text-[10px] px-1.5 py-0.2 border border-indigo-500/30">
-                      {assistantMode === "call" ? "Voice Agent" : "AI"}
-                    </span>
-                  </p>
+                  <p className="text-sm font-semibold text-white">AB Assistant</p>
                   <p className="flex items-center gap-1 text-[11px] text-emerald-400">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                    {assistantMode === "call"
-                      ? callActive
-                        ? `Live Call (${formatTimer(callDuration)})`
-                        : "Ready to Call"
-                      : "Online · Ready to Help"}
+                    Online · Portfolio AI
                   </p>
                 </div>
               </div>
@@ -518,7 +510,7 @@ export function Chatbot() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setShowPrivacy((v) => !v)}
-                  className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] text-slate-400 transition hover:border-indigo-500/30 hover:text-indigo-300"
+                  className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] text-slate-400 transition hover:border-accent/30 hover:text-accent-soft"
                   aria-label="Privacy notice"
                   title="Privacy notice"
                 >
@@ -540,39 +532,41 @@ export function Chatbot() {
               </div>
             </div>
 
-            {/* Mode Switcher Tabs */}
-            <div className="grid grid-cols-2 gap-1 rounded-xl bg-white/[0.04] p-1 border border-white/5">
-              <button
-                onClick={() => {
-                  setAssistantMode("chat");
-                  if (callActive) endCall();
-                }}
-                className={cn(
-                  "flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg transition",
-                  assistantMode === "chat"
-                    ? "bg-indigo-600 text-white shadow-md"
-                    : "text-slate-400 hover:text-white"
-                )}
-              >
-                <MessageCircle className="h-3.5 w-3.5" />
-                Text Assistant
-              </button>
-              <button
-                onClick={() => {
-                  setAssistantMode("call");
-                  if (!callActive) startCall();
-                }}
-                className={cn(
-                  "flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg transition",
-                  assistantMode === "call"
-                    ? "bg-emerald-600 text-white shadow-md"
-                    : "text-slate-400 hover:text-white"
-                )}
-              >
-                <PhoneCall className="h-3.5 w-3.5" />
-                Voice Call Agent
-              </button>
-            </div>
+            {/* Mode Switcher Tabs (Hidden when ENABLE_VOICE_AGENT is false) */}
+            {ENABLE_VOICE_AGENT && (
+              <div className="grid grid-cols-2 gap-1 rounded-xl bg-white/[0.04] p-1 border border-white/5">
+                <button
+                  onClick={() => {
+                    setAssistantMode("chat");
+                    if (callActive) endCall();
+                  }}
+                  className={cn(
+                    "flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg transition",
+                    assistantMode === "chat"
+                      ? "bg-indigo-600 text-white shadow-md"
+                      : "text-slate-400 hover:text-white"
+                  )}
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Text Assistant
+                </button>
+                <button
+                  onClick={() => {
+                    setAssistantMode("call");
+                    if (!callActive) startCall();
+                  }}
+                  className={cn(
+                    "flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg transition",
+                    assistantMode === "call"
+                      ? "bg-emerald-600 text-white shadow-md"
+                      : "text-slate-400 hover:text-white"
+                  )}
+                >
+                  <PhoneCall className="h-3.5 w-3.5" />
+                  Voice Call Agent
+                </button>
+              </div>
+            )}
           </div>
 
           {/* ── Privacy Notice Banner ── */}
@@ -583,7 +577,7 @@ export function Chatbot() {
                 Privacy Notice
               </p>
               <p>
-                Conversations are processed in real-time. Logged call messages are delivered securely to Abdul Nabi&apos;s admin inbox. No data is sold or shared with third parties.
+                Chat messages are sent in real-time for AI processing. No chat history is stored on Abdul Nabi&apos;s servers. Contact form data is stored securely in Supabase and only accessible by Abdul Nabi. No data is sold or shared.
               </p>
               <button
                 onClick={() => setShowPrivacy(false)}
@@ -595,9 +589,9 @@ export function Chatbot() {
           )}
 
           {/* ══════════════════════════════════════════
-              MODE 1: VOICE CALL AGENT (Abdul Nabi Receptionist)
+              MODE 1: VOICE CALL AGENT (Hidden when disabled)
              ══════════════════════════════════════════ */}
-          {assistantMode === "call" && (
+          {ENABLE_VOICE_AGENT && assistantMode === "call" && (
             <div className="flex flex-col flex-1 bg-slate-950/60">
               {/* Voice Call Status & Visualizer Card */}
               <div className="p-4 border-b border-white/[0.08] bg-gradient-to-b from-indigo-950/30 to-transparent space-y-3">
@@ -785,7 +779,6 @@ export function Chatbot() {
                     disabled={callProcessing}
                   />
 
-                  {/* Microphone Toggle Button */}
                   <button
                     type="button"
                     onClick={toggleListening}
@@ -810,7 +803,6 @@ export function Chatbot() {
                   </button>
                 </form>
 
-                {/* Call End / Redial Button */}
                 <div className="flex items-center justify-between gap-2 pt-1">
                   {callActive ? (
                     <Button
@@ -837,14 +829,14 @@ export function Chatbot() {
           )}
 
           {/* ══════════════════════════════════════════
-              MODE 2: CHAT ASSISTANT (AB Assistant)
+              MODE 2: CHAT ASSISTANT (Default Text Assistant)
              ══════════════════════════════════════════ */}
-          {assistantMode === "chat" && (
+          {(!ENABLE_VOICE_AGENT || assistantMode === "chat") && (
             <>
               {/* Message List */}
               <div
                 ref={listRef}
-                className="flex max-h-[360px] min-h-[260px] flex-col gap-3 overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10"
+                className="flex max-h-[380px] min-h-[260px] flex-col gap-3 overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10"
               >
                 {messages.map((message) => (
                   <div
@@ -989,7 +981,7 @@ export function Chatbot() {
 
       {/* ── FAB Toggle Button ── */}
       <div className="flex items-center gap-2">
-        {!open && (
+        {ENABLE_VOICE_AGENT && !open && (
           <button
             onClick={() => {
               setOpen(true);

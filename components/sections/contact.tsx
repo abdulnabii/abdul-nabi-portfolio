@@ -274,7 +274,7 @@ export function Contact() {
                   </span>
                 </a>
 
-                {/* Voice Call Receptionist Tile */}
+                {/* Voice Call Receptionist Tile (Temporarily Hidden)
                 <button
                   type="button"
                   onClick={() => {
@@ -302,6 +302,7 @@ export function Contact() {
                     📞 Call Now
                   </span>
                 </button>
+                */}
 
                 {/* Location Tile */}
                 <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
