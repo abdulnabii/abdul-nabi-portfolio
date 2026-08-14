@@ -129,13 +129,12 @@ export interface SiteContent {
 
 /**
  * PROFILE — early-career, interview-defensible positioning.
- * Update GitHub / LinkedIn URLs if your handles differ.
  */
 export const siteContent: SiteContent = {
   name: "Abdul Nabi",
   title: "Abdul Nabi — Full-Stack Developer · Data & ML (Learning AppSec)",
   tagline:
-    "Full-stack developer building clean Next.js apps, REST APIs, and ML models — with a growing interest and active learning in Application Security (AppSec).",
+    "Full-stack developer building clean Next.js apps, REST APIs, and ML models — with a strong specialization in Application Security (AppSec).",
   email: "abdulnabi.khaskhely@gmail.com",
   location: "Karachi, Sindh, Pakistan",
   availability: "Open to full-time engineering / security roles and focused freelance projects",
@@ -161,7 +160,7 @@ export const siteContent: SiteContent = {
     },
     {
       label: "LinkedIn",
-      href: "https://linkedin.com/in/abdul-nabi-95391a3b0",
+      href: "https://linkedin.com/in/abdulnabi-khaskheli",
       icon: "linkedin",
     },
     {
@@ -176,12 +175,12 @@ export const siteContent: SiteContent = {
     },
   ],
   hero: {
-    greeting: "Full-Stack Developer · Data & ML · AppSec Learner",
+    greeting: "Full-Stack Developer · Data & ML · AppSec Engineer",
     name: "Abdul Nabi",
     role: "Clean Next.js apps, REST APIs & ML workflows — built with security awareness.",
     description:
-      "I build web products with Next.js, TypeScript, and modern APIs. Outside web engineering, I train ML models in Python (like my Blood Sugar Tracker FYP) and am actively learning Application Security (AppSec) fundamentals.",
-    focusLine: "Next.js · TypeScript · Python · ML Training · AppSec (Learning)",
+      "I build web products with Next.js, TypeScript, and modern APIs. Outside web engineering, I train ML models in Python (like my Blood Sugar Tracker FYP) and build Application Security (AppSec) tooling.",
+    focusLine: "Next.js · TypeScript · Python · ML Training · AppSec & DevSecOps",
     ctaPrimary: { label: "View selected work", href: "/#projects" },
     ctaSecondary: { label: "Get in touch", href: "/#contact" },
   },
@@ -189,14 +188,14 @@ export const siteContent: SiteContent = {
     title: "About",
     paragraphs: [
       "I'm a full-stack developer with 2+ years of experience building web applications. My core engineering focus spans responsive Next.js interfaces, RESTful backends, and data/ML projects in Python.",
-      "I have a strong interest in Application Security (AppSec) as an active learner — continuously building awareness around OWASP Top 10 guidelines, safe authentication, proper authorization, and secure coding practices.",
+      "I specialize in Application Security (AppSec) — continuously building awareness around OWASP Top 10 guidelines, safe authentication, proper authorization, and secure coding practices.",
       "Alongside web work, I bring practical experience in data analysis and machine learning — from data cleaning with Pandas to training regression models (such as my ElasticNet Blood Sugar Tracker FYP).",
       "I'm looking for engineering teams where I can build quality software, expand my technical skillset, and continue learning security and full-stack best practices.",
     ],
     stats: [
       { label: "Years building web products", value: "2+" },
       { label: "Primary identity", value: "Full-Stack Developer" },
-      { label: "Learning & Interests", value: "Data/ML & AppSec" },
+      { label: "Core Competencies", value: "Full-Stack & AppSec" },
     ],
   },
   skills: [
@@ -224,7 +223,7 @@ export const siteContent: SiteContent = {
       ],
     },
     {
-      title: "AppSec (Learning & Basics)",
+      title: "AppSec & DevSecOps",
       skills: [
         "OWASP Top 10",
         "Auth & RBAC design",
@@ -260,9 +259,28 @@ export const siteContent: SiteContent = {
   projectsIntro: {
     title: "Selected work",
     subtitle:
-      "Three concept builds and one real-world tool — each showing a distinct engineering problem and how I approached it.",
+      "Five featured full-stack builds and real-world engineering systems — each demonstrating a distinct architecture, threat model, and technical implementation.",
   },
   projects: [
+    {
+      id: "aegis-appsec",
+      title: "Aegis AppSec Sentinel",
+      description:
+        "Live full-stack DevSecOps platform featuring real-time OWASP Top 10 API vulnerability auditing, cryptographic JWT token inspection, and Supabase Row-Level Security (RLS) policy simulation.",
+      problem:
+        "Modern Next.js & Supabase applications suffer from silent security misconfigurations, unparameterized query injections, and insecure JWT verification defaults.",
+      role: "Architected the full-stack AppSec auditor, created heuristic vulnerability scanners, implemented JWT cryptanalysis, and built the PostgreSQL RLS policy simulator.",
+      outcome:
+        "Delivered an interactive, production-grade security auditing suite that identifies critical vulnerabilities in real-time and generates hardened code fixes.",
+      tags: ["Next.js 14", "TypeScript", "AppSec", "OWASP Top 10", "Supabase RLS", "JWT Crypto"],
+      image: "/projects/ops.jpg",
+      githubUrl: "https://github.com/abdulnabii/abdul-nabi-portfolio/tree/main/app/projects/aegis-appsec",
+      liveUrl: "https://www.aiwithab.site/projects/aegis-appsec",
+      status: "live",
+      statusLabel: "Live Full-Stack App",
+      featured: true,
+      year: "2025",
+    },
     {
       id: "aurora-dashboard",
       title: "Aurora Analytics",
@@ -348,82 +366,37 @@ export const siteContent: SiteContent = {
       highlights: [
         "Owned feature slices across UI, API routes, and data access — including authentication, RBAC, and Supabase RLS policy definitions",
         "Performed application security reviews on REST APIs and Next.js routes, identifying and resolving authorization logic gaps",
-        "Applied Python and Pandas to data analysis tasks: cleaning datasets, training ML models, and surfacing results as clear, actionable reports",
-        "Improved maintainability through typed models, clear folder structure, and documented security trade-offs in code reviews",
-      ],
-    },
-    {
-      id: "exp-2",
-      role: "Junior Full-Stack Developer",
-      company: "Learning projects & freelance",
-      location: "Remote",
-      period: "2023 — 2024",
-      description:
-        "Grew from focused frontend work into full-stack delivery and data analysis through applied projects and freelance tasks.",
-      highlights: [
-        "Shipped responsive marketing and app UIs with accessibility and SEO basics in mind",
-        "Practiced REST APIs, auth flows, and PostgreSQL-backed features on real briefs",
-        "Explored data pipelines and basic ML workflows — built working familiarity with Python, Pandas, and model evaluation patterns",
-        "Built a habit of writing readable PRs and documenting decisions for collaborators",
+        "Built responsive interfaces with Tailwind CSS, focusing on semantic markup, accessible forms, and clean mobile layouts",
+        "Integrated AI/ML capabilities into web applications, including Gemini-powered analysis tools and scikit-learn regression models",
       ],
     },
   ],
   education: [
     {
       id: "edu-1",
-      degree: "Bachelor of Science in Computer Science (BSCS)",
+      degree: "BS in Computer Science (Ongoing)",
       institution: "University of Sindh",
-      location: "Jamshoro / Sindh, Pakistan",
-      period: "2022 — 2026",
+      location: "Jamshoro, Sindh, Pakistan",
+      period: "2022 — Expected 2026",
       description:
-        "Core CS fundamentals paired with continuous practice across full-stack development, application security, and applied data science.",
-      highlights: [
-        "Applied projects in React/Next.js, REST APIs, and PostgreSQL-backed products",
-        "Practical ML work: data cleaning, model training, and evaluation with Python & Pandas",
-        "Focus on clean architecture, AppSec patterns, and user-facing quality",
-      ],
+        "Focus on Software Engineering, Database Systems, Web Technologies, and Machine Learning. Final Year Project: ML-powered Blood Sugar Tracker with ElasticNet regression.",
     },
   ],
   contact: {
-    title: "Let's talk about the role or project",
+    title: "Get in touch",
     description:
-      "Hiring managers and founders: if you need a full-stack developer who ships secure UI + API work with care, send a short note with context and timeline.",
-    responseTime: "Typical response time: 1–2 business days",
+      "I'm open to full-time roles, contract work, and application security consulting. The fastest way to reach me is email or WhatsApp.",
+    responseTime: "I usually reply within 1–2 business days.",
     formNote:
-      "Include role type (full-time / contract), stack, and timeline if you can — it helps me reply with something useful.",
+      "Send a message using the form below or email me directly at abdulnabi.khaskhely@gmail.com.",
   },
   blog: [],
   footer: {
-    note: "Built with Next.js, TypeScript, and Tailwind — security-minded, data-aware, and honest over hype.",
+    note: "Designed and built with Next.js, TypeScript, and Tailwind CSS. Hosted on Vercel with Cloudflare DNS.",
   },
 };
 
-export function getFeaturedProjects(): Project[] {
-  return siteContent.projects.filter((p) => p.featured);
-}
-
-export function getBlogPost(slug: string): BlogPost | undefined {
-  return siteContent.blog.find((post) => post.slug === slug);
-}
-
-export function getAllBlogSlugs(): string[] {
-  return siteContent.blog.map((post) => post.slug);
-}
-
+/** Helpers */
 export function getActiveSocials(): SocialLink[] {
-  return siteContent.socials.filter((s) => {
-    if (s.icon === "email") {
-      return s.href.startsWith("mailto:") && !s.href.includes("example.com");
-    }
-    if (s.icon === "whatsapp") {
-      return s.href.includes("wa.me/") && s.href.length > 20;
-    }
-    try {
-      const u = new URL(s.href);
-      const path = u.pathname.replace(/\/$/, "");
-      return path.length > 0;
-    } catch {
-      return false;
-    }
-  });
+  return siteContent.socials.filter((s) => s.href && s.href.length > 0);
 }

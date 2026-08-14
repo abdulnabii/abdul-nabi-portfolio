@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseDbQuery, supabaseDbUpsert } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
+import { getAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -91,6 +92,11 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getAdminSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json();
   const { nightTheme, dayTheme, cursorStyle, defaultMode, theme } = body;
   const nTheme = nightTheme || (typeof theme === "string" && !theme.startsWith("day-") ? theme : undefined);

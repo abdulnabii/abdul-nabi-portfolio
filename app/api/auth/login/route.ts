@@ -1,6 +1,7 @@
 import {
   createSessionToken,
   getSessionCookieName,
+  isAdminAuthConfigured,
   sessionCookieOptions,
   verifyCredentials,
 } from "@/lib/auth";
@@ -11,6 +12,14 @@ const failedLoginAttempts = new Map<string, { count: number; resetAt: number }>(
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isAdminAuthConfigured()) {
+      console.error("[api/auth/login] Admin authentication is not configured.");
+      return NextResponse.json(
+        { error: "Admin sign-in is temporarily unavailable." },
+        { status: 503 }
+      );
+    }
+
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown-ip";
     const now = Date.now();
 
