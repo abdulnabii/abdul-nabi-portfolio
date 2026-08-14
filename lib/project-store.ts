@@ -20,33 +20,76 @@ import { supabaseDbDelete, supabaseDbQuery, supabaseDbUpsert } from "./supabase"
 
 const memoryProjects: Project[] = [];
 
+const DEFAULT_PROJECT_BANNERS: Record<string, string> = {
+  "aegis-appsec": "/projects/aegis.jpg",
+  "aurora-dashboard": "/projects/aurora.jpg",
+  "blood-sugar-tracker": "/blood_sugar_banner.jpg",
+  "nova-commerce": "/projects/nova.jpg",
+  "pulse-chat": "/projects/pulse.jpg",
+  "signal-ops": "/projects/ops.jpg",
+};
+
 export async function getAllProjects(): Promise<Project[]> {
   const map = new Map<string, Project>();
 
   try {
     // 1. Static seed projects from bundled JSON
-    (seedProjects as Project[]).forEach((p) => map.set(p.id, p));
+    (seedProjects as Project[]).forEach((p) => {
+      map.set(p.id, {
+        ...p,
+        image: p.image || DEFAULT_PROJECT_BANNERS[p.id] || "/projects/ops.jpg",
+      });
+    });
 
     // 2. Read from disk if readable
     try {
       await ensureProjectsFile();
       const raw = await fs.readFile(PROJECTS_FILE, "utf8");
       const projects = JSON.parse(raw) as Project[];
-      projects.forEach((p) => map.set(p.id, p));
+      projects.forEach((p) => {
+        const existing = map.get(p.id);
+        map.set(p.id, {
+          ...existing,
+          ...p,
+          image: p.image || (p as any).image_url || existing?.image || DEFAULT_PROJECT_BANNERS[p.id] || "/projects/ops.jpg",
+        });
+      });
     } catch {
       // Read-only filesystem fallback
     }
 
     // 3. Overlay Supabase DB if connected
     try {
-      const dbProjects = await supabaseDbQuery<Project>("projects", "select=*");
+      const dbProjects = await supabaseDbQuery<any>("projects", "select=*");
       if (dbProjects && dbProjects.length > 0) {
-        dbProjects.forEach((p) => map.set(p.id, p));
+        dbProjects.forEach((p) => {
+          const existing = map.get(p.id);
+          const resolvedImage =
+            p.image || p.image_url || existing?.image || DEFAULT_PROJECT_BANNERS[p.id] || "/projects/ops.jpg";
+          map.set(p.id, {
+            ...existing,
+            ...p,
+            image: resolvedImage,
+            tags: Array.isArray(p.tags) ? p.tags : existing?.tags || [],
+            published: p.published !== undefined ? p.published : (existing?.published !== undefined ? existing.published : true),
+            featured: p.featured !== undefined ? p.featured : (existing?.featured !== undefined ? existing.featured : true),
+            year: p.year || existing?.year || "2025",
+            status: p.status || existing?.status || "case-study",
+            statusLabel: p.statusLabel || existing?.statusLabel || "Open Source Concept Build",
+          });
+        });
       }
     } catch {}
 
     // 4. Overlay in-memory cache LAST
-    memoryProjects.forEach((p) => map.set(p.id, p));
+    memoryProjects.forEach((p) => {
+      const existing = map.get(p.id);
+      map.set(p.id, {
+        ...existing,
+        ...p,
+        image: p.image || existing?.image || DEFAULT_PROJECT_BANNERS[p.id] || "/projects/ops.jpg",
+      });
+    });
   } catch (err) {
     console.error("[getAllProjects] Exception:", err);
   }

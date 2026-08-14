@@ -146,17 +146,27 @@ export function ProjectList({ projects: initial }: ProjectListProps) {
               className="flex flex-col gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-4 sm:flex-row sm:items-center transition hover:border-white/10 hover:bg-white/[0.05]"
             >
               <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-20 sm:w-32 bg-[#050814]">
-                {project.image ? (
-                  <Image
-                    src={project.image}
-                    alt=""
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="h-full w-full bg-white/5" />
-                )}
+                <Image
+                  src={
+                    project.image ||
+                    (project as any).image_url ||
+                    (project.id.includes("aegis")
+                      ? "/projects/aegis.jpg"
+                      : project.id.includes("aurora")
+                      ? "/projects/aurora.jpg"
+                      : project.id.includes("pulse")
+                      ? "/projects/pulse.jpg"
+                      : project.id.includes("nova")
+                      ? "/projects/nova.jpg"
+                      : project.id.includes("sugar")
+                      ? "/blood_sugar_banner.jpg"
+                      : "/projects/ops.jpg")
+                  }
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
               </div>
 
               <div className="min-w-0 flex-1">
