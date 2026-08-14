@@ -274,6 +274,35 @@ export function Contact() {
                   </span>
                 </a>
 
+                {/* Voice Call Receptionist Tile */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      window.dispatchEvent(new CustomEvent("open-assistant-call"));
+                    }
+                  }}
+                  className="group w-full flex items-center justify-between rounded-xl border border-emerald-500/40 bg-gradient-to-r from-emerald-950/40 to-slate-900/60 p-3.5 transition hover:border-emerald-400 hover:bg-emerald-900/30 text-left shadow-lg shadow-emerald-950/30 cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-emerald-500/40 bg-emerald-500/20 text-emerald-300">
+                      <Phone className="h-4 w-4 animate-pulse" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                        <span>AI Voice Call Agent</span>
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                      </p>
+                      <p className="text-xs sm:text-sm font-semibold text-white group-hover:text-emerald-200 transition">
+                        Speak with Abdul&apos;s Receptionist
+                      </p>
+                    </div>
+                  </div>
+                  <span className="rounded-md bg-emerald-500/20 border border-emerald-500/40 px-2.5 py-1 text-[10px] font-bold text-emerald-300 flex items-center gap-1 shadow">
+                    📞 Call Now
+                  </span>
+                </button>
+
                 {/* Location Tile */}
                 <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-indigo-300">
