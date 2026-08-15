@@ -226,51 +226,51 @@ export function MiniGames() {
       {/* ── High-End Game Modal Overlay ── */}
       {activeGame && game && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/90 backdrop-blur-2xl animate-fade-in overflow-y-auto"
           onClick={(e) => {
             if (e.target === e.currentTarget) setActiveGame(null);
           }}
         >
-          <div className={`relative w-full max-w-2xl rounded-3xl border ${game.borderColor} bg-[#060a17]/95 p-6 sm:p-8 shadow-2xl space-y-5 animate-scale-in`}>
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className={`relative w-full max-w-xl max-h-[96vh] flex flex-col rounded-3xl border ${game.borderColor} bg-[#060a17] shadow-2xl overflow-hidden animate-scale-in my-auto`}>
+            {/* Modal Header (Compact & Fixed) */}
+            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 sm:px-6 sm:py-3.5 bg-white/[0.02] shrink-0">
               <div className="flex items-center gap-3">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 ${game.accentColor}`}>
-                  <game.icon className="h-6 w-6" />
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 ${game.accentColor} shrink-0`}>
+                  <game.icon className="h-5 w-5" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-bold text-white">{game.name}</h3>
-                    <span className="rounded-md bg-indigo-500/20 border border-indigo-500/40 px-2 py-0.5 text-[10px] font-mono text-indigo-300">
+                    <h3 className="text-base font-bold text-white truncate">{game.name}</h3>
+                    <span className="hidden sm:inline-block rounded-md bg-indigo-500/20 border border-indigo-500/40 px-2 py-0.5 text-[10px] font-mono text-indigo-300">
                       {game.techBadge}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">{game.architecture}</p>
+                  <p className="text-[11px] text-slate-400 truncate">{game.architecture}</p>
                 </div>
               </div>
 
               <button
                 onClick={() => setActiveGame(null)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0 ml-2"
                 title="Close Engine"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Canvas Viewport */}
-            <div className="flex justify-center rounded-2xl border border-white/10 bg-[#030611] p-3 sm:p-4 overflow-hidden shadow-inner">
+            {/* Canvas Viewport (Scrollable if needed & Responsively Centered) */}
+            <div className="flex-1 min-h-0 flex items-center justify-center p-2 sm:p-4 overflow-y-auto bg-[#030611]">
               {game.component}
             </div>
 
-            {/* Modal Footer Controls Hint */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs text-slate-400 font-mono">
-              <div className="flex items-center gap-1.5">
+            {/* Modal Footer Controls Hint (Compact & Fixed) */}
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2 sm:px-6 sm:py-2.5 border-t border-white/10 bg-white/[0.02] text-xs text-slate-400 font-mono shrink-0">
+              <div className="flex items-center gap-1.5 text-[11px]">
                 <Keyboard className="h-3.5 w-3.5 text-indigo-400" />
                 <span>Controls: <strong className="text-white">{game.controls}</strong></span>
               </div>
-              <span className="text-[11px] text-slate-500">
-                Rendered on HTML5 Canvas · TypeScript Engine
+              <span className="text-[10px] text-slate-500 hidden sm:inline">
+                HTML5 Canvas · 60 FPS Engine
               </span>
             </div>
           </div>

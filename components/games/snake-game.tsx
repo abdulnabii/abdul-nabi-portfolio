@@ -176,22 +176,22 @@ export function SnakeGame() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="flex items-center justify-between w-full max-w-[400px]">
-        <span className="text-sm text-slate-400">Score: <span className="text-white font-bold">{displayScore}</span></span>
+    <div className="flex flex-col items-center gap-2 max-w-full">
+      <div className="flex items-center justify-between w-full max-w-[400px] px-1 text-xs">
+        <span className="text-slate-400">Score: <span className="text-white font-bold">{displayScore}</span></span>
         <button
           onClick={startGame}
-          className="px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30 transition-all"
+          className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30 transition-all"
         >
           {started ? "Restart" : "▶ Start"}
         </button>
       </div>
-      <div className="relative" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      <div className="relative max-w-full flex justify-center" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <canvas
           ref={canvasRef}
           width={COLS * CELL}
           height={ROWS * CELL}
-          className="rounded-xl border border-white/10"
+          className="rounded-xl border border-white/10 max-h-[min(50vh,360px)] w-auto max-w-full object-contain shadow-lg"
           style={{ touchAction: "none" }}
         />
         {!started && (

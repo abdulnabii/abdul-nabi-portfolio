@@ -188,26 +188,26 @@ export function AimTrainer() {
   const cps = (hits / Math.max(1, GAME_DURATION - timeLeft)).toFixed(1);
 
   return (
-    <div className="flex flex-col items-center gap-4 select-none">
-      <div className="flex items-center justify-between w-full max-w-[380px]">
-        <div className="flex gap-3 text-sm">
+    <div className="flex flex-col items-center gap-2 select-none max-w-full">
+      <div className="flex items-center justify-between w-full max-w-[380px] px-1 text-xs">
+        <div className="flex gap-3">
           <span className="text-slate-400">Hits: <span className="text-emerald-400 font-bold">{hits}</span></span>
           <span className="text-slate-400">Miss: <span className="text-red-400 font-bold">{misses}</span></span>
         </div>
-        <span className={`text-sm font-bold ${timeLeft <= 10 ? "text-red-400 animate-pulse" : "text-white"}`}>
+        <span className={`font-bold ${timeLeft <= 10 ? "text-red-400 animate-pulse" : "text-white"}`}>
           {timeLeft}s
         </span>
-        <button onClick={startGame} className="px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/20 border border-red-500/40 text-red-300 hover:bg-red-500/30 transition-all">
+        <button onClick={startGame} className="px-3 py-1 rounded-full text-xs font-semibold bg-red-500/20 border border-red-500/40 text-red-300 hover:bg-red-500/30 transition-all">
           {started ? "Restart" : "▶ Start"}
         </button>
       </div>
 
-      <div className="relative">
+      <div className="relative max-w-full flex justify-center">
         <canvas
           ref={canvasRef}
           width={W}
           height={H}
-          className="rounded-xl border border-white/10 cursor-crosshair"
+          className="rounded-xl border border-white/10 cursor-crosshair max-h-[min(50vh,360px)] w-auto max-w-full object-contain shadow-lg"
           onClick={handleClick}
         />
         {!started && (

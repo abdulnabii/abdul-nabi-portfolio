@@ -209,17 +209,17 @@ export function FlappyBird() {
   }, [draw, jump]);
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="flex items-center justify-between w-full max-w-[360px]">
-        <span className="text-sm text-slate-400">Best: <span className="text-yellow-300 font-bold">{displayBest}</span></span>
-        <span className="text-sm text-slate-400">Score: <span className="text-white font-bold">{displayScore}</span></span>
+    <div className="flex flex-col items-center gap-2 max-w-full">
+      <div className="flex items-center justify-between w-full max-w-[360px] px-1 text-xs">
+        <span className="text-slate-400">Best: <span className="text-yellow-300 font-bold">{displayBest}</span></span>
+        <span className="text-slate-400">Score: <span className="text-white font-bold">{displayScore}</span></span>
       </div>
-      <div className="relative">
+      <div className="relative max-w-full flex justify-center">
         <canvas
           ref={canvasRef}
           width={W}
           height={H}
-          className="rounded-2xl border border-white/10 cursor-pointer"
+          className="rounded-2xl border border-white/10 cursor-pointer max-h-[min(50vh,400px)] w-auto max-w-full object-contain shadow-lg"
           onClick={jump}
           style={{ touchAction: "none" }}
           onTouchStart={(e) => { e.preventDefault(); jump(); }}
