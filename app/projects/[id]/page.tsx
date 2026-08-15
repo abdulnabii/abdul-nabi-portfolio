@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { ProjectAppreciation } from "@/components/project-appreciation";
+import { ProjectDeepDive } from "@/components/projects/project-deep-dive";
 import { getProjectById } from "@/lib/project-store";
 import { isPublicUrl } from "@/lib/links";
 import { ArrowLeft, ArrowUpRight, Github, Heart } from "lucide-react";
@@ -136,15 +137,8 @@ export default async function DynamicProjectPage({ params }: Props) {
             )}
           </GlassCard>
 
-          {/* Architecture / Deep Dive if available */}
-          {project.architecture && (
-            <div className="mt-8">
-              <GlassCard className="p-6 sm:p-8">
-                <h2 className="text-lg font-semibold text-white mb-3">System Architecture</h2>
-                <p className="text-sm leading-relaxed text-slate-300 whitespace-pre-wrap">{project.architecture}</p>
-              </GlassCard>
-            </div>
-          )}
+          {/* Interactive Deep Dive Tabs: Architecture, Security, & Performance */}
+          <ProjectDeepDive project={project} />
         </div>
       </div>
     </div>

@@ -14,6 +14,8 @@ import { usePathname } from "next/navigation";
 
 import { CommandPaletteProvider } from "@/components/command-palette";
 import { NowWidget } from "@/components/ui/now-widget";
+import { PWAInstaller } from "@/components/ui/pwa-installer";
+import { KeyboardShortcutsModal } from "@/components/ui/keyboard-shortcuts-modal";
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -37,6 +39,8 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             <Footer />
             <Chatbot />
             <NowWidget />
+            <PWAInstaller />
+            <KeyboardShortcutsModal />
           </div>
         </CommandPaletteProvider>
       </BackgroundThemeProvider>
