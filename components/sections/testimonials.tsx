@@ -1,13 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Star, Quote, ShieldCheck, Linkedin, Award, Briefcase } from "lucide-react";
-import testimonialsData from "@/data/testimonials.json";
+import seedTestimonials from "@/data/testimonials.json";
+import type { TestimonialItem } from "@/lib/settings-store";
 
 export function Testimonials() {
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>(seedTestimonials as TestimonialItem[]);
+
+  useEffect(() => {
+    fetch("/api/admin/testimonials")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.testimonials && d.testimonials.length > 0) {
+          setTestimonials(d.testimonials);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section
       id="testimonials"
@@ -24,7 +38,7 @@ export function Testimonials() {
         </Reveal>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {testimonialsData.map((item, index) => {
+          {testimonials.map((item, index) => {
             return (
               <Reveal key={item.id} delay={index * 80} className="h-full">
                 <GlassCard

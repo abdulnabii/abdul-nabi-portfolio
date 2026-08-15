@@ -19,6 +19,7 @@ import {
   Activity,
   Code2,
   Keyboard,
+  Shield,
 } from "lucide-react";
 
 const SnakeGame = dynamic(() => import("@/components/games/snake-game").then(m => m.SnakeGame), {
@@ -38,6 +39,10 @@ const ReactionTest = dynamic(() => import("@/components/games/reaction-test").th
   loading: () => <GameLoading />,
 });
 const AimTrainer = dynamic(() => import("@/components/games/aim-trainer").then(m => m.AimTrainer), {
+  ssr: false,
+  loading: () => <GameLoading />,
+});
+const AppSecSandbox = dynamic(() => import("@/components/games/appsec-sandbox").then(m => m.AppSecSandbox), {
   ssr: false,
   loading: () => <GameLoading />,
 });
@@ -142,6 +147,21 @@ const GAMES: GameSpec[] = [
     glowColor: "hover:shadow-[0_0_35px_rgba(244,63,94,0.2)]",
     techBadge: "Spatial Tracking · Accuracy Math",
     component: <AimTrainer />,
+  },
+  {
+    id: "appsec",
+    name: "AppSec Security & Token Lab",
+    category: "Application Security",
+    architecture: "Client-side JWT parser, HMAC-SHA256 signature verifier, XSS sanitizer & entropy calculator.",
+    description: "Interactive security sandbox demonstrating token decoding, cross-site scripting payload neutralization, and password entropy defense.",
+    controls: "Interactive UI & Input Sandbox",
+    icon: Shield,
+    gradient: "from-blue-500/20 via-slate-900/60 to-indigo-950/40",
+    accentColor: "text-blue-400",
+    borderColor: "border-blue-500/30 hover:border-blue-400/60",
+    glowColor: "hover:shadow-[0_0_35px_rgba(59,130,246,0.2)]",
+    techBadge: "JWT · XSS Defense · AppSec",
+    component: <AppSecSandbox />,
   },
 ];
 

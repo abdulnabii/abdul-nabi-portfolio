@@ -1,13 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Award, ExternalLink, CheckCircle2, Shield, Sparkles } from "lucide-react";
-import certsData from "@/data/certifications.json";
+import seedCerts from "@/data/certifications.json";
+import type { CertificationItem } from "@/lib/settings-store";
 
 export function Certifications() {
+  const [certs, setCerts] = useState<CertificationItem[]>(seedCerts as CertificationItem[]);
+
+  useEffect(() => {
+    fetch("/api/admin/certifications")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.certifications && d.certifications.length > 0) {
+          setCerts(d.certifications);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section
       id="certifications"
@@ -24,7 +38,7 @@ export function Certifications() {
         </Reveal>
 
         <div className="grid gap-5 md:grid-cols-2">
-          {certsData.map((cert, index) => {
+          {certs.map((cert, index) => {
             return (
               <Reveal key={cert.id} delay={index * 70} className="h-full">
                 <GlassCard

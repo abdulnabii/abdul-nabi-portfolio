@@ -309,3 +309,89 @@ export async function saveAchievements(achievements: AchievementItem[]): Promise
   }
   return memoryAchievements;
 }
+
+// ─── Testimonials ───────────────────────────────────────────────────────────
+
+export interface TestimonialItem {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  avatar: string;
+  rating: number;
+  quote: string;
+  project: string;
+  platform: string;
+}
+
+import seedTestimonials from "@/data/testimonials.json";
+let memoryTestimonials: TestimonialItem[] = [...(seedTestimonials as TestimonialItem[])];
+
+export async function getTestimonials(): Promise<TestimonialItem[]> {
+  try {
+    const rows = await supabaseDbQuery<{ key: string; value: string }>("site_settings", "select=*&key=eq.testimonials_data");
+    if (rows && rows.length > 0 && rows[0].value) {
+      return JSON.parse(rows[0].value) as TestimonialItem[];
+    }
+  } catch (err) {
+    console.error("[getTestimonials] Exception:", err);
+  }
+  return memoryTestimonials;
+}
+
+export async function saveTestimonials(testimonials: TestimonialItem[]): Promise<TestimonialItem[]> {
+  try {
+    memoryTestimonials = [...testimonials];
+    await supabaseDbUpsert("site_settings", [{
+      key: "testimonials_data",
+      value: JSON.stringify(testimonials),
+      updated_at: new Date().toISOString(),
+    }]);
+  } catch (err) {
+    console.error("[saveTestimonials] Exception:", err);
+  }
+  return memoryTestimonials;
+}
+
+// ─── Certifications ─────────────────────────────────────────────────────────
+
+export interface CertificationItem {
+  id: string;
+  title: string;
+  issuer: string;
+  date: string;
+  badge: string;
+  color: string;
+  credentialUrl?: string;
+  skills: string[];
+}
+
+import seedCertifications from "@/data/certifications.json";
+let memoryCertifications: CertificationItem[] = [...(seedCertifications as CertificationItem[])];
+
+export async function getCertifications(): Promise<CertificationItem[]> {
+  try {
+    const rows = await supabaseDbQuery<{ key: string; value: string }>("site_settings", "select=*&key=eq.certifications_data");
+    if (rows && rows.length > 0 && rows[0].value) {
+      return JSON.parse(rows[0].value) as CertificationItem[];
+    }
+  } catch (err) {
+    console.error("[getCertifications] Exception:", err);
+  }
+  return memoryCertifications;
+}
+
+export async function saveCertifications(certifications: CertificationItem[]): Promise<CertificationItem[]> {
+  try {
+    memoryCertifications = [...certifications];
+    await supabaseDbUpsert("site_settings", [{
+      key: "certifications_data",
+      value: JSON.stringify(certifications),
+      updated_at: new Date().toISOString(),
+    }]);
+  } catch (err) {
+    console.error("[saveCertifications] Exception:", err);
+  }
+  return memoryCertifications;
+}
+

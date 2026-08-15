@@ -26,6 +26,7 @@ import {
 import { useThemeMode } from "@/components/effects/theme-mode-provider";
 import { useSiteSettings } from "@/components/settings-provider";
 import { siteContent } from "@/data/content";
+import { playTactileClick } from "@/components/effects/sound-effects";
 
 interface CommandPaletteContextType {
   isOpen: boolean;
@@ -46,9 +47,15 @@ export const useCommandPalette = () => useContext(CommandPaletteContext);
 export function CommandPaletteProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const open = () => setIsOpen(true);
+  const open = () => {
+    playTactileClick("pop");
+    setIsOpen(true);
+  };
   const close = () => setIsOpen(false);
-  const toggle = () => setIsOpen((prev) => !prev);
+  const toggle = () => {
+    playTactileClick("pop");
+    setIsOpen((prev) => !prev);
+  };
 
   // Global keyboard shortcut: Cmd+K / Ctrl+K
   useEffect(() => {

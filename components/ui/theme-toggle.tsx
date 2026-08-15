@@ -2,6 +2,7 @@
 
 import { useThemeMode } from "@/components/effects/theme-mode-provider";
 import { useSiteSettings } from "@/components/settings-provider";
+import { playTactileClick } from "@/components/effects/sound-effects";
 import { Sun, Moon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -32,10 +33,15 @@ export function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) 
 
   const isLight = theme === "light";
 
+  const handleToggle = () => {
+    playTactileClick("switch");
+    toggleTheme();
+  };
+
   return (
     <button
       type="button"
-      onClick={toggleTheme}
+      onClick={handleToggle}
       aria-label={isLight ? "Switch to Night Mode (Dark)" : "Switch to Day Mode (Light)"}
       title={isLight ? "Switch to Night Mode (Dark)" : "Switch to Day Mode (Light)"}
       className={cn(
