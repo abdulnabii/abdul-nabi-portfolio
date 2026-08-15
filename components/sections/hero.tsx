@@ -8,6 +8,7 @@ import { getActiveSocials } from "@/data/content";
 import { isPublicUrl } from "@/lib/links";
 import { useSiteSettings } from "@/components/settings-provider";
 import { ArrowDownRight, FileText, Github, Linkedin, Mail } from "lucide-react";
+import { TerminalTypewriter } from "@/components/ui/terminal-typewriter";
 
 const iconMap = {
   github: Github,
@@ -101,18 +102,14 @@ export function Hero() {
               >
                 {hero.ctaSecondary.label}
               </LinkButton>
-              {showResume && resumeUrl && (
-                <LinkButton
-                  href={resumeUrl}
-                  variant="ghost"
-                  size="lg"
-                  external
-                  className="cursor-grow"
-                >
-                  <FileText className="h-4 w-4" />
-                  Download CV
-                </LinkButton>
-              )}
+              <a
+                href="/ab_resume.pdf"
+                download="Abdul_Nabi_Resume.pdf"
+                className="cursor-grow inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-5 py-3 text-sm font-medium text-slate-200 transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white"
+              >
+                <FileText className="h-4 w-4 text-indigo-400" />
+                Download CV
+              </a>
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-slate-400">
@@ -170,6 +167,9 @@ export function Hero() {
                 </li>
               )}
             </ul>
+
+            {/* Interactive Terminal Typewriter */}
+            <TerminalTypewriter />
           </div>
 
           <div

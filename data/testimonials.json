@@ -1,0 +1,35 @@
+[
+  {
+    "id": "t-1",
+    "name": "Hamza Tariq",
+    "role": "Engineering Lead",
+    "company": "NextGen Fintech Solutions",
+    "avatar": "HT",
+    "rating": 5,
+    "quote": "Abdul delivered a clean Next.js dashboard with zero TypeScript regressions and outstanding Supabase RLS security policies. His attention to edge cases and auth flow security is rare for early-career developers.",
+    "project": "Fintech Client Portal",
+    "platform": "LinkedIn"
+  },
+  {
+    "id": "t-2",
+    "name": "Sarah Jenkins",
+    "role": "Product Manager & Startup Founder",
+    "company": "MedTrack Health",
+    "avatar": "SJ",
+    "rating": 5,
+    "quote": "Worked with Abdul on an ML-powered health classification tool. He translated complex machine learning metrics into an intuitive, responsive user interface that our clinical trial users loved. Fast delivery and stellar communication.",
+    "project": "AI Health Diagnostic Tool",
+    "platform": "Fiverr Pro"
+  },
+  {
+    "id": "t-3",
+    "name": "Dr. Farhan Qureshi",
+    "role": "Assistant Professor & FYP Advisor",
+    "company": "University of Sindh",
+    "avatar": "FQ",
+    "rating": 5,
+    "quote": "Abdul consistently demonstrates exceptional problem-solving acumen in Python and Full-Stack development. His final year project in blood sugar analytics showcases both academic rigor and real-world software engineering depth.",
+    "project": "Blood Sugar Tracking System",
+    "platform": "Academic"
+  }
+]

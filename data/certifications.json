@@ -1,0 +1,42 @@
+[
+  {
+    "id": "c-1",
+    "title": "Full-Stack Web Development & Modern React",
+    "issuer": "freeCodeCamp / Meta Specialized",
+    "date": "2025",
+    "badge": "Frontend & APIs",
+    "color": "emerald",
+    "credentialUrl": "https://www.freecodecamp.org",
+    "skills": ["React 18", "Next.js", "TypeScript", "REST APIs", "State Management"]
+  },
+  {
+    "id": "c-2",
+    "title": "Application Security & OWASP Top 10 Fundamentals",
+    "issuer": "AppSec Practitioner Coursework",
+    "date": "2025 – 2026",
+    "badge": "Security",
+    "color": "rose",
+    "credentialUrl": "https://owasp.org",
+    "skills": ["OWASP Top 10", "RBAC", "SQLi Prevention", "Auth Security", "RLS Policies"]
+  },
+  {
+    "id": "c-3",
+    "title": "Python for Data Science & Machine Learning",
+    "issuer": "Kaggle & Stanford Online",
+    "date": "2024",
+    "badge": "AI & ML",
+    "color": "indigo",
+    "credentialUrl": "https://www.kaggle.com",
+    "skills": ["Python", "scikit-learn", "Pandas", "Feature Engineering", "Data Modeling"]
+  },
+  {
+    "id": "c-4",
+    "title": "Database Architecture & PostgreSQL Mastery",
+    "issuer": "Supabase & Postgres Academy",
+    "date": "2025",
+    "badge": "Database",
+    "color": "amber",
+    "credentialUrl": "https://supabase.com",
+    "skills": ["PostgreSQL", "Supabase", "Row Level Security", "Indexes", "Schema Design"]
+  }
+]

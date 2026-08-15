@@ -24,7 +24,7 @@ export async function Projects() {
         <Reveal>
           <div className="mb-12 flex flex-col gap-6 sm:mb-16 sm:flex-row sm:items-end sm:justify-between">
             <SectionHeading
-              eyebrow="Portfolio"
+              eyebrow="Portfolio & Systems"
               title={projectsIntro.title}
               subtitle={projectsIntro.subtitle}
               className="mb-0"
@@ -70,7 +70,22 @@ export async function Projects() {
                       <div className="absolute inset-x-0 bottom-0 p-6">
                         <div className="mb-3 flex flex-wrap items-center gap-2">
                           <Badge variant="accent">{project.year}</Badge>
-                          <Badge variant="muted">{project.statusLabel}</Badge>
+                          {live ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                              Live System
+                            </span>
+                          ) : project.status === "in-progress" ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-300">
+                              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+                              In Dev
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-xs font-medium text-indigo-300">
+                              <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
+                              {project.statusLabel || "Verified Build"}
+                            </span>
+                          )}
                           {project.appreciations !== undefined && project.appreciations > 0 && (
                             <Badge variant="muted" className="gap-1 text-indigo-300">
                               <Heart className="h-3 w-3 fill-indigo-400/40" />
@@ -164,7 +179,6 @@ export async function Projects() {
             );
           })}
         </div>
-
       </div>
     </section>
   );

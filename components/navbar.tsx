@@ -2,13 +2,14 @@
 
 import { siteContent } from "@/data/content";
 import { cn } from "@/lib/utils";
-import { Menu, X, User, Briefcase, Layers, Trophy, Gamepad2, FileText, Mail, FolderGit2, Rocket } from "lucide-react";
+import { Menu, X, User, Briefcase, Layers, Trophy, Gamepad2, FileText, Mail, FolderGit2, Rocket, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { usePathname } from "next/navigation";
+import { useCommandPalette } from "@/components/command-palette";
 
 import { useSiteSettings } from "@/components/settings-provider";
 import { useThemeMode } from "@/components/effects/theme-mode-provider";
@@ -28,6 +29,7 @@ const NAV_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> 
 export function Navbar() {
   const { settings, sectionVisibility } = useSiteSettings();
   const { theme } = useThemeMode();
+  const { open: openCommandPalette } = useCommandPalette();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
@@ -252,6 +254,25 @@ export function Navbar() {
           )}
 
           <div className="flex items-center gap-2 md:gap-3">
+            {/* Command Palette Trigger */}
+            <button
+              onClick={openCommandPalette}
+              className={cn(
+                "group flex items-center gap-2 rounded-full border px-2.5 py-1.5 text-xs font-medium transition-all duration-200",
+                isLight && scrolled
+                  ? "border-slate-300 bg-slate-100 text-slate-700 hover:border-slate-400 hover:bg-slate-200/80 hover:text-slate-900"
+                  : "border-white/10 bg-white/[0.05] text-slate-300 hover:border-white/20 hover:bg-white/10 hover:text-white"
+              )}
+              title="Search & Commands (Cmd+K / Ctrl+K)"
+              aria-label="Open Command Palette"
+            >
+              <Search className="h-3.5 w-3.5 text-indigo-400 group-hover:scale-110 transition-transform" />
+              <span className="hidden lg:inline text-[11px] text-slate-400 group-hover:text-slate-200">Search</span>
+              <kbd className="hidden sm:inline-flex items-center rounded border border-white/10 bg-white/[0.08] px-1 py-0.2 text-[9px] font-mono text-slate-400">
+                ⌘K
+              </kbd>
+            </button>
+
             {/* Desktop & Mobile Theme Toggle */}
             {sectionVisibility?.themeToggle !== false && <ThemeToggle />}
 

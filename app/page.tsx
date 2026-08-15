@@ -8,6 +8,9 @@ import { MiniProjects } from "@/components/sections/mini-projects";
 import { Skills } from "@/components/sections/skills";
 import { Achievements } from "@/components/sections/achievements";
 import { MiniGames } from "@/components/sections/mini-games";
+import { Testimonials } from "@/components/sections/testimonials";
+import { Certifications } from "@/components/sections/certifications";
+import { Process } from "@/components/sections/process";
 import { BlogCard } from "@/components/blog-card";
 import { LinkButton } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
@@ -32,7 +35,10 @@ export default async function HomePage() {
       {vis.miniProjects && <MiniProjects />}
       {vis.experience && <Experience />}
       {vis.education && <Education />}
+      <Certifications />
       {vis.achievements && <Achievements />}
+      <Process />
+      <Testimonials />
       {vis.games && <MiniGames />}
 
       {vis.blog && (

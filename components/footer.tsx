@@ -95,11 +95,18 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="mt-8 flex flex-col gap-2 border-t border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-slate-500">
+            <div className="mt-8 flex flex-col gap-2 border-t border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-500">
+              <p>
                 {`© ${year} ${name}. All rights reserved.`}
               </p>
-              <p className="text-xs text-slate-500">{siteContent.footer.note}</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
+                  Last updated: {new Date().toLocaleString("en-US", { month: "long", year: "numeric" })}
+                </span>
+                <span>·</span>
+                <span>{siteContent.footer.note}</span>
+              </div>
             </div>
           </div>
         </div>

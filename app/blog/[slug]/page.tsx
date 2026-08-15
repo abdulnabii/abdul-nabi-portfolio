@@ -60,13 +60,13 @@ export async function generateMetadata({
       tags: post?.tags,
       images: post?.coverImage
         ? [{ url: post.coverImage, alt: title }]
-        : [{ url: "/profile.jpg", alt: "Abdul Nabi" }],
+        : [{ url: `/api/og/blog?slug=${encodeURIComponent(params.slug)}`, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} · Abdul Nabi`,
       description,
-      images: post?.coverImage ? [post.coverImage] : ["/profile.jpg"],
+      images: post?.coverImage ? [post.coverImage] : [`/api/og/blog?slug=${encodeURIComponent(params.slug)}`],
     },
   };
 }

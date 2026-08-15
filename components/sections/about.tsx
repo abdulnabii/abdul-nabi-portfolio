@@ -7,7 +7,42 @@ import { siteContent } from "@/data/content";
 import { useSiteSettings } from "@/components/settings-provider";
 import { Calendar, Shield, Cpu, Sparkles } from "lucide-react";
 
+import { CountUp } from "@/components/ui/count-up";
+
 const statIcons = [Calendar, Shield, Cpu];
+
+function StatValueDisplay({ value, isLongValue }: { value: string; isLongValue: boolean }) {
+  // Check if string matches patterns like "2+ Years", "5+", "10+", "100+", "24/7"
+  const match = value.match(/^([^\d]*)(\d+)([^\d]*)$/);
+
+  if (match) {
+    const prefix = match[1];
+    const num = parseInt(match[2], 10);
+    const suffix = match[3];
+
+    return (
+      <CountUp
+        end={num}
+        prefix={prefix}
+        suffix={suffix}
+        duration={1800}
+        className={`w-full font-bold tracking-tight text-accent-soft transition-colors group-hover:text-white ${
+          isLongValue ? "text-base sm:text-lg" : "text-2xl sm:text-3xl"
+        }`}
+      />
+    );
+  }
+
+  return (
+    <p
+      className={`w-full font-bold tracking-tight text-accent-soft transition-colors group-hover:text-white ${
+        isLongValue ? "text-base sm:text-lg" : "text-2xl sm:text-3xl"
+      }`}
+    >
+      {value}
+    </p>
+  );
+}
 
 export function About() {
   const { settings, about: aboutState } = useSiteSettings();
@@ -63,13 +98,7 @@ export function About() {
                   <p className="w-full mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 leading-snug">
                     {stat.label}
                   </p>
-                  <p
-                    className={`w-full font-bold tracking-tight text-accent-soft transition-colors group-hover:text-white ${
-                      isLongValue ? "text-base sm:text-lg" : "text-2xl sm:text-3xl"
-                    }`}
-                  >
-                    {stat.value}
-                  </p>
+                  <StatValueDisplay value={stat.value} isLongValue={isLongValue} />
                 </GlassCard>
               </Reveal>
             );

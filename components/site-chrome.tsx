@@ -12,6 +12,9 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { usePathname } from "next/navigation";
 
+import { CommandPaletteProvider } from "@/components/command-palette";
+import { NowWidget } from "@/components/ui/now-widget";
+
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
@@ -24,15 +27,18 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <ThemeModeProvider>
       <BackgroundThemeProvider>
-        <div className="relative min-h-screen transition-colors duration-500">
-          <AnalyticsTracker />
-          <BackgroundThemeRenderer />
-          <CustomCursor />
-          <Navbar />
-          <main className="relative z-10">{children}</main>
-          <Footer />
-          <Chatbot />
-        </div>
+        <CommandPaletteProvider>
+          <div className="relative min-h-screen transition-colors duration-500">
+            <AnalyticsTracker />
+            <BackgroundThemeRenderer />
+            <CustomCursor />
+            <Navbar />
+            <main className="relative z-10">{children}</main>
+            <Footer />
+            <Chatbot />
+            <NowWidget />
+          </div>
+        </CommandPaletteProvider>
       </BackgroundThemeProvider>
     </ThemeModeProvider>
   );

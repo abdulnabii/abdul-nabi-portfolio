@@ -19,6 +19,7 @@ export interface BlogPost {
   notHelpfulCount?: number;
   ratingSum?: number;
   ratingCount?: number;
+  views?: number;
 }
 
 const BLOGS_FILE = path.join(process.cwd(), "data", "blogs.json");

@@ -71,6 +71,7 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  manifest: "/manifest.json",
 };
 
 import { SettingsProvider } from "@/components/settings-provider";
