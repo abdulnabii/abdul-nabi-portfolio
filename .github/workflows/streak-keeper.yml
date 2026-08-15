@@ -1,0 +1,45 @@
+name: GitHub Daily Streak Keeper
+
+on:
+  schedule:
+    # Runs every day at 00:05 UTC (05:05 AM PKT)
+    - cron: '5 0 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  keep-streak:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git Author
+        run: |
+          git config user.name "Abdul Nabi"
+          git config user.email "abdulnabi.khaskhely@gmail.com"
+
+      - name: Update Daily Streak Log
+        run: |
+          mkdir -p data
+          DATE_NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          DATE_LABEL=$(date -u +"%Y-%m-%d")
+          
+          # Update streak tracker log
+          cat <<EOF > data/streak.json
+          {
+            "lastStreakPing": "$DATE_NOW",
+            "date": "$DATE_LABEL",
+            "status": "active",
+            "automated": true,
+            "author": "Abdul Nabi"
+          }
+          EOF
+          
+          git add data/streak.json
+          git commit -m "chore(streak): daily developer streak activity ping [$DATE_LABEL] [skip ci]" || echo "No changes to commit"
+          git push origin main

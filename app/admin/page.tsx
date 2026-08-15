@@ -1,5 +1,6 @@
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AnalyticsDashboardOverview } from "@/components/admin/analytics-dashboard-overview";
+import { StreakKeeperPanel } from "@/components/admin/streak-keeper-panel";
 import { GlassCard } from "@/components/ui/glass-card";
 import { AnalyticsSummary, getAnalyticsSummary } from "@/lib/analytics-store";
 import { getAdminSession } from "@/lib/auth";
@@ -64,6 +65,9 @@ export default async function AdminDashboardPage() {
 
         {/* Analytics Section */}
         <AnalyticsDashboardOverview initialSummary={analyticsSummary} />
+
+        {/* GitHub Streak Keeper Widget */}
+        <StreakKeeperPanel />
 
         {/* Blog Content Stats */}
         <div className="space-y-2">
