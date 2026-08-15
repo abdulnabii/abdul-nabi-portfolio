@@ -11,7 +11,10 @@ const SECTIONS: { key: keyof SectionVisibility; label: string; icon: string; des
   { key: "miniProjects", label: "Mini Projects", icon: "🧪", description: "Interactive mini tools & live demo links" },
   { key: "experience", label: "Experience", icon: "💼", description: "Work experience and career timeline" },
   { key: "education", label: "Education", icon: "🎓", description: "Academic background and degrees" },
+  { key: "certifications", label: "Certifications Wall", icon: "🏅", description: "Verified coursework and certificate credentials" },
   { key: "achievements", label: "Achievements", icon: "🏆", description: "Milestone badges and achievement wall" },
+  { key: "process", label: "How I Work (Process)", icon: "🔄", description: "4-step engineering workflow & deliverables" },
+  { key: "testimonials", label: "Testimonials & Reviews", icon: "⭐", description: "Social proof cards and client recommendations" },
   { key: "games", label: "Mini Games", icon: "🎮", description: "Interactive playable games section" },
   { key: "blog", label: "Blog Preview", icon: "📝", description: "Latest blog post previews on home page" },
   { key: "contact", label: "Contact", icon: "📬", description: "Contact form and social links" },
@@ -20,8 +23,8 @@ const SECTIONS: { key: keyof SectionVisibility; label: string; icon: string; des
 
 const DEFAULT_VISIBILITY: SectionVisibility = {
   hero: true, about: true, skills: true, projects: true, miniProjects: true,
-  experience: true, education: true, blog: true, games: true,
-  achievements: true, contact: true, themeToggle: true,
+  experience: true, education: true, certifications: true, process: true, testimonials: true,
+  blog: true, games: true, achievements: true, contact: true, themeToggle: true,
 };
 
 export function SectionsManager() {

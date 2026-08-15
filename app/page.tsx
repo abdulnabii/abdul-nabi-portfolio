@@ -35,10 +35,10 @@ export default async function HomePage() {
       {vis.miniProjects && <MiniProjects />}
       {vis.experience && <Experience />}
       {vis.education && <Education />}
-      <Certifications />
+      {vis.certifications !== false && <Certifications />}
       {vis.achievements && <Achievements />}
-      <Process />
-      <Testimonials />
+      {vis.process !== false && <Process />}
+      {vis.testimonials !== false && <Testimonials />}
       {vis.games && <MiniGames />}
 
       {vis.blog && (

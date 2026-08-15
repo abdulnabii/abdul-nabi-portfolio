@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import type { AchievementItem } from "@/lib/settings-store";
+import { GitHubHeatmap } from "@/components/ui/github-heatmap";
 
 const COLOR_MAP: Record<string, { bg: string; border: string; glow: string; text: string }> = {
   indigo: { bg: "from-indigo-500/15 to-indigo-900/5", border: "border-indigo-500/30", glow: "hover:shadow-[0_0_25px_rgba(99,102,241,0.3)]", text: "text-indigo-300" },
@@ -97,6 +98,11 @@ export function Achievements() {
             );
           })}
         </div>
+
+        {/* GitHub Live Contribution Heatmap */}
+        <Reveal delay={200}>
+          <GitHubHeatmap />
+        </Reveal>
       </div>
     </section>
   );

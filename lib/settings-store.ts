@@ -202,9 +202,12 @@ export interface SectionVisibility {
   miniProjects?: boolean;
   experience: boolean;
   education: boolean;
-  blog: boolean;
-  games: boolean;
+  certifications?: boolean;
   achievements: boolean;
+  process?: boolean;
+  testimonials?: boolean;
+  games: boolean;
+  blog: boolean;
   contact: boolean;
   themeToggle?: boolean;
 }
@@ -217,9 +220,12 @@ const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
   miniProjects: true,
   experience: true,
   education: true,
-  blog: true,
-  games: true,
+  certifications: true,
   achievements: true,
+  process: true,
+  testimonials: true,
+  games: true,
+  blog: true,
   contact: true,
   themeToggle: true,
 };
