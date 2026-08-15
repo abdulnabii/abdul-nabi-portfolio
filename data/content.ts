@@ -374,12 +374,12 @@ export const siteContent: SiteContent = {
   education: [
     {
       id: "edu-1",
-      degree: "BS in Computer Science (Ongoing)",
+      degree: "BS in Computer Science",
       institution: "University of Sindh",
       location: "Jamshoro, Sindh, Pakistan",
-      period: "2022 — Expected 2026",
+      period: "2022 — 2026",
       description:
-        "Focus on Software Engineering, Database Systems, Web Technologies, and Machine Learning. Final Year Project: ML-powered Blood Sugar Tracker with ElasticNet regression.",
+        "Graduated in 2026 with a focus on Software Engineering, Database Systems, Web Technologies, Application Security, and Machine Learning. Final Year Project: ML-powered Blood Sugar Tracker with ElasticNet regression.",
     },
   ],
   contact: {

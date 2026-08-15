@@ -44,9 +44,11 @@ export function Education() {
                 </h3>
                 <p className="mt-1 text-sm text-slate-400">
                   {item.institution}
-                  {canonicalLocation && (
+                  {item.location ? (
+                    <> · {item.location}</>
+                  ) : canonicalLocation ? (
                     <> · {canonicalLocation}</>
-                  )}
+                  ) : null}
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-slate-300">
                   {item.description}
