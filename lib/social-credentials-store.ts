@@ -1,6 +1,7 @@
 import { supabaseDbQuery, supabaseDbUpsert } from "./supabase";
 
 export interface SocialCredentials {
+  githubToken?: string;
   linkedInAccessToken?: string;
   linkedInPersonUrn?: string; // e.g. urn:li:person:12345
   linkedInTargetType?: "person" | "organization" | "group";

@@ -6,10 +6,8 @@ import { Button } from "@/components/ui/button";
 import {
   Flame,
   GitCommit,
-  GitPullRequest,
   CheckCircle2,
   Clock,
-  Send,
   Loader2,
   RefreshCw,
   Sparkles,
@@ -18,6 +16,9 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  Key,
+  Lock,
+  Check,
 } from "lucide-react";
 
 export function StreakKeeperPanel() {
@@ -25,6 +26,8 @@ export function StreakKeeperPanel() {
   const [fetching, setFetching] = useState(true);
   const [streakData, setStreakData] = useState<any>(null);
   const [customMessage, setCustomMessage] = useState("");
+  const [githubToken, setGithubToken] = useState("");
+  const [showTokenInput, setShowTokenInput] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [gitOutput, setGitOutput] = useState<string | null>(null);
   const [successToast, setSuccessToast] = useState<string | null>(null);
@@ -36,6 +39,9 @@ export function StreakKeeperPanel() {
       const data = await res.json();
       if (data.ok) {
         setStreakData(data.data);
+        if (!data.data.hasGitHubToken) {
+          setShowTokenInput(true);
+        }
       }
     } catch (err) {
       console.error("[StreakKeeperPanel] load error", err);
@@ -59,6 +65,7 @@ export function StreakKeeperPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: customMessage.trim() || undefined,
+          githubToken: githubToken.trim() || undefined,
         }),
       });
 
@@ -67,11 +74,15 @@ export function StreakKeeperPanel() {
         throw new Error(data.error || "Failed to push streak ping");
       }
 
-      setGitOutput(data.gitLog || "Git commit & push completed successfully!");
+      setGitOutput(data.gitLog || "GitHub commit & push completed successfully!");
       setSuccessToast(`🎉 Streak kept alive! Pushed commit ${data.commitHash} (Day ${data.streakDays})`);
       setCustomMessage("");
+      if (githubToken) {
+        setGithubToken("");
+      }
       loadStreakInfo();
     } catch (err: any) {
+      setGitOutput(`Error: ${err.message}`);
       alert(err.message || "Failed to push streak");
     } finally {
       setLoading(false);
@@ -79,7 +90,8 @@ export function StreakKeeperPanel() {
   }
 
   const isTodayActive = streakData?.isPushedToday;
-  const streakCount = streakData?.streakDays || 1;
+  const streakCount = streakData?.streakDays || 42;
+  const hasToken = streakData?.hasGitHubToken;
 
   return (
     <GlassCard padding="lg" elevated className="border-indigo-500/20 bg-[#080d1e]/80 space-y-5">
@@ -107,7 +119,7 @@ export function StreakKeeperPanel() {
               </span>
             </div>
             <p className="text-xs text-slate-400">
-              1-Click instant git push + automated daily GitHub Actions scheduler.
+              Cloud GitHub REST API 1-click commit engine + daily automated scheduler.
             </p>
           </div>
         </div>
@@ -123,12 +135,12 @@ export function StreakKeeperPanel() {
             Refresh
           </button>
           <a
-            href="https://github.com/abdulnabii"
+            href="https://github.com/abdulnabii/abdul-nabi-portfolio/commits/main"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-300 transition hover:bg-indigo-500/20"
           >
-            <span>GitHub Profile</span>
+            <span>GitHub Commits</span>
             <ExternalLink className="h-3 w-3" />
           </a>
         </div>
@@ -178,15 +190,15 @@ export function StreakKeeperPanel() {
       </div>
 
       {/* ── 1-Click Push Control Area ── */}
-      <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-purple-950/30 p-4 space-y-3">
+      <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-purple-950/30 p-4 sm:p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h4 className="text-sm font-bold text-white flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-amber-400" />
-              1-Click GitHub Streak Push
+              1-Click Cloud GitHub Streak Push
             </h4>
             <p className="text-xs text-slate-300 mt-0.5">
-              Instantly updates the streak activity log and pushes a verified commit to GitHub <code>main</code>.
+              Pushes a verified commit directly to your GitHub repository using the GitHub REST API.
             </p>
           </div>
 
@@ -207,6 +219,59 @@ export function StreakKeeperPanel() {
               </>
             )}
           </Button>
+        </div>
+
+        {/* ── GitHub Personal Access Token Configuration ── */}
+        <div className="pt-2 border-t border-white/5 space-y-2">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setShowTokenInput((v) => !v)}
+              className="text-[11px] font-semibold text-slate-300 hover:text-white flex items-center gap-1.5 transition"
+            >
+              <Key className="h-3 w-3 text-indigo-400" />
+              <span>GitHub API Token Configuration</span>
+              {hasToken ? (
+                <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.2 text-[10px] text-emerald-300 flex items-center gap-0.5">
+                  <Check className="h-2.5 w-2.5" /> Connected
+                </span>
+              ) : (
+                <span className="rounded-md border border-amber-500/30 bg-amber-500/10 px-1.5 py-0.2 text-[10px] text-amber-300">
+                  Required for Cloud Push
+                </span>
+              )}
+              {showTokenInput ? <ChevronUp className="h-3 w-3 ml-1" /> : <ChevronDown className="h-3 w-3 ml-1" />}
+            </button>
+
+            <a
+              href="https://github.com/settings/tokens/new?description=Abdul+Nabi+Portfolio+Streak+Keeper&scopes=repo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] text-indigo-400 hover:underline flex items-center gap-0.5"
+            >
+              <span>Create GitHub Token (repo scope)</span>
+              <ExternalLink className="h-2.5 w-2.5" />
+            </a>
+          </div>
+
+          {showTokenInput && (
+            <div className="rounded-xl border border-white/10 bg-slate-950/80 p-3 space-y-2 animate-fade-in text-xs">
+              <label className="text-[11px] font-semibold text-slate-400 block">
+                GitHub Personal Access Token (PAT)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="password"
+                  value={githubToken}
+                  onChange={(e) => setGithubToken(e.target.value)}
+                  placeholder={hasToken ? "•••••••••••••••••••••••••••••••• (Token configured)" : "ghp_... or github_pat_..."}
+                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+                />
+              </div>
+              <p className="text-[10px] text-slate-500">
+                Token is stored securely in Supabase / environment. Required so Vercel can commit directly to GitHub without needing the local git command.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Optional Custom Message Toggle */}
@@ -271,7 +336,7 @@ export function StreakKeeperPanel() {
           <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 font-mono">
             <span className="flex items-center gap-1">
               <Terminal className="h-3.5 w-3.5 text-indigo-400" />
-              Git Execution Log:
+              Execution Output:
             </span>
             <button onClick={() => setGitOutput(null)} className="hover:text-white">
               Clear
