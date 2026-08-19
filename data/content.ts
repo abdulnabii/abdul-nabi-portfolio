@@ -160,7 +160,7 @@ export const siteContent: SiteContent = {
     },
     {
       label: "LinkedIn",
-      href: "https://linkedin.com/in/abdulnabi-khaskheli",
+      href: "https://linkedin.com/in/abdul-nabi-95391a3b0",
       icon: "linkedin",
     },
     {

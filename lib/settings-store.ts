@@ -30,7 +30,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   heroDescription: "Full-Stack Developer with 2+ years of hands-on experience building production Next.js, Supabase, TypeScript, and ML systems — actively learning AppSec fundamentals.",
   responseTime: "1–2 business days",
   githubUrl: "https://github.com/abdulnabii",
-  linkedinUrl: "https://linkedin.com/in/abdulnabi-khaskheli",
+  linkedinUrl: "https://linkedin.com/in/abdul-nabi-95391a3b0",
   whatsapp: "+92 309 3751434",
   email: "abdulnabi.khaskhely@gmail.com",
   phone: "0333 7597315",

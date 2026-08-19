@@ -68,9 +68,9 @@ export default function ResumePage() {
                 github.com/abdulnabii
               </a>
               <span>•</span>
-              <a href="https://linkedin.com/in/abdulnabi-khaskheli" target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
+              <a href="https://linkedin.com/in/abdul-nabi-95391a3b0" target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
                 <Linkedin className="h-3.5 w-3.5 text-indigo-400 print:hidden" />
-                linkedin.com/in/abdulnabi-khaskheli
+                linkedin.com/in/abdul-nabi-95391a3b0
               </a>
             </div>
           </div>

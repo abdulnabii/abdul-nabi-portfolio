@@ -47,7 +47,7 @@ Contact channels:
   • Email: abdulnabi.khaskhely@gmail.com
   • Phone: 0333 7597315
   • WhatsApp: +92 309 3751434
-  • LinkedIn: https://linkedin.com/in/abdulnabi-khaskheli
+  • LinkedIn: https://linkedin.com/in/abdul-nabi-95391a3b0
   • GitHub: https://github.com/abdulnabii
   • Portfolio: https://aiwithab.site
   • Contact form: https://aiwithab.site/#contact
@@ -401,7 +401,7 @@ function mockReply(userMessage: string): string {
     lower.includes("social") ||
     lower.includes("connect")
   ) {
-    return "Connect with Abdul Nabi:\n\n- **LinkedIn:** linkedin.com/in/abdulnabi-khaskheli\n- **GitHub:** github.com/abdulnabii\n- **Portfolio:** aiwithab.site\n- **Email:** abdulnabi.khaskhely@gmail.com";
+    return "Connect with Abdul Nabi:\n\n- **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- **GitHub:** github.com/abdulnabii\n- **Portfolio:** aiwithab.site\n- **Email:** abdulnabi.khaskhely@gmail.com";
   }
 
   // Blog
@@ -424,7 +424,7 @@ function mockReply(userMessage: string): string {
     lower.includes("reach") ||
     lower.includes("available")
   ) {
-    return "Get in touch with Abdul Nabi:\n\n- 📧 **Email:** abdulnabi.khaskhely@gmail.com\n- 📱 **Phone:** 0333 7597315\n- 💬 **WhatsApp:** +92 309 3751434\n- 💼 **LinkedIn:** linkedin.com/in/abdulnabi-khaskheli\n- 📝 **Contact form:** aiwithab.site/#contact\n\nTypical response time: **1–2 business days**.";
+    return "Get in touch with Abdul Nabi:\n\n- 📧 **Email:** abdulnabi.khaskhely@gmail.com\n- 📱 **Phone:** 0333 7597315\n- 💬 **WhatsApp:** +92 309 3751434\n- 💼 **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- 📝 **Contact form:** aiwithab.site/#contact\n\nTypical response time: **1–2 business days**.";
   }
 
   // About / experience
