@@ -107,7 +107,7 @@ function CommandPaletteModal({ onClose }: { onClose: () => void }) {
   const commands: CommandItem[] = useMemo(() => {
     const email = settings.email || siteContent.email || "abdulnabi.khaskhely@gmail.com";
     const github = settings.githubUrl || siteContent.socials?.find((s) => s.icon === "github")?.href || "https://github.com/abdulnabii";
-    const linkedin = settings.linkedinUrl || siteContent.socials?.find((s) => s.icon === "linkedin")?.href || "https://linkedin.com/in/abdul-nabi-95391a3b0";
+    const linkedin = settings.linkedinUrl || siteContent.socials?.find((s) => s.icon === "linkedin")?.href || "https://linkedin.com/in/abdulnabi-khaskheli";
 
     const items: CommandItem[] = [
       // Navigation

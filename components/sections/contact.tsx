@@ -215,7 +215,7 @@ export function Contact() {
                 </p>
                 <div className="flex items-center gap-1.5 text-xs text-emerald-300/80 pt-1">
                   <Clock className="h-3.5 w-3.5 text-emerald-400" />
-                  <span>Avg. response time: <strong className="text-emerald-200">{responseTime}</strong></span>
+                  <span>Typical response time: <strong className="text-emerald-200">{responseTime?.replace(/^(Avg\.|Typical)?\s*response\s*time:\s*/i, "") || "1–2 business days"}</strong></span>
                 </div>
               </div>
 

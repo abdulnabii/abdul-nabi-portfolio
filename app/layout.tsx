@@ -104,7 +104,7 @@ export default async function RootLayout({
     url: "https://www.aiwithab.site",
     sameAs: [
       "https://github.com/abdulnabii",
-      "https://linkedin.com/in/abdul-nabi-95391a3b0",
+      "https://linkedin.com/in/abdulnabi-khaskheli",
     ],
     address: {
       "@type": "PostalAddress",

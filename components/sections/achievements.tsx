@@ -19,12 +19,12 @@ const COLOR_MAP: Record<string, { bg: string; border: string; glow: string; text
 };
 
 const DEFAULT_ACHIEVEMENTS: AchievementItem[] = [
-  { id: "1", title: "FYP Completed", description: "Delivered Blood Sugar Tracker ML system as Final Year Project using Flask & scikit-learn", icon: "🎓", date: "2024", color: "indigo", category: "Academic" },
+  { id: "1", title: "FYP Completed", description: "Delivered Blood Sugar Tracker ML system as Final Year Project using Flask & scikit-learn", icon: "🎓", date: "2025", color: "indigo", category: "Academic" },
   { id: "2", title: "First Production Deployment", description: "Shipped first full-stack Next.js + Supabase app to Vercel with live users", icon: "🚀", date: "2024", color: "violet", category: "Dev" },
   { id: "3", title: "GitHub Streak", description: "Maintained consistent GitHub contribution streak across multiple repositories", icon: "🔥", date: "2024", color: "orange", category: "Dev" },
   { id: "4", title: "Full-Stack Stack Mastered", description: "Proficient in Next.js, TypeScript, Supabase, TailwindCSS, PostgreSQL end-to-end", icon: "⚡", date: "2024", color: "cyan", category: "Skills" },
   { id: "5", title: "AppSec Learning Journey", description: "Actively studying Application Security — OWASP Top 10, authentication, and threat modeling", icon: "🛡️", date: "2025", color: "emerald", category: "Learning" },
-  { id: "6", title: "ML Model Shipped", description: "Built and deployed ElasticNet regression model predicting glucose levels with real accuracy", icon: "🧠", date: "2024", color: "purple", category: "ML" },
+  { id: "6", title: "ML Model Shipped", description: "Built and deployed ElasticNet regression model predicting glucose levels with real accuracy", icon: "🧠", date: "2025", color: "purple", category: "ML" },
   { id: "7", title: "Portfolio Launched", description: "Built premium portfolio with admin CMS, real-time DB, AI chatbot, and mini games", icon: "🌟", date: "2025", color: "yellow", category: "Dev" },
   { id: "8", title: "Open Source Contributor", description: "Published projects on GitHub with clean READMEs and documentation", icon: "💻", date: "2024", color: "blue", category: "Dev" },
 ];

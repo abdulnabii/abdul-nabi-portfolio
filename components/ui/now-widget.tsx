@@ -24,16 +24,17 @@ export function NowWidget() {
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="group flex items-center gap-2.5 rounded-full border border-white/15 bg-[#080d24]/90 px-3.5 py-2 text-xs font-medium text-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-indigo-500/50 hover:text-white"
+          title="Currently Building: 30 Days 30 AI Projects Challenge (Click to expand)"
+          className="group flex items-center gap-2.5 rounded-full border border-white/15 bg-[#080d24]/90 px-3.5 py-2 text-xs font-medium text-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-indigo-500/50 hover:text-white cursor-pointer"
         >
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
           </span>
           <Hammer className="h-3.5 w-3.5 text-indigo-400 group-hover:rotate-12 transition-transform" />
-          <span>Currently Building</span>
-          <span className="rounded-full bg-indigo-500/20 px-1.5 py-0.2 text-[10px] text-indigo-300 font-mono">
-            30D-30P
+          <span>Building</span>
+          <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] text-indigo-300 font-medium">
+            30 Days 30 Projects
           </span>
         </button>
       ) : (

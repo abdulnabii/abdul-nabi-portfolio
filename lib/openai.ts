@@ -41,7 +41,7 @@ SECTION 1 — IDENTITY & CONTACT
 - Location: Karachi, Sindh, Pakistan
 - Domain: https://aiwithab.site (Vercel + Cloudflare DNS)
 - Role: Full-Stack Developer & AI/ML Engineer | AppSec Enthusiast
-- Experience: 1+ years building production Next.js, Supabase, Python ML systems
+- Experience: 2+ years building production Next.js, Supabase, Python ML systems
 
 Contact channels:
   • Email: abdulnabi.khaskhely@gmail.com
@@ -435,7 +435,7 @@ function mockReply(userMessage: string): string {
     lower.includes("background") ||
     lower.includes("karachi")
   ) {
-    return "**Abdul Nabi** is a Full-Stack Developer & AI/ML Engineer based in **Karachi, Pakistan** with 1+ years of production experience. He specialises in Next.js, Supabase, Python ML, and AppSec. His portfolio lives at **aiwithab.site**.";
+    return "**Abdul Nabi** is a Full-Stack Developer & AI/ML Engineer based in **Karachi, Pakistan** with 2+ years of production experience. He specialises in Next.js, Supabase, Python ML, and AppSec. His portfolio lives at **aiwithab.site**.";
   }
 
   // Logo / branding

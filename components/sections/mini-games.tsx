@@ -182,7 +182,7 @@ export function MiniGames() {
             />
             <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-400 shrink-0 font-mono">
               <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
-              <span>5 Interactive Sandboxes</span>
+              <span>{GAMES.length} Interactive Sandboxes</span>
             </div>
           </div>
         </Reveal>

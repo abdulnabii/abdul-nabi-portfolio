@@ -259,7 +259,7 @@ export const siteContent: SiteContent = {
   projectsIntro: {
     title: "Selected work",
     subtitle:
-      "Five featured full-stack builds and real-world engineering systems — each demonstrating a distinct architecture, threat model, and technical implementation.",
+      "Featured full-stack builds and production-grade engineering systems — each demonstrating a distinct architecture, threat model, and technical implementation.",
   },
   projects: [
     {
