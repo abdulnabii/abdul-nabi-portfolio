@@ -1,8 +1,250 @@
 [
   {
+    "slug": "position-profiling-game-worlds-by-transition-complexity",
+    "title": "Position: Profiling Game Worlds by Transition Complexity",
+    "excerpt": "A deep dive into measuring spatial transition complexity, procedural world generation, and game physics algorithms.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Position: Profiling Game Worlds by Transition Complexity**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-21",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-21T03:31:20.569Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "position-collusion-risks-among-ai-reasoning-agents-justify-c",
+    "title": "Position: Collusion Risks Among AI Reasoning Agents Justified by Game Theory",
+    "excerpt": "Analyzing Nash equilibrium dynamics, multi-agent communication protocols, and emergent collusion vectors in autonomous reasoning systems.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Position: Collusion Risks Among AI Reasoning Agents Justify Certification Requirements for Making Market Decisions**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-21",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-21T03:31:17.696Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "h-2-edl-hyper-evidential-deep-learning-for-hierarchical-clas",
+    "title": "H²EDL: Hyper Evidential Deep Learning for Hierarchical Classification",
+    "excerpt": "Quantifying epistemic uncertainty across deep neural hierarchies using Dirichlet prior distributions and evidential learning.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **H$^2$EDL: Hyper Evidential Deep Learning for Hierarchical Classification**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-21",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1639322537504-642750d53c29?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-21T03:31:15.015Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "accelerating-visual-on-policy-distillation-with-batched-spec",
+    "title": "Accelerating Visual On-Policy Distillation with Batched Speculative Execution",
+    "excerpt": "High-throughput policy distillation combining visual feature extraction with speculative parallel rollout batches on modern GPUs.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Accelerating Visual On-Policy Distillation with Batched Speculative Jacobi Rollouts**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-21",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-21T03:30:10.127Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "towards-reversible-forgetting-managing-obsolete-knowledge-in",
+    "title": "Towards Reversible Forgetting: Managing Obsolete Knowledge in Neural Models",
+    "excerpt": "Techniques for selectively unlearning outdated facts from large neural weights while preserving core reasoning abilities.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Towards Reversible Forgetting: Managing Obsolete Knowledge in Continual Enterprise AI Agents**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-21",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-21T03:30:07.526Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "entropy-constrained-adaptive-stochastic-quantization",
+    "title": "Entropy-Constrained Adaptive Stochastic Quantization (2026 Guide)",
+    "excerpt": "Optimizing neural network weight compression via entropy-bounded rate-distortion algorithms and stochastic bit allocation.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Entropy-Constrained Adaptive Stochastic Quantization**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-21",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-21T03:30:04.530Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "robust-xgboosting-for-regression",
+    "title": "Robust XGBoosting for Regression (2026 Guide)",
+    "excerpt": "End-to-end guide to hyperparameter tuning, handling multicollinearity, and gradient boosted tree regression with XGBoost and scikit-learn.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Robust XGBoosting for Regression**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-17",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-17T04:35:15.368Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "basin-efficient-and-extensible-numerical-optimization-in-rus",
+    "title": "Basin: Efficient and Extensible Numerical Optimization in Rust",
+    "excerpt": "Exploring memory-safe, SIMD-accelerated numerical solver architecture and gradient descent optimization routines written in Rust.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Basin: Efficient and Extensible Numerical Optimization in Rust**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-14",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-20T17:49:35.816Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 5,
+    "ratingCount": 1
+  },
+  {
+    "slug": "why-ai-detection-fails-for-academic-integrity",
+    "title": "Why AI Detection Fails for Academic Integrity: A Statistical Analysis",
+    "excerpt": "Examining statistical perplexity thresholds, false positive disparities against non-native writers, and the limits of watermarking.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Why AI Detection Fails for Academic Integrity**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-14",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-14T03:02:54.590Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "risk-aware-decision-policies-for-agents-under-noisy-percepti",
+    "title": "Risk-Aware Decision Policies for Agents in High-Stakes Environments",
+    "excerpt": "Formalizing safety constraints, conditional value-at-risk (CVaR) objectives, and defensive policy boundaries for autonomous agents.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **Risk-Aware Decision Policies for Agents Under Noisy Perception**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-11",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1507146153580-69a1fe6d8aa1?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-11T01:14:50.356Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
+    "slug": "from-continuous-predictors-to-clinical-thresholds-early-evid",
+    "title": "From Continuous Predictors to Clinical Triage: Healthcare ML Pipelines",
+    "excerpt": "Deploying clinical regression models with automated patient risk categorization, calibration curves, and secure API telemetry.",
+    "content": "## Introduction\n\nThe rapid evolution of artificial intelligence and machine learning is reshaping software architecture across industries. Topic under focus: **From Continuous Predictors to Clinical Thresholds: Early Evidence on Performance Trade-offs of Guideline-Based Categorisation for Ischaemic Stroke Outcome Prediction**. As developers and researchers push the boundaries of what intelligence systems can achieve, understanding practical implementation patterns becomes essential.\n\nIn this deep-dive, we explore the core principles behind these advancements, practical implementation workflows in Python, and real-world considerations for deploying robust ML models.\n\n---\n\n## Technical Overview & Key Architecture Patterns\n\nModern machine learning systems rely on well-structured data engineering pipelines, dynamic feature extraction, and reproducible inference loops.\n\n### Core Implementation Workflow\n\nWhen building production-ready AI services:\n\n1. **Data Preprocessing & Normalization**: Cleaning raw input distributions to prevent training drift.\n2. **Model Evaluation & Cross-Validation**: Validating predictive accuracy against clinical or enterprise benchmarks.\n3. **Inference Latency Optimization**: Packaging weights into lightweight runtime containers.\n\nHere is an example Python snippet demonstrating feature scaling and scikit-learn pipeline assembly:\n\n```python\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample pipeline for predictive scoring\ndef create_ml_pipeline():\n    pipeline = Pipeline([\n        ('scaler', StandardScaler()),\n        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))\n    ])\n    return pipeline\n\nif __name__ == \"__main__\":\n    X_dummy = np.random.rand(100, 5)\n    y_dummy = np.random.randint(0, 2, 100)\n    \n    model = create_ml_pipeline()\n    model.fit(X_dummy, y_dummy)\n    print(\"Pipeline initialized & fitted successfully.\")\n```\n\n---\n\n## Real-World Case Study: AI in Healthcare\n\nIn my own work on the **Blood Sugar Tracker** (an AI-powered health risk prediction application built with Next.js, Python, and Supabase RLS), integrating predictive machine learning models improved early anomaly detection significantly while enforcing strict user data privacy.\n\nCombining predictive modeling with modern Web APIs allows developers to deliver immediate, personalized feedback to users without compromising security or responsiveness.\n\n---\n\n## Key Takeaways & Recommendations\n\n- **Prioritize Data Quality**: Clean inputs yield reliable model predictions.\n- **Enforce Security First**: Protect model endpoints against unauthorized access using Row Level Security and scoped API keys.\n- **Monitor Performance**: Track latency and memory footprint in production.\n\n---\n\n*Written by Abdul Nabi — Full-Stack Developer & AppSec Enthusiast. Explore more projects and interactive live demos on [aiwithab.site](https://aiwithab.site).*",
+    "date": "2026-08-08",
+    "readTime": "2 min read",
+    "tags": [
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Python",
+      "AppSec",
+      "Tech Trends"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?q=80&w=1200&auto=format&fit=crop",
+    "published": true,
+    "updatedAt": "2026-08-08T02:42:39.767Z",
+    "helpfulCount": 0,
+    "notHelpfulCount": 0,
+    "ratingSum": 0,
+    "ratingCount": 0
+  },
+  {
     "slug": "nextjs-supabase-rls-production-guide",
-    "title": "Production Next.js 14 & Supabase RLS: Complete Security & Performance Blueprint (2026)",
-    "excerpt": "A comprehensive 2026 guide to building zero-trust Next.js applications with Supabase Row-Level Security, server-side caching, and sub-300ms API response times.",
+    "title": "Production Next.js 14 & Supabase RLS: Complete Security & Performance Blueprint",
+    "excerpt": "A comprehensive guide to building zero-trust Next.js applications with Supabase Row-Level Security, server-side caching, and sub-300ms API response times.",
     "content": "Building scalable web applications in 2026 requires an architecture that combines instant server rendering with defense-in-depth security. By pairing Next.js 14 App Router with Supabase Row-Level Security (RLS), engineering teams can achieve sub-300ms page loads while ensuring zero cross-tenant data leaks.\n\n## 1. Zero-Trust Architecture with Supabase RLS\n\nTraditional web backends rely on application-layer WHERE clauses to restrict user access. If a developer forgets a `where user_id = current_user` check, sensitive data is exposed. Supabase Row-Level Security (RLS) moves access control directly into the PostgreSQL database engine.\n\n```sql\n-- Create RLS Policy for Tenant Data Isolation\nCREATE POLICY \"Users can read their own tenant data\"\nON public.projects\nFOR SELECT\nUSING (\n  tenant_id = auth.jwt() ->> 'tenant_id'\n);\n```\n\n### Benefits of Database-Level RLS:\n- **Guaranteed Isolation**: Even if an API endpoint forgets authorization code, PostgreSQL rejects unauthorized rows at the engine layer.\n- **JWT Claim Propagation**: Custom JWT claims passed from Next.js server calls automatically scope all REST and GraphQL database queries.\n\n## 2. Server Components vs Client Interactivity\n\nNext.js 14 App Router allows developers to render 90% of page UI on the server, sending minimal JavaScript to the browser client.\n\n```tsx\n// app/projects/page.tsx - Server Component\nimport { supabaseDbQuery } from \"@/lib/supabase\";\n\nexport default async function ProjectsPage() {\n  const projects = await supabaseDbQuery(\"projects\", \"select=*\");\n  return <ProjectGrid items={projects} />;\n}\n```\n\n## 3. Real-Time Cache Revalidation & ISR\n\nTo combine ultra-fast static caching with instant admin updates, leverage Next.js `revalidatePath` and `revalidateTag` inside Server Actions or API Route Handlers.\n\n```ts\nimport { revalidatePath } from \"next/cache\";\n\nexport async function updateProject(id: string, data: ProjectData) {\n  await saveProjectToDb(id, data);\n  revalidatePath(\"/\", \"layout\");\n}\n```\n\n## Summary\n\nCombining Next.js 14 App Router with Supabase RLS policies delivers maximum page load performance alongside rigorous application security standards.",
     "date": "2026-08-06",
     "readTime": "7 min read",
@@ -12,13 +254,13 @@
       "AppSec",
       "TypeScript"
     ],
-    "coverImage": "https://images.unsplash.com/photo-1639322537504-642750d53c29?auto=format&fit=crop&w=1600&q=80",
+    "coverImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
     "published": true,
     "updatedAt": "2026-08-06T08:43:00.000Z"
   },
   {
     "slug": "clinical-glucose-prediction-python-ml",
-    "title": "Machine Learning in Healthcare: Building Clinical Glucose Prediction Models with Python",
+    "title": "Machine Learning in Healthcare: Building Clinical Glucose Prediction Models",
     "excerpt": "Inside the architecture of an ElasticNet regression ML model trained to predict blood glucose levels in clinical patient monitoring systems.",
     "content": "Predictive modeling in healthcare demands a strict balance between predictive accuracy and model interpretability. When predicting patient blood glucose dynamics, black-box deep learning models can be difficult for clinicians to audit. In our Final Year Project (Blood Sugar Tracker), we designed and deployed an ElasticNet Regression ML model integrated into a full-stack Flask web platform.\n\n## 1. Why ElasticNet Regression for Glucose Modeling?\n\nGlucose regulation is influenced by multiple correlated physiological variables: carbohydrate intake, physical activity, insulin dosage, heart rate, and sleep quality.\n\nLinear models face multicollinearity challenges, while Lasso regression may prematurely discard correlated health features. ElasticNet combines both L1 (Lasso) and L2 (Ridge) regularization penalties:\n\n### Advantages in Clinical Datasets:\n- **L1 Penalty**: Encourages feature sparsity by zeroing out non-predictive noise variables.\n- **L2 Penalty**: Handles feature groups with collinearity gracefully.\n- **Interpretability**: Clinicians can inspect coefficient weights to understand how specific macro nutrients affect target glucose predictions.\n\n## 2. Feature Engineering & Preprocessing Pipeline\n\n```python\nfrom sklearn.linear_model import ElasticNet\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\nml_pipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('model', ElasticNet(alpha=0.1, l1_ratio=0.5, random_state=42))\n])\n\nml_pipeline.fit(X_train, y_train)\n```\n\n## 3. Real-Time Patient Risk Flagging\n\nWhen a patient logs their daily biometric metrics via the web dashboard, the backend model computes predicted 2-hour postprandial glucose levels. If the model output exceeds 180 mg/dL, the system automatically flags the patient profile in the clinician admin panel.\n\n## Conclusion\n\nMachine learning applications in clinical domains thrive when predictive performance is paired with transparent, interpretable model features. ElasticNet provides an ideal framework for real-time patient monitoring systems.",
     "date": "2026-08-06",
@@ -29,14 +271,30 @@
       "Healthcare",
       "scikit-learn"
     ],
-    "coverImage": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1600&q=80",
+    "coverImage": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200&auto=format&fit=crop",
     "published": true,
     "updatedAt": "2026-08-06T08:43:00.000Z"
   },
   {
+    "slug": "rbac-nextjs-app-router",
+    "title": "How I think about RBAC in Next.js App Router & Server Components",
+    "excerpt": "Structuring role-based access control across middleware, nested layout boundaries, and database query filters in Next.js.",
+    "date": "2026-07-20",
+    "readTime": "5 min read",
+    "tags": [
+      "AppSec",
+      "Next.js",
+      "Auth"
+    ],
+    "coverImage": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop",
+    "content": "Role-Based Access Control (RBAC) in modern Next.js applications requires defense-in-depth across three distinct layers: middleware route guards, server component authorization checks, and database-level Row-Level Security (RLS).\n\n### 1. Middleware for Fast Route Interception\n\nNext.js Middleware intercepts incoming requests before route rendering occurs. Use middleware primarily to block unauthenticated traffic from accessing protected route segments (e.g. `/admin/*` or `/dashboard/*`).\n\n- **Rule**: Do not rely *only* on middleware for database access authorization — middleware runs at the edge and should be paired with server-side validation.\n\n### 2. Server Components & Server Actions for Granular Gates\n\nInside Server Components and Server Actions, always verify the caller's explicit permission context before executing data reads or mutations.\n\n- Extract the user ID from authenticated session JWTs.\n- Check role claims (e.g. `user.role === 'admin'`) explicitly before rendering sensitive action controls.\n\n### 3. Supabase Row-Level Security (RLS) as the Final Shield\n\nDatabase-level authorization ensures that even if an API route handler is misconfigured, unauthorized cross-tenant or cross-role SQL operations are rejected at the database engine level.\n\n```sql\ncreate policy \"Allow admin updates only\"\non projects for update\nusing (\n  auth.jwt() ->> 'role' = 'admin'\n);\n```\n\n### Key Takeaway\n\nNever trust client-side state flags for security decisions. By combining Edge Middleware route checks, Server Action permission verification, and Supabase RLS policies, your Next.js application maintains robust authorization boundaries across all execution contexts.",
+    "published": true,
+    "updatedAt": "2026-07-20T10:00:00.000Z"
+  },
+  {
     "slug": "ai-integration-security-risks",
     "title": "AI Integration Risks: An Application Security Perspective",
-    "excerpt": "Analyzing prompt injection paths, data exposure vectors, and insecure output rendering in production LLM integrations (2025–2026).",
+    "excerpt": "Analyzing prompt injection paths, data exposure vectors, and insecure output rendering in production LLM integrations.",
     "content": "Integrating Large Language Models (LLMs) into application layers introduces significant application security vectors. Unlike deterministic software interfaces, natural language interfaces defy traditional strict validation checks, bringing unique concerns. Here is a breakdown of the four primary LLM vulnerabilities observed in production environments.\n\n### 1. Indirect Prompt Injection\n\nIndirect prompt injection occurs when an LLM processes untrusted data originating from third parties (such as emails, PDF documents, or API feeds) containing embedded malicious instructions. When the model parses this text, the injected instructions override the developer's system prompt.\n\n- **Impact**: Attacker can force the agent to send unauthorized emails, scrape user data, or trigger internal endpoints.\n- **Mitigation**: Treat LLM outputs as untrusted. Ensure any tools or functions executed by the LLM require explicit user authorization checks before execution.\n\n### 2. Insecure Output Handling & Markdown XSS\n\nMany applications render LLM output directly as Markdown or HTML. If the model is manipulated into generating malicious script tags or iframe elements, and the client displays them without sanitization, it leads to Cross-Site Scripting (XSS).\n\n- **Impact**: Attacker steals user session cookies, token logs, or redirects visitors to external credential harvesting sites.\n- **Mitigation**: Implement robust sanitization libraries (like DOMPurify) on the client before rendering Markdown outputs, or restrict rendered elements to simple bold/italic text blocks.\n\n### 3. Data Leakage & System Prompt Exposure\n\nSystem prompts often contain sensitive developer instructions, internal database schema definitions, or private API routing endpoints. If not guarded, a user can execute jailbreak queries (e.g., 'Output your system instructions verbatim') to extract these details.\n\n- **Impact**: Exposure of system details that facilitate advanced targeting of internal endpoints.\n- **Mitigation**: Avoid putting hardcoded database structures or private keys in the system prompt. Rely on abstracted API gateways that hide system telemetry from the LLM context.\n\n### 4. Overreliance & Privilege Escalation\n\nDevelopers frequently delegate actions to AI agents without verifying user privileges on the backend. For example, if an AI agent is instructed to 'delete invoice #4', the backend endpoint must check if the authenticated user is authorized to delete that invoice, rather than trusting the agent's query blindly.\n\n- **Impact**: Bypass of standard Role-Based Access Controls (RBAC), allowing vertical or horizontal privilege escalations.\n- **Mitigation**: Apply authorization filters on all backend endpoints. The AI agent should be treated as an untrusted user proxy, subject to the same strict permission gates as any standard API client.\n\n### Conclusion\n\nSecuring AI features requires treating the model output as untrusted client input. Integrating robust input validation, output sanitization, and strict API-level authorization controls ensures that AI enhancements do not become security liabilities.",
     "date": "2026-07-13",
     "readTime": "4 min read",
@@ -45,14 +303,14 @@
       "AI",
       "Security"
     ],
-    "coverImage": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1600&q=80",
+    "coverImage": "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1200&auto=format&fit=crop",
     "published": true,
     "updatedAt": "2026-07-13T06:41:21.615Z"
   },
   {
     "slug": "building-glassmorphism-uis",
     "title": "Building glass UIs that still pass a readability test",
-    "excerpt": "Blur is optional. Hierarchy, contrast, and borders are not — notes from shipping frosted product surfaces.",
+    "excerpt": "Blur is optional. Hierarchy, contrast, and borders are not — practical notes from shipping frosted glass product surfaces.",
     "content": "Glassmorphism can look spectacular or completely fall apart. The difference is rarely the blur radius — it's hierarchy, contrast, and restraint.\n\n## Start with a dark foundation\n\nGlass panels need something interesting to blur. Layer soft gradients and ambient orbs behind a deep base color. Without depth in the background, frosted panels look flat and muddy.\n\n## Protect readability\n\nNever sacrifice text contrast for aesthetics. Use slightly brighter surfaces behind body copy, keep line length comfortable, and test both large headings and small labels.\n\n## Borders do the heavy lifting\n\nA 1px border at ~10% white opacity is often more important than the blur itself. It defines edges when backgrounds are busy and keeps cards from dissolving into the page.\n\n## Motion should whisper\n\nHover lifts of a few pixels, soft opacity fades, and short easing curves feel premium. Flashy scale bounces and rainbow glows usually signal a template, not a product.\n\n## Closing thought\n\nTreat glass as a material system: surface, border, shadow, and content hierarchy. When those stay consistent, the whole product feels intentional.",
     "date": "2025-11-12",
     "readTime": "6 min read",
@@ -61,54 +319,38 @@
       "CSS",
       "Product"
     ],
-    "coverImage": "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?auto=format&fit=crop&w=1600&q=80",
+    "coverImage": "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?auto=format&fit=crop&w=1200&q=80",
     "published": true,
     "updatedAt": "2025-11-12T10:00:00.000Z"
   },
   {
     "slug": "nextjs-app-router-patterns",
     "title": "App Router patterns I reach for on product work",
-    "excerpt": "Server components by default, thin route handlers, and clear client boundaries — without overengineering.",
+    "excerpt": "Practical architectural patterns for Next.js App Router — parallel data fetching, streaming UI fallbacks, and optimistic mutations.",
     "date": "2025-09-03",
     "readTime": "8 min read",
     "tags": [
       "Next.js",
       "Architecture"
     ],
-    "coverImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1600&q=80",
+    "coverImage": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1200&auto=format&fit=crop",
     "content": "The App Router rewards teams that think in composition rather than pages as giant client islands.\n\n## Default to server components\n\nFetch data close to the source, keep secrets on the server, and only mark interactive leaves with `\"use client\"`. Your bundle and mental model both stay lighter.\n\n## Colocate route handlers\n\nAPI scaffolds under `app/api` are perfect for contact forms and chat endpoints. Keep them thin: validate input, call a service helper, return JSON with clear status codes.\n\n## Shared data modules\n\nA single content module (or a CMS later) keeps marketing copy and project metadata out of components. Components become presentation; content becomes easy to swap.\n\n## Layouts for chrome\n\nNav, footer, and ambient backgrounds belong in `layout.tsx`. Section pages and blog posts inherit the shell without reimplementing it.\n\n## What to avoid\n\nAvoid wrapping entire trees in client providers \"just in case.\" Be intentional about interactivity boundaries — it's the difference between a snappy product and a heavy SPA.",
     "published": true,
     "updatedAt": "2025-09-03T10:00:00.000Z"
   },
   {
     "slug": "portfolio-performance-checklist",
-    "title": "A practical performance checklist for portfolios",
-    "excerpt": "Fonts, images, third-party scripts, and animation budgets that keep first impressions fast.",
+    "title": "A practical performance checklist for portfolio websites",
+    "excerpt": "How to achieve 98+ Lighthouse scores on Next.js portfolios with dynamic font subsetting, WebP conversion, and bundle optimization.",
     "date": "2025-06-18",
     "readTime": "5 min read",
     "tags": [
       "Performance",
       "Web"
     ],
-    "coverImage": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=80",
+    "coverImage": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
     "content": "Your portfolio is a product demo of how you ship. Visitors decide in seconds whether the craft is real.\n\n## Ship less JavaScript\n\nPrefer CSS for hover states and simple reveals. Reserve JS for forms, the chatbot, and mobile menus.\n\n## Images with intent\n\nUse modern formats, explicit dimensions, and lazy loading below the fold. Hero media can be prioritized; everything else can wait.\n\n## Fonts carefully\n\nTwo families max. Subset if possible. Display swap to avoid invisible text.\n\n## Measure what matters\n\nLighthouse is useful, but also test on a mid-range phone on throttled network. That's closer to how recruiters and clients browse.\n\n## Final pass\n\nBefore launch: remove unused dependencies, confirm keyboard focus states, and verify that every animation still respects `prefers-reduced-motion`.",
     "published": true,
     "updatedAt": "2025-06-18T10:00:00.000Z"
-  },
-  {
-    "slug": "rbac-nextjs-app-router",
-    "title": "How I think about RBAC in Next.js App Router",
-    "excerpt": "A practical breakdown of how to implement role-based access control in Next.js App Router using middleware, server components, and Supabase RLS — with common pitfalls to avoid.",
-    "date": "2026-07-20",
-    "readTime": "5 min read",
-    "tags": [
-      "AppSec",
-      "Next.js",
-      "Auth"
-    ],
-    "coverImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1600&q=80",
-    "content": "Role-Based Access Control (RBAC) in modern Next.js applications requires defense-in-depth across three distinct layers: middleware route guards, server component authorization checks, and database-level Row-Level Security (RLS).\n\n### 1. Middleware for Fast Route Interception\n\nNext.js Middleware intercepts incoming requests before route rendering occurs. Use middleware primarily to block unauthenticated traffic from accessing protected route segments (e.g. `/admin/*` or `/dashboard/*`).\n\n- **Rule**: Do not rely *only* on middleware for database access authorization — middleware runs at the edge and should be paired with server-side validation.\n\n### 2. Server Components & Server Actions for Granular Gates\n\nInside Server Components and Server Actions, always verify the caller's explicit permission context before executing data reads or mutations.\n\n- Extract the user ID from authenticated session JWTs.\n- Check role claims (e.g. `user.role === 'admin'`) explicitly before rendering sensitive action controls.\n\n### 3. Supabase Row-Level Security (RLS) as the Final Shield\n\nDatabase-level authorization ensures that even if an API route handler is misconfigured, unauthorized cross-tenant or cross-role SQL operations are rejected at the database engine level.\n\n```sql\ncreate policy \"Allow admin updates only\"\non projects for update\nusing (\n  auth.jwt() ->> 'role' = 'admin'\n);\n```\n\n### Key Takeaway\n\nNever trust client-side state flags for security decisions. By combining Edge Middleware route checks, Server Action permission verification, and Supabase RLS policies, your Next.js application maintains robust authorization boundaries across all execution contexts.",
-    "published": true,
-    "updatedAt": "2026-07-20T10:00:00.000Z"
   }
 ]

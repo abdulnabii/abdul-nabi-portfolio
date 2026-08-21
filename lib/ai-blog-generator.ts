@@ -234,22 +234,10 @@ function hashTitle(str: string): number {
   return Math.abs(hash);
 }
 
+import { getUniqueTopicCoverImage } from "./image-search";
+
 export function selectTopicCoverImage(title: string, tags: string[] = []): string {
-  const text = `${title} ${tags.join(" ")}`.toLowerCase();
-  const index = hashTitle(title);
-
-  let pool = TECH_COVER_POOLS.general;
-  if (text.includes("health") || text.includes("medical") || text.includes("patient") || text.includes("diabetes") || text.includes("clinical")) {
-    pool = TECH_COVER_POOLS.health;
-  } else if (text.includes("security") || text.includes("appsec") || text.includes("threat") || text.includes("injection") || text.includes("hack")) {
-    pool = TECH_COVER_POOLS.security;
-  } else if (text.includes("python") || text.includes("code") || text.includes("pipeline") || text.includes("polars") || text.includes("pytorch")) {
-    pool = TECH_COVER_POOLS.coding;
-  } else if (text.includes("agent") || text.includes("llm") || text.includes("transformer") || text.includes("gpt") || text.includes("claude") || text.includes("gemini") || text.includes("ai")) {
-    pool = TECH_COVER_POOLS.ai;
-  }
-
-  return pool[index % pool.length];
+  return getUniqueTopicCoverImage(title, tags);
 }
 
 /**
@@ -258,7 +246,12 @@ export function selectTopicCoverImage(title: string, tags: string[] = []): strin
  */
 function generateTechnicalFallbackPost(topic: NewsItem): GeneratedBlogPost {
   const year = new Date().getFullYear();
-  const cleanTitle = topic.title.replace(/[\n\r]/g, " ").trim();
+  const cleanTitle = topic.title
+    .replace(/\$\^2\$/g, "²")
+    .replace(/\$\^3\$/g, "³")
+    .replace(/\$([^^$]+)\$/g, "$1")
+    .replace(/[\n\r]/g, " ")
+    .trim();
   const slug = slugify(cleanTitle);
 
   const content = `
@@ -330,10 +323,19 @@ Combining predictive modeling with modern Web APIs allows developers to deliver 
 
   const tags = ["Artificial Intelligence", "Machine Learning", "Python", "AppSec", "Tech Trends"];
 
+  // Generate dynamic, unique meta description
+  let excerpt = "";
+  if (topic.summary && topic.summary.length > 30) {
+    excerpt = topic.summary.slice(0, 160).replace(/<[^>]+>/g, "").trim();
+    if (!excerpt.endsWith(".")) excerpt += "...";
+  } else {
+    excerpt = `Architectural analysis, evaluation benchmarks, and production implementation considerations for ${cleanTitle}.`;
+  }
+
   return {
     title: `${cleanTitle} (${year} Guide)`,
     slug: slug.slice(0, 60),
-    excerpt: `An in-depth technical analysis of ${cleanTitle}, covering implementation workflows, architecture patterns, and real-world deployment strategies.`,
+    excerpt,
     content,
     tags,
     coverImage: selectTopicCoverImage(cleanTitle, tags),
