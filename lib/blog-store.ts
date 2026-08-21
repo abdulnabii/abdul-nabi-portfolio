@@ -15,6 +15,8 @@ export interface BlogPost {
   published: boolean;
   scheduledAt?: string; // ISO Date string for future scheduled publication
   updatedAt: string;
+  trashedAt?: string; // ISO Date string when moved to Bin/Trash
+  trashedReason?: string; // "manual" | "auto_bot_cleanup"
   helpfulCount?: number;
   notHelpfulCount?: number;
   ratingSum?: number;
@@ -23,7 +25,9 @@ export interface BlogPost {
 }
 
 const BLOGS_FILE = path.join(process.cwd(), "data", "blogs.json");
+const TRASH_FILE = path.join(process.cwd(), "data", "blogs_trash.json");
 const memoryBlogs: BlogPost[] = [];
+const memoryTrash: BlogPost[] = [];
 
 function estimateReadTime(content: string): string {
   const words = content.trim().split(/\s+/).filter(Boolean).length;
@@ -436,11 +440,102 @@ export async function publishScheduledBlogs(): Promise<{ publishedCount: number;
   return { publishedCount: publishedSlugs.length, publishedSlugs };
 }
 
-export async function deleteBlog(slug: string): Promise<void> {
+export async function getTrashedBlogs(): Promise<BlogPost[]> {
+  const map = new Map<string, BlogPost>();
+
+  try {
+    // 1. Read from Supabase site_settings blogs_trash_store_json
+    try {
+      const rows = await supabaseDbQuery<{ key: string; value: string }>(
+        "site_settings",
+        "select=*&key=eq.blogs_trash_store_json"
+      );
+      if (rows && rows.length > 0 && rows[0].value) {
+        const parsed = JSON.parse(rows[0].value) as BlogPost[];
+        if (Array.isArray(parsed)) {
+          parsed.forEach((p) => map.set(p.slug, p));
+        }
+      }
+    } catch {}
+
+    // 2. Read from disk if available
+    try {
+      const raw = await fs.readFile(TRASH_FILE, "utf8");
+      const localTrash = JSON.parse(raw) as BlogPost[];
+      if (Array.isArray(localTrash)) {
+        localTrash.forEach((p) => map.set(p.slug, p));
+      }
+    } catch {}
+
+    // 3. In-memory cache overlay
+    memoryTrash.forEach((p) => map.set(p.slug, p));
+  } catch (err) {
+    console.error("[getTrashedBlogs] Exception:", err);
+  }
+
+  return Array.from(map.values()).sort(
+    (a, b) => new Date(b.trashedAt || b.updatedAt).getTime() - new Date(a.trashedAt || a.updatedAt).getTime()
+  );
+}
+
+export async function saveTrashedBlogs(trashed: BlogPost[]): Promise<void> {
+  try {
+    memoryTrash.length = 0;
+    memoryTrash.push(...trashed);
+
+    // Save to Supabase site_settings
+    try {
+      await supabaseDbUpsert("site_settings", [
+        {
+          key: "blogs_trash_store_json",
+          value: JSON.stringify(trashed),
+          updated_at: new Date().toISOString(),
+        },
+      ]);
+    } catch (err) {
+      console.error("[saveTrashedBlogs] Supabase error:", err);
+    }
+
+    // Save to disk
+    try {
+      await fs.writeFile(TRASH_FILE, JSON.stringify(trashed, null, 2), "utf8");
+    } catch {}
+  } catch (err) {
+    console.error("[saveTrashedBlogs] Exception:", err);
+  }
+}
+
+/**
+ * Moves an active blog to the Trash / Bin.
+ * Safe delete: blog is NOT destroyed, can be retrieved/restored anytime.
+ */
+export async function moveToTrash(slug: string, reason = "manual"): Promise<BlogPost | null> {
+  const posts = await getAllBlogs();
   const decoded = decodeURIComponent(slug);
   const targetSlug = slugify(slug);
 
-  // 1. Save slug to deleted_blog_slugs in site_settings so seed/cached blogs are suppressed forever
+  const targetIndex = posts.findIndex(
+    (p) => p.slug === slug || p.slug === decoded || slugify(p.slug) === targetSlug
+  );
+
+  if (targetIndex === -1) {
+    console.warn(`[moveToTrash] Blog not found: ${slug}`);
+    return null;
+  }
+
+  const [removed] = posts.splice(targetIndex, 1);
+  const trashedPost: BlogPost = {
+    ...removed,
+    published: false,
+    trashedAt: new Date().toISOString(),
+    trashedReason: reason,
+  };
+
+  // Add to trash list
+  const trash = await getTrashedBlogs();
+  const nextTrash = [trashedPost, ...trash.filter((p) => p.slug !== removed.slug)];
+
+  // 1. Mark as suppressed in active deleted_blog_slugs so it doesn't leak to public
   try {
     const rows = await supabaseDbQuery<{ key: string; value: string }>(
       "site_settings",
@@ -461,11 +556,9 @@ export async function deleteBlog(slug: string): Promise<void> {
         updated_at: new Date().toISOString(),
       },
     ]);
-  } catch (err) {
-    console.error("[deleteBlog] Error recording deleted_blog_slugs:", err);
-  }
+  } catch {}
 
-  // 2. Delete from Supabase DB blogs table
+  // 2. Delete from active blogs table
   try {
     await supabaseDbDelete("blogs", `slug=eq.${encodeURIComponent(slug)}`);
     if (decoded !== slug) {
@@ -473,14 +566,104 @@ export async function deleteBlog(slug: string): Promise<void> {
     }
   } catch {}
 
-  // 3. Filter current blog list and SAVE via saveAllBlogs
-  const posts = await getAllBlogs();
-  const next = posts.filter(
-    (p) =>
-      p.slug !== slug &&
-      p.slug !== decoded &&
-      slugify(p.slug) !== targetSlug
+  // 3. Save updated active blogs & trash store
+  await saveAllBlogs(posts);
+  await saveTrashedBlogs(nextTrash);
+
+  return trashedPost;
+}
+
+/**
+ * Restores a blog from the Trash / Bin back into active posts.
+ * If publishNow is true, it is immediately published live on the website!
+ * If publishNow is false, it is restored as a Draft.
+ */
+export async function restoreFromTrash(
+  slug: string,
+  publishNow = false
+): Promise<BlogPost | null> {
+  const trash = await getTrashedBlogs();
+  const decoded = decodeURIComponent(slug);
+  const targetSlug = slugify(slug);
+
+  const targetIndex = trash.findIndex(
+    (p) => p.slug === slug || p.slug === decoded || slugify(p.slug) === targetSlug
   );
 
-  await saveAllBlogs(next);
+  if (targetIndex === -1) {
+    throw new Error("NOT_FOUND_IN_TRASH");
+  }
+
+  const [trashedPost] = trash.splice(targetIndex, 1);
+  const restoredPost: BlogPost = {
+    ...trashedPost,
+    published: publishNow,
+    scheduledAt: undefined,
+    trashedAt: undefined,
+    trashedReason: undefined,
+    updatedAt: new Date().toISOString(),
+    date: publishNow ? new Date().toISOString().slice(0, 10) : trashedPost.date,
+  };
+
+  // 1. Remove from deleted_blog_slugs suppression list
+  try {
+    const rows = await supabaseDbQuery<{ key: string; value: string }>(
+      "site_settings",
+      "select=*&key=eq.deleted_blog_slugs"
+    );
+    if (rows && rows.length > 0 && rows[0].value) {
+      const deletedList = (JSON.parse(rows[0].value) as string[]).filter(
+        (s) => s !== slug && s !== decoded && s !== targetSlug
+      );
+      await supabaseDbUpsert("site_settings", [
+        {
+          key: "deleted_blog_slugs",
+          value: JSON.stringify(deletedList),
+          updated_at: new Date().toISOString(),
+        },
+      ]);
+    }
+  } catch {}
+
+  // 2. Add back to active blogs
+  const activePosts = await getAllBlogs();
+  const filteredActive = activePosts.filter(
+    (p) => p.slug !== slug && p.slug !== decoded && slugify(p.slug) !== targetSlug
+  );
+  filteredActive.unshift(restoredPost);
+
+  // 3. Save both stores
+  await saveAllBlogs(filteredActive);
+  await saveTrashedBlogs(trash);
+
+  return restoredPost;
+}
+
+/**
+ * Permanently purges an article from the Bin / Trash (cannot be undone).
+ */
+export async function permanentlyDeleteFromTrash(slug: string): Promise<void> {
+  const trash = await getTrashedBlogs();
+  const decoded = decodeURIComponent(slug);
+  const targetSlug = slugify(slug);
+
+  const nextTrash = trash.filter(
+    (p) => p.slug !== slug && p.slug !== decoded && slugify(p.slug) !== targetSlug
+  );
+
+  await saveTrashedBlogs(nextTrash);
+}
+
+/**
+ * Empties all items currently in the Bin / Trash.
+ */
+export async function emptyTrash(): Promise<void> {
+  await saveTrashedBlogs([]);
+}
+
+/**
+ * Default deleteBlog now safely routes to moveToTrash!
+ */
+export async function deleteBlog(slug: string): Promise<void> {
+  await moveToTrash(slug, "manual");
 }

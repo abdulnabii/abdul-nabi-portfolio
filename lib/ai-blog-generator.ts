@@ -4,7 +4,7 @@
  * with a high-quality technical fallback generator if no API key is set.
  */
 
-import { createBlog, getAllBlogs, slugify } from "./blog-store";
+import { createBlog, getAllBlogs, moveToTrash, slugify } from "./blog-store";
 
 export interface NewsItem {
   title: string;
@@ -546,6 +546,20 @@ export async function runAutoBlog(maxPosts = 3): Promise<{ created: string[]; sk
       console.error("[ai-blog-generator] Failed to create blog:", err);
       result.errors.push(`Database error on slug: ${post.slug}`);
     }
+  }
+
+  // Smart retention: If active blogs exceed 35, gracefully move oldest posts to Bin
+  try {
+    const allActive = await getAllBlogs();
+    if (allActive.length > 35) {
+      const excess = allActive.slice(35);
+      for (const oldPost of excess) {
+        console.log(`[ai-blog-generator] Gracefully archiving old post to Bin: ${oldPost.slug}`);
+        await moveToTrash(oldPost.slug, "auto_bot_cleanup");
+      }
+    }
+  } catch (err) {
+    console.warn("[ai-blog-generator] Auto-retention notice:", err);
   }
 
   return result;

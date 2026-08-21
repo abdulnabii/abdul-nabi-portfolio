@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { AutoBlogPanel } from "@/components/admin/auto-blog-panel";
 import { BlogList } from "@/components/admin/blog-list";
 import { getAdminSession } from "@/lib/auth";
-import { getAllBlogs } from "@/lib/blog-store";
+import { getAllBlogs, getTrashedBlogs } from "@/lib/blog-store";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -13,7 +13,10 @@ export default async function AdminBlogsPage() {
   const session = await getAdminSession();
   if (!session) redirect("/admin/login");
 
-  const posts = await getAllBlogs();
+  const [posts, trashedPosts] = await Promise.all([
+    getAllBlogs(),
+    getTrashedBlogs(),
+  ]);
 
   return (
     <AdminShell email={session.email}>
@@ -44,9 +47,9 @@ export default async function AdminBlogsPage() {
         {/* All Blogs List */}
         <div className="pt-2">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-            Published & Draft Articles
+            Articles & Content Archive
           </h3>
-          <BlogList posts={posts} />
+          <BlogList posts={posts} initialTrash={trashedPosts} />
         </div>
       </div>
     </AdminShell>
