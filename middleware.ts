@@ -57,6 +57,7 @@ const PUBLIC_READ_API_ROUTES = [
   "/api/admin/stack",
   "/api/admin/experience",
   "/api/admin/education",
+  "/api/admin/certifications",
   "/api/admin/achievements",
   "/api/admin/mini-projects",
 ];
