@@ -239,6 +239,74 @@ export default function ResumePage() {
               <strong>Core Coursework:</strong> Data Structures & Algorithms, Database Management Systems, Software Engineering, Web Application Security, Artificial Intelligence & Machine Learning, Computer Networks.
             </p>
           </section>
+
+          {/* Professional Certifications & Verified Credentials */}
+          <section className="space-y-2.5">
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-400 print:text-slate-900 border-b border-white/10 print:border-slate-300 pb-1 flex items-center gap-1.5">
+              <span>📜</span> Professional Certifications & Verified Credentials
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div className="rounded-lg border border-white/5 print:border-slate-300 bg-white/[0.02] print:bg-transparent p-2 space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white print:text-slate-900">IT Security: Defense against digital dark arts</span>
+                  <span className="font-mono text-[11px] text-indigo-300 print:text-slate-600">Google • Nov 2024</span>
+                </div>
+                <p className="text-[11px] text-slate-400 print:text-slate-600">
+                  <a href="https://www.coursera.org/account/accomplishments/records/UKH04RM2CIFP" target="_blank" rel="noreferrer" className="text-indigo-400 print:text-indigo-700 hover:underline">
+                    View Verification (Coursera) ↗
+                  </a>
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-white/5 print:border-slate-300 bg-white/[0.02] print:bg-transparent p-2 space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white print:text-slate-900">Google AI Essentials</span>
+                  <span className="font-mono text-[11px] text-indigo-300 print:text-slate-600">Google • Oct 2024</span>
+                </div>
+                <p className="text-[11px] text-slate-400 print:text-slate-600">
+                  <a href="https://www.coursera.org/account/accomplishments/records/XGUVFK784XZ6" target="_blank" rel="noreferrer" className="text-indigo-400 print:text-indigo-700 hover:underline">
+                    View Verification (Coursera) ↗
+                  </a>
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-white/5 print:border-slate-300 bg-white/[0.02] print:bg-transparent p-2 space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white print:text-slate-900">Google Business Intelligence Professional</span>
+                  <span className="font-mono text-[11px] text-indigo-300 print:text-slate-600">Google • Nov 2024</span>
+                </div>
+                <p className="text-[11px] text-slate-400 print:text-slate-600">
+                  <a href="https://www.coursera.org/account/accomplishments/professional-cert/certificate/LCZNQDANGYKB" target="_blank" rel="noreferrer" className="text-indigo-400 print:text-indigo-700 hover:underline">
+                    View Verification (Coursera) ↗
+                  </a>
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-white/5 print:border-slate-300 bg-white/[0.02] print:bg-transparent p-2 space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white print:text-slate-900">Decisions, Decisions: Dashboards & Reports</span>
+                  <span className="font-mono text-[11px] text-indigo-300 print:text-slate-600">Google • Nov 2024</span>
+                </div>
+                <p className="text-[11px] text-slate-400 print:text-slate-600">
+                  <a href="https://www.coursera.org/account/accomplishments/records/WPERMOPPEDJU" target="_blank" rel="noreferrer" className="text-indigo-400 print:text-indigo-700 hover:underline">
+                    View Verification (Coursera) ↗
+                  </a>
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-white/5 print:border-slate-300 bg-white/[0.02] print:bg-transparent p-2 space-y-0.5 sm:col-span-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white print:text-slate-900">System Administration and IT Infrastructure Services</span>
+                  <span className="font-mono text-[11px] text-indigo-300 print:text-slate-600">Google • Nov 2024</span>
+                </div>
+                <p className="text-[11px] text-slate-400 print:text-slate-600">
+                  <a href="https://www.coursera.org/account/accomplishments/records/CFT0KUT95A6L" target="_blank" rel="noreferrer" className="text-indigo-400 print:text-indigo-700 hover:underline">
+                    View Verification (Coursera) ↗
+                  </a>
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>

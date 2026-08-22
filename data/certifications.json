@@ -1,6 +1,56 @@
 [
   {
-    "id": "c-1",
+    "id": "cert-google-sec",
+    "title": "IT Security: Defense against the digital dark arts",
+    "issuer": "Google",
+    "date": "Nov 2024",
+    "badge": "Security & Defense",
+    "color": "rose",
+    "credentialUrl": "https://www.coursera.org/account/accomplishments/records/UKH04RM2CIFP",
+    "skills": ["Network Security", "Cryptography", "Authentication (AAA)", "Threat Detection", "System Hardening"]
+  },
+  {
+    "id": "cert-google-ai",
+    "title": "Google AI Essentials",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "badge": "AI & Prompt Engineering",
+    "color": "indigo",
+    "credentialUrl": "https://www.coursera.org/account/accomplishments/records/XGUVFK784XZ6",
+    "skills": ["Generative AI", "Prompt Engineering", "AI Productivity", "Responsible AI", "LLM Workflows"]
+  },
+  {
+    "id": "cert-google-bi",
+    "title": "Google Business Intelligence",
+    "issuer": "Google",
+    "date": "Nov 2024",
+    "badge": "BI & Analytics",
+    "color": "cyan",
+    "credentialUrl": "https://www.coursera.org/account/accomplishments/professional-cert/certificate/LCZNQDANGYKB",
+    "skills": ["Business Intelligence", "Data Modeling", "SQL Pipelines", "Tableau", "Dashboard Strategy"]
+  },
+  {
+    "id": "cert-google-dashboards",
+    "title": "Decisions, Decisions: Dashboards and Reports",
+    "issuer": "Google",
+    "date": "Nov 2024",
+    "badge": "Data Visualization",
+    "color": "amber",
+    "credentialUrl": "https://www.coursera.org/account/accomplishments/records/WPERMOPPEDJU",
+    "skills": ["BI Dashboards", "Reporting Architecture", "Data Storytelling", "KPI Metrics", "Data Analysis"]
+  },
+  {
+    "id": "cert-google-sysadmin",
+    "title": "System Administration and IT Infrastructure Services",
+    "issuer": "Google",
+    "date": "Nov 2024",
+    "badge": "IT Infrastructure",
+    "color": "emerald",
+    "credentialUrl": "https://www.coursera.org/account/accomplishments/records/CFT0KUT95A6L",
+    "skills": ["System Administration", "IT Infrastructure", "Directory Services", "Cloud Computing", "DNS & Network Services"]
+  },
+  {
+    "id": "cert-fullstack-meta",
     "title": "Full-Stack Web Development & Modern React",
     "issuer": "freeCodeCamp / Meta Specialized",
     "date": "2025",
@@ -10,7 +60,7 @@
     "skills": ["React 18", "Next.js", "TypeScript", "REST APIs", "State Management"]
   },
   {
-    "id": "c-2",
+    "id": "cert-appsec-owasp",
     "title": "Application Security & OWASP Top 10 Fundamentals",
     "issuer": "AppSec Practitioner Coursework",
     "date": "2025 – 2026",
@@ -20,7 +70,7 @@
     "skills": ["OWASP Top 10", "RBAC", "SQLi Prevention", "Auth Security", "RLS Policies"]
   },
   {
-    "id": "c-3",
+    "id": "cert-python-ml",
     "title": "Python for Data Science & Machine Learning",
     "issuer": "Kaggle & Stanford Online",
     "date": "2024",
@@ -30,7 +80,7 @@
     "skills": ["Python", "scikit-learn", "Pandas", "Feature Engineering", "Data Modeling"]
   },
   {
-    "id": "c-4",
+    "id": "cert-postgres-supabase",
     "title": "Database Architecture & PostgreSQL Mastery",
     "issuer": "Supabase & Postgres Academy",
     "date": "2025",
