@@ -46,20 +46,35 @@ export async function recordAnalyticsEvent(event: AnalyticsEvent): Promise<void>
 
     // 1. Add to active memory store
     memoryEvents.unshift(payload);
-    if (memoryEvents.length > 1000) memoryEvents.pop();
+    if (memoryEvents.length > 2000) memoryEvents.pop();
 
-    // 2. Try inserting into analytics_events table
+    // 2. Load existing stored events from Supabase so we ACCUMULATE, not overwrite
+    let existingStored: AnalyticsEvent[] = [];
     try {
-      await supabaseDbInsert("analytics_events", payload);
+      const rows = await supabaseDbQuery<{ key: string; value: string }>(
+        "site_settings",
+        `select=*&key=eq.${SETTING_KEY}`
+      );
+      if (rows && rows.length > 0 && rows[0].value) {
+        const parsed = JSON.parse(rows[0].value) as AnalyticsEvent[];
+        if (Array.isArray(parsed)) existingStored = parsed;
+      }
     } catch {}
 
-    // 3. Persist to site_settings for guaranteed Supabase durability
+    // 3. Merge: deduplicate by id, newest first, keep up to 2000
+    const mergedMap = new Map<string, AnalyticsEvent>();
+    existingStored.forEach((e) => { if (e.id) mergedMap.set(e.id, e); });
+    mergedMap.set(payload.id!, payload);
+    const merged = Array.from(mergedMap.values())
+      .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+      .slice(0, 2000);
+
+    // 4. Persist accumulated event set back to site_settings
     try {
-      const combined = [...memoryEvents].slice(0, 500);
       await supabaseDbUpsert("site_settings", [
         {
           key: SETTING_KEY,
-          value: JSON.stringify(combined),
+          value: JSON.stringify(merged),
           updated_at: new Date().toISOString(),
         },
       ]);

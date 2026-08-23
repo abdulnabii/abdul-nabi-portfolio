@@ -285,6 +285,7 @@ export interface BlogInput {
   notHelpfulCount?: number;
   ratingSum?: number;
   ratingCount?: number;
+  views?: number;
 }
 
 export async function createBlog(input: BlogInput): Promise<BlogPost> {

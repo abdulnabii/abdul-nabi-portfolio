@@ -14,7 +14,7 @@ interface BlogCardProps {
 export function BlogCard({ post, index = 0 }: BlogCardProps) {
   // Estimate read time if not formatted
   const readTime = post.readTime || `${Math.max(2, Math.ceil((post.content?.split(/\s+/).length || 300) / 200))} min read`;
-  const views = post.views || Math.floor(120 + (post.slug.length * 17) % 350);
+  const views = post.views ?? 0;
 
   return (
     <article

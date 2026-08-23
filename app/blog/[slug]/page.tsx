@@ -76,6 +76,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const all = await getPublishedBlogs();
   const related = all.filter((p) => p.slug !== params.slug).slice(0, 2);
 
+  // Increment view count server-side on each real page load
+  if (post) {
+    try {
+      const { updateBlog } = await import("@/lib/blog-store");
+      await updateBlog(params.slug, { views: (post.views ?? 0) + 1 });
+    } catch {}
+  }
+
   const jsonLd = post
     ? {
         "@context": "https://schema.org",
