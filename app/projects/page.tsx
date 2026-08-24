@@ -14,12 +14,33 @@ import { ProjectFilterList } from "@/components/projects/project-filter-list";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "All Projects | Abdul Nabi — Full-Stack Developer",
+  title: "Projects — Abdul Nabi | Full-Stack & AI/ML Portfolio",
   description:
-    "Browse all projects by Abdul Nabi — Full-Stack apps built with Next.js, Supabase, TypeScript, and ML systems. Case studies, source code, and live demos.",
+    "Browse all projects by Abdul Nabi — full-stack web apps built with Next.js 14, Supabase, TypeScript, and Python ML. Case studies, live demos, and source code.",
+  alternates: {
+    canonical: "https://www.aiwithab.site/projects",
+  },
   openGraph: {
-    title: "All Projects | Abdul Nabi",
-    description: "Full portfolio of web apps, ML systems, and open-source projects by Abdul Nabi.",
+    title: "Projects — Abdul Nabi | Full-Stack & AI/ML Portfolio",
+    description:
+      "Full portfolio of web apps, ML systems, and AI projects by Abdul Nabi. Next.js, TypeScript, Python, Supabase.",
+    url: "https://www.aiwithab.site/projects",
+    type: "website",
+    images: [
+      {
+        url: "https://www.aiwithab.site/profile.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Projects by Abdul Nabi",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Projects — Abdul Nabi | Full-Stack & AI/ML Portfolio",
+    description:
+      "Full portfolio of web apps, ML systems, and AI projects by Abdul Nabi.",
+    images: ["https://www.aiwithab.site/profile.jpg"],
   },
 };
 

@@ -37,6 +37,8 @@ export async function generateMetadata({
   const post = await getBlogBySlug(params.slug);
   const title = post?.title ?? slugToTitle(params.slug);
   const description = post?.excerpt ?? "Technical article by Abdul Nabi";
+  const canonicalUrl = `https://www.aiwithab.site/blog/${params.slug}`;
+  const image = post?.coverImage || `https://www.aiwithab.site/api/og/blog?slug=${encodeURIComponent(params.slug)}`;
 
   return {
     title: `${title} · Abdul Nabi`,
@@ -50,23 +52,26 @@ export async function generateMetadata({
       "aiwithab.site",
     ],
     authors: [{ name: "Abdul Nabi", url: "https://www.aiwithab.site" }],
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${title} · Abdul Nabi`,
       description,
       type: "article",
-      url: `https://www.aiwithab.site/blog/${params.slug}`,
+      url: canonicalUrl,
       publishedTime: post?.date,
+      modifiedTime: post?.updatedAt || post?.date,
       authors: ["Abdul Nabi"],
       tags: post?.tags,
-      images: post?.coverImage
-        ? [{ url: post.coverImage, alt: title }]
-        : [{ url: `/api/og/blog?slug=${encodeURIComponent(params.slug)}`, width: 1200, height: 630, alt: title }],
+      images: [{ url: image, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} · Abdul Nabi`,
       description,
-      images: post?.coverImage ? [post.coverImage] : [`/api/og/blog?slug=${encodeURIComponent(params.slug)}`],
+      images: [image],
+      creator: "@abdulnabii",
     },
   };
 }
