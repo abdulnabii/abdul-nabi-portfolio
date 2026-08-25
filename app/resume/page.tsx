@@ -5,8 +5,34 @@ import { Metadata } from "next";
 import { ResumePrintButton } from "@/components/resume-print-button";
 
 export const metadata: Metadata = {
-  title: "Resume · Abdul Nabi — Full-Stack Software Engineer",
-  description: "Official Professional Resume of Abdul Nabi — Full-Stack Software Engineer specializing in Next.js, TypeScript, Python ML, and Application Security.",
+  title: "Resume — Abdul Nabi | Full-Stack & AI/ML Engineer",
+  description:
+    "Professional resume of Abdul Nabi — Full-Stack Software Engineer specializing in Next.js 14, TypeScript, Python ML, Supabase, and Application Security. Based in Karachi, Pakistan.",
+  alternates: {
+    canonical: "https://www.aiwithab.site/resume",
+  },
+  openGraph: {
+    title: "Resume — Abdul Nabi | Full-Stack & AI/ML Engineer",
+    description:
+      "Professional resume of Abdul Nabi — Full-Stack Engineer, Next.js, TypeScript, Python ML, Supabase, Application Security.",
+    url: "https://www.aiwithab.site/resume",
+    type: "profile",
+    images: [
+      {
+        url: "https://www.aiwithab.site/profile.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Abdul Nabi Resume",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Resume — Abdul Nabi | Full-Stack & AI/ML Engineer",
+    description:
+      "Professional resume of Abdul Nabi — Full-Stack Engineer specializing in Next.js, TypeScript, Python ML and AppSec.",
+    images: ["https://www.aiwithab.site/profile.jpg"],
+  },
 };
 
 export const dynamic = "force-dynamic";
