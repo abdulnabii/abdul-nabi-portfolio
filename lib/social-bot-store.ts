@@ -29,93 +29,145 @@ function getCleanImageTextUrl(imageUrl?: string, dayNumber?: number): string {
   return imageUrl;
 }
 
+export interface GeneratedLinkedInPost {
+  post: string;
+  firstComment: string;
+  hashtags: string[];
+  angle: string;
+}
+
 export function generateLinkedInPost(proj: Partial<MiniProject>, imageUrl?: string): string {
-  const dayStr = proj.dayNumber ? `Day ${String(proj.dayNumber).padStart(2, "0")}` : "New AI Project";
-  const title = proj.title || "AI Micro Tool";
-  const category = proj.category || "Full-Stack AI";
+  const dayNum = proj.dayNumber || 1;
+  const title = proj.title || "AI Developer Tool";
+  const category = proj.category || "Full-Stack Web App";
+  const desc = proj.description || "Building real-world web applications with Next.js and AI.";
+  const tags = proj.tags || ["Next.js", "TypeScript", "TailwindCSS"];
   const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
-  const portfolioUrl = "https://www.aiwithab.site/mini-projects";
 
-  return `🚀 ${dayStr} of my 30 Days 30 AI Projects Challenge: ${title}!
+  // Filter 3-4 tight hashtags
+  const selectedTags: string[] = [];
+  const lowerCat = category.toLowerCase();
+  const lowerTitle = title.toLowerCase();
 
-I just launched ${title} — a production-grade ${category} web application designed for high performance, accuracy, and seamless user experience.
+  if (lowerCat.includes("health") || lowerTitle.includes("glucose") || lowerTitle.includes("symptom") || lowerTitle.includes("medic")) {
+    selectedTags.push("#healthcareAI", "#python", "#machinelearning", "#webdev");
+  } else if (lowerCat.includes("cloud") || lowerCat.includes("devops") || lowerTitle.includes("architecture") || lowerTitle.includes("load test")) {
+    selectedTags.push("#cloudcomputing", "#devops", "#systemdesign", "#nextjs");
+  } else if (lowerCat.includes("fintech") || lowerTitle.includes("stock") || lowerTitle.includes("expense") || lowerTitle.includes("finance")) {
+    selectedTags.push("#fintech", "#typescript", "#react", "#buildinpublic");
+  } else if (lowerCat.includes("data") || lowerTitle.includes("sql") || lowerTitle.includes("3d") || lowerTitle.includes("database")) {
+    selectedTags.push("#databases", "#fullstack", "#typescript", "#datascience");
+  } else {
+    selectedTags.push("#nextjs", "#typescript", "#webdev", "#buildinpublic");
+  }
 
-💡 What it does:
-${proj.description || "Building full-stack AI web applications with Next.js 14 and cutting-edge machine learning models."}
+  // Rotate between 5 high-performing narrative angles based on day/category
+  const angleIndex = dayNum % 5;
 
-🛠️ Tech Stack & Architecture:
-• ${proj.tags ? proj.tags.join(" • ") : "Next.js 14 • TypeScript • Gemini 1.5 • TailwindCSS"}
-• Monorepo Architecture with clean Vercel serverless deployments
-• Responsive Dark/Light UI with glassmorphism ergonomics
+  let hook = "";
+  let meat = "";
+  let takeaway = "";
+  let closing = "";
 
-🔗 Test the live application here:
-👉 Live App: ${vercelUrl}
-🌐 Full Portfolio & Micro Tools Explorer: ${portfolioUrl}
+  if (angleIndex === 0) {
+    // Angle 1: Architecture & Technical Tradeoff
+    hook = `Most developers underestimate the hidden cost of state synchronization in real-time web apps.\n\nWhile building ${title}, I had to make a tough call between client-side optimistic updates and strict server validation.`;
+    meat = `Here is what actually worked in the build:\n\n• ${desc}\n• Stack: ${tags.slice(0, 3).join(" • ")}\n• Handled latency by pushing compute to edge serverless functions instead of heavy central servers.`;
+    takeaway = `Building this taught me that keeping client state simple beats complex caching layers every single time.`;
+    closing = `For other engineers building in ${tags[0] || "Next.js"}: what’s your go-to pattern for handling optimistic UI?`;
+  } else if (angleIndex === 1) {
+    // Angle 2: Problem-Solving & Edge Case Bug
+    hook = `The hardest bug when building ${title} wasn't the AI integration—it was handling messy edge cases in the user input.\n\nWhen you build an app that relies on real user data, edge cases break your assumptions in minutes.`;
+    meat = `What the tool does:\n${desc}\n\nKey technical decision:\nAdded strict runtime schema validation and fallback heuristics so the application never crashes even if the external API returns unexpected tokens.`;
+    takeaway = `Reliability isn’t about using the biggest model; it’s about writing solid defensive code around the model.`;
+    closing = `How do you usually handle prompt drift or unformatted outputs in your apps?`;
+  } else if (angleIndex === 2) {
+    // Angle 3: Practical Insight & User Experience
+    hook = `Clean UI doesn’t matter if the user has to wait more than 300ms for feedback.\n\nFor ${title}, my primary focus was cutting interaction friction down to zero.`;
+    meat = `Here’s how it works:\n• ${desc}\n• Core stack: ${tags.join(" • ")}\n• Built with lightweight client-side state so interactions feel instantaneous on mobile and desktop.`;
+    takeaway = `Users judge tools on speed and clarity, not how complicated the backend looks under the hood.`;
+    closing = `What’s the single most important UX detail you prioritize when shipping a new tool?`;
+  } else if (angleIndex === 3) {
+    // Angle 4: Contrarian Builder Reflection
+    hook = `Stop over-engineering your full-stack projects before you even validate the core workflow.\n\nWith ${title}, I resisted the urge to set up a bloated microservice architecture.`;
+    meat = `Instead, I focused on shipping one solid solution:\n• ${desc}\n• Implemented with ${tags.slice(0, 3).join(", ")}.\n• Kept the entire system in a single clean monorepo with automated edge deployments.`;
+    takeaway = `Shipping small, focused utilities has taught me 10x more about full-stack engineering than reading endless docs.`;
+    closing = `What’s a feature you recently stripped out of a project because it was unnecessary complexity?`;
+  } else {
+    // Angle 5: Domain & Safety / Reliability
+    hook = `Building software for ${category} requires a completely different mindset than building standard CRUD apps.\n\nWith ${title}, correctness and user trust had to come before everything else.`;
+    meat = `Project breakdown:\n${desc}\n\nTech implementation:\n• Powered by ${tags.join(" • ")}\n• Engineered with clear visual diagnostics and instant actionable feedback.`;
+    takeaway = `Writing clear code and transparent error states is how you build products people actually rely on.`;
+    closing = `What’s your biggest priority when designing user-facing dashboards?`;
+  }
 
-I'd love your feedback! What feature should I add next?
+  const hashtagString = selectedTags.slice(0, 4).join(" ");
 
-#BuildInPublic #NextJS #TypeScript #ArtificialIntelligence #SoftwareEngineering #30Days30AIProjects #FullStackDeveloper`;
+  return `${hook}
+
+${meat}
+
+${takeaway}
+
+${closing}
+
+${hashtagString}
+
+(Live demo and repo link in the first comment 👇)`;
 }
 
 export function generateRedditPost(proj: Partial<MiniProject>, imageUrl?: string): { title: string; body: string; subreddit: string } {
   const dayStr = proj.dayNumber ? `Day ${String(proj.dayNumber).padStart(2, "0")}` : "Day XX";
   const title = proj.title || "AI Micro Tool";
-  const category = proj.category || "Full-Stack AI";
+  const category = proj.category || "Full-Stack";
   const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
   const githubUrl = proj.githubUrl || "https://github.com/abdulnabii/mini-projects";
-  const img = getCleanImageTextUrl(imageUrl, proj.dayNumber);
+  const tags = proj.tags ? proj.tags.join(", ") : "Next.js, TypeScript, TailwindCSS";
 
   const subreddit = category.toLowerCase().includes("health")
     ? "r/SideProject"
-    : category.toLowerCase().includes("developer")
-    ? "r/webdev"
-    : "r/reactjs";
+    : category.toLowerCase().includes("devops") || category.toLowerCase().includes("cloud")
+    ? "r/devops"
+    : "r/webdev";
 
-  const redditTitle = `[Show HN / Project] I'm building 30 AI projects in 30 days — ${dayStr}: ${title}`;
+  const redditTitle = `I built a tool for ${title.toLowerCase()} — built with ${tags.split(",")[0]}`;
 
   const body = `Hey r/${subreddit.replace("r/", "")}!
 
-I'm currently undertaking a challenge to build and deploy 30 production-grade AI micro-tools in 30 days.
+I wanted to share a project I've been working on: **${title}** (${category}).
 
-Today I finished **${title}** (${category}).
+### 📌 The Problem & Solution
+${proj.description || "An application built to solve real-world workflows with minimal friction."}
 
-![Project Preview Banner](${img})
+### 🛠️ Technical Stack
+* **Frontend**: Next.js (App Router) + TypeScript
+* **Styling**: Tailwind CSS
+* **Tech / APIs**: ${tags}
+* **Deployment**: Vercel
 
-### 📌 Overview
-${proj.description || "An AI-powered web application built to solve real-world workflows."}
+### 🔗 Live Links
+* **Live Demo**: ${vercelUrl}
+* **GitHub Repository**: ${githubUrl}
 
-### 🛠️ Tech Stack
-* **Framework**: Next.js 14 (App Router) + TypeScript
-* **Styling**: Tailwind CSS & Framer Motion
-* **AI Engine**: Google Gemini 1.5 API
-* **Deployment**: Vercel Serverless
-
-### 🔗 Live Links & Monorepo
-* **Live Demo**: [${vercelUrl}](${vercelUrl})
-* **GitHub Monorepo**: [${githubUrl}](${githubUrl})
-* **Full Portfolio Explorer**: [https://www.aiwithab.site/mini-projects](https://www.aiwithab.site/mini-projects)
-
-Would love to hear your thoughts, feedback, or any edge cases you spot!`;
+Would love any constructive feedback on the architecture, edge cases, or UX!`;
 
   return { title: redditTitle, body, subreddit };
 }
 
 export function generateTwitterPost(proj: Partial<MiniProject>): string {
-  const dayStr = proj.dayNumber ? `Day ${String(proj.dayNumber).padStart(2, "0")}` : "Day XX";
-  const title = proj.title || "AI Micro Tool";
-  const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
+  const title = proj.title || "AI Tool";
+  const desc = proj.description?.slice(0, 150) || "Full-stack developer tool.";
+  const tags = (proj.tags || ["NextJS", "TypeScript"]).map(t => `#${t.replace(/[^a-zA-Z0-9]/g, "")}`).slice(0, 3).join(" ");
 
-  return `🚀 ${dayStr} of 30 AI Projects in 30 Days: ${title}!
+  return `Shipped ${title}:
 
-Built with Next.js 14, TypeScript & Gemini API.
+${desc}
 
-✨ Feature Highlights:
-${proj.description?.slice(0, 130) || "AI-powered micro tool."}
+Stack: ${(proj.tags || ["Next.js", "TypeScript"]).slice(0, 3).join(" • ")}
 
-Try it live: ${vercelUrl}
-Explorer: https://www.aiwithab.site/mini-projects
+Try it: ${proj.vercelUrl || "https://www.aiwithab.site/mini-projects"}
 
-#BuildInPublic #NextJS #AI`;
+${tags}`;
 }
 
 let memorySocialPosts: SocialPost[] = [];
