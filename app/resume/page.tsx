@@ -39,8 +39,82 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default function ResumePage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    name: "Abdul Nabi — Official Resume & Verified Credentials",
+    url: "https://www.aiwithab.site/resume",
+    mainEntity: {
+      "@type": "Person",
+      name: "Abdul Nabi",
+      jobTitle: "Full-Stack Software Engineer & AI/ML Developer",
+      url: "https://www.aiwithab.site",
+      alumniOf: {
+        "@type": "EducationalOrganization",
+        name: "University of Sindh",
+      },
+      hasCredential: [
+        {
+          "@type": "EducationalOccupationalCredential",
+          name: "Google IT Security: Defense Against the Digital Dark Arts",
+          credentialCategory: "Professional Certificate",
+          recognizedBy: {
+            "@type": "Organization",
+            name: "Google",
+          },
+          url: "https://www.coursera.org/account/accomplishments/records/UKH04RM2CIFP",
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          name: "Google AI Essentials",
+          credentialCategory: "Professional Certificate",
+          recognizedBy: {
+            "@type": "Organization",
+            name: "Google",
+          },
+          url: "https://www.coursera.org/account/accomplishments/records/XGUVFK784XZ6",
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          name: "Google Business Intelligence Professional Certificate",
+          credentialCategory: "Professional Certificate",
+          recognizedBy: {
+            "@type": "Organization",
+            name: "Google",
+          },
+          url: "https://www.coursera.org/account/accomplishments/professional-cert/certificate/LCZNQDANGYKB",
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          name: "Decisions, Decisions: Dashboards and Reports",
+          credentialCategory: "Professional Certificate",
+          recognizedBy: {
+            "@type": "Organization",
+            name: "Google",
+          },
+          url: "https://www.coursera.org/account/accomplishments/records/WPERMOPPEDJU",
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          name: "System Administration and IT Infrastructure Services",
+          credentialCategory: "Professional Certificate",
+          recognizedBy: {
+            "@type": "Organization",
+            name: "Google",
+          },
+          url: "https://www.coursera.org/account/accomplishments/records/CFT0KUT95A6L",
+        },
+      ],
+    },
+  };
+
   return (
-    <div id="resume-printable-area" className="min-h-screen bg-slate-950 text-slate-100 section-padding pt-24 pb-20 print:bg-white print:text-black print:p-0 print:pt-0">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div id="resume-printable-area" className="min-h-screen bg-slate-950 text-slate-100 section-padding pt-24 pb-20 print:bg-white print:text-black print:p-0 print:pt-0">
       <div className="container-narrow max-w-4xl space-y-8 print:max-w-none print:w-full">
         {/* Top Control Bar (Hidden on print) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 print:hidden">
@@ -336,5 +410,6 @@ export default function ResumePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

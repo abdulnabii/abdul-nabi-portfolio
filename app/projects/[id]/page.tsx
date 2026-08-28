@@ -25,13 +25,47 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     project = (seedProjects as any[]).find((p) => p.id === params.id || p.id === decodeURIComponent(params.id));
   }
   if (!project) return { title: "Project Not Found" };
+
+  const canonicalUrl = `https://www.aiwithab.site/projects/${project.id}`;
+  const img = project.image?.startsWith("http")
+    ? project.image
+    : project.image?.startsWith("/")
+    ? `https://www.aiwithab.site${project.image}`
+    : "https://www.aiwithab.site/profile.jpg";
+
   return {
-    title: `${project.title} | Case Study — Abdul Nabi`,
-    description: project.description,
+    title: `${project.title} — Full-Stack Case Study | Abdul Nabi`,
+    description: project.description || `Case study and technical architecture for ${project.title} by Abdul Nabi.`,
+    keywords: [
+      project.title,
+      ...(project.tags || []),
+      "Abdul Nabi Project",
+      "Full-Stack Case Study",
+      "aiwithab.site",
+    ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      title: `${project.title} | Case Study — Abdul Nabi`,
+      title: `${project.title} — Full-Stack Case Study | Abdul Nabi`,
       description: project.description,
-      url: `https://aiwithab.site/projects/${project.id}`,
+      url: canonicalUrl,
+      type: "article",
+      images: [
+        {
+          url: img,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} — Case Study | Abdul Nabi`,
+      description: project.description,
+      images: [img],
+      creator: "@abdulnabii",
     },
   };
 }
@@ -47,8 +81,33 @@ export default async function DynamicProjectPage({ params }: Props) {
   const code = isPublicUrl(project.githubUrl);
   const tags: string[] = Array.isArray(project.tags) ? project.tags : [];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: project.title,
+    description: project.description,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web Browser",
+    url: `https://www.aiwithab.site/projects/${project.id}`,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    author: {
+      "@type": "Person",
+      name: "Abdul Nabi",
+      url: "https://www.aiwithab.site",
+    },
+  };
+
   return (
-    <div className="relative min-h-screen pt-28 md:pt-36">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="relative min-h-screen pt-28 md:pt-36">
       <div className="section-padding pb-20">
         <div className="container-narrow">
           {/* Back link */}
@@ -142,5 +201,6 @@ export default async function DynamicProjectPage({ params }: Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }

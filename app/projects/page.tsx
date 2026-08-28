@@ -58,8 +58,39 @@ export default async function AllProjectsPage() {
 
   const featuredCount = projects.filter((p) => p.featured).length;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Full-Stack Web & AI/ML Projects Portfolio — Abdul Nabi",
+    description: "Browse all production web applications, machine learning systems, and developer tools built by Abdul Nabi.",
+    url: "https://www.aiwithab.site/projects",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: projects.length,
+      itemListElement: projects.map((p, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        item: {
+          "@type": "CreativeWork",
+          name: p.title,
+          description: p.description,
+          url: `https://www.aiwithab.site/projects/${p.id}`,
+          author: {
+            "@type": "Person",
+            name: "Abdul Nabi",
+          },
+        },
+      })),
+    },
+  };
+
   return (
-    <div className="relative min-h-screen pt-28 md:pt-36">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="relative min-h-screen pt-28 md:pt-36">
       {/* Header */}
       <section className="section-padding pb-8">
         <div className="container-narrow">
@@ -119,5 +150,6 @@ export default async function AllProjectsPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

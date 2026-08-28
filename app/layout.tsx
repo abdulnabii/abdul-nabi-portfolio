@@ -193,6 +193,51 @@ export default async function RootLayout({
           "query-input": "required name=search_term_string",
         },
       },
+      {
+        "@type": "ProfilePage",
+        "@id": "https://www.aiwithab.site/#profilepage",
+        url: "https://www.aiwithab.site",
+        name: "Abdul Nabi — Official Developer Profile",
+        mainEntity: { "@id": "https://www.aiwithab.site/#person" },
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://www.aiwithab.site/#faq",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "Who is Abdul Nabi?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Abdul Nabi (Abdul Nabi Khaskheli) is a Full-Stack Software Engineer and AI/ML Developer based in Karachi, Pakistan, specializing in Next.js 14, TypeScript, Python ML, Supabase, and Application Security.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What is Blood Sugar Tracker FYP?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Blood Sugar Tracker is a clinical healthcare machine learning web application engineered by Abdul Nabi that predicts diabetes risk probability and glucose trends using patient biological markers and Scikit-Learn models.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What is Abdul Nabi's core tech stack?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Abdul Nabi specializes in Next.js 14/16 (App Router), React 19, TypeScript, Python (Scikit-Learn, FastAPI), Supabase (PostgreSQL, Row Level Security), Tailwind CSS, and Application Security (AppSec).",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Where can I explore Abdul Nabi's free AI tools and projects?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "You can explore 30+ interactive AI tools and live developer labs at https://www.aiwithab.site/mini-projects and full project case studies at https://www.aiwithab.site/projects.",
+            },
+          },
+        ],
+      },
     ],
   };
 
