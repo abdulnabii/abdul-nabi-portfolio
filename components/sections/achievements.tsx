@@ -19,14 +19,78 @@ const COLOR_MAP: Record<string, { bg: string; border: string; glow: string; text
 };
 
 const DEFAULT_ACHIEVEMENTS: AchievementItem[] = [
-  { id: "1", title: "FYP Completed", description: "Delivered Blood Sugar Tracker ML system as Final Year Project using Flask & scikit-learn", icon: "🎓", date: "2025", color: "indigo", category: "Academic" },
-  { id: "2", title: "First Production Deployment", description: "Shipped first full-stack Next.js + Supabase app to Vercel with live users", icon: "🚀", date: "2024", color: "violet", category: "Dev" },
-  { id: "3", title: "GitHub Streak", description: "Maintained consistent GitHub contribution streak across multiple repositories", icon: "🔥", date: "2024", color: "orange", category: "Dev" },
-  { id: "4", title: "Full-Stack Stack Mastered", description: "Proficient in Next.js, TypeScript, Supabase, TailwindCSS, PostgreSQL end-to-end", icon: "⚡", date: "2024", color: "cyan", category: "Skills" },
-  { id: "5", title: "AppSec Learning Journey", description: "Actively studying Application Security — OWASP Top 10, authentication, and threat modeling", icon: "🛡️", date: "2025", color: "emerald", category: "Learning" },
-  { id: "6", title: "ML Model Shipped", description: "Built and deployed ElasticNet regression model predicting glucose levels with real accuracy", icon: "🧠", date: "2025", color: "purple", category: "ML" },
-  { id: "7", title: "Portfolio Launched", description: "Built premium portfolio with admin CMS, real-time DB, AI chatbot, and mini games", icon: "🌟", date: "2025", color: "yellow", category: "Dev" },
-  { id: "8", title: "Open Source Contributor", description: "Published projects on GitHub with clean READMEs and documentation", icon: "💻", date: "2024", color: "blue", category: "Dev" },
+  {
+    id: "1",
+    title: "Google: Foundations of Cybersecurity",
+    description: "Completed Google's Foundations of Cybersecurity course — covering core security frameworks, NIST CSF, threat categories, and CIA triad fundamentals.",
+    icon: "🔐",
+    date: "2025",
+    color: "indigo",
+    category: "Certification",
+  },
+  {
+    id: "2",
+    title: "Google: Play It Safe — Security Risks",
+    description: "Completed Google's security risk management module — SIEM tools, security playbooks, incident response frameworks, and NIST risk management practices.",
+    icon: "🛡️",
+    date: "2025",
+    color: "emerald",
+    category: "Certification",
+  },
+  {
+    id: "3",
+    title: "Google: Networks & Network Security",
+    description: "Completed Google's networking & security course — TCP/IP model, firewalls, VPNs, network hardening, and network intrusion tactics.",
+    icon: "🌐",
+    date: "2025",
+    color: "cyan",
+    category: "Certification",
+  },
+  {
+    id: "4",
+    title: "Google: Linux & SQL (Tools of the Trade)",
+    description: "Completed Google's Linux & SQL for security module — CLI navigation, file permissions, Bash commands, and SQL-based log analysis for threat investigation.",
+    icon: "🖥️",
+    date: "2025",
+    color: "violet",
+    category: "Certification",
+  },
+  {
+    id: "5",
+    title: "Google: Assets, Threats & Vulnerabilities",
+    description: "Completed Google's threat modeling course — asset classification, vulnerability assessment, attack surface analysis, and threat actor profiling.",
+    icon: "🎯",
+    date: "2025",
+    color: "orange",
+    category: "Certification",
+  },
+  {
+    id: "6",
+    title: "BS Computer Science — Graduated",
+    description: "Graduated with a BS in Computer Science from University of Sindh (2022–2026). Final Year Project: ML-powered Blood Sugar Tracker using ElasticNet regression, Flask, and scikit-learn.",
+    icon: "🎓",
+    date: "2026",
+    color: "yellow",
+    category: "Academic",
+  },
+  {
+    id: "7",
+    title: "GitHub: Pair Extraordinaire",
+    description: "Earned GitHub's Pair Extraordinaire achievement for co-authoring commits across collaborative pull requests — recognizing cross-developer collaboration.",
+    icon: "🤝",
+    date: "2025",
+    color: "purple",
+    category: "GitHub",
+  },
+  {
+    id: "8",
+    title: "Blood Sugar Tracker — FYP Published",
+    description: "Shipped open-source clinical ML system to GitHub: ElasticNet glucose prediction, patient dashboard, role-based auth, PDF reports, and automated high-risk alert flags.",
+    icon: "🧠",
+    date: "2025",
+    color: "red",
+    category: "ML",
+  },
 ];
 
 export function Achievements() {
@@ -47,8 +111,8 @@ export function Achievements() {
         <Reveal>
           <SectionHeading
             eyebrow="Achievements"
-            title="Milestones & badges"
-            subtitle="A wall of earned achievements — from academic milestones to shipped products and mastered skills."
+            title="Credentials & Milestones"
+            subtitle="Real credentials — Google Cybersecurity certifications, academic graduation, GitHub achievements, and shipped open-source projects."
           />
         </Reveal>
 
