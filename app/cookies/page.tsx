@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
-import { CookieInspector } from "@/components/cookies/cookie-inspector";
+import { CookiePreferences } from "@/components/cookies/cookie-preferences";
 import {
   Cookie,
   ShieldCheck,
@@ -103,7 +103,7 @@ export default function CookiesPage() {
             Control which cookies are permitted on your device below. Changes take effect immediately.
           </p>
 
-          <CookieInspector embedded={false} />
+          <CookiePreferences />
         </section>
 
         {/* Educational Breakdown */}

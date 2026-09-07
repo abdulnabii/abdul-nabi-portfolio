@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
-import { CookieInspector } from "@/components/cookies/cookie-inspector";
+import { CookiePreferences } from "@/components/cookies/cookie-preferences";
 import {
   ShieldCheck,
   Lock,
@@ -151,7 +151,7 @@ export default function PrivacyPolicyPage() {
           <p className="text-sm text-slate-400">
             You can configure your privacy choices or review our minimal cookie policy below:
           </p>
-          <CookieInspector embedded={true} />
+          <CookiePreferences />
         </section>
 
         {/* Detailed Legal Sections */}
