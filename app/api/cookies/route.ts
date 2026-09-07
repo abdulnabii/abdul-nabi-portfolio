@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { categorizeCookie, CookieCategory } from "@/lib/cookies";
+import { getAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,14 @@ interface ServerCookieInfo {
 
 export async function GET() {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized: only admin can inspect server cookies" },
+        { status: 401 }
+      );
+    }
+
     const cookieStore = await cookies();
     const allCookies = cookieStore.getAll();
 
@@ -69,6 +78,14 @@ export async function GET() {
 
 export async function DELETE(request: Request) {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized: only admin can modify cookies" },
+        { status: 401 }
+      );
+    }
+
     const { name } = await request.json().catch(() => ({ name: "" }));
     const cookieStore = await cookies();
 

@@ -90,21 +90,17 @@ export default function CookiesPage() {
           </p>
         </div>
 
-        {/* Real-time Interactive Cookie Inspector */}
+        {/* Cookie Preferences Section */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <Sliders className="h-5 w-5 text-accent-soft" />
-              Interactive Cookie Inspector
+              Cookie Preferences & Consent Controls
             </h2>
-            <span className="text-xs text-emerald-400 flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Live Telemetry
-            </span>
           </div>
 
           <p className="text-sm text-slate-400">
-            Use the tool below to fetch all active cookies from your current browser session or inspect the server-side HTTP request headers received by our Next.js edge runtime.
+            Control which cookies are permitted on your device below. Changes take effect immediately.
           </p>
 
           <CookieInspector embedded={false} />

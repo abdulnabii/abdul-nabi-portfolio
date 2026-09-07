@@ -134,12 +134,12 @@ export default function PrivacyPolicyPage() {
           </GlassCard>
         </div>
 
-        {/* Live Cookie Inspector Section */}
+        {/* Cookie Consent Section */}
         <section className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Cookie className="h-5 w-5 text-accent-soft" />
-              <h2 className="text-xl font-bold text-white">Live Cookie Inspector & Consent Controls</h2>
+              <h2 className="text-xl font-bold text-white">Cookie Preferences & Consent Controls</h2>
             </div>
             <Link
               href="/cookies"
@@ -149,7 +149,7 @@ export default function PrivacyPolicyPage() {
             </Link>
           </div>
           <p className="text-sm text-slate-400">
-            You can interactively fetch, inspect, and toggle all cookies currently registered in your browser below:
+            You can configure your privacy choices or review our minimal cookie policy below:
           </p>
           <CookieInspector embedded={true} />
         </section>
