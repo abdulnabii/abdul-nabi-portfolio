@@ -1,10 +1,11 @@
 "use client";
 
 import { getActiveSocials, siteContent } from "@/data/content";
-import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter, Cookie } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { useSiteSettings } from "@/components/settings-provider";
+import { openCookieModal } from "@/components/cookie-consent";
 
 const iconMap = {
   github: Github,
@@ -95,16 +96,40 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="mt-8 flex flex-col gap-2 border-t border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-500">
-              <p>
-                {`© ${year} ${name}. All rights reserved.`}
-              </p>
-              <div className="flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-col gap-3 border-t border-white/5 pt-6 text-xs text-slate-500">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p>
+                  {`© ${year} ${name}. All rights reserved.`}
+                </p>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                  <Link href="/privacy" className="hover:text-slate-300 transition-colors">
+                    Privacy Policy
+                  </Link>
+                  <span>·</span>
+                  <Link href="/cookies" className="hover:text-slate-300 transition-colors">
+                    Cookie Policy
+                  </Link>
+                  <span>·</span>
+                  <Link href="/terms" className="hover:text-slate-300 transition-colors">
+                    Terms of Service
+                  </Link>
+                  <span>·</span>
+                  <button
+                    type="button"
+                    onClick={openCookieModal}
+                    className="inline-flex items-center gap-1 text-slate-400 hover:text-accent-soft transition-colors cursor-pointer"
+                  >
+                    <Cookie className="h-3 w-3 text-accent-soft" />
+                    Cookie Preferences
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-[11px] text-slate-500 border-t border-white/[0.02]">
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
                   Last updated: {new Date().toLocaleString("en-US", { month: "long", year: "numeric" })}
                 </span>
-                <span>·</span>
                 <span>{siteContent.footer.note}</span>
               </div>
             </div>

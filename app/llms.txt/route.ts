@@ -56,6 +56,11 @@ ${blogs.map((b) => `- [${b.title}](https://www.aiwithab.site/blog/${b.slug}): ${
 - System Administration and IT Infrastructure Services (Coursera)
 - Resume: https://www.aiwithab.site/resume
 
+## Legal, Privacy & Policies
+- Privacy Policy: https://www.aiwithab.site/privacy
+- Cookie Policy & Live Inspector: https://www.aiwithab.site/cookies
+- Terms of Service: https://www.aiwithab.site/terms
+
 ## Official Contact & Profiles
 - Website: https://www.aiwithab.site
 - GitHub: https://github.com/abdulnabii

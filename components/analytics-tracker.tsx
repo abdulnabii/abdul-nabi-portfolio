@@ -1,7 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getCookieConsent, COOKIE_CONSENT_EVENT, hasUserSetConsent } from "@/lib/cookies";
 
 function getOrCreateSessionId(): string {
   if (typeof window === "undefined") return "";
@@ -15,8 +16,28 @@ function getOrCreateSessionId(): string {
 
 export function AnalyticsTracker() {
   const pathname = usePathname();
+  const [consentAllowed, setConsentAllowed] = useState(true);
 
   useEffect(() => {
+    const checkConsent = () => {
+      // If user explicitly made a choice, check if analytics is allowed
+      if (hasUserSetConsent()) {
+        const prefs = getCookieConsent();
+        setConsentAllowed(prefs.analytics);
+      } else {
+        // Default mode before explicit choice (privacy friendly)
+        setConsentAllowed(true);
+      }
+    };
+
+    checkConsent();
+    const handleUpdate = () => checkConsent();
+    window.addEventListener(COOKIE_CONSENT_EVENT, handleUpdate);
+    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, handleUpdate);
+  }, []);
+
+  useEffect(() => {
+    if (!consentAllowed) return;
     if (!pathname || pathname.startsWith("/admin") || pathname.startsWith("/api")) return;
 
     const sessionId = getOrCreateSessionId();
@@ -34,7 +55,7 @@ export function AnalyticsTracker() {
         }),
       }).catch(() => {});
     }
-  }, [pathname]);
+  }, [pathname, consentAllowed]);
 
   useEffect(() => {
     const handleCtaClick = (e: MouseEvent) => {
@@ -55,7 +76,7 @@ export function AnalyticsTracker() {
         text.toLowerCase().includes(label.toLowerCase())
       );
 
-      if (matchedLabel) {
+      if (matchedLabel && consentAllowed) {
         const sessionId = getOrCreateSessionId();
         fetch("/api/analytics/track", {
           method: "POST",
@@ -72,7 +93,7 @@ export function AnalyticsTracker() {
 
     document.addEventListener("click", handleCtaClick);
     return () => document.removeEventListener("click", handleCtaClick);
-  }, []);
+  }, [consentAllowed]);
 
   return null;
 }
