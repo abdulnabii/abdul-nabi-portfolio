@@ -158,6 +158,12 @@ export function fetchBrowserCookies(): CookieItem[] {
 
     const name = decodeURIComponent(rawName.trim());
     const value = decodeURIComponent(rawValue.trim());
+
+    // Never expose administrative or authentication tokens to public inspectors
+    if (name.toLowerCase().includes("admin") || name.toLowerCase().includes("token") || name === "an_admin_session") {
+      continue;
+    }
+
     const size = new Blob([raw]).size;
 
     const { category, description, provider } = categorizeCookie(name);

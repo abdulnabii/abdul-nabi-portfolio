@@ -25,7 +25,15 @@ export async function GET() {
       other: 0,
     };
 
-    const cookieList: ServerCookieInfo[] = allCookies.map((c) => {
+    // Sensitive authentication / security cookies that must NEVER be exposed publicly
+    const SENSITIVE_COOKIE_NAMES = new Set(["an_admin_session", "admin_session", "session", "token", "auth_token"]);
+
+    // Filter out sensitive admin and authentication tokens completely
+    const publicCookies = allCookies.filter(
+      (c) => !SENSITIVE_COOKIE_NAMES.has(c.name.toLowerCase()) && !c.name.toLowerCase().includes("admin")
+    );
+
+    const cookieList: ServerCookieInfo[] = publicCookies.map((c) => {
       const { category, description, provider } = categorizeCookie(c.name);
       summary[category] = (summary[category] || 0) + 1;
 
@@ -35,10 +43,7 @@ export async function GET() {
 
       return {
         name: c.name,
-        // Mask session cookie values for safety in telemetry
-        value: c.name.includes("session") || c.name.includes("auth") || c.name.includes("token")
-          ? `${c.value.substring(0, 6)}••••••••${c.value.substring(c.value.length - 4)}`
-          : c.value,
+        value: c.value,
         category,
         description,
         provider,
