@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
-import { CookiePreferences } from "@/components/cookies/cookie-preferences";
 import {
   ShieldCheck,
   Lock,
@@ -13,7 +12,6 @@ import {
   Mail,
   ArrowLeft,
   ExternalLink,
-  Cookie,
   CheckCircle,
 } from "lucide-react";
 
@@ -134,25 +132,6 @@ export default function PrivacyPolicyPage() {
           </GlassCard>
         </div>
 
-        {/* Cookie Consent Section */}
-        <section className="space-y-4 pt-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Cookie className="h-5 w-5 text-accent-soft" />
-              <h2 className="text-xl font-bold text-white">Cookie Preferences & Consent Controls</h2>
-            </div>
-            <Link
-              href="/cookies"
-              className="text-xs text-accent-soft hover:underline flex items-center gap-1"
-            >
-              Full Cookie Policy <ExternalLink className="h-3 w-3" />
-            </Link>
-          </div>
-          <p className="text-sm text-slate-400">
-            You can configure your privacy choices or review our minimal cookie policy below:
-          </p>
-          <CookiePreferences />
-        </section>
 
         {/* Detailed Legal Sections */}
         <div className="space-y-8 pt-4">
@@ -365,10 +344,6 @@ export default function PrivacyPolicyPage() {
             ← Home
           </Link>
           <div className="flex items-center gap-4">
-            <Link href="/cookies" className="hover:text-white transition-colors">
-              Cookie Policy
-            </Link>
-            <span>·</span>
             <Link href="/terms" className="hover:text-white transition-colors">
               Terms of Service
             </Link>

@@ -134,8 +134,7 @@ export default function TermsOfServicePage() {
               <p>
                 By visiting, browsing, or utilizing the interactive tools on <strong>aiwithab.site</strong>, you
                 confirm that you are at least 13 years of age and agree to be bound by these Terms of Service,
-                our <Link href="/privacy" className="text-accent-soft hover:underline">Privacy Policy</Link>, and
-                our <Link href="/cookies" className="text-accent-soft hover:underline">Cookie Policy</Link>.
+                our <Link href="/privacy" className="text-accent-soft hover:underline">Privacy Policy</Link>.
               </p>
               <p>
                 If you do not agree to these terms, please discontinue using this website immediately.
@@ -287,10 +286,6 @@ export default function TermsOfServicePage() {
           <div className="flex items-center gap-4">
             <Link href="/privacy" className="hover:text-white transition-colors">
               Privacy Policy
-            </Link>
-            <span>·</span>
-            <Link href="/cookies" className="hover:text-white transition-colors">
-              Cookie Policy
             </Link>
             <span>·</span>
             <Link href="/#contact" className="hover:text-white transition-colors">

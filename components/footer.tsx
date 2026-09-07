@@ -1,11 +1,10 @@
 "use client";
 
 import { getActiveSocials, siteContent } from "@/data/content";
-import { Github, Linkedin, Mail, Twitter, Cookie } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { useSiteSettings } from "@/components/settings-provider";
-import { openCookieModal } from "@/components/cookie-consent";
 
 const iconMap = {
   github: Github,
@@ -106,22 +105,9 @@ export function Footer() {
                     Privacy Policy
                   </Link>
                   <span>·</span>
-                  <Link href="/cookies" className="hover:text-slate-300 transition-colors">
-                    Cookie Policy
-                  </Link>
-                  <span>·</span>
                   <Link href="/terms" className="hover:text-slate-300 transition-colors">
                     Terms of Service
                   </Link>
-                  <span>·</span>
-                  <button
-                    type="button"
-                    onClick={openCookieModal}
-                    className="inline-flex items-center gap-1 text-slate-400 hover:text-accent-soft transition-colors cursor-pointer"
-                  >
-                    <Cookie className="h-3 w-3 text-accent-soft" />
-                    Cookie Preferences
-                  </button>
                 </div>
               </div>
 
