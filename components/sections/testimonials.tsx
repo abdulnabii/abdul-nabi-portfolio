@@ -8,19 +8,26 @@ import { Star, Quote, ShieldCheck, Linkedin, Award, Briefcase } from "lucide-rea
 import seedTestimonials from "@/data/testimonials.json";
 import type { TestimonialItem } from "@/lib/settings-store";
 
-export function Testimonials() {
-  const [testimonials, setTestimonials] = useState<TestimonialItem[]>(seedTestimonials as TestimonialItem[]);
+export function Testimonials({ initialTestimonials }: { initialTestimonials?: TestimonialItem[] } = {}) {
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>(
+    initialTestimonials && initialTestimonials.length > 0
+      ? initialTestimonials
+      : (seedTestimonials as TestimonialItem[])
+  );
 
   useEffect(() => {
-    fetch("/api/admin/testimonials")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.testimonials && d.testimonials.length > 0) {
-          setTestimonials(d.testimonials);
-        }
-      })
-      .catch(() => {});
-  }, []);
+    // Only fetch if initialTestimonials was not supplied on server render
+    if (!initialTestimonials || initialTestimonials.length === 0) {
+      fetch("/api/admin/testimonials")
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.testimonials && d.testimonials.length > 0) {
+            setTestimonials(d.testimonials);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [initialTestimonials]);
 
   return (
     <section

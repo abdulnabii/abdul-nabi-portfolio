@@ -60,6 +60,7 @@ const PUBLIC_READ_API_ROUTES = [
   "/api/admin/certifications",
   "/api/admin/achievements",
   "/api/admin/mini-projects",
+  "/api/admin/testimonials",
 ];
 
 export async function middleware(request: NextRequest) {

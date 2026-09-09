@@ -16,7 +16,7 @@ import { LinkButton } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getPublishedBlogs } from "@/lib/blog-store";
-import { getSectionVisibility } from "@/lib/settings-store";
+import { getSectionVisibility, getTestimonials } from "@/lib/settings-store";
 import { ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +25,7 @@ export const revalidate = 0;
 export default async function HomePage() {
   const latestPosts = (await getPublishedBlogs()).slice(0, 2);
   const vis = await getSectionVisibility();
+  const testimonials = await getTestimonials();
 
   return (
     <>
@@ -38,7 +39,7 @@ export default async function HomePage() {
       {vis.certifications !== false && <Certifications />}
       {vis.achievements && <Achievements />}
       {vis.process !== false && <Process />}
-      {vis.testimonials !== false && <Testimonials />}
+      {vis.testimonials !== false && <Testimonials initialTestimonials={testimonials} />}
       {vis.games && <MiniGames />}
 
       {vis.blog && (
