@@ -41,24 +41,46 @@ export default async function BlogPage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Blog",
-    name: "Abdul Nabi Blog",
-    url: "https://www.aiwithab.site/blog",
-    description: "Articles on Next.js, AI engineering, TypeScript, and Application Security by Abdul Nabi.",
-    author: {
-      "@type": "Person",
-      "@id": "https://www.aiwithab.site/#person",
-      name: "Abdul Nabi",
-    },
-    blogPost: posts.slice(0, 10).map((post) => ({
-      "@type": "BlogPosting",
-      headline: post.title,
-      url: `https://www.aiwithab.site/blog/${post.slug}`,
-      datePublished: post.date,
-      description: post.excerpt,
-      image: post.coverImage || "https://www.aiwithab.site/profile.jpg",
-      author: { "@type": "Person", name: "Abdul Nabi" },
-    })),
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.aiwithab.site",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Blog",
+            item: "https://www.aiwithab.site/blog",
+          },
+        ],
+      },
+      {
+        "@type": "Blog",
+        "@id": "https://www.aiwithab.site/blog#blog",
+        name: "Abdul Nabi Blog",
+        url: "https://www.aiwithab.site/blog",
+        description: "Articles on Next.js, AI engineering, TypeScript, and Application Security by Abdul Nabi.",
+        author: {
+          "@type": "Person",
+          "@id": "https://www.aiwithab.site/#person",
+          name: "Abdul Nabi",
+        },
+        blogPost: posts.slice(0, 10).map((post) => ({
+          "@type": "BlogPosting",
+          headline: post.title,
+          url: `https://www.aiwithab.site/blog/${post.slug}`,
+          datePublished: post.date,
+          description: post.excerpt,
+          image: post.coverImage || "https://www.aiwithab.site/profile.jpg",
+          author: { "@type": "Person", name: "Abdul Nabi" },
+        })),
+      },
+    ],
   };
 
   return (

@@ -1,6 +1,15 @@
 import { LinkButton } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { ArrowLeft, Home } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Page Not Found · Abdul Nabi",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function NotFound() {
   return (

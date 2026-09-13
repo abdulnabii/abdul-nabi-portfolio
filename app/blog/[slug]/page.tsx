@@ -92,27 +92,56 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const jsonLd = post
     ? {
         "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        headline: post.title,
-        description: post.excerpt,
-        image: post.coverImage || "https://www.aiwithab.site/profile.jpg",
-        datePublished: post.date,
-        dateModified: post.updatedAt || post.date,
-        author: {
-          "@type": "Person",
-          name: "Abdul Nabi",
-          url: "https://www.aiwithab.site",
-        },
-        publisher: {
-          "@type": "Person",
-          name: "Abdul Nabi",
-          url: "https://www.aiwithab.site",
-        },
-        mainEntityOfPage: {
-          "@type": "WebPage",
-          "@id": `https://www.aiwithab.site/blog/${params.slug}`,
-        },
-        keywords: post.tags?.join(", "),
+        "@graph": [
+          {
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.aiwithab.site",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Blog",
+                item: "https://www.aiwithab.site/blog",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: post.title,
+                item: `https://www.aiwithab.site/blog/${params.slug}`,
+              },
+            ],
+          },
+          {
+            "@type": "BlogPosting",
+            "@id": `https://www.aiwithab.site/blog/${params.slug}#article`,
+            headline: post.title,
+            description: post.excerpt,
+            image: post.coverImage || `https://www.aiwithab.site/api/og/blog?slug=${encodeURIComponent(params.slug)}`,
+            datePublished: post.date,
+            dateModified: post.updatedAt || post.date,
+            inLanguage: "en-US",
+            author: {
+              "@type": "Person",
+              name: "Abdul Nabi",
+              url: "https://www.aiwithab.site",
+            },
+            publisher: {
+              "@type": "Person",
+              name: "Abdul Nabi",
+              url: "https://www.aiwithab.site",
+            },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://www.aiwithab.site/blog/${params.slug}`,
+            },
+            keywords: post.tags?.join(", "),
+          },
+        ],
       }
     : null;
 

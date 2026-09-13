@@ -41,71 +41,93 @@ export const revalidate = 0;
 export default function ResumePage() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    name: "Abdul Nabi — Official Resume & Verified Credentials",
-    url: "https://www.aiwithab.site/resume",
-    mainEntity: {
-      "@type": "Person",
-      name: "Abdul Nabi",
-      jobTitle: "Full-Stack Software Engineer & AI/ML Developer",
-      url: "https://www.aiwithab.site",
-      alumniOf: {
-        "@type": "EducationalOrganization",
-        name: "University of Sindh",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.aiwithab.site",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Resume",
+            item: "https://www.aiwithab.site/resume",
+          },
+        ],
       },
-      hasCredential: [
-        {
-          "@type": "EducationalOccupationalCredential",
-          name: "Google IT Security: Defense Against the Digital Dark Arts",
-          credentialCategory: "Professional Certificate",
-          recognizedBy: {
-            "@type": "Organization",
-            name: "Google",
+      {
+        "@type": "ProfilePage",
+        "@id": "https://www.aiwithab.site/resume#profile",
+        name: "Abdul Nabi — Official Resume & Verified Credentials",
+        url: "https://www.aiwithab.site/resume",
+        mainEntity: {
+          "@type": "Person",
+          name: "Abdul Nabi",
+          jobTitle: "Full-Stack Software Engineer & AI/ML Developer",
+          url: "https://www.aiwithab.site",
+          alumniOf: {
+            "@type": "EducationalOrganization",
+            name: "University of Sindh",
           },
-          url: "https://www.coursera.org/account/accomplishments/records/UKH04RM2CIFP",
+          hasCredential: [
+            {
+              "@type": "EducationalOccupationalCredential",
+              name: "Google IT Security: Defense Against the Digital Dark Arts",
+              credentialCategory: "Professional Certificate",
+              recognizedBy: {
+                "@type": "Organization",
+                name: "Google",
+              },
+              url: "https://www.coursera.org/account/accomplishments/records/UKH04RM2CIFP",
+            },
+            {
+              "@type": "EducationalOccupationalCredential",
+              name: "Google AI Essentials",
+              credentialCategory: "Professional Certificate",
+              recognizedBy: {
+                "@type": "Organization",
+                name: "Google",
+              },
+              url: "https://www.coursera.org/account/accomplishments/records/XGUVFK784XZ6",
+            },
+            {
+              "@type": "EducationalOccupationalCredential",
+              name: "Google Business Intelligence Professional Certificate",
+              credentialCategory: "Professional Certificate",
+              recognizedBy: {
+                "@type": "Organization",
+                name: "Google",
+              },
+              url: "https://www.coursera.org/account/accomplishments/professional-cert/certificate/LCZNQDANGYKB",
+            },
+            {
+              "@type": "EducationalOccupationalCredential",
+              name: "Decisions, Decisions: Dashboards and Reports",
+              credentialCategory: "Professional Certificate",
+              recognizedBy: {
+                "@type": "Organization",
+                name: "Google",
+              },
+              url: "https://www.coursera.org/account/accomplishments/records/WPERMOPPEDJU",
+            },
+            {
+              "@type": "EducationalOccupationalCredential",
+              name: "System Administration and IT Infrastructure Services",
+              credentialCategory: "Professional Certificate",
+              recognizedBy: {
+                "@type": "Organization",
+                name: "Google",
+              },
+              url: "https://www.coursera.org/account/accomplishments/records/CFT0KUT95A6L",
+            },
+          ],
         },
-        {
-          "@type": "EducationalOccupationalCredential",
-          name: "Google AI Essentials",
-          credentialCategory: "Professional Certificate",
-          recognizedBy: {
-            "@type": "Organization",
-            name: "Google",
-          },
-          url: "https://www.coursera.org/account/accomplishments/records/XGUVFK784XZ6",
-        },
-        {
-          "@type": "EducationalOccupationalCredential",
-          name: "Google Business Intelligence Professional Certificate",
-          credentialCategory: "Professional Certificate",
-          recognizedBy: {
-            "@type": "Organization",
-            name: "Google",
-          },
-          url: "https://www.coursera.org/account/accomplishments/professional-cert/certificate/LCZNQDANGYKB",
-        },
-        {
-          "@type": "EducationalOccupationalCredential",
-          name: "Decisions, Decisions: Dashboards and Reports",
-          credentialCategory: "Professional Certificate",
-          recognizedBy: {
-            "@type": "Organization",
-            name: "Google",
-          },
-          url: "https://www.coursera.org/account/accomplishments/records/WPERMOPPEDJU",
-        },
-        {
-          "@type": "EducationalOccupationalCredential",
-          name: "System Administration and IT Infrastructure Services",
-          credentialCategory: "Professional Certificate",
-          recognizedBy: {
-            "@type": "Organization",
-            name: "Google",
-          },
-          url: "https://www.coursera.org/account/accomplishments/records/CFT0KUT95A6L",
-        },
-      ],
-    },
+      },
+    ],
   };
 
   return (

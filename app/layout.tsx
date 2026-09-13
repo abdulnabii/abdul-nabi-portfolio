@@ -1,7 +1,7 @@
 import { DraftPreviewBanner } from "@/components/draft-preview-banner";
 import { SiteChrome } from "@/components/site-chrome";
 import { siteContent } from "@/data/content";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -10,6 +10,13 @@ const inter = Inter({
   variable: "--font-geist-sans",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  themeColor: "#050814",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -253,6 +260,12 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Abdul Nabi — Full-Stack & AI/ML Engineering Blog RSS Feed"
+          href="https://www.aiwithab.site/feed.xml"
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem("app_theme");if(t==="light"){document.documentElement.classList.add("light");document.documentElement.classList.remove("dark");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();`,

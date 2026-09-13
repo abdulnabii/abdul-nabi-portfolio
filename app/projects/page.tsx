@@ -60,28 +60,50 @@ export default async function AllProjectsPage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "Full-Stack Web & AI/ML Projects Portfolio — Abdul Nabi",
-    description: "Browse all production web applications, machine learning systems, and developer tools built by Abdul Nabi.",
-    url: "https://www.aiwithab.site/projects",
-    mainEntity: {
-      "@type": "ItemList",
-      numberOfItems: projects.length,
-      itemListElement: projects.map((p, idx) => ({
-        "@type": "ListItem",
-        position: idx + 1,
-        item: {
-          "@type": "CreativeWork",
-          name: p.title,
-          description: p.description,
-          url: `https://www.aiwithab.site/projects/${p.id}`,
-          author: {
-            "@type": "Person",
-            name: "Abdul Nabi",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.aiwithab.site",
           },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Projects",
+            item: "https://www.aiwithab.site/projects",
+          },
+        ],
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://www.aiwithab.site/projects#collection",
+        name: "Full-Stack Web & AI/ML Projects Portfolio — Abdul Nabi",
+        description: "Browse all production web applications, machine learning systems, and developer tools built by Abdul Nabi.",
+        url: "https://www.aiwithab.site/projects",
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: projects.length,
+          itemListElement: projects.map((p, idx) => ({
+            "@type": "ListItem",
+            position: idx + 1,
+            item: {
+              "@type": "CreativeWork",
+              name: p.title,
+              description: p.description,
+              url: `https://www.aiwithab.site/projects/${p.id}`,
+              author: {
+                "@type": "Person",
+                name: "Abdul Nabi",
+              },
+            },
+          })),
         },
-      })),
-    },
+      },
+    ],
   };
 
   return (

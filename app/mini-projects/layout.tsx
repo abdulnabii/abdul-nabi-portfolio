@@ -1,29 +1,28 @@
 import type { Metadata } from "next";
-import { getMiniProjects } from "@/lib/mini-projects-store";
 
 export const metadata: Metadata = {
-  title: "Free AI Web Apps, Developer Tools & Labs Online | Abdul Nabi",
+  title: "30 Days 30 AI Projects — Interactive Developer Tools & Demos | Abdul Nabi",
   description:
-    "Explore 30+ free interactive AI tools, developer utilities, and web applications — AI Resume Builder, Diabetes Risk Predictor, Cloud Architecture Canvas, SQL Generator, and API Load Tester.",
+    "Explore 30 production AI & full-stack micro-applications built by Abdul Nabi — including Healthcare ML diagnostic predictors, automated AppSec auditors, developer utilities, and AI agents with live browser demos.",
   keywords: [
-    "free AI tools online",
-    "AI resume builder ATS free",
-    "diabetes risk predictor machine learning",
-    "cloud architecture diagram generator",
-    "API load testing dashboard free",
-    "AI SQL query builder",
-    "Next.js developer tools",
-    "30 days 30 AI projects",
-    "Abdul Nabi dev labs",
-    "full stack AI web applications",
+    "30 Days 30 AI Projects",
+    "Abdul Nabi Mini Projects",
+    "AI Developer Tools",
+    "Healthcare ML Web App",
+    "Diabetes Risk Predictor",
+    "Code Review Bot",
+    "Next.js AI Tools",
+    "Free AI Browser Tools",
+    "Abdul Nabi",
+    "aiwithab.site",
   ],
   alternates: {
     canonical: "https://www.aiwithab.site/mini-projects",
   },
   openGraph: {
-    title: "Free AI Web Apps, Developer Tools & Labs Online | Abdul Nabi",
+    title: "30 Days 30 AI Projects — Interactive Developer Tools & Demos | Abdul Nabi",
     description:
-      "30+ free interactive AI tools, developer utilities, and web applications built with Next.js, TypeScript, and Python ML by Abdul Nabi.",
+      "Explore 30 production AI & full-stack micro-applications built by Abdul Nabi — live browser demos, Healthcare ML, and AppSec tools.",
     url: "https://www.aiwithab.site/mini-projects",
     type: "website",
     images: [
@@ -31,62 +30,59 @@ export const metadata: Metadata = {
         url: "https://www.aiwithab.site/profile.jpg",
         width: 1200,
         height: 630,
-        alt: "Free AI Web Apps & Developer Tools by Abdul Nabi",
+        alt: "30 Days 30 AI Projects by Abdul Nabi",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free AI Web Apps, Developer Tools & Labs Online | Abdul Nabi",
+    title: "30 Days 30 AI Projects — Interactive Developer Tools & Demos | Abdul Nabi",
     description:
-      "30+ free interactive AI tools, developer utilities, and web applications by Abdul Nabi.",
+      "Explore 30 production AI & full-stack micro-applications built by Abdul Nabi with live browser demos.",
     images: ["https://www.aiwithab.site/profile.jpg"],
+    creator: "@abdulnabii",
   },
 };
 
-export default async function MiniProjectsLayout({
+export default function MiniProjectsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  let projects: any[] = [];
-  try {
-    projects = await getMiniProjects();
-  } catch {}
-
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: "30 Days 30 AI Projects & Free Developer Tools",
-    description: "Interactive AI applications, developer utilities, and web tools built by Abdul Nabi.",
-    url: "https://www.aiwithab.site/mini-projects",
-    numberOfItems: projects.length,
-    itemListElement: projects.slice(0, 15).map((p, idx) => ({
-      "@type": "ListItem",
-      position: idx + 1,
-      item: {
-        "@type": "SoftwareApplication",
-        name: p.title,
-        description: p.description,
-        applicationCategory: p.category.includes("Health")
-          ? "HealthApplication"
-          : p.category.includes("FinTech")
-          ? "FinanceApplication"
-          : "DeveloperApplication",
-        operatingSystem: "Web Browser",
-        url: p.vercelUrl || "https://www.aiwithab.site/mini-projects",
-        offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "USD",
-        },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.aiwithab.site",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Mini Projects",
+            item: "https://www.aiwithab.site/mini-projects",
+          },
+        ],
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://www.aiwithab.site/mini-projects#collection",
+        name: "30 Days 30 AI Projects Challenge — Abdul Nabi",
+        url: "https://www.aiwithab.site/mini-projects",
+        description:
+          "Open-source suite of 30 interactive AI and machine learning micro-applications spanning Healthcare, DevTools, FinTech, and IoT.",
         author: {
           "@type": "Person",
           name: "Abdul Nabi",
           url: "https://www.aiwithab.site",
         },
       },
-    })),
+    ],
   };
 
   return (
@@ -99,4 +95,3 @@ export default async function MiniProjectsLayout({
     </>
   );
 }
-

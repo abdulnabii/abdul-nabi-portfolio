@@ -27,11 +27,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!project) return { title: "Project Not Found" };
 
   const canonicalUrl = `https://www.aiwithab.site/projects/${project.id}`;
+  const dynamicOg = `https://www.aiwithab.site/api/og/project?id=${encodeURIComponent(project.id)}`;
   const img = project.image?.startsWith("http")
     ? project.image
     : project.image?.startsWith("/")
     ? `https://www.aiwithab.site${project.image}`
-    : "https://www.aiwithab.site/profile.jpg";
+    : dynamicOg;
 
   return {
     title: `${project.title} — Full-Stack Case Study | Abdul Nabi`,
@@ -53,10 +54,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       images: [
         {
-          url: img,
+          url: dynamicOg,
           width: 1200,
           height: 630,
-          alt: project.title,
+          alt: `${project.title} Case Study — Abdul Nabi`,
         },
       ],
     },
@@ -64,7 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: `${project.title} — Case Study | Abdul Nabi`,
       description: project.description,
-      images: [img],
+      images: [dynamicOg],
       creator: "@abdulnabii",
     },
   };
@@ -83,22 +84,51 @@ export default async function DynamicProjectPage({ params }: Props) {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: project.title,
-    description: project.description,
-    applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web Browser",
-    url: `https://www.aiwithab.site/projects/${project.id}`,
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    author: {
-      "@type": "Person",
-      name: "Abdul Nabi",
-      url: "https://www.aiwithab.site",
-    },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.aiwithab.site",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Projects",
+            item: "https://www.aiwithab.site/projects",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: project.title,
+            item: `https://www.aiwithab.site/projects/${project.id}`,
+          },
+        ],
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": `https://www.aiwithab.site/projects/${project.id}#app`,
+        name: project.title,
+        description: project.description,
+        applicationCategory: "DeveloperApplication",
+        operatingSystem: "Web Browser",
+        url: `https://www.aiwithab.site/projects/${project.id}`,
+        image: `https://www.aiwithab.site/api/og/project?id=${encodeURIComponent(project.id)}`,
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+        author: {
+          "@type": "Person",
+          name: "Abdul Nabi",
+          url: "https://www.aiwithab.site",
+        },
+      },
+    ],
   };
 
   return (
