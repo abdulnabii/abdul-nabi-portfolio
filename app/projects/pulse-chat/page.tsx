@@ -18,17 +18,44 @@ export async function generateMetadata(): Promise<Metadata> {
   if (!project) {
     project = (seedProjects as any[]).find((p) => p.id === "pulse-chat");
   }
-  if (!project) {
-    return { title: "Project not found" };
-  }
+  if (!project) return { title: "Project not found" };
+
+  const canonicalUrl = "https://www.aiwithab.site/projects/pulse-chat";
+  const dynamicOg = "https://www.aiwithab.site/api/og/project?id=pulse-chat";
 
   return {
-    title: `${project.title} — Case Study`,
+    title: `${project.title} — Real-Time Streaming Chat Case Study | Abdul Nabi`,
     description: project.description,
+    keywords: [
+      project.title,
+      ...(project.tags || []),
+      "Abdul Nabi Project",
+      "Full-Stack Case Study",
+      "aiwithab.site",
+    ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      title: project.title,
+      title: `${project.title} — Real-Time Streaming Chat Case Study | Abdul Nabi`,
       description: project.description,
-      images: project.image ? [project.image] : undefined,
+      url: canonicalUrl,
+      type: "article",
+      images: [
+        {
+          url: dynamicOg,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} Case Study — Abdul Nabi`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} — Real-Time Streaming Chat Case Study | Abdul Nabi`,
+      description: project.description,
+      images: [dynamicOg],
+      creator: "@abdulnabii",
     },
   };
 }
@@ -111,7 +138,62 @@ export default async function PulseChatPage() {
 
   const isPrivate = project.status === "in-progress" || !project.liveUrl;
 
+    const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.aiwithab.site",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Projects",
+            item: "https://www.aiwithab.site/projects",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: project.title,
+            item: "https://www.aiwithab.site/projects/pulse-chat",
+          },
+        ],
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://www.aiwithab.site/projects/pulse-chat#app",
+        name: project.title,
+        description: project.description,
+        applicationCategory: "CommunicationApplication",
+        operatingSystem: "Web Browser",
+        url: "https://www.aiwithab.site/projects/pulse-chat",
+        image: "https://www.aiwithab.site/api/og/project?id=pulse-chat",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+        author: {
+          "@type": "Person",
+          name: "Abdul Nabi",
+          url: "https://www.aiwithab.site",
+        },
+      },
+    ],
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      return (
     <article className="section-padding pt-32 md:pt-36 bg-gradient-to-b from-[#0a0f1e] via-[#050814] to-[#0a0f1e]">
       <div className="container-narrow max-w-4xl">
         <LinkButton
@@ -491,5 +573,6 @@ export default async function PulseChatPage() {
         )}
       </div>
     </article>
+    </>
   );
 }

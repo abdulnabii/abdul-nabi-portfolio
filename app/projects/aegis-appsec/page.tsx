@@ -33,24 +33,42 @@ export async function generateMetadata(): Promise<Metadata> {
   }
   if (!project) return { title: "Project not found" };
 
+  const canonicalUrl = "https://www.aiwithab.site/projects/aegis-appsec";
+  const dynamicOg = "https://www.aiwithab.site/api/og/project?id=aegis-appsec";
+
   return {
     title: `${project.title} — Live Full-Stack AppSec Studio | Abdul Nabi`,
     description: project.description,
     keywords: [
-      "Aegis AppSec Sentinel",
-      "Application Security",
-      "OWASP Top 10",
-      "Next.js AppSec",
-      "Supabase RLS Policy Validator",
-      "JWT Security Auditor",
-      "Abdul Nabi",
+      project.title,
+      ...(project.tags || []),
+      "Abdul Nabi Project",
+      "Full-Stack Case Study",
       "aiwithab.site",
     ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${project.title} — Live Full-Stack AppSec Studio | Abdul Nabi`,
       description: project.description,
-      url: "https://www.aiwithab.site/projects/aegis-appsec",
-      images: [{ url: "/profile.jpg", alt: project.title }],
+      url: canonicalUrl,
+      type: "article",
+      images: [
+        {
+          url: dynamicOg,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} Case Study — Abdul Nabi`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} — Live Full-Stack AppSec Studio | Abdul Nabi`,
+      description: project.description,
+      images: [dynamicOg],
+      creator: "@abdulnabii",
     },
   };
 }

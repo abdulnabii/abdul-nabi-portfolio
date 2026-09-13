@@ -27,23 +27,43 @@ export async function generateMetadata(): Promise<Metadata> {
     project = (seedProjects as any[]).find((p) => p.id === "blood-sugar-tracker");
   }
   if (!project) return { title: "Project not found" };
+
+  const canonicalUrl = "https://www.aiwithab.site/projects/blood-sugar-tracker";
+  const dynamicOg = "https://www.aiwithab.site/api/og/project?id=blood-sugar-tracker";
+
   return {
     title: `${project.title} — FYP Case Study | Abdul Nabi`,
     description: project.description,
     keywords: [
-      "Blood Sugar Tracker FYP",
-      "Blood Sugar Tracker Abdul Nabi",
-      "Glucose Prediction ML",
-      "Python Flask Healthcare",
-      "ElasticNet Regression",
-      "Abdul Nabi",
+      project.title,
+      ...(project.tags || []),
+      "Abdul Nabi Project",
+      "Full-Stack Case Study",
       "aiwithab.site",
     ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${project.title} — FYP Case Study | Abdul Nabi`,
       description: project.description,
-      url: "https://www.aiwithab.site/projects/blood-sugar-tracker",
-      images: [{ url: "/profile.jpg", alt: project.title }],
+      url: canonicalUrl,
+      type: "article",
+      images: [
+        {
+          url: dynamicOg,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} Case Study — Abdul Nabi`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} — FYP Case Study | Abdul Nabi`,
+      description: project.description,
+      images: [dynamicOg],
+      creator: "@abdulnabii",
     },
   };
 }
@@ -119,7 +139,62 @@ export default async function BloodSugarTrackerPage() {
   const related = all.filter((p) => p.id !== project!.id).slice(0, 2);
   const tags: string[] = Array.isArray(project.tags) ? project.tags : [];
 
+    const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.aiwithab.site",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Projects",
+            item: "https://www.aiwithab.site/projects",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: project.title,
+            item: "https://www.aiwithab.site/projects/blood-sugar-tracker",
+          },
+        ],
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://www.aiwithab.site/projects/blood-sugar-tracker#app",
+        name: project.title,
+        description: project.description,
+        applicationCategory: "HealthApplication",
+        operatingSystem: "Web Browser",
+        url: "https://www.aiwithab.site/projects/blood-sugar-tracker",
+        image: "https://www.aiwithab.site/api/og/project?id=blood-sugar-tracker",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+        author: {
+          "@type": "Person",
+          name: "Abdul Nabi",
+          url: "https://www.aiwithab.site",
+        },
+      },
+    ],
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      return (
     <article className="section-padding pt-32 md:pt-36 bg-gradient-to-b from-[#0a0f1e] via-[#050814] to-[#0a0f1e]">
       <div className="container-narrow max-w-4xl">
         <LinkButton
@@ -353,5 +428,6 @@ export default async function BloodSugarTrackerPage() {
         )}
       </div>
     </article>
+    </>
   );
 }
