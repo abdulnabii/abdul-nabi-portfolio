@@ -2,7 +2,17 @@
 
 import { GlassCard } from "@/components/ui/glass-card";
 import type { AnalyticsSummary } from "@/lib/analytics-store";
-import { BarChart3, Download, Eye, MousePointerClick, RefreshCw, TrendingUp } from "lucide-react";
+import {
+  BarChart3,
+  Calendar,
+  CheckCircle2,
+  Download,
+  Eye,
+  Lock,
+  MousePointerClick,
+  RefreshCw,
+  TrendingUp,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface AnalyticsDashboardOverviewProps {
@@ -15,7 +25,11 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
   const [summary, setSummary] = useState<AnalyticsSummary>(
     initialSummary || {
       totalViews: 0,
+      totalClicks: 0,
       viewsThisWeek: 0,
+      periodViews: 0,
+      dateRange: "30d",
+      dailyTrend: [],
       topBlogs: [],
       topProjects: [],
       topCtas: [],
@@ -47,22 +61,35 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
     return () => clearInterval(timer);
   }, [dateRange]);
 
-  function exportCSV() {
-    const topBlogs = summary.topBlogs || [];
-    const topProjects = summary.topProjects || [];
-    const topCtas = summary.topCtas || [];
+  const totalViews = summary.totalViews || 0;
+  const totalClicks = summary.totalClicks || 0;
+  const viewsThisWeek = summary.viewsThisWeek || 0;
+  const periodViews = typeof summary.periodViews === "number" ? summary.periodViews : totalViews;
+  const topBlogs = summary.topBlogs || [];
+  const topProjects = summary.topProjects || [];
+  const topCtas = summary.topCtas || [];
+  const dailyTrend = summary.dailyTrend || [];
 
+  function exportCSV() {
     const rows = [
       ["Metric / Section", "Name / Title", "Value / Count"],
-      ["Summary", "Total Views", summary.totalViews || 0],
-      ["Summary", "Views This Week", summary.viewsThisWeek || 0],
+      ["Summary", "Total Views (All Time)", totalViews],
+      ["Summary", "Total CTA Clicks", totalClicks],
+      ["Summary", `Period Views (${dateRange})`, periodViews],
+      ["Summary", "Views This Week", viewsThisWeek],
+      ...dailyTrend.map((d) => [
+        "Daily Activity (Locked)",
+        `${d.dayLabel} (${d.date})`,
+        `${d.views} views, ${d.clicks} clicks`,
+      ]),
       ...topBlogs.map((b) => ["Top Blog", b.title, b.views]),
       ...topProjects.map((p) => ["Top Project", p.title, p.views]),
       ...topCtas.map((c) => ["Top CTA", c.label, c.clicks]),
     ];
 
     const csvContent =
-      "data:text/csv;charset=utf-8," + rows.map((e) => e.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(",")).join("\n");
+      "data:text/csv;charset=utf-8," +
+      rows.map((e) => e.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(",")).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -72,28 +99,13 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
     document.body.removeChild(link);
   }
 
-  const totalViews = summary.totalViews || 0;
-  const viewsThisWeek = summary.viewsThisWeek || 0;
-  const topBlogs = summary.topBlogs || [];
-  const topProjects = summary.topProjects || [];
-  const topCtas = summary.topCtas || [];
-
-  // Calculate views multiplier visually based on selected date range
-  const displayViews =
-    dateRange === "7d"
-      ? viewsThisWeek
-      : dateRange === "30d"
-      ? Math.round(totalViews * 0.75)
-      : dateRange === "90d"
-      ? Math.round(totalViews * 0.9)
-      : totalViews;
-
   return (
     <div className="space-y-4">
+      {/* Header & Controls */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Page Views & CTA Analytics
+            Page Views & Activity Ledger
           </p>
         </div>
 
@@ -136,14 +148,17 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
         </div>
       </div>
 
+      {/* Main KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <GlassCard>
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs uppercase tracking-wider text-slate-500">Period Views ({dateRange})</span>
+            <span className="text-xs uppercase tracking-wider text-slate-500">
+              Period Views ({dateRange === "all" ? "All Time" : dateRange})
+            </span>
             <Eye className="h-4 w-4 text-accent" />
           </div>
-          <p className="mt-2 text-3xl font-semibold text-white">{displayViews}</p>
-          <p className="mt-1 text-xs text-slate-500">Filtered for selected time window</p>
+          <p className="mt-2 text-3xl font-semibold text-white">{periodViews}</p>
+          <p className="mt-1 text-xs text-slate-500">True views in selected window</p>
         </GlassCard>
 
         <GlassCard>
@@ -152,34 +167,87 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
             <TrendingUp className="h-4 w-4 text-emerald-400" />
           </div>
           <p className="mt-2 text-3xl font-semibold text-emerald-300">{viewsThisWeek}</p>
-          <p className="mt-1 text-xs text-slate-500">Last 7 days activity</p>
+          <p className="mt-1 text-xs text-slate-500">Last 7 days total activity</p>
         </GlassCard>
 
         <GlassCard>
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs uppercase tracking-wider text-slate-500">Top Blog Post</span>
+            <span className="text-xs uppercase tracking-wider text-slate-500">Total Views (All Time)</span>
             <BarChart3 className="h-4 w-4 text-indigo-400" />
           </div>
-          <p className="mt-2 truncate text-lg font-semibold text-indigo-200">
-            {topBlogs[0]?.title || "N/A"}
-          </p>
-          <p className="mt-1 text-xs text-slate-500">
-            {topBlogs[0]?.views ? `${topBlogs[0].views} views` : "No views recorded yet"}
-          </p>
+          <p className="mt-2 text-3xl font-semibold text-indigo-200">{totalViews}</p>
+          <p className="mt-1 text-xs text-slate-500">Monotonic & permanently saved</p>
         </GlassCard>
 
         <GlassCard>
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs uppercase tracking-wider text-slate-500">Top CTA Button</span>
+            <span className="text-xs uppercase tracking-wider text-slate-500">CTA Interactions</span>
             <MousePointerClick className="h-4 w-4 text-amber-400" />
           </div>
-          <p className="mt-2 truncate text-lg font-semibold text-amber-200/90">
-            {topCtas[0]?.label || "N/A"}
-          </p>
-          <p className="mt-1 text-xs text-slate-500">
-            {topCtas[0]?.clicks ? `${topCtas[0].clicks} clicks` : "No clicks recorded yet"}
-          </p>
+          <p className="mt-2 text-3xl font-semibold text-amber-200/90">{totalClicks}</p>
+          <p className="mt-1 text-xs text-slate-500">Buttons & links clicked</p>
         </GlassCard>
+      </div>
+
+      {/* Daily Breakdown (Last 7 Days) */}
+      <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-accent" />
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+              Daily Activity (Last 7 Days)
+            </h4>
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Locked Daily Ledger
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-[11px] text-slate-500">
+            <Lock className="h-3 w-3 text-slate-500" />
+            <span>Past dates are permanent and will never change</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
+          {dailyTrend.map((day, idx) => {
+            const isToday = idx === dailyTrend.length - 1;
+            return (
+              <div
+                key={day.date}
+                className={`rounded-xl p-3 border text-center transition ${
+                  isToday
+                    ? "bg-accent/10 border-accent/40 shadow-[0_0_15px_rgba(99,102,241,0.12)] ring-1 ring-accent/30"
+                    : "bg-white/[0.03] border-white/5 hover:border-white/10"
+                }`}
+              >
+                <div className="flex items-center justify-center gap-1 text-[11px] font-medium text-slate-400">
+                  <span>{day.dayLabel}</span>
+                  {isToday && (
+                    <span className="text-[9px] bg-accent/25 text-accent font-bold px-1 rounded">
+                      Today
+                    </span>
+                  )}
+                </div>
+                <div className="mt-2 text-2xl font-bold text-white">
+                  {day.views}
+                  <span className="text-[10px] font-normal text-slate-400 ml-1">views</span>
+                </div>
+                <div className="mt-1 flex items-center justify-center gap-1 text-[11px] text-amber-300/80">
+                  <MousePointerClick className="h-3 w-3" />
+                  <span>
+                    {day.clicks} {day.clicks === 1 ? "click" : "clicks"}
+                  </span>
+                </div>
+                {!isToday && (
+                  <div className="mt-2 flex items-center justify-center gap-1 text-[10px] text-slate-500">
+                    <CheckCircle2 className="h-2.5 w-2.5 text-emerald-400/70" />
+                    <span>Locked</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Breakdown Lists */}
@@ -207,7 +275,7 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
 
         <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-            Top Clicked Actions (CTAS)
+            Top Clicked Actions (CTAs)
           </h4>
           <div className="space-y-2">
             {topCtas.length === 0 ? (
@@ -229,3 +297,4 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
     </div>
   );
 }
+

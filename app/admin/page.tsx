@@ -41,7 +41,11 @@ export default async function AdminDashboardPage() {
 
   let analyticsSummary: AnalyticsSummary = {
     totalViews: 0,
+    totalClicks: 0,
     viewsThisWeek: 0,
+    periodViews: 0,
+    dateRange: "30d",
+    dailyTrend: [],
     topBlogs: [],
     topProjects: [],
     topCtas: [],
