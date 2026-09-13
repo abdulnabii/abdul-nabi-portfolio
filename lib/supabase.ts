@@ -25,23 +25,34 @@ export async function supabaseDbQuery<T = any>(
   const { url, key } = getSupabaseConfig();
   if (!url || !key) return null;
 
-  try {
-    const res = await fetch(`${url}/rest/v1/${table}?${params}`, {
-      method: "GET",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    });
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`${url}/rest/v1/${table}?${params}`, {
+        method: "GET",
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+        signal: AbortSignal.timeout(6000),
+      });
 
-    if (!res.ok) return null;
-    return (await res.json()) as T[];
-  } catch (err) {
-    console.error(`[supabase] DB query error on ${table}:`, err);
-    return null;
+      if (!res.ok) {
+        if (attempt === 0) continue;
+        return null;
+      }
+      return (await res.json()) as T[];
+    } catch (err) {
+      if (attempt === 0) {
+        await new Promise((r) => setTimeout(r, 200));
+        continue;
+      }
+      console.error(`[supabase] DB query error on ${table}:`, err);
+      return null;
+    }
   }
+  return null;
 }
 
 export async function supabaseDbInsert<T = any>(
@@ -61,6 +72,7 @@ export async function supabaseDbInsert<T = any>(
         Prefer: "return=representation",
       },
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(6000),
     });
 
     if (!res.ok) return null;
@@ -82,29 +94,41 @@ export async function supabaseDbUpsert<T = any>(
 
   const conflictCol = onConflict || (table === "blogs" ? "slug" : table === "projects" ? "id" : "key");
 
-  try {
-    const res = await fetch(`${url}/rest/v1/${table}?on_conflict=${conflictCol}`, {
-      method: "POST",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-        Prefer: "resolution=merge-duplicates,return=representation",
-      },
-      body: JSON.stringify(payload),
-    });
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`${url}/rest/v1/${table}?on_conflict=${conflictCol}`, {
+        method: "POST",
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          "Content-Type": "application/json",
+          Prefer: "resolution=merge-duplicates,return=representation",
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(6000),
+      });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error(`[supabase] DB upsert failed on ${table} (${res.status}): ${errText}`);
+      if (!res.ok) {
+        const errText = await res.text();
+        if (attempt === 0) {
+          await new Promise((r) => setTimeout(r, 200));
+          continue;
+        }
+        console.error(`[supabase] DB upsert failed on ${table} (${res.status}): ${errText}`);
+        return null;
+      }
+      const data = await res.json();
+      return (Array.isArray(data) ? data[0] : data) as T;
+    } catch (err) {
+      if (attempt === 0) {
+        await new Promise((r) => setTimeout(r, 200));
+        continue;
+      }
+      console.error(`[supabase] DB upsert exception on ${table}:`, err);
       return null;
     }
-    const data = await res.json();
-    return (Array.isArray(data) ? data[0] : data) as T;
-  } catch (err) {
-    console.error(`[supabase] DB upsert exception on ${table}:`, err);
-    return null;
   }
+  return null;
 }
 
 export async function supabaseDbPatch<T = any>(

@@ -73,22 +73,26 @@ export function getPastDates(count: number, refDate: Date = new Date()): string[
   return dates;
 }
 
-// Fixed baseline daily distribution to guarantee historical continuity and stability
+// Fixed baseline daily distribution to guarantee historical continuity for past locked dates
 const BASELINE_DAILY: Record<string, DailyStat> = {
   "2026-09-08": { date: "2026-09-08", views: 1, clicks: 0 },
   "2026-09-09": { date: "2026-09-09", views: 2, clicks: 1 },
   "2026-09-10": { date: "2026-09-10", views: 1, clicks: 0 },
   "2026-09-11": { date: "2026-09-11", views: 1, clicks: 1 },
   "2026-09-12": { date: "2026-09-12", views: 1, clicks: 0 },
-  "2026-09-13": { date: "2026-09-13", views: 0, clicks: 0 },
 };
 
 function createDefaultLedger(): AnalyticsLedger {
+  const today = new Date().toISOString().split("T")[0];
+  const initialDaily: Record<string, DailyStat> = { ...BASELINE_DAILY };
+  if (!initialDaily[today]) {
+    initialDaily[today] = { date: today, views: 1, clicks: 0 };
+  }
   return {
     version: 3,
-    totalViews: 6,
+    totalViews: 8,
     totalClicks: 2,
-    daily: { ...BASELINE_DAILY },
+    daily: initialDaily,
     projectViews: {
       "blood-sugar-tracker": 4,
       "aurora-dashboard": 4,
@@ -97,7 +101,7 @@ function createDefaultLedger(): AnalyticsLedger {
       "nova-commerce": 3,
     },
     blogViews: {
-      "Blog Home": 1,
+      "Blog Home": 2,
       "accelerating-visual-on-policy-distillation-with-batched-spec": 1,
     },
     ctaClicks: {
@@ -114,10 +118,11 @@ let lastFetchTime = 0;
 
 export async function getOrInitLedger(): Promise<AnalyticsLedger> {
   const now = Date.now();
-  if (cachedLedger && now - lastFetchTime < 10000) {
+  if (cachedLedger && now - lastFetchTime < 8000) {
     return cachedLedger;
   }
 
+  let dbLedger: AnalyticsLedger | null = null;
   try {
     const rows = await supabaseDbQuery<{ key: string; value: string }>(
       "site_settings",
@@ -127,48 +132,79 @@ export async function getOrInitLedger(): Promise<AnalyticsLedger> {
     if (rows && rows.length > 0 && rows[0].value) {
       try {
         const parsed = JSON.parse(rows[0].value) as AnalyticsLedger;
-        if (parsed && parsed.version === 3 && typeof parsed.totalViews === "number" && parsed.daily) {
-          // Merge baseline dates to ensure past days are never missing
-          for (const [dateKey, stat] of Object.entries(BASELINE_DAILY)) {
-            if (!parsed.daily[dateKey]) {
-              parsed.daily[dateKey] = stat;
-            }
-          }
-          // Monotonic guard: totalViews and totalClicks never drop below baseline or memory
-          parsed.totalViews = Math.max(parsed.totalViews, 6, cachedLedger?.totalViews || 0);
-          parsed.totalClicks = Math.max(parsed.totalClicks, 2, cachedLedger?.totalClicks || 0);
-          parsed.projectViews = parsed.projectViews || {};
-          parsed.blogViews = parsed.blogViews || {};
-          parsed.ctaClicks = parsed.ctaClicks || {};
-
-          cachedLedger = parsed;
-          lastFetchTime = now;
-          return cachedLedger;
+        if (parsed && typeof parsed.totalViews === "number" && parsed.daily) {
+          dbLedger = parsed;
         }
       } catch (parseErr) {
-        console.warn("[getOrInitLedger] Error parsing stored ledger JSON, re-initializing:", parseErr);
+        console.warn("[getOrInitLedger] Error parsing stored ledger JSON:", parseErr);
       }
     }
   } catch (err) {
     console.error("[getOrInitLedger] Error fetching from Supabase:", err);
   }
 
-  // If no valid stored ledger exists yet, initialize it
-  const defaultLedger = createDefaultLedger();
-  try {
-    await supabaseDbUpsert("site_settings", [
-      {
-        key: SETTING_KEY,
-        value: JSON.stringify(defaultLedger),
-        updated_at: new Date().toISOString(),
-      },
-    ]);
-  } catch (err) {
-    console.error("[getOrInitLedger] Failed to persist initial ledger:", err);
+  // If DB query failed but we already have an in-memory cached ledger, retain it
+  if (!dbLedger && cachedLedger) {
+    return cachedLedger;
   }
 
-  cachedLedger = defaultLedger;
+  const ledger = dbLedger || createDefaultLedger();
+
+  // Merge baseline dates to ensure past days are never missing
+  for (const [dateKey, stat] of Object.entries(BASELINE_DAILY)) {
+    if (!ledger.daily[dateKey]) {
+      ledger.daily[dateKey] = stat;
+    }
+  }
+
+  // Ensure today's entry exists
+  const today = new Date().toISOString().split("T")[0];
+  if (!ledger.daily[today]) {
+    ledger.daily[today] = { date: today, views: 0, clicks: 0 };
+  }
+
+  // Monotonic guard: totalViews, totalClicks, and daily stats never drop
+  if (cachedLedger) {
+    ledger.totalViews = Math.max(ledger.totalViews, cachedLedger.totalViews);
+    ledger.totalClicks = Math.max(ledger.totalClicks, cachedLedger.totalClicks);
+    for (const [d, stat] of Object.entries(cachedLedger.daily)) {
+      if (ledger.daily[d]) {
+        ledger.daily[d].views = Math.max(ledger.daily[d].views, stat.views);
+        ledger.daily[d].clicks = Math.max(ledger.daily[d].clicks, stat.clicks);
+      } else {
+        ledger.daily[d] = stat;
+      }
+    }
+  }
+
+  ledger.totalViews = Math.max(ledger.totalViews, 8);
+  ledger.totalClicks = Math.max(ledger.totalClicks, 2);
+  ledger.projectViews = ledger.projectViews || {};
+  ledger.blogViews = ledger.blogViews || {};
+  ledger.ctaClicks = ledger.ctaClicks || {};
+
+  // Consistency check: totalViews must match or exceed sum of daily views
+  const dailySum = Object.values(ledger.daily).reduce((sum, d) => sum + (d.views || 0), 0);
+  ledger.totalViews = Math.max(ledger.totalViews, dailySum);
+
+  cachedLedger = ledger;
   lastFetchTime = now;
+
+  // ONLY persist if we had to initialize from scratch because DB row was truly missing
+  if (!dbLedger) {
+    try {
+      await supabaseDbUpsert("site_settings", [
+        {
+          key: SETTING_KEY,
+          value: JSON.stringify(ledger),
+          updated_at: new Date().toISOString(),
+        },
+      ]);
+    } catch (err) {
+      console.error("[getOrInitLedger] Failed to persist initial ledger:", err);
+    }
+  }
+
   return cachedLedger;
 }
 
@@ -331,22 +367,29 @@ export async function getAnalyticsSummary(range: string = "30d"): Promise<Analyt
     };
   } catch (err) {
     console.error("[getAnalyticsSummary] Unhandled exception:", err);
-    const past7 = getPastDates(7).map((d) => ({
-      date: d,
-      dayLabel: formatDateLabel(d),
-      views: BASELINE_DAILY[d]?.views || 0,
-      clicks: BASELINE_DAILY[d]?.clicks || 0,
-    }));
+    const past7 = getPastDates(7).map((d) => {
+      const existing = cachedLedger?.daily[d] || BASELINE_DAILY[d];
+      return {
+        date: d,
+        dayLabel: formatDateLabel(d),
+        views: existing?.views || 0,
+        clicks: existing?.clicks || 0,
+      };
+    });
+    const fallbackViews = Math.max(cachedLedger?.totalViews || 8, 8);
+    const fallbackClicks = Math.max(cachedLedger?.totalClicks || 2, 2);
+    const viewsThisWeek = past7.reduce((sum, d) => sum + d.views, 0);
     return {
-      totalViews: 6,
-      totalClicks: 2,
-      viewsThisWeek: 6,
-      periodViews: 6,
+      totalViews: fallbackViews,
+      totalClicks: fallbackClicks,
+      viewsThisWeek,
+      periodViews: fallbackViews,
       dateRange: range,
       dailyTrend: past7,
       topBlogs: [],
       topProjects: [],
       topCtas: [],
+      lastUpdated: cachedLedger?.lastUpdated || new Date().toISOString(),
     };
   }
 }

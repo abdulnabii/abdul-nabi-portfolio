@@ -41,20 +41,23 @@ export function AnalyticsTracker() {
     if (!pathname || pathname.startsWith("/admin") || pathname.startsWith("/api")) return;
 
     const sessionId = getOrCreateSessionId();
-    const visitedKey = `visited_${pathname}`;
+    const lastVisitKey = `last_track_${pathname}`;
+    const now = Date.now();
+    const lastTrackTime = parseInt(sessionStorage.getItem(lastVisitKey) || "0", 10);
 
-    if (!sessionStorage.getItem(visitedKey)) {
-      sessionStorage.setItem(visitedKey, "1");
-      fetch("/api/analytics/track", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          event_type: "page_view",
-          page_slug: pathname,
-          session_id: sessionId,
-        }),
-      }).catch(() => {});
-    }
+    // Debounce rapid double-execution within 2.5 seconds (prevents React StrictMode double count)
+    if (now - lastTrackTime < 2500) return;
+    sessionStorage.setItem(lastVisitKey, now.toString());
+
+    fetch("/api/analytics/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event_type: "page_view",
+        page_slug: pathname,
+        session_id: sessionId,
+      }),
+    }).catch(() => {});
   }, [pathname, consentAllowed]);
 
   useEffect(() => {
