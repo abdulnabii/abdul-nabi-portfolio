@@ -108,7 +108,37 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// Allow manual trigger from admin panel
+// Allow manual trigger from admin panel with optional topic
 export async function POST(req: NextRequest) {
-  return GET(req);
+  try {
+    const authHeader = req.headers.get("authorization");
+    const cronSecret = process.env.CRON_SECRET || "auto-blog-secret-2025";
+    const isAuthorized = authHeader === `Bearer ${cronSecret}`;
+    if (!isAuthorized) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const topic = typeof body?.topic === "string" ? body.topic : undefined;
+
+    const startTime = Date.now();
+    const result = await runAutoBlog(1, topic);
+    const duration = Math.round((Date.now() - startTime) / 1000);
+
+    if (result.created.length > 0) {
+      revalidatePath("/", "layout");
+      revalidatePath("/blog", "layout");
+      result.created.forEach((slug) => revalidatePath(`/blog/${slug}`, "layout"));
+    }
+
+    return NextResponse.json({
+      ok: true,
+      created: result.created,
+      skipped: result.skipped,
+      errors: result.errors,
+      durationSeconds: duration,
+    });
+  } catch (err) {
+    return GET(req);
+  }
 }

@@ -164,7 +164,7 @@ export function classifyBlogTopic(title: string, tags: string[] = []): string {
 /**
  * Builds an AI image prompt suitable for dynamic generative CDN (Pollinations.ai / Flux)
  */
-export function buildTopicVisualPrompt(title: string): string {
+export function buildTopicVisualPrompt(title: string, tags: string[] = [], visualTheme?: string): string {
   // Clean LaTeX and special chars
   const cleanTitle = title
     .replace(/\$[^^$]+\$/g, "")
@@ -172,12 +172,14 @@ export function buildTopicVisualPrompt(title: string): string {
     .replace(/\s+/g, " ")
     .trim();
 
-  return `cinematic conceptual 3D illustration of ${cleanTitle}, futuristic high tech laboratory, abstract glowing data nodes, deep dark navy and purple atmosphere, octane render, 8k resolution, professional tech publication banner`;
+  const tagContext = tags.slice(0, 3).join(", ");
+  const theme = visualTheme || cleanTitle;
+
+  return `cinematic high tech 3D digital illustration of ${theme}, technical concepts: ${tagContext}, glowing cybernetic nodes, deep dark navy and obsidian atmosphere, subtle neon violet and cyan lighting, octane render, 8k resolution, photorealistic, professional software architecture banner, minimal aesthetic, no text watermark`;
 }
 
 /**
- * Asynchronously resolves a high-impact, unique image from the internet.
- * Uses Pollinations AI high-resolution dynamic generator with fallback to curated high-tech pools.
+ * Asynchronously resolves a high-impact, unique image from curated technical pools.
  */
 export function getUniqueTopicCoverImage(title: string, tags: string[] = []): string {
   const category = classifyBlogTopic(title, tags);
@@ -192,8 +194,24 @@ export function getUniqueTopicCoverImage(title: string, tags: string[] = []): st
 /**
  * Generates an ultra-relevant AI-generated internet cover image URL via Pollinations Flux engine.
  */
-export function generateDynamicInternetImage(title: string): string {
-  const prompt = buildTopicVisualPrompt(title);
-  const seed = stringHash(title) % 100000;
+export function generateDynamicInternetImage(title: string, tags: string[] = []): string {
+  const prompt = buildTopicVisualPrompt(title, tags);
+  const seed = (stringHash(title) + 42) % 100000;
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&model=flux&nologo=true&seed=${seed}`;
 }
+
+/**
+ * Generates or selects the best cover image for a blog post.
+ * Uses Pollinations Flux AI generation with custom visual styling.
+ */
+export function generateAiBlogCoverImage(
+  title: string,
+  tags: string[] = [],
+  customVisualDescription?: string
+): string {
+  const prompt = buildTopicVisualPrompt(title, tags, customVisualDescription);
+  const seed = (stringHash(title) + 77) % 99999;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&model=flux&nologo=true&seed=${seed}`;
+}
+
+export const selectTopicCoverImage = getUniqueTopicCoverImage;
