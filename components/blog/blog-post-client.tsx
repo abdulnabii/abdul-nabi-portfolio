@@ -98,6 +98,7 @@ function renderContent(content: string) {
 export function BlogPostClient({ initialPost, slug, related }: BlogPostClientProps) {
   const [post, setPost] = useState<BlogPost | null>(initialPost);
   const [loading, setLoading] = useState(!initialPost);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     async function loadPost() {
@@ -181,12 +182,14 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
         </LinkButton>
 
         <header className="mb-10">
-          <div className="relative mb-8 h-56 overflow-hidden rounded-3xl border border-white/10 sm:h-72">
-            {post.coverImage ? (
+          <div className="relative mb-8 h-56 overflow-hidden rounded-3xl border border-white/10 sm:h-72 bg-[#060a17]">
+            {post.coverImage && !imageError ? (
               <Image
                 src={post.coverImage}
-                alt=""
+                alt={post.title}
                 fill
+                unoptimized
+                onError={() => setImageError(true)}
                 className="object-cover"
                 priority
                 sizes="(max-width: 768px) 100vw, 768px"
@@ -194,7 +197,7 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-slate-900" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/70 to-transparent pointer-events-none" />
           </div>
 
           <div className="mb-4 flex flex-wrap items-center gap-3 text-sm text-slate-400">
@@ -256,8 +259,9 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
                       <div className="relative h-28 w-full">
                         <Image
                           src={item.coverImage}
-                          alt=""
+                          alt={item.title}
                           fill
+                          unoptimized
                           className="object-cover"
                           sizes="300px"
                         />

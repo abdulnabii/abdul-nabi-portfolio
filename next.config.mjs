@@ -19,6 +19,30 @@ const nextConfig = {
         protocol: "https",
         hostname: "cdn.pixabay.com",
       },
+      {
+        protocol: "https",
+        hostname: "image.pollinations.ai",
+      },
+      {
+        protocol: "https",
+        hostname: "pollinations.ai",
+      },
+      {
+        protocol: "https",
+        hostname: "**.pollinations.ai",
+      },
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "raw.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
     ],
   },
   async headers() {

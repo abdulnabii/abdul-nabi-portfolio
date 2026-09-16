@@ -1,10 +1,13 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { GlassCard } from "@/components/ui/glass-card";
 import type { BlogPost } from "@/lib/blog-store";
 import { formatDate } from "@/lib/utils";
-import { ArrowUpRight, Clock, Eye } from "lucide-react";
+import { ArrowUpRight, Clock, Eye, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -12,6 +15,7 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post, index = 0 }: BlogCardProps) {
+  const [imageError, setImageError] = useState(false);
   // Estimate read time if not formatted
   const readTime = post.readTime || `${Math.max(2, Math.ceil((post.content?.split(/\s+/).length || 300) / 200))} min read`;
   const views = post.views ?? 0;
@@ -32,19 +36,23 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
           padding="none"
           className="flex h-full flex-col overflow-hidden cursor-grow"
         >
-          <div className="relative h-44 w-full overflow-hidden border-b border-white/10">
-            {post.coverImage ? (
+          <div className="relative h-44 w-full overflow-hidden border-b border-white/10 bg-[#060a17]">
+            {post.coverImage && !imageError ? (
               <Image
                 src={post.coverImage}
-                alt=""
+                alt={post.title}
                 fill
+                unoptimized
+                onError={() => setImageError(true)}
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-accent/30 to-accent-cyan/10" />
+              <div className="h-full w-full bg-gradient-to-br from-indigo-950/60 via-[#0a0f1e] to-purple-950/40 flex items-center justify-center">
+                <Sparkles className="h-7 w-7 text-indigo-400/40" />
+              </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e]/80 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e]/80 via-transparent to-transparent pointer-events-none" />
           </div>
 
           <div className="flex flex-1 flex-col justify-between p-6">
