@@ -16,18 +16,21 @@ export async function POST(req: NextRequest) {
     const body = (await req.json().catch(() => ({}))) as {
       topic?: string;
       category?: string;
+      imageStyle?: string;
       published?: boolean;
     };
 
     const topic = typeof body.topic === "string" ? body.topic.trim() : "";
     const category = typeof body.category === "string" ? body.category.trim() : "";
+    const imageStyle = typeof body.imageStyle === "string" ? body.imageStyle.trim() : "curated_hd";
     const published = typeof body.published === "boolean" ? body.published : true;
 
-    console.log(`[auto-blog-generate-api] Request by ${session.email} for topic: "${topic || "(auto-trending)"}"`);
+    console.log(`[auto-blog-generate-api] Request by ${session.email} for topic: "${topic || "(auto-trending)"}" (style: ${imageStyle})`);
 
     const result = await generateAndPublishSingleBlog({
       topic,
       category,
+      imageStyle,
       published,
     });
 

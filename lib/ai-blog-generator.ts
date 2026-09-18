@@ -34,6 +34,7 @@ export interface GeneratedBlogPost {
 export interface AutoBlogRequest {
   topic?: string;
   category?: string;
+  imageStyle?: "curated_hd" | "ai_studio" | "ai_prism" | "ai_cyber" | string;
   published?: boolean;
 }
 
@@ -329,9 +330,9 @@ export async function fetchTrendingAiNews(): Promise<NewsItem[]> {
  * Builds a visual prompt for the image generation model.
  */
 function createCoverVisualPrompt(title: string, tags: string[] = []): string {
-  const cleanTitle = title.replace(/[^a-zA-Z0-9 ]/g, " ").slice(0, 60);
+  const cleanTitle = title.replace(/[^a-zA-Z0-9 ]/g, " ").slice(0, 60).trim();
   const tagList = tags.slice(0, 3).join(", ");
-  return `futuristic cybernetic visualization of ${cleanTitle}, ${tagList}, glowing neon cyan and violet circuitry, obsidian glass reflection, 3d octane render, 8k resolution, minimalist high tech developer publication cover, wide angle banner`;
+  return `${cleanTitle}, ${tagList}`;
 }
 
 /**
@@ -341,7 +342,8 @@ function createCoverVisualPrompt(title: string, tags: string[] = []): string {
 function generateTechnicalFallbackPost(
   topic: NewsItem,
   relatedNews: NewsItem[] = [],
-  customCategory?: string
+  customCategory?: string,
+  imageStyle: string = "curated_hd"
 ): GeneratedBlogPost {
   const year = new Date().getFullYear();
   const cleanTitle = topic.title
@@ -500,7 +502,7 @@ In my own work developing the **Blood Sugar Tracker** (an AI clinical risk predi
   if (!excerpt.endsWith(".")) excerpt += ".";
 
   const visualPrompt = createCoverVisualPrompt(cleanTitle, tags);
-  const coverImage = generateAiBlogCoverImage(cleanTitle, tags, visualPrompt);
+  const coverImage = generateAiBlogCoverImage(cleanTitle, tags, visualPrompt, imageStyle);
 
   return {
     title: `${cleanTitle} (${year} Technical Guide)`,
@@ -520,14 +522,15 @@ In my own work developing the **Blood Sugar Tracker** (an AI clinical risk predi
 export async function generateAiBlogPost(
   topic: NewsItem,
   relatedNews: NewsItem[] = [],
-  customInstructions?: string
+  customInstructions?: string,
+  imageStyle: string = "curated_hd"
 ): Promise<GeneratedBlogPost | null> {
   const openAiKey = process.env.OPENAI_API_KEY;
   const isKeyMissing = !openAiKey || openAiKey === "sk-your-openai-api-key" || openAiKey.trim() === "";
 
   if (isKeyMissing) {
     console.log("[ai-blog-generator] OPENAI_API_KEY not configured — using technical synthesis engine.");
-    return generateTechnicalFallbackPost(topic, relatedNews, customInstructions);
+    return generateTechnicalFallbackPost(topic, relatedNews, customInstructions, imageStyle);
   }
 
   const year = new Date().getFullYear();
@@ -592,11 +595,11 @@ Respond ONLY with valid JSON in this exact structure:
 
     const parsed = JSON.parse(raw) as GeneratedBlogPost;
     if (!parsed.title || !parsed.content || !parsed.excerpt) {
-      return generateTechnicalFallbackPost(topic, relatedNews, customInstructions);
+      return generateTechnicalFallbackPost(topic, relatedNews, customInstructions, imageStyle);
     }
 
     const tags = Array.isArray(parsed.tags) ? parsed.tags.slice(0, 6) : ["AI", "Machine Learning", "Tech Trends"];
-    const coverImage = generateAiBlogCoverImage(parsed.title, tags, parsed.visualPrompt);
+    const coverImage = generateAiBlogCoverImage(parsed.title, tags, parsed.visualPrompt, imageStyle);
 
     return {
       title: parsed.title,
@@ -609,7 +612,7 @@ Respond ONLY with valid JSON in this exact structure:
     };
   } catch (err) {
     console.warn("[ai-blog-generator] OpenAI call exception, using technical synthesis fallback:", err);
-    return generateTechnicalFallbackPost(topic, relatedNews, customInstructions);
+    return generateTechnicalFallbackPost(topic, relatedNews, customInstructions, imageStyle);
   }
 }
 
@@ -617,7 +620,7 @@ Respond ONLY with valid JSON in this exact structure:
  * Complete 4-Step Interactive & Programmatic Generation Pipeline:
  * 1. Takes input topic
  * 2. Analyzes trending IT/tech news
- * 3. Generates AI cover image
+ * 3. Generates high-resolution cover image
  * 4. Publishes post to Supabase & revalidates cache
  */
 export async function generateAndPublishSingleBlog(
@@ -632,7 +635,7 @@ export async function generateAndPublishSingleBlog(
     console.log(`[ai-blog-generator] Selected primary topic: "${primaryTopic.title}" (${primaryTopic.source})`);
 
     // 2. Generate the blog post & visual prompt
-    const generatedPost = await generateAiBlogPost(primaryTopic, relatedNews, req.category);
+    const generatedPost = await generateAiBlogPost(primaryTopic, relatedNews, req.category, req.imageStyle || "curated_hd");
     if (!generatedPost) {
       return { success: false, error: "Failed to generate blog content" };
     }

@@ -65,13 +65,14 @@ const TOPIC_PRESETS = [
 const GENERATION_STEPS = [
   { id: 1, label: "Scanning Trending IT & Tech News", desc: "Searching Hacker News, Google News Tech, ArXiv & Dev feeds..." },
   { id: 2, label: "Synthesizing In-Depth Technical Post", desc: "Drafting code snippets, architecture diagrams & benchmarks in Abdul Nabi's voice..." },
-  { id: 3, label: "Generating Bespoke AI Cover Image", desc: "Rendering 1200x630 Octane 3D cybernetic banner via Pollinations Flux AI..." },
+  { id: 3, label: "Resolving High-Definition Cover Image", desc: "Selecting 4K award-winning editorial photography or rendering 3D artwork..." },
   { id: 4, label: "Publishing & Revalidating Site", desc: "Writing to Supabase database, updating sitemap, and clearing page caches..." },
 ];
 
 export function AutoBlogPanel() {
   const [topicInput, setTopicInput] = useState("");
   const [category, setCategory] = useState("Software Architecture");
+  const [imageStyle, setImageStyle] = useState("curated_hd");
   const [publishImmediate, setPublishImmediate] = useState(true);
 
   const [generating, setGenerating] = useState(false);
@@ -162,6 +163,7 @@ export function AutoBlogPanel() {
         body: JSON.stringify({
           topic: topicInput.trim(),
           category,
+          imageStyle,
           published: publishImmediate,
         }),
       });
@@ -288,6 +290,21 @@ export function AutoBlogPanel() {
                 <option value="Full-Stack Web">Full-Stack Web</option>
                 <option value="Application Security">Application Security</option>
                 <option value="Healthcare Tech">Healthcare Tech</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400">Image Style:</span>
+              <select
+                value={imageStyle}
+                onChange={(e) => setImageStyle(e.target.value)}
+                disabled={generating}
+                className="rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none font-medium"
+              >
+                <option value="curated_hd">📸 4K Editorial Photography (Unsplash - Recommended)</option>
+                <option value="ai_prism">🎨 AI: 3D Minimalist Prism (Apple / Linear style)</option>
+                <option value="ai_studio">🔬 AI: Studio Tech Photography (Hasselblad)</option>
+                <option value="ai_cyber">⚡ AI: Cybernetic Dark Mode</option>
               </select>
             </div>
 
@@ -428,7 +445,7 @@ export function AutoBlogPanel() {
                 </div>
               )}
               <span className="absolute bottom-2 left-2 rounded bg-black/70 backdrop-blur px-1.5 py-0.5 text-[10px] font-mono text-white">
-                1200x630 AI Cover
+                {latestPost.coverImage?.includes("unsplash.com") ? "4K Editorial Unsplash" : "1200x630 AI Render"}
               </span>
             </div>
 
