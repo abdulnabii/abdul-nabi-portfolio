@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
@@ -29,7 +29,7 @@ export function ScrollToTop() {
       onClick={scrollToTop}
       aria-label="Scroll to top of page"
       className={cn(
-        "fixed bottom-20 right-5 sm:bottom-22 sm:right-6 z-40 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-white/15 bg-[#080d24]/85 text-slate-300 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-400/50 hover:bg-[#0e163d] hover:text-white hover:shadow-[0_0_20px_rgba(99,102,241,0.35)] active:scale-95 print:hidden",
+        "fixed bottom-24 right-7 sm:bottom-26 sm:right-8 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#080d24]/90 text-slate-300 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-400/50 hover:bg-[#0e163d] hover:text-white hover:shadow-[0_0_20px_rgba(99,102,241,0.35)] active:scale-95 print:hidden",
         visible
           ? "pointer-events-auto translate-y-0 opacity-100 scale-100"
           : "pointer-events-none translate-y-3 opacity-0 scale-90"

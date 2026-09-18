@@ -27,7 +27,7 @@ import {
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 // Feature flag: set to true to re-enable the Voice Receptionist Agent
-const ENABLE_VOICE_AGENT = true;
+const ENABLE_VOICE_AGENT = false;
 
 interface Message {
   id: string;
