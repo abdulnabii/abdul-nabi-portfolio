@@ -27,9 +27,12 @@ import {
   Briefcase,
   Code2,
   ShieldAlert,
+  Calendar,
 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useSiteSettings } from "@/components/settings-provider";
+import { CalendlyModal } from "@/components/ui/calendly-modal";
+import { useToast } from "@/components/ui/toast";
 
 interface FormState {
   name: string;
@@ -79,11 +82,13 @@ const socialIcons = {
 
 export function Contact() {
   const { settings } = useSiteSettings();
+  const { toast } = useToast();
   const [form, setForm] = useState<FormState>(initialState);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [calendlyOpen, setCalendlyOpen] = useState(false);
 
   const email = settings.email || siteContent.email?.trim() || "abdulnabi.khaskhely@gmail.com";
   const location = settings.location || siteContent.location || "Karachi, Sindh, Pakistan";
@@ -170,11 +175,21 @@ export function Contact() {
 
       setStatus("success");
       setForm(initialState);
+      toast({
+        variant: "success",
+        title: "Message Dispatched! 🚀",
+        description: "Thank you! Abdul Nabi will review your note and reply within 1–2 business days.",
+      });
     } catch (err) {
       setStatus("error");
-      setErrorMessage(
-        err instanceof Error ? err.message : "Something went wrong sending your message. Please try again or email directly."
-      );
+      const errText =
+        err instanceof Error ? err.message : "Something went wrong sending your message. Please try again or email directly.";
+      setErrorMessage(errText);
+      toast({
+        variant: "error",
+        title: "Delivery Failed",
+        description: errText,
+      });
     }
   }
 
@@ -287,35 +302,30 @@ export function Contact() {
                   </span>
                 </a>
 
-                {/* Voice Call Receptionist Tile (Temporarily Hidden)
+                {/* Calendly Booking Tile */}
                 <button
                   type="button"
-                  onClick={() => {
-                    if (typeof window !== "undefined") {
-                      window.dispatchEvent(new CustomEvent("open-assistant-call"));
-                    }
-                  }}
-                  className="group w-full flex items-center justify-between rounded-xl border border-emerald-500/40 bg-gradient-to-r from-emerald-950/40 to-slate-900/60 p-3.5 transition hover:border-emerald-400 hover:bg-emerald-900/30 text-left shadow-lg shadow-emerald-950/30 cursor-pointer"
+                  onClick={() => setCalendlyOpen(true)}
+                  className="group w-full flex items-center justify-between rounded-xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-purple-950/40 p-3.5 transition-all hover:border-indigo-400 hover:bg-indigo-900/30 text-left shadow-lg shadow-indigo-950/20 cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-emerald-500/40 bg-emerald-500/20 text-emerald-300">
-                      <Phone className="h-4 w-4 animate-pulse" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-indigo-500/30 bg-indigo-500/20 text-indigo-300 group-hover:scale-105 transition-transform">
+                      <Calendar className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
-                        <span>AI Voice Call Agent</span>
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                        <span>Discovery Call</span>
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       </p>
-                      <p className="text-xs sm:text-sm font-semibold text-white group-hover:text-emerald-200 transition">
-                        Speak with Abdul&apos;s Receptionist
+                      <p className="text-xs sm:text-sm font-semibold text-white group-hover:text-indigo-200 transition">
+                        Schedule a 1-on-1 Call
                       </p>
                     </div>
                   </div>
-                  <span className="rounded-md bg-emerald-500/20 border border-emerald-500/40 px-2.5 py-1 text-[10px] font-bold text-emerald-300 flex items-center gap-1 shadow">
-                    📞 Call Now
+                  <span className="rounded-md bg-indigo-500/20 border border-indigo-500/30 px-2.5 py-1 text-[10px] font-bold text-indigo-200 flex items-center gap-1">
+                    📅 Book Time
                   </span>
                 </button>
-                */}
 
                 {/* Location Tile */}
                 <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
@@ -570,6 +580,12 @@ export function Contact() {
           </Reveal>
         </div>
       </div>
+
+      <CalendlyModal
+        isOpen={calendlyOpen}
+        onClose={() => setCalendlyOpen(false)}
+        calendlyUrl={settings.calendlyUrl}
+      />
     </section>
   );
 }

@@ -205,9 +205,40 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
               label="LinkedIn Profile URL"
               value={settings.linkedinUrl}
               onChange={(e) => handleChange("linkedinUrl", e.target.value)}
-              className="sm:col-span-2"
+            />
+            <Input
+              label="Calendly Scheduling URL"
+              value={settings.calendlyUrl || ""}
+              onChange={(e) => handleChange("calendlyUrl", e.target.value)}
+              placeholder="https://calendly.com/your-handle/30min"
             />
           </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5 space-y-4">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-white/5 pb-2">
+            Top Announcement / Open to Work Banner
+          </h4>
+
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="announcementBarActive"
+              checked={Boolean(settings.announcementBarActive === true || settings.announcementBarActive === "true")}
+              onChange={(e) => handleChange("announcementBarActive", e.target.checked ? "true" : "false")}
+              className="h-4 w-4 rounded border-white/20 bg-[#060a17] text-indigo-600 focus:ring-indigo-500"
+            />
+            <label htmlFor="announcementBarActive" className="text-sm font-medium text-white cursor-pointer">
+              Enable Top Announcement Banner
+            </label>
+          </div>
+
+          <Input
+            label="Banner Announcement Text"
+            value={settings.announcementBarText || ""}
+            onChange={(e) => handleChange("announcementBarText", e.target.value)}
+            placeholder="e.g. 🚀 Open to full-time engineering roles & freelance projects"
+          />
         </div>
 
         <div className="flex justify-end pt-2">

@@ -5,6 +5,7 @@ import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { useSiteSettings } from "@/components/settings-provider";
+import { NewsletterSignup } from "@/components/newsletter-signup";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -50,6 +51,10 @@ export function Footer() {
                 <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-400">
                   {siteContent.tagline}
                 </p>
+                <div className="mt-5 max-w-sm">
+                  <p className="text-xs font-semibold text-slate-300 mb-2">Subscribe to weekly tech updates</p>
+                  <NewsletterSignup variant="compact" />
+                </div>
               </div>
 
               <div className="flex flex-col items-start gap-4 md:items-end">

@@ -281,7 +281,28 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
       </div>
 
       {/* Breakdown Lists */}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+            Traffic & Referral Sources
+          </h4>
+          <div className="space-y-2">
+            {(summary.trafficSources || []).length === 0 ? (
+              <p className="text-xs text-slate-500 italic">No external referrals recorded yet.</p>
+            ) : (
+              (summary.trafficSources || []).map((s, idx) => (
+                <div
+                  key={s.source + idx}
+                  className="flex items-center justify-between rounded-xl bg-white/[0.03] p-2.5 text-xs border border-white/5"
+                >
+                  <span className="font-medium text-slate-200 truncate">{s.source}</span>
+                  <span className="text-indigo-400 font-mono font-semibold">{s.count} visits</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
         <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
             Top Performing Case Studies

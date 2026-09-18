@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { BlogFeedback } from "@/components/blog-feedback";
+import { NewsletterSignup } from "@/components/newsletter-signup";
 import type { BlogPost } from "@/lib/blog-store";
 import { formatDate } from "@/lib/utils";
 import { ArrowLeft, Clock, Eye } from "lucide-react";
@@ -99,6 +100,21 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
   const [post, setPost] = useState<BlogPost | null>(initialPost);
   const [loading, setLoading] = useState(!initialPost);
   const [imageError, setImageError] = useState(false);
+  const [readingProgress, setReadingProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const progress = Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100));
+        setReadingProgress(progress);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [post]);
 
   useEffect(() => {
     async function loadPost() {
@@ -170,6 +186,21 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
 
   return (
     <article className="section-padding pt-32 md:pt-36">
+      {/* Top Sticky Reading Progress Bar */}
+      <div
+        className="fixed top-0 left-0 right-0 h-[3px] bg-white/5 z-50 pointer-events-none"
+        role="progressbar"
+        aria-valuenow={Math.round(readingProgress)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Reading progress"
+      >
+        <div
+          className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 transition-[width] duration-150 ease-out shadow-[0_0_12px_rgba(99,102,241,0.6)]"
+          style={{ width: `${readingProgress}%` }}
+        />
+      </div>
+
       <div className="container-narrow max-w-3xl">
         <LinkButton
           href="/blog"
@@ -241,6 +272,9 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
             initialRatingCount={post.ratingCount ?? 0}
           />
         </GlassCard>
+
+        {/* Newsletter Subscription Opt-In */}
+        <NewsletterSignup className="mt-12" />
 
         {related.length > 0 && (
           <aside className="mt-16">

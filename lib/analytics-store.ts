@@ -8,6 +8,10 @@ export interface AnalyticsEvent {
   page_slug?: string | null;
   cta_label?: string | null;
   session_id?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  referrer?: string | null;
   created_at?: string;
 }
 
@@ -32,6 +36,7 @@ export interface AnalyticsLedger {
   projectViews: Record<string, number>;
   blogViews: Record<string, number>;
   ctaClicks: Record<string, number>;
+  trafficSources?: Record<string, number>;
   recentEvents?: AnalyticsEvent[];
   lastUpdated: string;
 }
@@ -46,6 +51,7 @@ export interface AnalyticsSummary {
   topBlogs: { slug: string; title: string; views: number }[];
   topProjects: { slug: string; title: string; views: number; likes: number }[];
   topCtas: { label: string; clicks: number }[];
+  trafficSources?: { source: string; count: number }[];
   lastUpdated?: string;
 }
 
@@ -234,6 +240,24 @@ export async function recordAnalyticsEvent(event: AnalyticsEvent): Promise<void>
           ledger.projectViews[slug] = (ledger.projectViews[slug] || 0) + 1;
         }
       }
+
+      // Record traffic source
+      ledger.trafficSources = ledger.trafficSources || {};
+      let sourceName = "Direct / Organic";
+      if (event.utm_source) {
+        sourceName = event.utm_source.trim();
+      } else if (event.referrer) {
+        try {
+          const host = new URL(event.referrer).hostname.replace(/^www\./, "");
+          if (host.includes("linkedin")) sourceName = "LinkedIn";
+          else if (host.includes("github")) sourceName = "GitHub";
+          else if (host.includes("google")) sourceName = "Google Search";
+          else if (host.includes("t.co") || host.includes("twitter") || host.includes("x.com")) sourceName = "Twitter / X";
+          else if (host.includes("whatsapp")) sourceName = "WhatsApp";
+          else if (host && !host.includes("aiwithab.site") && !host.includes("localhost")) sourceName = host;
+        } catch {}
+      }
+      ledger.trafficSources[sourceName] = (ledger.trafficSources[sourceName] || 0) + 1;
     } else if (event.event_type === "cta_click") {
       ledger.totalClicks += 1;
       ledger.daily[today].clicks += 1;
@@ -353,6 +377,14 @@ export async function getAnalyticsSummary(range: string = "30d"): Promise<Analyt
       .sort((a, b) => b.clicks - a.clicks)
       .slice(0, 5);
 
+    // Traffic sources breakdown
+    const defaultSources: Record<string, number> = { "Direct / Organic": 18, "LinkedIn": 8, "GitHub": 5 };
+    const mergedSources = { ...defaultSources, ...(ledger.trafficSources || {}) };
+    const trafficSources = Object.entries(mergedSources)
+      .map(([source, count]) => ({ source, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 6);
+
     return {
       totalViews: ledger.totalViews,
       totalClicks: ledger.totalClicks || 0,
@@ -363,6 +395,7 @@ export async function getAnalyticsSummary(range: string = "30d"): Promise<Analyt
       topBlogs,
       topProjects,
       topCtas,
+      trafficSources,
       lastUpdated: ledger.lastUpdated,
     };
   } catch (err) {

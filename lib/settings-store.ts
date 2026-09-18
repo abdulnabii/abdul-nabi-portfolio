@@ -14,6 +14,9 @@ export interface SiteSettings {
   email: string;
   phone: string;
   cvUrl?: string;
+  calendlyUrl?: string;
+  announcementBarActive?: boolean | string;
+  announcementBarText?: string;
 }
 
 export interface AboutData {
@@ -35,6 +38,9 @@ const DEFAULT_SETTINGS: SiteSettings = {
   email: "abdulnabi.khaskhely@gmail.com",
   phone: "0333 7597315",
   cvUrl: "/ab_resume.pdf",
+  calendlyUrl: "https://calendly.com",
+  announcementBarActive: false,
+  announcementBarText: "🚀 Available for high-impact software engineering roles & freelance projects",
 };
 
 let memorySettings: SiteSettings = { ...DEFAULT_SETTINGS };

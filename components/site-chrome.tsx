@@ -17,6 +17,9 @@ import { NowWidget } from "@/components/ui/now-widget";
 import { PWAInstaller } from "@/components/ui/pwa-installer";
 import { KeyboardShortcutsModal } from "@/components/ui/keyboard-shortcuts-modal";
 import { CookieConsent } from "@/components/cookie-consent";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import { ToastProvider } from "@/components/ui/toast";
+import { AnnouncementBar } from "@/components/announcement-bar";
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -31,19 +34,23 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     <ThemeModeProvider>
       <BackgroundThemeProvider>
         <CommandPaletteProvider>
-          <div className="relative min-h-screen transition-colors duration-500">
-            <AnalyticsTracker />
-            <BackgroundThemeRenderer />
-            <CustomCursor />
-            <Navbar />
-            <main className="relative z-10">{children}</main>
-            <Footer />
-            <Chatbot />
-            <NowWidget />
-            <PWAInstaller />
-            <KeyboardShortcutsModal />
-            <CookieConsent />
-          </div>
+          <ToastProvider>
+            <div className="relative min-h-screen transition-colors duration-500">
+              <AnalyticsTracker />
+              <BackgroundThemeRenderer />
+              <CustomCursor />
+              <AnnouncementBar />
+              <Navbar />
+              <main className="relative z-10">{children}</main>
+              <Footer />
+              <Chatbot />
+              <NowWidget />
+              <PWAInstaller />
+              <KeyboardShortcutsModal />
+              <CookieConsent />
+              <ScrollToTop />
+            </div>
+          </ToastProvider>
         </CommandPaletteProvider>
       </BackgroundThemeProvider>
     </ThemeModeProvider>

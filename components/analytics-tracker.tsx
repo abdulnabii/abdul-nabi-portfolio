@@ -49,6 +49,12 @@ export function AnalyticsTracker() {
     if (now - lastTrackTime < 2500) return;
     sessionStorage.setItem(lastVisitKey, now.toString());
 
+    const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const utmSource = searchParams?.get("utm_source") || undefined;
+    const utmMedium = searchParams?.get("utm_medium") || undefined;
+    const utmCampaign = searchParams?.get("utm_campaign") || undefined;
+    const referrer = typeof document !== "undefined" ? document.referrer : undefined;
+
     fetch("/api/analytics/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -56,6 +62,10 @@ export function AnalyticsTracker() {
         event_type: "page_view",
         page_slug: pathname,
         session_id: sessionId,
+        utm_source: utmSource,
+        utm_medium: utmMedium,
+        utm_campaign: utmCampaign,
+        referrer,
       }),
     }).catch(() => {});
   }, [pathname, consentAllowed]);
