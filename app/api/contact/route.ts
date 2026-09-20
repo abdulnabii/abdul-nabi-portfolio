@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 interface ContactPayload {
   name?: string;
@@ -24,6 +25,14 @@ function escapeHtml(str: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 messages per 10 minutes per IP to prevent spam and Resend quota burn
+    const rl = checkRateLimit(request, "api_contact", 5, 10 * 60 * 1000);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Too many messages sent. Please wait a few minutes before trying again." },
+        { status: 429 }
+      );
+    }
     const body = (await request.json().catch(() => ({}))) as ContactPayload;
 
     const name = body.name?.trim() ?? "";

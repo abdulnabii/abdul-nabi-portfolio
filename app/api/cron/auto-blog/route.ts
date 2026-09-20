@@ -4,11 +4,28 @@ import { runAutoBlog } from "@/lib/ai-blog-generator";
 import { publishScheduledBlogs } from "@/lib/blog-store";
 import { supabaseDbQuery, supabaseDbUpsert } from "@/lib/supabase";
 
+import { getAdminSession } from "@/lib/auth";
+
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // 5 minutes max (Vercel Pro allows up to 5min for cron)
 
 const CRON_LOG_KEY = "auto_blog_cron_log";
 const ENABLED_KEY = "auto_blog_enabled";
+
+async function isAuthorizedCaller(req: NextRequest): Promise<boolean> {
+  const authHeader = req.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
+    return true;
+  }
+
+  const session = await getAdminSession();
+  if (session && session.role === "admin") {
+    return true;
+  }
+
+  return false;
+}
 
 async function isAutoBlogEnabled(): Promise<boolean> {
   try {
@@ -24,15 +41,8 @@ async function isAutoBlogEnabled(): Promise<boolean> {
 
 export async function GET(req: NextRequest) {
   try {
-    // Security: Verify cron secret header OR Vercel cron caller
-    const authHeader = req.headers.get("authorization");
-    const cronSecret = process.env.CRON_SECRET || "auto-blog-secret-2025";
-
-    const isVercelCron = req.headers.get("user-agent")?.includes("vercel-cron");
-    const isAuthorized = authHeader === `Bearer ${cronSecret}`;
-
-    if (!isVercelCron && !isAuthorized) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!(await isAuthorizedCaller(req))) {
+      return NextResponse.json({ error: "Unauthorized cron execution" }, { status: 401 });
     }
 
     // 1. First publish any scheduled blog posts that have reached their scheduledAt time
@@ -111,10 +121,7 @@ export async function GET(req: NextRequest) {
 // Allow manual trigger from admin panel with optional topic
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get("authorization");
-    const cronSecret = process.env.CRON_SECRET || "auto-blog-secret-2025";
-    const isAuthorized = authHeader === `Bearer ${cronSecret}`;
-    if (!isAuthorized) {
+    if (!(await isAuthorizedCaller(req))) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

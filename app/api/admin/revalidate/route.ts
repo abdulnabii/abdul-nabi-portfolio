@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const secret = req.headers.get("x-revalidate-secret") || req.nextUrl.searchParams.get("secret");
-    const expectedSecret = process.env.REVALIDATION_SECRET || "default_revalidate_secret";
+    const expectedSecret = process.env.REVALIDATION_SECRET;
 
-    if (secret !== expectedSecret) {
-      return NextResponse.json({ error: "Invalid revalidation secret token" }, { status: 401 });
+    if (!expectedSecret || secret !== expectedSecret) {
+      return NextResponse.json({ error: "Unauthorized revalidation request" }, { status: 401 });
     }
 
     revalidatePath("/", "layout");

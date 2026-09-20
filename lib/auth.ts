@@ -4,12 +4,10 @@ import { cookies } from "next/headers";
 const SESSION_COOKIE = "an_admin_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
-// Env vars with hardcoded fallbacks so admin login works even when the
-// deployment platform has no explicit env configuration.
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL ?? "abdulnabi.khaskhely@gmail.com").trim();
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "AbdulNabi@Admin2025!";
-const SECRET =
-  process.env.SESSION_SECRET ?? "an-portfolio-admin-secret-key-2025-secure-random-value-here";
+// Strict environment variable configuration. Fails closed if not set.
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL ?? "").trim();
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "";
+const SECRET = process.env.SESSION_SECRET ?? "";
 
 interface SessionPayload {
   role: "admin";

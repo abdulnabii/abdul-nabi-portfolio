@@ -11,8 +11,12 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const type = (formData.get("type") as string) || "projects";
-    const slug = (formData.get("slug") as string) || "cover_" + Date.now();
+    const rawType = (formData.get("type") as string) || "projects";
+    const rawSlug = (formData.get("slug") as string) || "cover_" + Date.now();
+
+    // Sanitize parameters against path traversal
+    const safeType = rawType.replace(/[^a-zA-Z0-9_-]/g, "") || "projects";
+    const safeSlug = rawSlug.replace(/[^a-zA-Z0-9_-]/g, "") || "cover_" + Date.now();
 
     if (!file) {
       return NextResponse.json({ error: "No image file uploaded" }, { status: 400 });
@@ -34,9 +38,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const extension = file.name.split(".").pop() || "jpg";
-    const fileName = `${slug}.${extension}`;
-    const storagePath = `${type}/${fileName}`;
+    const rawExt = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-zA-Z0-9]/g, "");
+    const extension = ["jpg", "jpeg", "png", "webp"].includes(rawExt) ? rawExt : "jpg";
+    const fileName = `${safeSlug}.${extension}`;
+    const storagePath = `${safeType}/${fileName}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);

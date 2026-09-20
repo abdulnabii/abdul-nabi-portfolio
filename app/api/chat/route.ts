@@ -1,4 +1,5 @@
 import { createChatCompletion, type ChatMessage } from "@/lib/openai";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 
 interface ChatRequestBody {
@@ -8,6 +9,15 @@ interface ChatRequestBody {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 20 messages per minute per IP to prevent OpenAI quota depletion
+    const rl = checkRateLimit(request, "api_chat", 20, 60 * 1000);
+    if (!rl.allowed) {
+      const retryAfter = Math.ceil((rl.resetAt - Date.now()) / 1000);
+      return NextResponse.json(
+        { error: "Too many requests. Please slow down and try again in a moment." },
+        { status: 429, headers: { "Retry-After": String(retryAfter) } }
+      );
+    }
     const body = (await request.json()) as ChatRequestBody;
 
     let messages: ChatMessage[] = [];
