@@ -8,7 +8,6 @@ import { MiniProjects } from "@/components/sections/mini-projects";
 import { Skills } from "@/components/sections/skills";
 import { Achievements } from "@/components/sections/achievements";
 import { MiniGames } from "@/components/sections/mini-games";
-import { GitHubStats } from "@/components/sections/github-stats";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Certifications } from "@/components/sections/certifications";
 import { Process } from "@/components/sections/process";
@@ -35,7 +34,6 @@ export default async function HomePage() {
       {vis.skills && <Skills />}
       {vis.projects && <Projects />}
       {vis.miniProjects && <MiniProjects />}
-      <GitHubStats />
       {vis.experience && <Experience />}
       {vis.education && <Education />}
       {vis.certifications !== false && <Certifications />}
