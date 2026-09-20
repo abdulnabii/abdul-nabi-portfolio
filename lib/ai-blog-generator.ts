@@ -129,18 +129,36 @@ const FALLBACK_TOPICS: NewsItem[] = [
 ];
 
 function cleanHtml(raw: string): string {
-  return raw
-    .replace(/<[^>]+>/g, "")
-    .replace(/&amp;/g, "&")
+  if (!raw) return "";
+  let text = raw;
+  // Decode XML/HTML entities first so tags become real tags
+  text = text
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
     .replace(/&#8217;/g, "'")
     .replace(/&#8216;/g, "'")
     .replace(/&#8220;/g, '"')
     .replace(/&#8221;/g, '"')
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/&amp;/g, "&");
+
+  // Strip all HTML tags including attributes
+  text = text.replace(/<[^>]+>/g, "");
+
+  // Second pass in case of nested/double escaped tags
+  text = text
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/<[^>]+>/g, "");
+
+  // Strip Google News RSS redirect links or tracking artifacts
+  text = text.replace(/https?:\/\/news\.google\.com\/[^\s]+/g, "");
+
+  // Normalize whitespace
+  return text.replace(/\s+/g, " ").trim();
 }
 
 function parseRssXml(xml: string, source: string): NewsItem[] {
@@ -388,43 +406,41 @@ function generateTechnicalFallbackPost(
   tagsSet.add("Tech Trends");
   const tags = Array.from(tagsSet).slice(0, 5);
 
-  const relatedContextSection = relatedNews.length > 0
-    ? `\n\n### Context from Recent Tech Headlines\n` +
-      relatedNews
-        .slice(0, 3)
-        .map((n) => `- **${n.title}** (${n.source}): ${n.summary || "Major community discussion on Hacker News & developer forums."}`)
-        .join("\n")
+  const contextNotes = relatedNews
+    .filter((n) => n.title && n.title.trim().toLowerCase() !== cleanTitle.toLowerCase())
+    .slice(0, 3)
+    .map((n) => `- **${cleanHtml(n.title)}** — Core signal tracked across ${n.source || "developer forums"}.`)
+    .join("\n");
+
+  const relatedContextSection = contextNotes
+    ? `\n\n### Industry Signals & Related Trends\n\n${contextNotes}\n`
     : "";
 
   const content = `## Introduction: Why This Matters Now
 
-The global software engineering and AI landscape is undergoing a foundational pivot. Recently under high community discussion: **${cleanTitle}**. As developers and systems architects, we cannot treat these shifts as academic curiosities — they directly influence how we build production services, protect sensitive user data, and scale cloud infrastructure in ${year}.
+When you look past the social media noise around **${cleanTitle}**, there are tangible engineering implications that software teams need to evaluate in ${year}. Framework shifts, runtime updates, and AI integration aren't just cosmetic changes—they dictate how we structure data boundaries, minimize compute overhead, and maintain resilient production services.
 
-In this in-depth guide, I dissect the real technical mechanisms behind this development, examine practical code patterns, and share architectural lessons learned from building high-scale full-stack applications.
-
+In this deep dive, I'll walk through the core architectural patterns behind ${cleanTitle}, share concrete code examples you can drop into production, and break down the operational trade-offs we've navigated in real deployments.
 ${relatedContextSection}
-
 ---
 
-## Technical Deep-Dive & Architecture Patterns
+## Core Architecture & Execution Flow
 
-Behind the headlines, this technological shift hinges on three structural engineering pillars:
+To understand why this pattern matters, here is how the data and compute flow breaks down across production layers:
 
-\`\`\`
-┌─────────────────────────────────────────────────────────────┐
-│                 Modern System Architecture                  │
-├──────────────────────────────┬──────────────────────────────┤
-│ 1. Event & Ingestion Layer   │ Sub-50ms Reactive Ingestion │
-│ 2. Compute / Model Inference │ Distributed Vector & Workers │
-│ 3. Security & Policy (RLS)   │ Row-Level Cryptographic Auth │
-└──────────────────────────────┴──────────────────────────────┘
-\`\`\`
+| Layer | Responsibility | Key Engineering Trade-off |
+| :--- | :--- | :--- |
+| **Ingestion & Validation** | Edge sanitization, schema assertion, rate guards | Fast fail-early before downstream services |
+| **Execution & Compute** | Async task pipelines, vector/model inference | Scalable worker pools without blocking main thread |
+| **Persistence & Policy** | Database-level RLS, encrypted audit logs | Defense-in-depth independent of application code |
 
 ### 1. Architectural Decoupling & Low-Latency Processing
-Whether orchestrating machine learning inference loops or high-throughput API endpoints, modern systems prioritize decoupled asynchronous execution. Blocking synchronous operations creates catastrophic cascading failures under spike loads.
+
+Whether you are orchestrating machine learning inference loops or high-throughput API endpoints, modern systems prioritize decoupled asynchronous execution. Blocking synchronous operations creates catastrophic cascading failures under spike loads.
 
 ### 2. Concrete Implementation Example
-Here is a production-grade implementation pattern demonstrating safe input sanitation, asynchronous batching, and error resilience:
+
+Here is a production-grade implementation pattern demonstrating safe input validation, abort controller timeout guards, and structured responses:
 
 \`\`\`typescript
 import { NextRequest, NextResponse } from "next/server";
@@ -478,6 +494,7 @@ In my own work developing the **Blood Sugar Tracker** (an AI clinical risk predi
 | **Cold-Start Penalty** | High (Fat Container) | Edge Micro-Service | **Negligible** |
 
 ### Critical Security Gotchas & AppSec Guardrails
+
 1. **Never trust client-supplied model inputs**: Always sanitize boundaries before passing data to predictive models or SQL/vector queries.
 2. **Defend against data exfiltration**: Enforce Row Level Security (RLS) directly at the database engine level so application bugs never expose foreign tenant data.
 3. **Audit third-party dependencies**: Lock SHA hashes and verify npm/pip integrity to prevent supply-chain tampering.
