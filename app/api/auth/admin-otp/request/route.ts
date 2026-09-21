@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       success: true,
       emailDelivered: emailResult.deliveredRealEmail,
       message: emailResult.deliveredRealEmail
-        ? `Security OTP code has been dispatched to ${maskedEmail}. Please check your email inbox.`
+        ? `Security OTP code has been dispatched to ${maskedEmail}. Please check your inbox and Spam / Junk folder.`
         : `Security code generated! (Email provider not configured, code logged to console).`,
       maskedEmail,
       expiresAt,

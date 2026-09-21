@@ -216,9 +216,15 @@ export async function sendAdminOtpEmail(
     };
   }
 
+  // Brevo requires the sender to be the verified account email.
+  // In Brevo, nabi28309@gmail.com is the verified account sender.
+  // Any email sent with abdulnabi.khaskhely as sender is silently rejected by Brevo.
   const senderEmail =
-    process.env.BREVO_SENDER_EMAIL || "abdulnabi.khaskhely@gmail.com";
-  const senderName = "Abdul Nabi Admin";
+    process.env.BREVO_SENDER_EMAIL &&
+    !process.env.BREVO_SENDER_EMAIL.includes("abdulnabi.khaskhely")
+      ? process.env.BREVO_SENDER_EMAIL
+      : "nabi28309@gmail.com";
+  const senderName = "Portfolio Admin Security";
 
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
