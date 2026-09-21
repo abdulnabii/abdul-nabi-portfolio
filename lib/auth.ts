@@ -30,7 +30,7 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 export function verifyCredentials(email: string, password: string): boolean {
-  if (!isAdminAuthConfigured()) return false;
+  if (!isPasswordAuthConfigured()) return false;
   const emailMatches = safeEqual(
     email.trim().toLowerCase(),
     ADMIN_EMAIL!.toLowerCase()
@@ -40,9 +40,11 @@ export function verifyCredentials(email: string, password: string): boolean {
 }
 
 export function isAdminAuthConfigured(): boolean {
-  return Boolean(
-    ADMIN_EMAIL && ADMIN_PASSWORD && SECRET && SECRET.length >= 32
-  );
+  return Boolean(ADMIN_EMAIL && SECRET && SECRET.length >= 32);
+}
+
+export function isPasswordAuthConfigured(): boolean {
+  return Boolean(isAdminAuthConfigured() && ADMIN_PASSWORD);
 }
 
 export function createSessionToken(email: string): string {
