@@ -1,5 +1,4 @@
 import crypto from "crypto";
-import { Resend } from "resend";
 
 const OTP_EXPIRATION_MS = 10 * 60 * 1000; // 10 minutes
 export const ADMIN_OTP_CHALLENGE_COOKIE = "an_admin_otp_challenge";
@@ -196,7 +195,7 @@ function buildAdminOtpHtml(code: string): string {
 }
 
 /**
- * Sends the 6-digit OTP code to the administrator's email
+ * Sends the 6-digit OTP code to the administrator's email via Brevo Transactional API
  */
 export async function sendAdminOtpEmail(
   email: string,
@@ -207,9 +206,9 @@ export async function sendAdminOtpEmail(
   // Always log to server stdout for local dev / fallback recovery
   console.log(`[Admin OTP] Verification code for ${normalizedEmail}: ${code}`);
 
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) {
-    console.warn("[Admin OTP] RESEND_API_KEY not configured. Code logged to console only.");
+    console.warn("[Admin OTP] BREVO_API_KEY not configured. Code logged to console only.");
     return {
       success: true,
       deliveredRealEmail: false,
@@ -217,32 +216,37 @@ export async function sendAdminOtpEmail(
     };
   }
 
-  try {
-    const resend = new Resend(apiKey);
-    const fromEmail =
-      process.env.RESEND_FROM_EMAIL ||
-      "Abdul Nabi Admin <onboarding@resend.dev>";
+  const senderEmail =
+    process.env.BREVO_SENDER_EMAIL || "abdulnabi.khaskhely@gmail.com";
+  const senderName = "Abdul Nabi Admin";
 
-    const result = await resend.emails.send({
-      from: fromEmail,
-      to: [normalizedEmail],
-      subject: `🔐 Admin Security Code: ${code}`,
-      html: buildAdminOtpHtml(code),
+  try {
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": apiKey,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: senderName, email: senderEmail },
+        to: [{ email: normalizedEmail }],
+        subject: `🔐 Admin Security Code: ${code}`,
+        htmlContent: buildAdminOtpHtml(code),
+      }),
     });
 
-    if (result.error) {
-      console.error("[Admin OTP] Resend dispatch error:", result.error);
+    if (!res.ok) {
+      const errorBody = await res.text().catch(() => "");
+      console.error("[Admin OTP] Brevo API error:", res.status, errorBody);
       return {
         success: false,
         deliveredRealEmail: false,
-        error: result.error.message || "Failed to send email via Resend.",
+        error: `Email delivery failed (Brevo ${res.status}): ${errorBody}`,
       };
     }
 
-    return {
-      success: true,
-      deliveredRealEmail: true,
-    };
+    return { success: true, deliveredRealEmail: true };
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     console.error("[Admin OTP] Unexpected dispatch exception:", errorMsg);
