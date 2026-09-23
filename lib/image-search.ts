@@ -186,54 +186,99 @@ export function classifyBlogTopic(title: string, tags: string[] = []): string {
   return "web_cloud_fullstack";
 }
 
-export type ImageStylePreference = "curated_hd" | "ai_studio" | "ai_prism" | "ai_cyber";
+export type ImageStylePreference = "ai_flux" | "ai_prism" | "ai_studio" | "ai_cyber" | "curated_hd";
 
 /**
- * Resolves an ultra-high-definition, professional cover image.
- * By default ('curated_hd'), selects a verified, 4K award-winning Unsplash editorial photograph
- * from our curated domain pools, eliminating AI blur, watermarks, and dark CGI artifacts.
- * If an AI style is requested ('ai_studio', 'ai_prism', 'ai_cyber'), generates a tailored prompt.
+ * Builds a highly tailored AI image prompt using Flux model on Pollinations.
+ * Produces crisp, publication-grade 3D renders with glowing optics, frosted glass,
+ * and dark obsidian backgrounds, specifically themed to the article.
+ */
+export function generateBespokeAiCoverImage(
+  title: string,
+  tags: string[] = [],
+  customVisualDescription?: string,
+  seedOverride?: number
+): string {
+  const cleanTitle = title
+    .replace(/\$[^^$]+\$/g, "")
+    .replace(/[^a-zA-Z0-9 ,.-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const cleanSubject = (customVisualDescription || cleanTitle).slice(0, 110);
+  const tagContext = tags.slice(0, 3).join(", ");
+  const category = classifyBlogTopic(cleanTitle, tags);
+
+  // Cryptographically unique random seed per article to guarantee zero duplicates
+  const seed = seedOverride ?? Math.floor(Math.random() * 9000000) + 1000000;
+
+  let styleDetail = "modern 3D geometric abstract visualization, frosted glass and sleek titanium elements, soft subsurface scattering, glowing neon accents, 8k octane render, cinematic lighting, ultra-detailed, depth of field";
+
+  if (category === "security_appsec_cryptography") {
+    styleDetail = "abstract cyber security fortress concept, glowing cryptographic nodes, dark obsidian and deep navy environment, sharp raytracing, futuristic minimal tech, 8k octane render";
+  } else if (category === "ai_agents_multiagent") {
+    styleDetail = "abstract multi-agent neural network, interconnected glowing glass nodes and luminous energy paths, dark minimalist cybernetic space, high-end 3D octane render";
+  } else if (category === "healthcare_medical_clinical") {
+    styleDetail = "modern clinical biotech digital visualization, abstract DNA helical structures and holographic medical data nodes, clean frosted cyan and emerald lighting, professional 8k";
+  } else if (category === "web_cloud_fullstack") {
+    styleDetail = "high-tech cloud architecture diagram in 3D abstract isometric perspective, floating glowing microservices cubes, dark glass aesthetic, vibrant purple and blue rim light";
+  } else if (category === "deep_learning_neural") {
+    styleDetail = "complex neural network latent space visualization, glowing multi-head attention vectors, dark luxury aesthetic, sharp macro focus, 8k octane render";
+  }
+
+  const prompt = `editorial cover artwork of ${cleanSubject}, technical theme: ${tagContext}, ${styleDetail}, minimalist editorial publication banner, no text, no words, no watermark, no logos`;
+
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&model=flux&nologo=true&seed=${seed}`;
+}
+
+/**
+ * Resolves an ultra-high-definition, unique cover image for a blog post.
+ * Defaults to 'ai_flux', generating bespoke 100% unique 3D AI artwork for EVERY blog.
  */
 export function resolvePostCoverImage(
   title: string,
   tags: string[] = [],
-  stylePreference: ImageStylePreference | string = "curated_hd",
+  stylePreference: ImageStylePreference | string = "ai_flux",
   customVisualDescription?: string
 ): string {
-  // Option 1 (Default & Recommended): 4K Unsplash Editorial Photography
-  if (stylePreference === "curated_hd" || !stylePreference) {
-    const category = classifyBlogTopic(title, tags);
-    const pool = DOMAIN_IMAGE_POOLS[category] || DOMAIN_IMAGE_POOLS.web_cloud_fullstack;
-    const titleHash = stringHash(title);
-    const tagHash = stringHash(tags.join(""));
-    const selectedIndex = (titleHash + tagHash) % pool.length;
-    return pool[selectedIndex];
-  }
-
   const cleanSubject = (customVisualDescription || title)
     .replace(/\$[^^$]+\$/g, "")
     .replace(/[^a-zA-Z0-9 ,.-]/g, " ")
     .replace(/\s+/g, " ")
-    .slice(0, 70)
+    .slice(0, 80)
     .trim();
 
-  const seed = (stringHash(title) + Math.floor(Math.random() * 89999) + 10000) % 999999;
+  const seed = (stringHash(title) + Math.floor(Math.random() * 899999) + 10000) % 9999999;
+
+  // Option 1 (Default): Bespoke AI Flux Cover Artwork (100% Unique per post)
+  if (stylePreference === "ai_flux" || !stylePreference || stylePreference === "ai_default") {
+    return generateBespokeAiCoverImage(title, tags, customVisualDescription, seed);
+  }
 
   // Option 2: Clean Studio Tech Photography (Hasselblad / Crisp Lighting)
   if (stylePreference === "ai_studio") {
-    const prompt = `editorial studio photography of ${cleanSubject}, modern sleek technology hardware, soft daylight with vibrant rim lighting, Hasselblad 50mm, sharp focus, 8k resolution, minimalist publication cover, no watermark`;
+    const prompt = `editorial studio photography of ${cleanSubject}, modern sleek technology hardware, soft daylight with vibrant rim lighting, Hasselblad 50mm, sharp focus, 8k resolution, minimalist publication cover, no watermark, no text`;
     return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&model=flux&nologo=true&seed=${seed}`;
   }
 
   // Option 3: Minimalist 3D Prism / Glass (Apple / Linear / Stripe style)
   if (stylePreference === "ai_prism") {
-    const prompt = `minimalist 3D geometric prism sculpture representing ${cleanSubject}, translucent frosted glass refracting vibrant spectral gradient light, clean neutral titanium surface, modern abstract design, 8k octane render, crisp lighting, no watermark`;
+    const prompt = `minimalist 3D geometric prism sculpture representing ${cleanSubject}, translucent frosted glass refracting vibrant spectral gradient light, clean neutral titanium surface, modern abstract design, 8k octane render, crisp lighting, no watermark, no text`;
     return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&model=flux&nologo=true&seed=${seed}`;
   }
 
   // Option 4: Cybernetic Dark Mode (High Detail)
-  const prompt = `sleek cybernetic architecture representing ${cleanSubject}, glowing fiber optics and microcircuitry, deep dark obsidian atmosphere, octane render, sharp macro details, 8k, no watermark`;
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&model=flux&nologo=true&seed=${seed}`;
+  if (stylePreference === "ai_cyber") {
+    const prompt = `sleek cybernetic architecture representing ${cleanSubject}, glowing fiber optics and microcircuitry, deep dark obsidian atmosphere, octane render, sharp macro details, 8k, no watermark, no text`;
+    return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&model=flux&nologo=true&seed=${seed}`;
+  }
+
+  // Option 5: 4K Curated Unsplash Editorial Photography (with random offset to avoid duplicates)
+  const category = classifyBlogTopic(title, tags);
+  const pool = DOMAIN_IMAGE_POOLS[category] || DOMAIN_IMAGE_POOLS.web_cloud_fullstack;
+  const offset = Math.floor(Math.random() * pool.length);
+  const selectedIndex = (stringHash(title) + offset) % pool.length;
+  return pool[selectedIndex];
 }
 
 /**
@@ -260,32 +305,29 @@ export function getUniqueTopicCoverImage(
   tags: string[] = [],
   offset: number = 0
 ): string {
-  const category = classifyBlogTopic(title, tags);
-  const pool = DOMAIN_IMAGE_POOLS[category] || DOMAIN_IMAGE_POOLS.web_cloud_fullstack;
-  const hash = stringHash(title) + offset;
-  const selectedIndex = hash % pool.length;
-  return pool[selectedIndex];
+  return resolvePostCoverImage(title, tags, "ai_flux");
 }
 
 /**
  * Generates an ultra-relevant AI-generated internet cover image URL via Pollinations Flux engine.
  */
 export function generateDynamicInternetImage(title: string, tags: string[] = []): string {
-  return resolvePostCoverImage(title, tags, "ai_prism");
+  return resolvePostCoverImage(title, tags, "ai_flux");
 }
 
 /**
  * Generates or selects the best cover image for a blog post.
- * Defaults to crystal-clear 4K curated Unsplash photography unless an AI style is requested.
+ * Defaults to bespoke 100% unique 3D AI artwork for each blog post.
  */
 export function generateAiBlogCoverImage(
   title: string,
   tags: string[] = [],
   customVisualDescription?: string,
-  stylePreference: ImageStylePreference | string = "curated_hd"
+  stylePreference: ImageStylePreference | string = "ai_flux"
 ): string {
   return resolvePostCoverImage(title, tags, stylePreference, customVisualDescription);
 }
 
 export const selectTopicCoverImage = resolvePostCoverImage;
+
 

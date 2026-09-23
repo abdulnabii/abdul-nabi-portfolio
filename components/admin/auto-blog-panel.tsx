@@ -72,7 +72,7 @@ const GENERATION_STEPS = [
 export function AutoBlogPanel() {
   const [topicInput, setTopicInput] = useState("");
   const [category, setCategory] = useState("Software Architecture");
-  const [imageStyle, setImageStyle] = useState("curated_hd");
+  const [imageStyle, setImageStyle] = useState("ai_flux");
   const [publishImmediate, setPublishImmediate] = useState(true);
 
   const [generating, setGenerating] = useState(false);
@@ -301,10 +301,11 @@ export function AutoBlogPanel() {
                 disabled={generating}
                 className="rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1 text-xs text-slate-200 focus:border-indigo-500 focus:outline-none font-medium"
               >
-                <option value="curated_hd">📸 4K Editorial Photography (Unsplash - Recommended)</option>
+                <option value="ai_flux">✨ AI: Bespoke Flux 3D Artwork (100% Unique - Recommended)</option>
                 <option value="ai_prism">🎨 AI: 3D Minimalist Prism (Apple / Linear style)</option>
                 <option value="ai_studio">🔬 AI: Studio Tech Photography (Hasselblad)</option>
                 <option value="ai_cyber">⚡ AI: Cybernetic Dark Mode</option>
+                <option value="curated_hd">📸 4K Editorial Photography (Unsplash)</option>
               </select>
             </div>
 

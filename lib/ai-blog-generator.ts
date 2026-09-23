@@ -34,7 +34,7 @@ export interface GeneratedBlogPost {
 export interface AutoBlogRequest {
   topic?: string;
   category?: string;
-  imageStyle?: "curated_hd" | "ai_studio" | "ai_prism" | "ai_cyber" | string;
+  imageStyle?: "ai_flux" | "ai_prism" | "ai_studio" | "ai_cyber" | "curated_hd" | string;
   published?: boolean;
 }
 
@@ -361,7 +361,7 @@ function generateTechnicalFallbackPost(
   topic: NewsItem,
   relatedNews: NewsItem[] = [],
   customCategory?: string,
-  imageStyle: string = "curated_hd"
+  imageStyle: string = "ai_flux"
 ): GeneratedBlogPost {
   const year = new Date().getFullYear();
   const cleanTitle = topic.title
@@ -540,7 +540,7 @@ export async function generateAiBlogPost(
   topic: NewsItem,
   relatedNews: NewsItem[] = [],
   customInstructions?: string,
-  imageStyle: string = "curated_hd"
+  imageStyle: string = "ai_flux"
 ): Promise<GeneratedBlogPost | null> {
   const openAiKey = process.env.OPENAI_API_KEY;
   const isKeyMissing = !openAiKey || openAiKey === "sk-your-openai-api-key" || openAiKey.trim() === "";
@@ -652,7 +652,7 @@ export async function generateAndPublishSingleBlog(
     console.log(`[ai-blog-generator] Selected primary topic: "${primaryTopic.title}" (${primaryTopic.source})`);
 
     // 2. Generate the blog post & visual prompt
-    const generatedPost = await generateAiBlogPost(primaryTopic, relatedNews, req.category, req.imageStyle || "curated_hd");
+    const generatedPost = await generateAiBlogPost(primaryTopic, relatedNews, req.category, req.imageStyle || "ai_flux");
     if (!generatedPost) {
       return { success: false, error: "Failed to generate blog content" };
     }
@@ -755,7 +755,7 @@ export async function runAutoBlog(
     }
 
     try {
-      const post = await generateAiBlogPost(topic, relatedNews);
+      const post = await generateAiBlogPost(topic, relatedNews, undefined, "ai_flux");
       if (!post) {
         result.errors.push(`Failed to generate: ${topic.title.slice(0, 40)}`);
         continue;
