@@ -254,7 +254,7 @@ export async function recordAnalyticsEvent(event: AnalyticsEvent): Promise<void>
           else if (host.includes("google")) sourceName = "Google Search";
           else if (host.includes("t.co") || host.includes("twitter") || host.includes("x.com")) sourceName = "Twitter / X";
           else if (host.includes("whatsapp")) sourceName = "WhatsApp";
-          else if (host && !host.includes("aiwithab.site") && !host.includes("localhost")) sourceName = host;
+          else if (host && !host.includes("abdulnabi.org") && !host.includes("localhost")) sourceName = host;
         } catch {}
       }
       ledger.trafficSources[sourceName] = (ledger.trafficSources[sourceName] || 0) + 1;

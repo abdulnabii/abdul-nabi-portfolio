@@ -33,8 +33,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
   if (!project) return { title: "Project not found" };
 
-  const canonicalUrl = "https://www.aiwithab.site/projects/aegis-appsec";
-  const dynamicOg = "https://www.aiwithab.site/api/og/project?id=aegis-appsec";
+  const canonicalUrl = "https://www.abdulnabi.org/projects/aegis-appsec";
+  const dynamicOg = "https://www.abdulnabi.org/api/og/project?id=aegis-appsec";
 
   return {
     title: `${project.title} — Live Full-Stack AppSec Studio | Abdul Nabi`,
@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(project.tags || []),
       "Abdul Nabi Project",
       "Full-Stack Case Study",
-      "aiwithab.site",
+      "abdulnabi.org",
     ],
     alternates: {
       canonical: canonicalUrl,

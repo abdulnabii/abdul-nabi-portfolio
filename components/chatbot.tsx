@@ -451,7 +451,7 @@ export function Chatbot() {
           id: `error-${Date.now()}`,
           role: "assistant",
           content:
-            "Sorry — I couldn't process that right now. Please try again or use the contact form at aiwithab.site/#contact.",
+            "Sorry — I couldn't process that right now. Please try again or use the contact form at abdulnabi.org/#contact.",
         },
       ]);
     } finally {
@@ -769,8 +769,9 @@ export function Chatbot() {
 
               {/* Call Controls Bar & Input */}
               <div className="border-t border-white/[0.08] bg-[#0a0f1e]/80 p-3 space-y-2">
-                <form onSubmit={handleCallFormSubmit} className="flex items-center gap-2">
+                <form action="/api/chat" method="POST" onSubmit={handleCallFormSubmit} className="flex items-center gap-2">
                   <input
+                    name="call_input"
                     type="text"
                     value={callInput}
                     onChange={(e) => setCallInput(e.target.value)}
@@ -943,12 +944,15 @@ export function Chatbot() {
 
               {/* Input Form */}
               <form
+                action="/api/chat"
+                method="POST"
                 onSubmit={handleChatSubmit}
                 className="border-t border-white/[0.08] bg-[#0a0f1e]/60 p-3"
               >
                 <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 transition focus-within:border-accent/40 focus-within:ring-2 focus-within:ring-accent/10">
                   <input
                     ref={inputRef}
+                    name="message"
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}

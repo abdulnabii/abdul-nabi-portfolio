@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, FormEvent } from "react";
 import { Mail, Sparkles, Send, CheckCircle2, Loader2 } from "lucide-react";
@@ -60,10 +60,11 @@ export function NewsletterSignup({ variant = "card", className = "" }: Newslette
 
   if (variant === "compact") {
     return (
-      <form onSubmit={handleSubmit} className={`flex flex-col sm:flex-row gap-2 ${className}`}>
+      <form action="/api/newsletter/subscribe" method="POST" onSubmit={handleSubmit} className={`flex flex-col sm:flex-row gap-2 ${className}`}>
         <div className="relative flex-1">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
           <input
+            name="email"
             type="email"
             value={email}
             onChange={(e) => {
@@ -125,11 +126,12 @@ export function NewsletterSignup({ variant = "card", className = "" }: Newslette
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-2">
+            <form action="/api/newsletter/subscribe" method="POST" onSubmit={handleSubmit} className="space-y-2">
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
                   <input
+                    name="email"
                     type="email"
                     value={email}
                     onChange={(e) => {

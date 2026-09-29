@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
   images: {
     remotePatterns: [
       {
@@ -78,11 +79,11 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
+              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com https://images.pexels.com https://cdn.pixabay.com https://image.pollinations.ai https://pollinations.ai https://*.pollinations.ai https://*.supabase.co https://raw.githubusercontent.com https://avatars.githubusercontent.com",
+              "img-src 'self' data: blob: https://images.unsplash.com https://images.pexels.com https://cdn.pixabay.com https://image.pollinations.ai https://pollinations.ai https://gqqzcznxncatfovulmtp.supabase.co https://raw.githubusercontent.com https://avatars.githubusercontent.com",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://*.supabase.co https://api.openai.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+              "connect-src 'self' https://gqqzcznxncatfovulmtp.supabase.co https://api.openai.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
               "frame-ancestors 'none'",
               "form-action 'self'",
               "base-uri 'self'",
@@ -90,6 +91,32 @@ const nextConfig = {
             ].join("; "),
           },
         ],
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "aiwithab.site",
+          },
+        ],
+        destination: "https://www.abdulnabi.org/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "www.aiwithab.site",
+          },
+        ],
+        destination: "https://www.abdulnabi.org/:path*",
+        permanent: true,
       },
     ];
   },

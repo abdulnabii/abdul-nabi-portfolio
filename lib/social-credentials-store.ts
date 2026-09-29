@@ -121,10 +121,10 @@ export async function publishDirectToLinkedIn(
   // ── Resolve clean absolute URLs for media attachments ───────────────────
   const postText = content;
   const cleanImage = imageUrl && !imageUrl.startsWith("data:")
-    ? (imageUrl.startsWith("http") ? imageUrl : `https://www.aiwithab.site${imageUrl}`)
-    : "https://www.aiwithab.site/blood_sugar_banner.jpg";
+    ? (imageUrl.startsWith("http") ? imageUrl : `https://www.abdulnabi.org${imageUrl}`)
+    : "https://www.abdulnabi.org/blood_sugar_banner.jpg";
 
-  const cleanArticle = articleUrl || "https://www.aiwithab.site/mini-projects";
+  const cleanArticle = articleUrl || "https://www.abdulnabi.org/mini-projects";
 
   // ── Attempt 1: UGC Posts API (/v2/ugcPosts) — ARTICLE category with Image Banner ─
   try {
@@ -305,7 +305,7 @@ export async function publishDirectToReddit(
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "web:aiwithab-social-bot:v1.0.0 (by /u/" + c.redditUsername + ")",
+        "User-Agent": "web:abdulnabi-social-bot:v1.0.0 (by /u/" + c.redditUsername + ")",
       },
       body: new URLSearchParams({
         grant_type: "password",
@@ -330,7 +330,7 @@ export async function publishDirectToReddit(
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "web:aiwithab-social-bot:v1.0.0 (by /u/" + c.redditUsername + ")",
+        "User-Agent": "web:abdulnabi-social-bot:v1.0.0 (by /u/" + c.redditUsername + ")",
       },
       body: new URLSearchParams({
         sr: subClean,

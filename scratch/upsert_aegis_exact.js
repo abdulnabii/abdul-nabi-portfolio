@@ -22,7 +22,7 @@ const dbRecord = {
   description: "Live full-stack DevSecOps platform featuring real-time OWASP Top 10 API vulnerability auditing, cryptographic JWT token inspection, and Supabase Row-Level Security (RLS) policy simulation.",
   appreciations: 28,
   image_url: "/projects/ops.jpg",
-  link: "https://www.aiwithab.site/projects/aegis-appsec",
+  link: "https://www.abdulnabi.org/projects/aegis-appsec",
   tags: ["Next.js 14", "TypeScript", "AppSec", "OWASP Top 10", "Supabase RLS", "JWT Crypto"],
 };
 

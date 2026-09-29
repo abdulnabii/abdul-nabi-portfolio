@@ -21,10 +21,10 @@ export interface SocialPost {
 
 function getCleanImageTextUrl(imageUrl?: string, dayNumber?: number): string {
   if (!imageUrl || imageUrl.startsWith("data:")) {
-    return `https://www.aiwithab.site/api/project-banner?day=${dayNumber || 1}`;
+    return `https://www.abdulnabi.org/api/project-banner?day=${dayNumber || 1}`;
   }
   if (imageUrl.startsWith("/")) {
-    return `https://www.aiwithab.site${imageUrl}`;
+    return `https://www.abdulnabi.org${imageUrl}`;
   }
   return imageUrl;
 }
@@ -42,7 +42,7 @@ export function generateLinkedInPost(proj: Partial<MiniProject>, imageUrl?: stri
   const category = proj.category || "Full-Stack Web App";
   const desc = proj.description || "Building real-world web applications with Next.js and AI.";
   const tags = proj.tags || ["Next.js", "TypeScript", "TailwindCSS"];
-  const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
+  const vercelUrl = proj.vercelUrl || "https://www.abdulnabi.org/mini-projects";
 
   // Filter 3-4 tight hashtags
   const selectedTags: string[] = [];
@@ -120,7 +120,7 @@ export function generateRedditPost(proj: Partial<MiniProject>, imageUrl?: string
   const dayStr = proj.dayNumber ? `Day ${String(proj.dayNumber).padStart(2, "0")}` : "Day XX";
   const title = proj.title || "AI Micro Tool";
   const category = proj.category || "Full-Stack";
-  const vercelUrl = proj.vercelUrl || "https://www.aiwithab.site/mini-projects";
+  const vercelUrl = proj.vercelUrl || "https://www.abdulnabi.org/mini-projects";
   const githubUrl = proj.githubUrl || "https://github.com/abdulnabii/mini-projects";
   const tags = proj.tags ? proj.tags.join(", ") : "Next.js, TypeScript, TailwindCSS";
 
@@ -165,7 +165,7 @@ ${desc}
 
 Stack: ${(proj.tags || ["Next.js", "TypeScript"]).slice(0, 3).join(" • ")}
 
-Try it: ${proj.vercelUrl || "https://www.aiwithab.site/mini-projects"}
+Try it: ${proj.vercelUrl || "https://www.abdulnabi.org/mini-projects"}
 
 ${tags}`;
 }
@@ -233,7 +233,7 @@ export async function createSocialPost(
   options?: { scheduledAt?: string; status?: "Draft" | "Posted" | "Scheduled" }
 ): Promise<SocialPost> {
   const current = await getSocialPosts();
-  const img = imageUrl || "https://www.aiwithab.site/profile.jpg";
+  const img = imageUrl || "https://www.abdulnabi.org/profile.jpg";
   const redditData = generateRedditPost(proj, img);
 
   const isScheduled = !!options?.scheduledAt && new Date(options.scheduledAt).getTime() > Date.now();
@@ -247,7 +247,7 @@ export async function createSocialPost(
     redditContent: `Title: ${redditData.title}\n\n${redditData.body}`,
     redditSubreddit: redditData.subreddit,
     twitterContent: generateTwitterPost(proj),
-    vercelUrl: proj.vercelUrl || "https://www.aiwithab.site/mini-projects",
+    vercelUrl: proj.vercelUrl || "https://www.abdulnabi.org/mini-projects",
     githubUrl: proj.githubUrl,
     imageUrl: img,
     status: isScheduled ? "Scheduled" : (options?.status || "Draft"),

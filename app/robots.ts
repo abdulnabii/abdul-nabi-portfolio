@@ -46,8 +46,8 @@ export default function robots(): MetadataRoute.Robots {
         disallow: disallowed,
       },
     ],
-    sitemap: "https://www.aiwithab.site/sitemap.xml",
-    host: "https://www.aiwithab.site",
+    sitemap: "https://www.abdulnabi.org/sitemap.xml",
+    host: "https://www.abdulnabi.org",
   };
 }
 

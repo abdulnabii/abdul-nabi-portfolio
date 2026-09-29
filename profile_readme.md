@@ -6,7 +6,7 @@
 <br/>
 
 <!-- DYNAMIC TYPING TITLE -->
-<a href="https://aiwithab.site">
+<a href="https://abdulnabi.org">
   <img src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=22&duration=3000&pause=1000&color=818CF8&center=true&vCenter=true&width=620&lines=Full-Stack%20Developer%20(Next.js%2014%20%2B%20TypeScript);Application%20Security%20%26%20AppSec%20Specialist;Data%20%26%20ML%20Engineer%20(Python%20%2B%20scikit-learn);Creator%20of%20Aegis%20AppSec%20%26%20Dev%20Labs" alt="Typing SVG" />
 </a>
 
@@ -14,7 +14,7 @@
 
 <!-- SLEEK SOCIAL & PORTFOLIO QUICK LINKS -->
 <p align="center">
-  <a href="https://aiwithab.site" target="_blank">
+  <a href="https://abdulnabi.org" target="_blank">
     <img src="https://img.shields.io/badge/Portfolio-6366f1?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfolio"/>
   </a>
   <a href="https://linkedin.com/in/abdul-nabi-95391a3b0" target="_blank">
@@ -82,7 +82,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       </p>
       <p><b>Flagship Security Suite</b> — Full-stack developer security platform featuring an automated OWASP Top 10 API auditor, JWT cryptanalysis inspector, multi-tenant Supabase RLS policy simulator, and 1-click CSP middleware generator.</p>
       <p align="center">
-        <a href="https://aiwithab.site/projects/aegis-appsec"><b>🌐 Live AppSec Studio</b></a> · 
+        <a href="https://abdulnabi.org/projects/aegis-appsec"><b>🌐 Live AppSec Studio</b></a> · 
         <a href="https://github.com/abdulnabii"><b>📂 GitHub Repo</b></a>
       </p>
     </td>
@@ -96,7 +96,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       <p><b>Final Year Project</b> — Clinical machine learning web app predicting patient glucose levels using an ElasticNet regression model. Features interactive triage dashboards, risk flag notifications, and CSV/PDF reporting.</p>
       <p align="center">
         <a href="https://github.com/abdulnabii/blood-sugar-tracker-fyp"><b>📂 GitHub Repo</b></a> · 
-        <a href="https://aiwithab.site/projects/blood-sugar-tracker"><b>🌐 Portfolio Detail</b></a>
+        <a href="https://abdulnabi.org/projects/blood-sugar-tracker"><b>🌐 Portfolio Detail</b></a>
       </p>
     </td>
   </tr>
@@ -110,7 +110,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       </p>
       <p>Multi-tenant analytics workspace featuring strict <b>Row-Level Security (RLS)</b> policies, customizable telemetry charts, sub-400ms server renders, and real-time metric filtering.</p>
       <p align="center">
-        <a href="https://aiwithab.site/projects/aurora-dashboard"><b>🌐 Live Demo</b></a>
+        <a href="https://abdulnabi.org/projects/aurora-dashboard"><b>🌐 Live Demo</b></a>
       </p>
     </td>
     <td width="50%" valign="top">
@@ -122,7 +122,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       </p>
       <p>Headless luxury e-commerce storefront with Incremental Static Regeneration (ISR), Stripe payment processing, instant cart state, and a 98+ Lighthouse performance score.</p>
       <p align="center">
-        <a href="https://aiwithab.site/projects/nova-commerce"><b>🌐 Live Storefront</b></a>
+        <a href="https://abdulnabi.org/projects/nova-commerce"><b>🌐 Live Storefront</b></a>
       </p>
     </td>
   </tr>
@@ -136,7 +136,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       </p>
       <p>Embeddable real-time customer support chat widget powered by Server-Sent Events (SSE) token streaming, &lt;150ms TTFT, and a lightweight &lt;12KB bundle size.</p>
       <p align="center">
-        <a href="https://aiwithab.site/projects/pulse-chat"><b>🌐 Live Chat Demo</b></a>
+        <a href="https://abdulnabi.org/projects/pulse-chat"><b>🌐 Live Chat Demo</b></a>
       </p>
     </td>
     <td width="50%" valign="top">
@@ -148,7 +148,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
       </p>
       <p>5 low-latency interactive canvas engines and algorithm benchmarks running directly in the browser: Snake Grid Engine, 2048 Matrix Reducer, Aero Physics Simulator, Neural Reflex Benchmark, and Spatial Precision Trainer.</p>
       <p align="center">
-        <a href="https://aiwithab.site/#games"><b>🌐 Launch Interactive Labs</b></a>
+        <a href="https://abdulnabi.org/#games"><b>🌐 Launch Interactive Labs</b></a>
       </p>
     </td>
   </tr>
@@ -186,7 +186,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
 
 | Channel | Link / Handle |
 | :--- | :--- |
-| 🌐 **Live Portfolio** | [aiwithab.site](https://aiwithab.site) |
+| 🌐 **Live Portfolio** | [abdulnabi.org](https://abdulnabi.org) |
 | 💼 **LinkedIn** | [linkedin.com/in/abdul-nabi-95391a3b0](https://linkedin.com/in/abdul-nabi-95391a3b0) |
 | 📧 **Email** | [abdulnabi.khaskhely@gmail.com](mailto:abdulnabi.khaskhely@gmail.com) |
 | 💬 **WhatsApp** | [+92 309 3751434](https://wa.me/923093751434) |

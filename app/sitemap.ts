@@ -5,7 +5,7 @@ import { MetadataRoute } from "next";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://www.aiwithab.site";
+  const baseUrl = "https://www.abdulnabi.org";
   const now = new Date();
 
   // Static core routes

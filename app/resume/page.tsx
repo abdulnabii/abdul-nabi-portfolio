@@ -9,17 +9,17 @@ export const metadata: Metadata = {
   description:
     "Professional resume of Abdul Nabi — Full-Stack Software Engineer specializing in Next.js 14, TypeScript, Python ML, Supabase, and Application Security. Based in Karachi, Pakistan.",
   alternates: {
-    canonical: "https://www.aiwithab.site/resume",
+    canonical: "https://www.abdulnabi.org/resume",
   },
   openGraph: {
     title: "Resume — Abdul Nabi | Full-Stack & AI/ML Engineer",
     description:
       "Professional resume of Abdul Nabi — Full-Stack Engineer, Next.js, TypeScript, Python ML, Supabase, Application Security.",
-    url: "https://www.aiwithab.site/resume",
+    url: "https://www.abdulnabi.org/resume",
     type: "profile",
     images: [
       {
-        url: "https://www.aiwithab.site/profile.jpg",
+        url: "https://www.abdulnabi.org/profile.jpg",
         width: 1200,
         height: 630,
         alt: "Abdul Nabi Resume",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: "Resume — Abdul Nabi | Full-Stack & AI/ML Engineer",
     description:
       "Professional resume of Abdul Nabi — Full-Stack Engineer specializing in Next.js, TypeScript, Python ML and AppSec.",
-    images: ["https://www.aiwithab.site/profile.jpg"],
+    images: ["https://www.abdulnabi.org/profile.jpg"],
   },
 };
 
@@ -49,26 +49,26 @@ export default function ResumePage() {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Resume",
-            item: "https://www.aiwithab.site/resume",
+            item: "https://www.abdulnabi.org/resume",
           },
         ],
       },
       {
         "@type": "ProfilePage",
-        "@id": "https://www.aiwithab.site/resume#profile",
+        "@id": "https://www.abdulnabi.org/resume#profile",
         name: "Abdul Nabi — Official Resume & Verified Credentials",
-        url: "https://www.aiwithab.site/resume",
+        url: "https://www.abdulnabi.org/resume",
         mainEntity: {
           "@type": "Person",
           name: "Abdul Nabi",
           jobTitle: "Full-Stack Software Engineer & AI/ML Developer",
-          url: "https://www.aiwithab.site",
+          url: "https://www.abdulnabi.org",
           alumniOf: {
             "@type": "EducationalOrganization",
             name: "University of Sindh",
@@ -180,9 +180,9 @@ export default function ResumePage() {
                 +92 309 3751434 / 0333 7597315
               </a>
               <span>•</span>
-              <a href="https://www.aiwithab.site" target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
+              <a href="https://www.abdulnabi.org" target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
                 <Globe className="h-3.5 w-3.5 text-indigo-400 print:hidden" />
-                aiwithab.site
+                abdulnabi.org
               </a>
               <span>•</span>
               <a href="https://github.com/abdulnabii" target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
@@ -297,7 +297,7 @@ export default function ResumePage() {
                 <h3 className="font-bold text-white print:text-slate-900 text-xs">
                   30-Days 30-AI-Projects Suite — <span className="font-normal text-slate-300 print:text-slate-700">Next.js 14, TypeScript, Supabase, Gemini AI, Tailwind CSS</span>
                 </h3>
-                <span className="font-mono text-indigo-400 print:text-slate-600">aiwithab.site/mini-projects</span>
+                <span className="font-mono text-indigo-400 print:text-slate-600">abdulnabi.org/mini-projects</span>
               </div>
               <ul className="list-disc list-outside pl-4 text-slate-300 print:text-slate-800 space-y-0.5 leading-relaxed">
                 <li>Engineered and deployed 30 production micro-applications spanning Healthcare ML, Developer Tools, FinTech, LegalTech, and IoT.</li>

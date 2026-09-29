@@ -170,7 +170,7 @@ export default function AdminBackgroundThemePage() {
             target="_blank"
             className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition font-medium"
           >
-            View Public Site (aiwithab.site) →
+            View Public Site (abdulnabi.org) →
           </Link>
         </div>
 
@@ -183,7 +183,7 @@ export default function AdminBackgroundThemePage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white">Background & Theme Customization</h1>
-                <p className="text-sm text-slate-400">Configure visual themes, Day/Night mode, and cursor styles for aiwithab.site</p>
+                <p className="text-sm text-slate-400">Configure visual themes, Day/Night mode, and cursor styles for abdulnabi.org</p>
               </div>
             </div>
 
@@ -226,7 +226,7 @@ export default function AdminBackgroundThemePage() {
             {saved && !saving && (
               <div className="flex items-center gap-2 text-sm text-emerald-400 font-bold">
                 <Check className="h-4 w-4 stroke-[3]" />
-                Settings saved & live on aiwithab.site!
+                Settings saved & live on abdulnabi.org!
               </div>
             )}
           </div>
@@ -247,7 +247,7 @@ export default function AdminBackgroundThemePage() {
                   </div>
                   <div>
                     <h2 className="text-lg font-semibold text-white">🌙 Night Mode Themes (Dark Site)</h2>
-                    <p className="text-xs text-slate-400">Selecting a Night Theme automatically sets aiwithab.site to Night Mode</p>
+                    <p className="text-xs text-slate-400">Selecting a Night Theme automatically sets abdulnabi.org to Night Mode</p>
                   </div>
                 </div>
                 <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-medium text-indigo-300 border border-indigo-500/30">
@@ -277,7 +277,7 @@ export default function AdminBackgroundThemePage() {
                   </div>
                   <div>
                     <h2 className="text-lg font-semibold text-white">☀️ Day Mode Themes (Light Site)</h2>
-                    <p className="text-xs text-slate-400">Selecting a Day Theme automatically sets aiwithab.site to Day Mode</p>
+                    <p className="text-xs text-slate-400">Selecting a Day Theme automatically sets abdulnabi.org to Day Mode</p>
                   </div>
                 </div>
                 <span className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-medium text-amber-300 border border-amber-500/30">

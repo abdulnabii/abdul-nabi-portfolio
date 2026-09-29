@@ -28,8 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
   if (!project) return { title: "Project not found" };
 
-  const canonicalUrl = "https://www.aiwithab.site/projects/blood-sugar-tracker";
-  const dynamicOg = "https://www.aiwithab.site/api/og/project?id=blood-sugar-tracker";
+  const canonicalUrl = "https://www.abdulnabi.org/projects/blood-sugar-tracker";
+  const dynamicOg = "https://www.abdulnabi.org/api/og/project?id=blood-sugar-tracker";
 
   return {
     title: `${project.title} — FYP Case Study | Abdul Nabi`,
@@ -39,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(project.tags || []),
       "Abdul Nabi Project",
       "Full-Stack Case Study",
-      "aiwithab.site",
+      "abdulnabi.org",
     ],
     alternates: {
       canonical: canonicalUrl,
@@ -149,31 +149,31 @@ export default async function BloodSugarTrackerPage() {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Projects",
-            item: "https://www.aiwithab.site/projects",
+            item: "https://www.abdulnabi.org/projects",
           },
           {
             "@type": "ListItem",
             position: 3,
             name: project.title,
-            item: "https://www.aiwithab.site/projects/blood-sugar-tracker",
+            item: "https://www.abdulnabi.org/projects/blood-sugar-tracker",
           },
         ],
       },
       {
         "@type": "SoftwareApplication",
-        "@id": "https://www.aiwithab.site/projects/blood-sugar-tracker#app",
+        "@id": "https://www.abdulnabi.org/projects/blood-sugar-tracker#app",
         name: project.title,
         description: project.description,
         applicationCategory: "HealthApplication",
         operatingSystem: "Web Browser",
-        url: "https://www.aiwithab.site/projects/blood-sugar-tracker",
-        image: "https://www.aiwithab.site/api/og/project?id=blood-sugar-tracker",
+        url: "https://www.abdulnabi.org/projects/blood-sugar-tracker",
+        image: "https://www.abdulnabi.org/api/og/project?id=blood-sugar-tracker",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -182,7 +182,7 @@ export default async function BloodSugarTrackerPage() {
         author: {
           "@type": "Person",
           name: "Abdul Nabi",
-          url: "https://www.aiwithab.site",
+          url: "https://www.abdulnabi.org",
         },
       },
     ],

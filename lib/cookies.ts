@@ -31,30 +31,30 @@ export const KNOWN_COOKIES: Record<string, Omit<CookieInfo, "name">> = {
   an_cookie_consent: {
     category: "essential",
     description: "Stores user cookie consent choices for GDPR & privacy compliance.",
-    provider: "aiwithab.site (First-Party)",
+    provider: "abdulnabi.org (First-Party)",
     duration: "1 year",
     type: "HTTP Cookie",
   },
   an_admin_session: {
     category: "essential",
     description: "HMAC-SHA256 cryptographically signed session token for authenticated admin dashboard access.",
-    provider: "aiwithab.site (First-Party)",
+    provider: "abdulnabi.org (First-Party)",
     duration: "Session / 7 days",
     type: "HTTP Cookie",
   },
   app_theme: {
     category: "functional",
     description: "Persists your preferred UI visual theme (Dark or Light mode).",
-    provider: "aiwithab.site (First-Party)",
+    provider: "abdulnabi.org (First-Party)",
     duration: "Persistent",
     type: "Local Storage",
   },
-  an_session_id: {
+  an_session: {
     category: "analytics",
     description: "Anonymous, non-identifying random token to measure page views and click interactions.",
-    provider: "aiwithab.site (First-Party)",
-    duration: "Browser Session",
-    type: "Session Storage",
+    provider: "abdulnabi.org (First-Party)",
+    duration: "7 days",
+    type: "HTTP Cookie",
   },
 };
 
@@ -106,7 +106,7 @@ export function categorizeCookie(name: string): { category: CookieCategory; desc
     return {
       category: "functional",
       description: "Deduplication token preventing repeated upvotes on project appreciation buttons (24h).",
-      provider: "aiwithab.site (First-Party)",
+      provider: "abdulnabi.org (First-Party)",
     };
   }
 
@@ -114,7 +114,7 @@ export function categorizeCookie(name: string): { category: CookieCategory; desc
     return {
       category: "analytics",
       description: "Session flag marking unique page visits during current browsing session.",
-      provider: "aiwithab.site (First-Party)",
+      provider: "abdulnabi.org (First-Party)",
     };
   }
 
@@ -235,8 +235,18 @@ export function setCookieConsent(preferences: { analytics: boolean; functional: 
   } catch {}
 
   // If analytics is rejected, clear any analytics markers
-  if (!preferences.analytics && typeof sessionStorage !== "undefined") {
-    sessionStorage.removeItem("an_session_id");
+  if (!preferences.analytics) {
+    if (typeof sessionStorage !== "undefined") {
+      try {
+        sessionStorage.removeItem("an_session_id");
+      } catch {}
+    }
+    if (typeof localStorage !== "undefined") {
+      try {
+        localStorage.removeItem("an_session_id");
+      } catch {}
+    }
+    deleteCookie("an_session");
   }
 
   // Dispatch event for components to react

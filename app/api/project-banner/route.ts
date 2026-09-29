@@ -373,7 +373,7 @@ export async function GET(request: NextRequest) {
 
   <text x="1140" y="608" fill="${t.accent2}" font-family="system-ui,sans-serif"
         font-size="13" font-weight="600" text-anchor="end" opacity="0.8">
-    aiwithab.site
+    abdulnabi.org
   </text>
 </svg>`;
 

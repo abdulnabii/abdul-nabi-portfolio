@@ -414,7 +414,7 @@ export function Contact() {
                   </Button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+                <form action="/api/contact" method="POST" onSubmit={handleSubmit} className="space-y-5" noValidate>
                   {/* Inquiry Category Pills */}
                   <div className="space-y-2">
                     <label className="block text-xs font-bold uppercase tracking-wider text-indigo-300">

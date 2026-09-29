@@ -325,9 +325,10 @@ export function PulseChatDemo() {
           </div>
 
           {/* Form input */}
-          <form onSubmit={handleSend} className="mt-auto">
+          <form action="#" method="POST" onSubmit={handleSend} className="mt-auto">
             <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-1.5 focus-within:border-accent/40 focus-within:ring-2 focus-within:ring-accent/15">
               <input
+                name="chat_message"
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

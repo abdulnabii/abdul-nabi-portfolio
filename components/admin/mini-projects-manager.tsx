@@ -417,7 +417,7 @@ export function MiniProjectsManager() {
                 <input
                   type="url"
                   required
-                  placeholder="https://symptom-checker.aiwithab.site or vercel link"
+                  placeholder="https://symptom-checker.abdulnabi.org or vercel link"
                   value={formVercelUrl}
                   onChange={(e) => setFormVercelUrl(e.target.value)}
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white focus:border-indigo-500 focus:outline-none"

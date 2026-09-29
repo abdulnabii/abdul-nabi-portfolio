@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.aiwithab.site"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.abdulnabi.org"
   ),
   title: {
     default: "Abdul Nabi — Full-Stack Developer & AI/ML Engineer | Karachi",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     "Abdul Nabi developer",
     "Abdul Nabi portfolio",
     "Abdul Nabi Khaskheli",
-    "aiwithab.site",
+    "abdulnabi.org",
     "Full-Stack Developer Karachi",
     "Full-Stack Engineer Pakistan",
     "Next.js Developer Pakistan",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     "Application Security developer",
     "AppSec engineer",
     "Supabase developer",
-    "PostgreSQL developer",
+    "Postgres Database Engineer",
     "Next.js 14 app router",
     "hire full stack developer Pakistan",
     "freelance developer Karachi",
@@ -55,23 +55,23 @@ export const metadata: Metadata = {
     "web developer portfolio",
     "software engineer portfolio Pakistan",
   ],
-  authors: [{ name: "Abdul Nabi", url: "https://www.aiwithab.site" }],
+  authors: [{ name: "Abdul Nabi", url: "https://www.abdulnabi.org" }],
   creator: "Abdul Nabi",
   publisher: "Abdul Nabi",
   alternates: {
-    canonical: "https://www.aiwithab.site",
+    canonical: "https://www.abdulnabi.org",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.aiwithab.site",
+    url: "https://www.abdulnabi.org",
     title: "Abdul Nabi — Full-Stack Developer & AI/ML Engineer",
     description:
       "Portfolio of Abdul Nabi — Next.js, TypeScript, Python ML, Supabase, REST APIs, and Application Security. Based in Karachi, Pakistan.",
-    siteName: "Abdul Nabi — aiwithab.site",
+    siteName: "Abdul Nabi — abdulnabi.org",
     images: [
       {
-        url: "https://www.aiwithab.site/profile.jpg",
+        url: "https://www.abdulnabi.org/profile.jpg",
         width: 1200,
         height: 630,
         alt: "Abdul Nabi — Full-Stack Developer & AI/ML Engineer",
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
     title: "Abdul Nabi — Full-Stack Developer & AI/ML Engineer",
     description:
       "Portfolio of Abdul Nabi — Next.js, TypeScript, Python ML, Supabase, REST APIs, and AppSec. Based in Karachi, Pakistan.",
-    images: ["https://www.aiwithab.site/profile.jpg"],
+    images: ["https://www.abdulnabi.org/profile.jpg"],
     creator: "@abdulnabii",
     site: "@abdulnabii",
   },
@@ -141,16 +141,16 @@ export default async function RootLayout({
     "@graph": [
       {
         "@type": "Person",
-        "@id": "https://www.aiwithab.site/#person",
+        "@id": "https://www.abdulnabi.org/#person",
         name: "Abdul Nabi",
         alternateName: "Abdul Nabi Khaskheli",
         jobTitle: "Full-Stack Developer & AI/ML Engineer",
         description:
           "Full-Stack Engineer & AI/ML Developer specializing in Next.js 14, TypeScript, Python, Supabase, and Application Security. Based in Karachi, Pakistan.",
-        url: "https://www.aiwithab.site",
+        url: "https://www.abdulnabi.org",
         image: {
           "@type": "ImageObject",
-          url: "https://www.aiwithab.site/profile.jpg",
+          url: "https://www.abdulnabi.org/profile.jpg",
           width: 400,
           height: 400,
         },
@@ -194,31 +194,31 @@ export default async function RootLayout({
       },
       {
         "@type": "WebSite",
-        "@id": "https://www.aiwithab.site/#website",
-        url: "https://www.aiwithab.site",
+        "@id": "https://www.abdulnabi.org/#website",
+        url: "https://www.abdulnabi.org",
         name: "Abdul Nabi — Portfolio & Blog",
         description: "Portfolio and blog of Abdul Nabi, Full-Stack Developer & AI/ML Engineer based in Karachi, Pakistan.",
-        publisher: { "@id": "https://www.aiwithab.site/#person" },
+        publisher: { "@id": "https://www.abdulnabi.org/#person" },
         inLanguage: "en-US",
         potentialAction: {
           "@type": "SearchAction",
           target: {
             "@type": "EntryPoint",
-            urlTemplate: "https://www.aiwithab.site/blog?q={search_term_string}",
+            urlTemplate: "https://www.abdulnabi.org/blog?q={search_term_string}",
           },
           "query-input": "required name=search_term_string",
         },
       },
       {
         "@type": "ProfilePage",
-        "@id": "https://www.aiwithab.site/#profilepage",
-        url: "https://www.aiwithab.site",
+        "@id": "https://www.abdulnabi.org/#profilepage",
+        url: "https://www.abdulnabi.org",
         name: "Abdul Nabi — Official Developer Profile",
-        mainEntity: { "@id": "https://www.aiwithab.site/#person" },
+        mainEntity: { "@id": "https://www.abdulnabi.org/#person" },
       },
       {
         "@type": "FAQPage",
-        "@id": "https://www.aiwithab.site/#faq",
+        "@id": "https://www.abdulnabi.org/#faq",
         mainEntity: [
           {
             "@type": "Question",
@@ -249,7 +249,7 @@ export default async function RootLayout({
             name: "Where can I explore Abdul Nabi's free AI tools and projects?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "You can explore 30+ interactive AI tools and live developer labs at https://www.aiwithab.site/mini-projects and full project case studies at https://www.aiwithab.site/projects.",
+              text: "You can explore 30+ interactive AI tools and live developer labs at https://www.abdulnabi.org/mini-projects and full project case studies at https://www.abdulnabi.org/projects.",
             },
           },
         ],
@@ -264,7 +264,7 @@ export default async function RootLayout({
           rel="alternate"
           type="application/rss+xml"
           title="Abdul Nabi — Full-Stack & AI/ML Engineering Blog RSS Feed"
-          href="https://www.aiwithab.site/feed.xml"
+          href="https://www.abdulnabi.org/feed.xml"
         />
         <script
           dangerouslySetInnerHTML={{

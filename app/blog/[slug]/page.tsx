@@ -37,8 +37,8 @@ export async function generateMetadata({
   const post = await getBlogBySlug(params.slug);
   const title = post?.title ?? slugToTitle(params.slug);
   const description = post?.excerpt ?? "Technical article by Abdul Nabi";
-  const canonicalUrl = `https://www.aiwithab.site/blog/${params.slug}`;
-  const image = post?.coverImage || `https://www.aiwithab.site/api/og/blog?slug=${encodeURIComponent(params.slug)}`;
+  const canonicalUrl = `https://www.abdulnabi.org/blog/${params.slug}`;
+  const image = post?.coverImage || `https://www.abdulnabi.org/api/og/blog?slug=${encodeURIComponent(params.slug)}`;
 
   return {
     title: `${title} · Abdul Nabi`,
@@ -49,9 +49,9 @@ export async function generateMetadata({
       "Abdul Nabi",
       "Abdul Nabi Blog",
       "Full-Stack Engineering",
-      "aiwithab.site",
+      "abdulnabi.org",
     ],
-    authors: [{ name: "Abdul Nabi", url: "https://www.aiwithab.site" }],
+    authors: [{ name: "Abdul Nabi", url: "https://www.abdulnabi.org" }],
     alternates: {
       canonical: canonicalUrl,
     },
@@ -100,44 +100,44 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 "@type": "ListItem",
                 position: 1,
                 name: "Home",
-                item: "https://www.aiwithab.site",
+                item: "https://www.abdulnabi.org",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Blog",
-                item: "https://www.aiwithab.site/blog",
+                item: "https://www.abdulnabi.org/blog",
               },
               {
                 "@type": "ListItem",
                 position: 3,
                 name: post.title,
-                item: `https://www.aiwithab.site/blog/${params.slug}`,
+                item: `https://www.abdulnabi.org/blog/${params.slug}`,
               },
             ],
           },
           {
             "@type": "BlogPosting",
-            "@id": `https://www.aiwithab.site/blog/${params.slug}#article`,
+            "@id": `https://www.abdulnabi.org/blog/${params.slug}#article`,
             headline: post.title,
             description: post.excerpt,
-            image: post.coverImage || `https://www.aiwithab.site/api/og/blog?slug=${encodeURIComponent(params.slug)}`,
+            image: post.coverImage || `https://www.abdulnabi.org/api/og/blog?slug=${encodeURIComponent(params.slug)}`,
             datePublished: post.date,
             dateModified: post.updatedAt || post.date,
             inLanguage: "en-US",
             author: {
               "@type": "Person",
               name: "Abdul Nabi",
-              url: "https://www.aiwithab.site",
+              url: "https://www.abdulnabi.org",
             },
             publisher: {
               "@type": "Person",
               name: "Abdul Nabi",
-              url: "https://www.aiwithab.site",
+              url: "https://www.abdulnabi.org",
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": `https://www.aiwithab.site/blog/${params.slug}`,
+              "@id": `https://www.abdulnabi.org/blog/${params.slug}`,
             },
             keywords: post.tags?.join(", "),
           },

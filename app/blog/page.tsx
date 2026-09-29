@@ -10,17 +10,17 @@ export const metadata: Metadata = {
   description:
     "Articles on Next.js App Router, TypeScript, AI engineering, Application Security, and full-stack product development — written by Abdul Nabi, developer based in Karachi, Pakistan.",
   alternates: {
-    canonical: "https://www.aiwithab.site/blog",
+    canonical: "https://www.abdulnabi.org/blog",
   },
   openGraph: {
     title: "Blog — Abdul Nabi | Next.js, AI & Full-Stack Engineering",
     description:
       "Practical notes on Next.js, TypeScript, AI engineering, and application security by Abdul Nabi.",
-    url: "https://www.aiwithab.site/blog",
+    url: "https://www.abdulnabi.org/blog",
     type: "website",
     images: [
       {
-        url: "https://www.aiwithab.site/profile.jpg",
+        url: "https://www.abdulnabi.org/profile.jpg",
         width: 1200,
         height: 630,
         alt: "Abdul Nabi Blog",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: "Blog — Abdul Nabi | Next.js, AI & Full-Stack Engineering",
     description:
       "Practical notes on Next.js, TypeScript, AI engineering, and application security by Abdul Nabi.",
-    images: ["https://www.aiwithab.site/profile.jpg"],
+    images: ["https://www.abdulnabi.org/profile.jpg"],
   },
 };
 
@@ -49,34 +49,34 @@ export default async function BlogPage() {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Blog",
-            item: "https://www.aiwithab.site/blog",
+            item: "https://www.abdulnabi.org/blog",
           },
         ],
       },
       {
         "@type": "Blog",
-        "@id": "https://www.aiwithab.site/blog#blog",
+        "@id": "https://www.abdulnabi.org/blog#blog",
         name: "Abdul Nabi Blog",
-        url: "https://www.aiwithab.site/blog",
+        url: "https://www.abdulnabi.org/blog",
         description: "Articles on Next.js, AI engineering, TypeScript, and Application Security by Abdul Nabi.",
         author: {
           "@type": "Person",
-          "@id": "https://www.aiwithab.site/#person",
+          "@id": "https://www.abdulnabi.org/#person",
           name: "Abdul Nabi",
         },
         blogPost: posts.slice(0, 10).map((post) => ({
           "@type": "BlogPosting",
           headline: post.title,
-          url: `https://www.aiwithab.site/blog/${post.slug}`,
+          url: `https://www.abdulnabi.org/blog/${post.slug}`,
           datePublished: post.date,
           description: post.excerpt,
-          image: post.coverImage || "https://www.aiwithab.site/profile.jpg",
+          image: post.coverImage || "https://www.abdulnabi.org/profile.jpg",
           author: { "@type": "Person", name: "Abdul Nabi" },
         })),
       },

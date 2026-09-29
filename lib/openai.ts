@@ -29,7 +29,7 @@ export interface ChatCompletionResult {
 }
 
 export const PORTFOLIO_KNOWLEDGE = `
-YOU ARE THE AI ASSISTANT FOR ABDUL NABI'S OFFICIAL PORTFOLIO WEBSITE (https://aiwithab.site).
+YOU ARE THE AI ASSISTANT FOR ABDUL NABI'S OFFICIAL PORTFOLIO WEBSITE (https://abdulnabi.org).
 Your name is "AB Assistant" — a smart, professional portfolio guide.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -39,7 +39,7 @@ SECTION 1 — IDENTITY & CONTACT
 - Nickname / Brand Alias: AB, AN
 - Logo: AN / AB geometric monogram with glowing hexagon node
 - Location: Karachi, Sindh, Pakistan
-- Domain: https://aiwithab.site (Vercel + Cloudflare DNS)
+- Domain: https://abdulnabi.org (Vercel + Cloudflare DNS)
 - Role: Full-Stack Developer & AI/ML Engineer | AppSec Enthusiast
 - Experience: 2+ years building production Next.js, Supabase, Python ML systems
 
@@ -49,8 +49,8 @@ Contact channels:
   • WhatsApp: +92 309 3751434
   • LinkedIn: https://linkedin.com/in/abdul-nabi-95391a3b0
   • GitHub: https://github.com/abdulnabii
-  • Portfolio: https://aiwithab.site
-  • Contact form: https://aiwithab.site/#contact
+  • Portfolio: https://abdulnabi.org
+  • Contact form: https://abdulnabi.org/#contact
 
 Availability: Open to full-time engineering / AppSec roles and select freelance engagements.
 Response time: 1–2 business days.
@@ -63,83 +63,83 @@ SECTION 2 — FLAGSHIP / CORE PROJECTS
    • Tech: Next.js 14, Python (Random Forest + XGBoost), Supabase RLS, Tailwind CSS
    • ML accuracy: 94.2% on clinical diabetes datasets
    • HIPAA-inspired data isolation via Supabase Row Level Security
-   • Live: https://aiwithab.site/projects/blood-sugar-tracker
+   • Live: https://abdulnabi.org/projects/blood-sugar-tracker
 
 2. Aurora Analytics
    • Executive BI dashboard with real-time SSE data streaming
    • Custom metrics, interactive charts, dark-mode trading terminal UI
-   • Live: https://aiwithab.site/projects/aurora-dashboard
+   • Live: https://abdulnabi.org/projects/aurora-dashboard
 
 3. Pulse Support Chat
    • Real-time customer support platform with WebSocket streaming
    • AI agent routing, live typing indicators, priority queue
-   • Live: https://aiwithab.site/projects/pulse-chat
+   • Live: https://abdulnabi.org/projects/pulse-chat
 
 4. Nova Commerce
    • High-conversion e-commerce storefront with Stripe checkout
    • Dynamic inventory, cart, product recommendation engine
-   • Live: https://aiwithab.site/projects/nova-commerce
+   • Live: https://abdulnabi.org/projects/nova-commerce
 
 5. SignalOps
    • Real-time infrastructure monitoring with alert rules & status badges
-   • Live: https://aiwithab.site/projects/signal-ops
+   • Live: https://abdulnabi.org/projects/signal-ops
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 3 — 30 DAYS 30 PROJECTS CHALLENGE (Mini Projects)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Abdul Nabi is running a "30 Days 30 AI Projects" challenge, publishing one live AI project per day.
-All are live at subdomains: https://day-XX.aiwithab.site
-Browse all at: https://aiwithab.site/mini-projects
+All are live at subdomains: https://day-XX.abdulnabi.org
+Browse all at: https://abdulnabi.org/mini-projects
 
 Completed projects (10 published so far):
 Day 01 — AI Symptom Checker & Healthcare Triage
   Tech: Gemini 1.5 Flash, Next.js, Tailwind CSS
-  Live: https://day-01.aiwithab.site
+  Live: https://day-01.abdulnabi.org
   What it does: Analyses user symptoms and provides WHO-level triage risk assessment.
 
 Day 02 — AI Code Review Assistant
   Tech: Gemini 1.5 Flash, Monaco Editor, Next.js
-  Live: https://day-02.aiwithab.site
+  Live: https://day-02.abdulnabi.org
   What it does: Paste code → AI reviews bugs, security issues, code quality, and gives a score.
 
 Day 03 — Smart Resume Builder
   Tech: Gemini 1.5 Flash, Next.js, PDF export
-  Live: https://day-03.aiwithab.site
+  Live: https://day-03.abdulnabi.org
   What it does: Paste work history → AI generates ATS-optimized, beautifully formatted resumes.
 
 Day 04 — Diabetes Risk Predictor
   Tech: Python (scikit-learn), Next.js, Chart.js
-  Live: https://day-04.aiwithab.site
+  Live: https://day-04.abdulnabi.org
   What it does: Enter vitals (glucose, BMI, age, BP) → ML model predicts diabetes risk probability.
 
 Day 05 — AI Meeting Summarizer
   Tech: Gemini 1.5 Flash, Next.js, Whisper STT
-  Live: https://day-05.aiwithab.site
+  Live: https://day-05.abdulnabi.org
   What it does: Paste meeting transcript → AI extracts decisions, action items, and executive summary.
 
 Day 06 — Real-Time Stock Dashboard
   Tech: Next.js, WebSockets, Chart.js, Sentiment AI
-  Live: https://day-06.aiwithab.site
+  Live: https://day-06.abdulnabi.org
   What it does: Live stock charts with RSI/MACD/Bollinger bands + AI news sentiment analysis.
 
 Day 07 — AI Logo Generator
   Tech: Replicate SDXL, SVG manipulation, Next.js
-  Live: https://day-07.aiwithab.site
+  Live: https://day-07.abdulnabi.org
   What it does: Input company name + style → AI generates SVG logos, palettes, brand guide PDF.
 
 Day 08 — Smart Expense Tracker
   Tech: Tesseract OCR, Next.js, Chart.js, AI Coach
-  Live: https://day-08.aiwithab.site
+  Live: https://day-08.abdulnabi.org
   What it does: Scan receipts → AI auto-categorizes expenses, gives monthly savings insights.
 
 Day 09 — GitHub Profile Analyzer
   Tech: GitHub REST API, Next.js, Chart.js
-  Live: https://day-09.aiwithab.site
+  Live: https://day-09.abdulnabi.org
   What it does: Enter any GitHub username → visual language radar, commit heatmap, impact score, AI persona.
 
 Day 10 — AI Email Composer
   Tech: Gemini 1.5 Flash, Next.js
-  Live: https://day-10.aiwithab.site
+  Live: https://day-10.abdulnabi.org
   What it does: Pick tone + purpose → AI writes perfect email in 3 variants + subject line optimizer.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -175,7 +175,7 @@ Admin Panel features: project/blog/tech-stack/experience/achievements/social-bot
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 6 — BLOG & CONTENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Technical blog at: https://aiwithab.site/blog
+Technical blog at: https://abdulnabi.org/blog
 Topics covered:
   • "Building Resilient Next.js 14 Apps with Supabase RLS & Server Actions"
   • "Machine Learning in Healthcare: Building Predictable & Secure Patient Systems"
@@ -185,7 +185,7 @@ Topics covered:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 7 — PRIVACY POLICY (DATA & CHATBOT)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This chatbot is built into Abdul Nabi's personal portfolio site (https://aiwithab.site).
+This chatbot is built into Abdul Nabi's personal portfolio site (https://abdulnabi.org).
 
 Data collected by this chatbot:
   • Chat messages are sent to OpenAI's API (GPT-4o-mini) or Google Gemini API for AI processing.
@@ -329,24 +329,24 @@ function mockReply(userMessage: string): string {
     lower.includes("day 0") ||
     lower.includes("day-0")
   ) {
-    return "Abdul Nabi is running a **30 Days 30 AI Projects** challenge — one live project per day! 🚀\n\n10 published so far:\n- Day 01: AI Symptom Checker\n- Day 02: AI Code Review\n- Day 03: Resume Builder\n- Day 04: Diabetes Predictor\n- Day 05: Meeting Summarizer\n- Day 06: Stock Dashboard\n- Day 07: Logo Generator\n- Day 08: Expense Tracker\n- Day 09: GitHub Analyzer\n- Day 10: Email Composer\n\nBrowse all at **aiwithab.site/mini-projects**";
+    return "Abdul Nabi is running a **30 Days 30 AI Projects** challenge — one live project per day! 🚀\n\n10 published so far:\n- Day 01: AI Symptom Checker\n- Day 02: AI Code Review\n- Day 03: Resume Builder\n- Day 04: Diabetes Predictor\n- Day 05: Meeting Summarizer\n- Day 06: Stock Dashboard\n- Day 07: Logo Generator\n- Day 08: Expense Tracker\n- Day 09: GitHub Analyzer\n- Day 10: Email Composer\n\nBrowse all at **abdulnabi.org/mini-projects**";
   }
 
   // Specific day projects
   if (lower.includes("day 09") || lower.includes("github") || lower.includes("analyzer")) {
-    return "**Day 09 — GitHub Profile Analyzer** 👨‍💻\nEnter any GitHub username → get a visual analysis: language proficiency radar, commit heatmap, top repos by impact score, and an AI-generated developer persona. Live at **day-09.aiwithab.site**";
+    return "**Day 09 — GitHub Profile Analyzer** 👨‍💻\nEnter any GitHub username → get a visual analysis: language proficiency radar, commit heatmap, top repos by impact score, and an AI-generated developer persona. Live at **day-09.abdulnabi.org**";
   }
 
   if (lower.includes("day 10") || lower.includes("email composer") || lower.includes("email writer")) {
-    return "**Day 10 — AI Email Composer** ✉️\nPick your tone (formal/casual/persuasive) + purpose → AI generates 3 email variants with an optimized subject line. Built with Gemini 1.5 Flash. Live at **day-10.aiwithab.site**";
+    return "**Day 10 — AI Email Composer** ✉️\nPick your tone (formal/casual/persuasive) + purpose → AI generates 3 email variants with an optimized subject line. Built with Gemini 1.5 Flash. Live at **day-10.abdulnabi.org**";
   }
 
   if (lower.includes("day 01") || lower.includes("symptom") || lower.includes("triage") || lower.includes("healthcare")) {
-    return "**Day 01 — AI Symptom Checker** 🩺\nDescribe your symptoms → AI performs a WHO-level triage risk assessment. Built with Gemini 1.5 Flash. Live at **day-01.aiwithab.site**";
+    return "**Day 01 — AI Symptom Checker** 🩺\nDescribe your symptoms → AI performs a WHO-level triage risk assessment. Built with Gemini 1.5 Flash. Live at **day-01.abdulnabi.org**";
   }
 
   if (lower.includes("day 04") || lower.includes("diabetes")) {
-    return "**Day 04 — Diabetes Risk Predictor** 💉\nEnter vitals (glucose, BMI, age, BP) → scikit-learn ML model predicts diabetes risk probability with clinical confidence scores. Live at **day-04.aiwithab.site**";
+    return "**Day 04 — Diabetes Risk Predictor** 💉\nEnter vitals (glucose, BMI, age, BP) → scikit-learn ML model predicts diabetes risk probability with clinical confidence scores. Live at **day-04.abdulnabi.org**";
   }
 
   // Blood Sugar Tracker / FYP
@@ -355,7 +355,7 @@ function mockReply(userMessage: string): string {
     lower.includes("fyp") ||
     lower.includes("final year")
   ) {
-    return "Abdul Nabi's **Final Year Project (FYP)** is the *Blood Sugar Tracker* — an AI-powered diabetes risk prediction & glucose monitoring platform. Tech: Next.js 14 + Python (Random Forest/XGBoost achieving **94.2% accuracy**) + Supabase RLS. View it at **aiwithab.site/projects/blood-sugar-tracker**";
+    return "Abdul Nabi's **Final Year Project (FYP)** is the *Blood Sugar Tracker* — an AI-powered diabetes risk prediction & glucose monitoring platform. Tech: Next.js 14 + Python (Random Forest/XGBoost achieving **94.2% accuracy**) + Supabase RLS. View it at **abdulnabi.org/projects/blood-sugar-tracker**";
   }
 
   // Core projects
@@ -365,7 +365,7 @@ function mockReply(userMessage: string): string {
     lower.includes("portfolio") ||
     lower.includes("showcase")
   ) {
-    return "Abdul Nabi's **core projects** include:\n\n- 🩺 **Blood Sugar Tracker** (FYP ML App)\n- 📊 **Aurora Analytics** (BI Dashboard)\n- 💬 **Pulse Support Chat** (Real-Time WebSockets)\n- 🛍️ **Nova Commerce** (E-Commerce + Stripe)\n- 🔔 **SignalOps** (Infrastructure Monitoring)\n\nPlus **10 AI mini projects** live at subdomains. Browse at **aiwithab.site/projects**";
+    return "Abdul Nabi's **core projects** include:\n\n- 🩺 **Blood Sugar Tracker** (FYP ML App)\n- 📊 **Aurora Analytics** (BI Dashboard)\n- 💬 **Pulse Support Chat** (Real-Time WebSockets)\n- 🛍️ **Nova Commerce** (E-Commerce + Stripe)\n- 🔔 **SignalOps** (Infrastructure Monitoring)\n\nPlus **10 AI mini projects** live at subdomains. Browse at **abdulnabi.org/projects**";
   }
 
   // Themes
@@ -401,7 +401,7 @@ function mockReply(userMessage: string): string {
     lower.includes("social") ||
     lower.includes("connect")
   ) {
-    return "Connect with Abdul Nabi:\n\n- **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- **GitHub:** github.com/abdulnabii\n- **Portfolio:** aiwithab.site\n- **Email:** abdulnabi.khaskhely@gmail.com";
+    return "Connect with Abdul Nabi:\n\n- **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- **GitHub:** github.com/abdulnabii\n- **Portfolio:** abdulnabi.org\n- **Email:** abdulnabi.khaskhely@gmail.com";
   }
 
   // Blog
@@ -411,7 +411,7 @@ function mockReply(userMessage: string): string {
     lower.includes("writing") ||
     lower.includes("post")
   ) {
-    return "Abdul Nabi writes technical articles on **aiwithab.site/blog** covering:\n\n- Next.js 14 App Router & Supabase RLS\n- Healthcare Machine Learning\n- AppSec & OWASP security practices\n- 30-days AI project walkthroughs";
+    return "Abdul Nabi writes technical articles on **abdulnabi.org/blog** covering:\n\n- Next.js 14 App Router & Supabase RLS\n- Healthcare Machine Learning\n- AppSec & OWASP security practices\n- 30-days AI project walkthroughs";
   }
 
   // Contact / Hire
@@ -424,7 +424,7 @@ function mockReply(userMessage: string): string {
     lower.includes("reach") ||
     lower.includes("available")
   ) {
-    return "Get in touch with Abdul Nabi:\n\n- 📧 **Email:** abdulnabi.khaskhely@gmail.com\n- 📱 **Phone:** 0333 7597315\n- 💬 **WhatsApp:** +92 309 3751434\n- 💼 **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- 📝 **Contact form:** aiwithab.site/#contact\n\nTypical response time: **1–2 business days**.";
+    return "Get in touch with Abdul Nabi:\n\n- 📧 **Email:** abdulnabi.khaskhely@gmail.com\n- 📱 **Phone:** 0333 7597315\n- 💬 **WhatsApp:** +92 309 3751434\n- 💼 **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- 📝 **Contact form:** abdulnabi.org/#contact\n\nTypical response time: **1–2 business days**.";
   }
 
   // About / experience
@@ -435,7 +435,7 @@ function mockReply(userMessage: string): string {
     lower.includes("background") ||
     lower.includes("karachi")
   ) {
-    return "**Abdul Nabi** is a Full-Stack Developer & AI/ML Engineer based in **Karachi, Pakistan** with 2+ years of production experience. He specialises in Next.js, Supabase, Python ML, and AppSec. His portfolio lives at **aiwithab.site**.";
+    return "**Abdul Nabi** is a Full-Stack Developer & AI/ML Engineer based in **Karachi, Pakistan** with 2+ years of production experience. He specialises in Next.js, Supabase, Python ML, and AppSec. His portfolio lives at **abdulnabi.org**.";
   }
 
   // Logo / branding

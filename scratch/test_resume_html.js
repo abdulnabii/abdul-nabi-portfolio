@@ -20,4 +20,4 @@ function fetchUrl(url) {
   });
 }
 
-fetchUrl('https://www.aiwithab.site/resume');
+fetchUrl('https://www.abdulnabi.org/resume');

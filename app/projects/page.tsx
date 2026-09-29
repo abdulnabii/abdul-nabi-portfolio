@@ -18,17 +18,17 @@ export const metadata: Metadata = {
   description:
     "Browse all projects by Abdul Nabi — full-stack web apps built with Next.js 14, Supabase, TypeScript, and Python ML. Case studies, live demos, and source code.",
   alternates: {
-    canonical: "https://www.aiwithab.site/projects",
+    canonical: "https://www.abdulnabi.org/projects",
   },
   openGraph: {
     title: "Projects — Abdul Nabi | Full-Stack & AI/ML Portfolio",
     description:
       "Full portfolio of web apps, ML systems, and AI projects by Abdul Nabi. Next.js, TypeScript, Python, Supabase.",
-    url: "https://www.aiwithab.site/projects",
+    url: "https://www.abdulnabi.org/projects",
     type: "website",
     images: [
       {
-        url: "https://www.aiwithab.site/profile.jpg",
+        url: "https://www.abdulnabi.org/profile.jpg",
         width: 1200,
         height: 630,
         alt: "Projects by Abdul Nabi",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: "Projects — Abdul Nabi | Full-Stack & AI/ML Portfolio",
     description:
       "Full portfolio of web apps, ML systems, and AI projects by Abdul Nabi.",
-    images: ["https://www.aiwithab.site/profile.jpg"],
+    images: ["https://www.abdulnabi.org/profile.jpg"],
   },
 };
 
@@ -68,22 +68,22 @@ export default async function AllProjectsPage() {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Projects",
-            item: "https://www.aiwithab.site/projects",
+            item: "https://www.abdulnabi.org/projects",
           },
         ],
       },
       {
         "@type": "CollectionPage",
-        "@id": "https://www.aiwithab.site/projects#collection",
+        "@id": "https://www.abdulnabi.org/projects#collection",
         name: "Full-Stack Web & AI/ML Projects Portfolio — Abdul Nabi",
         description: "Browse all production web applications, machine learning systems, and developer tools built by Abdul Nabi.",
-        url: "https://www.aiwithab.site/projects",
+        url: "https://www.abdulnabi.org/projects",
         mainEntity: {
           "@type": "ItemList",
           numberOfItems: projects.length,
@@ -94,7 +94,7 @@ export default async function AllProjectsPage() {
               "@type": "CreativeWork",
               name: p.title,
               description: p.description,
-              url: `https://www.aiwithab.site/projects/${p.id}`,
+              url: `https://www.abdulnabi.org/projects/${p.id}`,
               author: {
                 "@type": "Person",
                 name: "Abdul Nabi",

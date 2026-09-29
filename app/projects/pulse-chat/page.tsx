@@ -20,8 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
   if (!project) return { title: "Project not found" };
 
-  const canonicalUrl = "https://www.aiwithab.site/projects/pulse-chat";
-  const dynamicOg = "https://www.aiwithab.site/api/og/project?id=pulse-chat";
+  const canonicalUrl = "https://www.abdulnabi.org/projects/pulse-chat";
+  const dynamicOg = "https://www.abdulnabi.org/api/og/project?id=pulse-chat";
 
   return {
     title: `${project.title} — Real-Time Streaming Chat Case Study | Abdul Nabi`,
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(project.tags || []),
       "Abdul Nabi Project",
       "Full-Stack Case Study",
-      "aiwithab.site",
+      "abdulnabi.org",
     ],
     alternates: {
       canonical: canonicalUrl,
@@ -148,31 +148,31 @@ export default async function PulseChatPage() {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Projects",
-            item: "https://www.aiwithab.site/projects",
+            item: "https://www.abdulnabi.org/projects",
           },
           {
             "@type": "ListItem",
             position: 3,
             name: project.title,
-            item: "https://www.aiwithab.site/projects/pulse-chat",
+            item: "https://www.abdulnabi.org/projects/pulse-chat",
           },
         ],
       },
       {
         "@type": "SoftwareApplication",
-        "@id": "https://www.aiwithab.site/projects/pulse-chat#app",
+        "@id": "https://www.abdulnabi.org/projects/pulse-chat#app",
         name: project.title,
         description: project.description,
         applicationCategory: "CommunicationApplication",
         operatingSystem: "Web Browser",
-        url: "https://www.aiwithab.site/projects/pulse-chat",
-        image: "https://www.aiwithab.site/api/og/project?id=pulse-chat",
+        url: "https://www.abdulnabi.org/projects/pulse-chat",
+        image: "https://www.abdulnabi.org/api/og/project?id=pulse-chat",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -181,7 +181,7 @@ export default async function PulseChatPage() {
         author: {
           "@type": "Person",
           name: "Abdul Nabi",
-          url: "https://www.aiwithab.site",
+          url: "https://www.abdulnabi.org",
         },
       },
     ],

@@ -14,20 +14,20 @@ export const metadata: Metadata = {
     "Next.js AI Tools",
     "Free AI Browser Tools",
     "Abdul Nabi",
-    "aiwithab.site",
+    "abdulnabi.org",
   ],
   alternates: {
-    canonical: "https://www.aiwithab.site/mini-projects",
+    canonical: "https://www.abdulnabi.org/mini-projects",
   },
   openGraph: {
     title: "30 Days 30 AI Projects — Interactive Developer Tools & Demos | Abdul Nabi",
     description:
       "Explore 30 production AI & full-stack micro-applications built by Abdul Nabi — live browser demos, Healthcare ML, and AppSec tools.",
-    url: "https://www.aiwithab.site/mini-projects",
+    url: "https://www.abdulnabi.org/mini-projects",
     type: "website",
     images: [
       {
-        url: "https://www.aiwithab.site/profile.jpg",
+        url: "https://www.abdulnabi.org/profile.jpg",
         width: 1200,
         height: 630,
         alt: "30 Days 30 AI Projects by Abdul Nabi",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: "30 Days 30 AI Projects — Interactive Developer Tools & Demos | Abdul Nabi",
     description:
       "Explore 30 production AI & full-stack micro-applications built by Abdul Nabi with live browser demos.",
-    images: ["https://www.aiwithab.site/profile.jpg"],
+    images: ["https://www.abdulnabi.org/profile.jpg"],
     creator: "@abdulnabii",
   },
 };
@@ -59,27 +59,27 @@ export default function MiniProjectsLayout({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Mini Projects",
-            item: "https://www.aiwithab.site/mini-projects",
+            item: "https://www.abdulnabi.org/mini-projects",
           },
         ],
       },
       {
         "@type": "CollectionPage",
-        "@id": "https://www.aiwithab.site/mini-projects#collection",
+        "@id": "https://www.abdulnabi.org/mini-projects#collection",
         name: "30 Days 30 AI Projects Challenge — Abdul Nabi",
-        url: "https://www.aiwithab.site/mini-projects",
+        url: "https://www.abdulnabi.org/mini-projects",
         description:
           "Open-source suite of 30 interactive AI and machine learning micro-applications spanning Healthcare, DevTools, FinTech, and IoT.",
         author: {
           "@type": "Person",
           name: "Abdul Nabi",
-          url: "https://www.aiwithab.site",
+          url: "https://www.abdulnabi.org",
         },
       },
     ],

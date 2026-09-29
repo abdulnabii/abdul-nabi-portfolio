@@ -88,42 +88,42 @@ const FALLBACK_TOPICS: NewsItem[] = [
     title: "The Rise of Agentic AI: How Autonomous Agent Loops Are Transforming Software Architecture",
     summary: "From reasoning tokens to tool-calling pipelines, autonomous agent swarms are moving from research playgrounds to mission-critical backend microservices.",
     source: "Tech Architecture Digest",
-    url: "https://aiwithab.site",
+    url: "https://abdulnabi.org",
     publishedAt: new Date().toISOString(),
   },
   {
     title: "Next.js 15 & React 19 in Production: Server Actions, Partial Prerendering and Caching Deep Dive",
     summary: "A practical developer evaluation of React 19 Compiler, asynchronous request headers, and optimizing Core Web Vitals at enterprise scale.",
     source: "Full-Stack Weekly",
-    url: "https://aiwithab.site",
+    url: "https://abdulnabi.org",
     publishedAt: new Date().toISOString(),
   },
   {
     title: "Securing Generative AI Systems: Threat Modeling Prompt Injection & Model Weight Protection",
     summary: "AppSec defensive strategies for auditing LLM integration endpoints, sanitizing untrusted context, and enforcing Supabase Row Level Security.",
     source: "Cybersecurity Review",
-    url: "https://aiwithab.site",
+    url: "https://abdulnabi.org",
     publishedAt: new Date().toISOString(),
   },
   {
     title: "DeepSeek V3 and Open Weights Revolution: Breaking the Proprietary LLM Monopoly",
     summary: "How multi-head latent attention (MLA) and DeepSeekMoE architectures achieve frontier-tier benchmark results at a fraction of training costs.",
     source: "AI Engineering Frontier",
-    url: "https://aiwithab.site",
+    url: "https://abdulnabi.org",
     publishedAt: new Date().toISOString(),
   },
   {
     title: "AI in Healthcare 2026: Machine Learning Revolutionizes Patient Risk Prediction",
     summary: "Clinical predictive modeling with scikit-learn, HIPAA-inspired data privacy, and sub-50ms inference for real-time diabetes and chronic care monitoring.",
     source: "Healthcare AI Journal",
-    url: "https://aiwithab.site",
+    url: "https://abdulnabi.org",
     publishedAt: new Date().toISOString(),
   },
   {
     title: "Vector Databases at Scale: Comparing pgvector, Qdrant, and Milvus for Real-Time RAG",
     summary: "Benchmarking indexing algorithms (HNSW vs IVFFlat), memory footprints, and multi-tenant isolation patterns for enterprise search.",
     source: "Database Engineering Review",
-    url: "https://aiwithab.site",
+    url: "https://abdulnabi.org",
     publishedAt: new Date().toISOString(),
   },
 ];
@@ -235,7 +235,7 @@ export async function searchAndAnalyzeTrendingNews(topicQuery?: string): Promise
     try {
       const gnUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(cleanQuery + " tech OR software OR programming")}&hl=en-US&gl=US&ceid=US:en`;
       const res = await fetch(gnUrl, {
-        headers: { "User-Agent": "Mozilla/5.0 (aiwithab.site bot)" },
+        headers: { "User-Agent": "Mozilla/5.0 (abdulnabi.org bot)" },
         signal: AbortSignal.timeout(6000),
         cache: "no-store",
       });
@@ -278,7 +278,7 @@ export async function searchAndAnalyzeTrendingNews(topicQuery?: string): Promise
       RSS_FEEDS.slice(0, 3).map(async ({ url, source }) => {
         try {
           const res = await fetch(url, {
-            headers: { "User-Agent": "aiwithab.site blog bot" },
+            headers: { "User-Agent": "abdulnabi.org blog bot" },
             signal: AbortSignal.timeout(6000),
             cache: "no-store",
           });
@@ -316,7 +316,7 @@ export async function searchAndAnalyzeTrendingNews(topicQuery?: string): Promise
         title: cleanQuery.charAt(0).toUpperCase() + cleanQuery.slice(1),
         summary: `Recent breakthrough, technical architecture, and community discussion surrounding ${cleanQuery}.`,
         source: "Trending Tech & Developer Ecosystem",
-        url: "https://aiwithab.site",
+        url: "https://abdulnabi.org",
         publishedAt: new Date().toISOString(),
       };
     }
@@ -510,7 +510,7 @@ In my own work developing the **Blood Sugar Tracker** (an AI clinical risk predi
 
 ---
 
-*Written by Abdul Nabi — Full-Stack Developer & AI/ML Engineer. Explore my projects, open-source tools, and interactive demos at [aiwithab.site](https://aiwithab.site).*
+*Written by Abdul Nabi — Full-Stack Developer & AI/ML Engineer. Explore my projects, open-source tools, and interactive demos at [abdulnabi.org](https://abdulnabi.org).*
 `.trim();
 
   let excerpt = topic.summary && topic.summary.length > 40
@@ -551,7 +551,7 @@ export async function generateAiBlogPost(
   }
 
   const year = new Date().getFullYear();
-  const prompt = `You are Abdul Nabi, a full-stack developer and AI/ML engineer from Karachi, Pakistan who writes authoritative, practical technical blog posts on AI, machine learning, and modern software architecture. Your official portfolio is https://aiwithab.site.
+  const prompt = `You are Abdul Nabi, a full-stack developer and AI/ML engineer from Karachi, Pakistan who writes authoritative, practical technical blog posts on AI, machine learning, and modern software architecture. Your official portfolio is https://abdulnabi.org.
 
 Write a comprehensive, SEO-optimized technical blog post analyzing this trending tech news topic:
 

@@ -66,7 +66,7 @@ export function SocialBotManager() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [customTitle, setCustomTitle] = useState("");
   const [customDesc, setCustomDesc] = useState("");
-  const [imageUrlInput, setImageUrlInput] = useState("https://www.aiwithab.site/api/project-banner?day=1");
+  const [imageUrlInput, setImageUrlInput] = useState("https://www.abdulnabi.org/api/project-banner?day=1");
 
   // Scheduling state for Generator
   const [genActionType, setGenActionType] = useState<"draft" | "schedule" | "immediate">("draft");
@@ -337,7 +337,7 @@ export function SocialBotManager() {
         scheduledAt?: string;
         status?: "Draft" | "Scheduled" | "Posted";
       } = {
-        imageUrl: imageUrlInput || "https://www.aiwithab.site/profile.jpg",
+        imageUrl: imageUrlInput || "https://www.abdulnabi.org/profile.jpg",
       };
 
       if (genActionType === "schedule") {
@@ -363,7 +363,7 @@ export function SocialBotManager() {
           title: customTitle || "AI Micro Application",
           description: customDesc || "Full-stack web application built with Next.js 14 and Gemini API.",
           category: "Full-Stack AI",
-          vercelUrl: "https://www.aiwithab.site/mini-projects",
+          vercelUrl: "https://www.abdulnabi.org/mini-projects",
           tags: ["Next.js 14", "TypeScript", "AI Engine"],
         };
       } else {
@@ -532,7 +532,7 @@ export function SocialBotManager() {
   }
 
   function launchLinkedInShare(post: SocialPost) {
-    const shareUrl = encodeURIComponent(post.vercelUrl || "https://www.aiwithab.site/mini-projects");
+    const shareUrl = encodeURIComponent(post.vercelUrl || "https://www.abdulnabi.org/mini-projects");
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`, "_blank");
   }
 
@@ -703,8 +703,8 @@ export function SocialBotManager() {
                     if (proj) {
                       const banner =
                         proj.dayNumber === 4
-                          ? "https://www.aiwithab.site/blood_sugar_banner.jpg"
-                          : `https://www.aiwithab.site/api/project-banner?day=${proj.dayNumber}`;
+                          ? "https://www.abdulnabi.org/blood_sugar_banner.jpg"
+                          : `https://www.abdulnabi.org/api/project-banner?day=${proj.dayNumber}`;
                       setImageUrlInput(banner);
                     }
                   }
@@ -1045,10 +1045,10 @@ export function SocialBotManager() {
                       src={
                         activePost.imageUrl.startsWith("http") || activePost.imageUrl.startsWith("data:") || activePost.imageUrl.startsWith("/api/")
                           ? activePost.imageUrl
-                          : "https://www.aiwithab.site/api/project-banner?day=1"
+                          : "https://www.abdulnabi.org/api/project-banner?day=1"
                       }
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://www.aiwithab.site/api/project-banner?day=1";
+                        (e.target as HTMLImageElement).src = "https://www.abdulnabi.org/api/project-banner?day=1";
                       }}
                       alt="LinkedIn Post Preview Graphic"
                       className="h-16 w-28 object-cover rounded-xl border border-white/10 bg-slate-950"
@@ -1134,10 +1134,10 @@ export function SocialBotManager() {
                       src={
                         activePost.imageUrl.startsWith("http") || activePost.imageUrl.startsWith("data:") || activePost.imageUrl.startsWith("/api/")
                           ? activePost.imageUrl
-                          : "https://www.aiwithab.site/api/project-banner?day=1"
+                          : "https://www.abdulnabi.org/api/project-banner?day=1"
                       }
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://www.aiwithab.site/api/project-banner?day=1";
+                        (e.target as HTMLImageElement).src = "https://www.abdulnabi.org/api/project-banner?day=1";
                       }}
                       alt="Reddit Post Embedded Graphic"
                       className="h-16 w-28 object-cover rounded-xl border border-white/10 bg-slate-950"
@@ -1483,7 +1483,7 @@ export function SocialBotManager() {
                 </div>
 
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Connect your LinkedIn account (<strong className="text-white">aiwithab</strong>) to enable 1-click &amp; scheduled auto-posting with project dashboard banners:
+                  Connect your LinkedIn account (<strong className="text-white">abdulnabi</strong>) to enable 1-click &amp; scheduled auto-posting with project dashboard banners:
                 </p>
 
                 <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/40 p-3 space-y-1.5 text-[11px] text-indigo-200">

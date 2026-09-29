@@ -84,7 +84,7 @@ ${formattedTranscript}
 
       await addInboxItem("message", {
         name,
-        email: contact.includes("@") ? contact : "voice-caller@aiwithab.site",
+        email: contact.includes("@") ? contact : "voice-caller@abdulnabi.org",
         company: type,
         subject,
         message,

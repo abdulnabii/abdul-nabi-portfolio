@@ -1,4 +1,4 @@
-// Service Worker for Abdul Nabi Portfolio (aiwithab.site)
+// Service Worker for Abdul Nabi Portfolio (abdulnabi.org)
 const CACHE_NAME = "an-portfolio-v1";
 const STATIC_ASSETS = [
   "/",

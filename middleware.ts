@@ -65,6 +65,17 @@ const PUBLIC_READ_API_ROUTES = [
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // 0. Defense-in-depth: intercept suspicious probes on public pages (e.g. form fields submitted via GET, SQLi or XSS probes)
+  const search = request.nextUrl.search;
+  if (search && !pathname.startsWith("/api/")) {
+    const hasFormProbe = /(?:name|email|company|subject|message)=/i.test(search);
+    const hasAttackProbe = /[<>'"]|%3C|%3E|%27|%22/i.test(search);
+    if (hasFormProbe || hasAttackProbe) {
+      const cleanUrl = new URL(pathname, request.url);
+      return NextResponse.redirect(cleanUrl, 302);
+    }
+  }
+
   // 1. One-page section redirects
   const target = SECTION_REDIRECTS[pathname];
   if (target) {
@@ -110,6 +121,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/about",
     "/work",
     "/stack",

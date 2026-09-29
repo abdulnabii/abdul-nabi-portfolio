@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const redirectUri = `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.aiwithab.site"}/api/admin/social-bot/oauth/linkedin/callback`;
+  const redirectUri = `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.abdulnabi.org"}/api/admin/social-bot/oauth/linkedin/callback`;
 
   const params = new URLSearchParams({
     response_type: "code",

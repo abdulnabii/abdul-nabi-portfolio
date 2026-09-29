@@ -163,7 +163,7 @@ export default function AdminLoginPage() {
           </div>
 
           {/* OTP Code Input + Verify */}
-          <form onSubmit={handleVerifyOtp} className="space-y-4">
+          <form action="/api/auth/admin-otp/verify" method="POST" onSubmit={handleVerifyOtp} className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -176,6 +176,7 @@ export default function AdminLoginPage() {
                 )}
               </div>
               <input
+                name="otp"
                 type="text"
                 inputMode="numeric"
                 maxLength={6}

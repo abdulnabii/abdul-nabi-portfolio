@@ -83,7 +83,7 @@ export function CookieConsent() {
           <Link href="/privacy" className="hover:text-accent-soft hover:underline transition-colors">
             Privacy Policy
           </Link>
-          <span>aiwithab.site</span>
+          <span>abdulnabi.org</span>
         </div>
       </div>
     </aside>

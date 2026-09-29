@@ -98,7 +98,7 @@ async function pushCommitViaGitHubApi(
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/vnd.github.v3+json",
-        "User-Agent": "aiwithab-streak-keeper",
+        "User-Agent": "abdulnabi-streak-keeper",
       },
       cache: "no-store",
     });
@@ -134,7 +134,7 @@ async function pushCommitViaGitHubApi(
         Authorization: `Bearer ${token}`,
         Accept: "application/vnd.github.v3+json",
         "Content-Type": "application/json",
-        "User-Agent": "aiwithab-streak-keeper",
+        "User-Agent": "abdulnabi-streak-keeper",
       },
       body: JSON.stringify(putPayload),
     });
@@ -317,7 +317,7 @@ export async function POST(req: NextRequest) {
       const { addInboxItem } = await import("@/lib/inbox-store");
       await addInboxItem("message", {
         name: "GitHub Streak Keeper",
-        email: "streak-bot@aiwithab.site",
+        email: "streak-bot@abdulnabi.org",
         subject: "⚡ GitHub Streak Ping Pushed",
         message: `Streak updated: Day ${nextStreakCount} · ${customMessage} (Commit: ${commitHash} via ${methodUsed})`,
       });

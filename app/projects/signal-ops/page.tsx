@@ -20,8 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
   if (!project) return { title: "Project not found" };
 
-  const canonicalUrl = "https://www.aiwithab.site/projects/signal-ops";
-  const dynamicOg = "https://www.aiwithab.site/api/og/project?id=signal-ops";
+  const canonicalUrl = "https://www.abdulnabi.org/projects/signal-ops";
+  const dynamicOg = "https://www.abdulnabi.org/api/og/project?id=signal-ops";
 
   return {
     title: `${project.title} — DevOps Observability Case Study | Abdul Nabi`,
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(project.tags || []),
       "Abdul Nabi Project",
       "Full-Stack Case Study",
-      "aiwithab.site",
+      "abdulnabi.org",
     ],
     alternates: {
       canonical: canonicalUrl,
@@ -144,31 +144,31 @@ export default async function SignalOpsPage() {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Projects",
-            item: "https://www.aiwithab.site/projects",
+            item: "https://www.abdulnabi.org/projects",
           },
           {
             "@type": "ListItem",
             position: 3,
             name: project.title,
-            item: "https://www.aiwithab.site/projects/signal-ops",
+            item: "https://www.abdulnabi.org/projects/signal-ops",
           },
         ],
       },
       {
         "@type": "SoftwareApplication",
-        "@id": "https://www.aiwithab.site/projects/signal-ops#app",
+        "@id": "https://www.abdulnabi.org/projects/signal-ops#app",
         name: project.title,
         description: project.description,
         applicationCategory: "DeveloperApplication",
         operatingSystem: "Web Browser",
-        url: "https://www.aiwithab.site/projects/signal-ops",
-        image: "https://www.aiwithab.site/api/og/project?id=signal-ops",
+        url: "https://www.abdulnabi.org/projects/signal-ops",
+        image: "https://www.abdulnabi.org/api/og/project?id=signal-ops",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -177,7 +177,7 @@ export default async function SignalOpsPage() {
         author: {
           "@type": "Person",
           name: "Abdul Nabi",
-          url: "https://www.aiwithab.site",
+          url: "https://www.abdulnabi.org",
         },
       },
     ],

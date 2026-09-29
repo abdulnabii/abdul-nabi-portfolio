@@ -108,14 +108,14 @@ export async function executeAutoPosterCycle(): Promise<{
   const project = miniProjects[currentIndex % miniProjects.length];
 
   // Determine appropriate project dashboard picture banner (never profile.jpg)
-  let bannerUrl = `https://www.aiwithab.site/api/project-banner?day=${project.dayNumber}`;
+  let bannerUrl = `https://www.abdulnabi.org/api/project-banner?day=${project.dayNumber}`;
   if (
     project.dayNumber === 4 ||
     project.title.toLowerCase().includes("diabetes") ||
     project.title.toLowerCase().includes("glucose") ||
     project.title.toLowerCase().includes("blood sugar")
   ) {
-    bannerUrl = "https://www.aiwithab.site/blood_sugar_banner.jpg";
+    bannerUrl = "https://www.abdulnabi.org/blood_sugar_banner.jpg";
   }
 
   // Generate Social Campaign

@@ -17,7 +17,7 @@ function escapeXml(unsafe: string): string {
 }
 
 export async function GET() {
-  const baseUrl = "https://www.aiwithab.site";
+  const baseUrl = "https://www.abdulnabi.org";
   const blogs = await getPublishedBlogs().catch(() => []);
 
   const rssItems = blogs.map((post) => {

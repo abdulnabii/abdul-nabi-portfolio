@@ -275,7 +275,7 @@ export const siteContent: SiteContent = {
       tags: ["Next.js 14", "TypeScript", "AppSec", "OWASP Top 10", "Supabase RLS", "JWT Crypto"],
       image: "/projects/ops.jpg",
       githubUrl: "https://github.com/abdulnabii/abdul-nabi-portfolio/tree/main/app/projects/aegis-appsec",
-      liveUrl: "https://www.aiwithab.site/projects/aegis-appsec",
+      liveUrl: "https://www.abdulnabi.org/projects/aegis-appsec",
       status: "live",
       statusLabel: "Live Full-Stack App",
       featured: true,

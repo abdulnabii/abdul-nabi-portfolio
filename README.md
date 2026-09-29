@@ -2,7 +2,7 @@
 
 # ⚡ Abdul Nabi — Full-Stack Engineering Portfolio & DevSecOps Platform
 
-[![Live Production](https://img.shields.io/badge/Production_Site-aiwithab.site-6366f1?style=for-the-badge&logo=vercel&logoColor=white)](https://aiwithab.site)
+[![Live Production](https://img.shields.io/badge/Production_Site-abdulnabi.org-6366f1?style=for-the-badge&logo=vercel&logoColor=white)](https://abdulnabi.org)
 [![Next.js 14](https://img.shields.io/badge/Next.js-14.2.35-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
@@ -14,7 +14,7 @@
   A high-performance, security-focused full-stack engineering portfolio, AppSec studio, and CMS built with <b>Next.js 14 (App Router)</b>, <b>TypeScript</b>, <b>Supabase PostgreSQL</b>, and <b>Tailwind CSS</b>.
 </p>
 
-[🌐 Live Demo](https://aiwithab.site) · [🛡️ Aegis AppSec Sentinel](https://aiwithab.site/projects/aegis-appsec) · [🕹️ Dev Labs](https://aiwithab.site/#games) · [📄 Official CV](https://aiwithab.site/resume) · [📬 Contact](https://aiwithab.site/#contact)
+[🌐 Live Demo](https://abdulnabi.org) · [🛡️ Aegis AppSec Sentinel](https://abdulnabi.org/projects/aegis-appsec) · [🕹️ Dev Labs](https://abdulnabi.org/#games) · [📄 Official CV](https://abdulnabi.org/resume) · [📬 Contact](https://abdulnabi.org/#contact)
 
 </div>
 
@@ -161,7 +161,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 **Abdul Nabi**  
 *Full-Stack Software Engineer & AI/ML Developer (AppSec Specialist)*
-* 🌐 Website: [aiwithab.site](https://aiwithab.site)
+* 🌐 Website: [abdulnabi.org](https://abdulnabi.org)
 * 💼 LinkedIn: [linkedin.com/in/abdul-nabi-95391a3b0](https://linkedin.com/in/abdul-nabi-95391a3b0)
 * 📧 Email: [abdulnabi.khaskhely@gmail.com](mailto:abdulnabi.khaskhely@gmail.com)
 * 🐙 GitHub: [@abdulnabii](https://github.com/abdulnabii)

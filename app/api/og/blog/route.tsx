@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
                   Abdul Nabi
                 </span>
                 <span style={{ fontSize: "14px", color: "#94a3b8" }}>
-                  aiwithab.site · Full-Stack & ML Engineer
+                  abdulnabi.org · Full-Stack & ML Engineer
                 </span>
               </div>
             </div>
@@ -140,7 +140,7 @@ export async function GET(req: NextRequest) {
           >
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <span style={{ fontSize: "16px", color: "#94a3b8" }}>
-                Published on aiwithab.site
+                Published on abdulnabi.org
               </span>
             </div>
 

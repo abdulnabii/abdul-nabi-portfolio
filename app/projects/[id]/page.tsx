@@ -26,12 +26,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   if (!project) return { title: "Project Not Found" };
 
-  const canonicalUrl = `https://www.aiwithab.site/projects/${project.id}`;
-  const dynamicOg = `https://www.aiwithab.site/api/og/project?id=${encodeURIComponent(project.id)}`;
+  const canonicalUrl = `https://www.abdulnabi.org/projects/${project.id}`;
+  const dynamicOg = `https://www.abdulnabi.org/api/og/project?id=${encodeURIComponent(project.id)}`;
   const img = project.image?.startsWith("http")
     ? project.image
     : project.image?.startsWith("/")
-    ? `https://www.aiwithab.site${project.image}`
+    ? `https://www.abdulnabi.org${project.image}`
     : dynamicOg;
 
   return {
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ...(project.tags || []),
       "Abdul Nabi Project",
       "Full-Stack Case Study",
-      "aiwithab.site",
+      "abdulnabi.org",
     ],
     alternates: {
       canonical: canonicalUrl,
@@ -92,31 +92,31 @@ export default async function DynamicProjectPage({ params }: Props) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Projects",
-            item: "https://www.aiwithab.site/projects",
+            item: "https://www.abdulnabi.org/projects",
           },
           {
             "@type": "ListItem",
             position: 3,
             name: project.title,
-            item: `https://www.aiwithab.site/projects/${project.id}`,
+            item: `https://www.abdulnabi.org/projects/${project.id}`,
           },
         ],
       },
       {
         "@type": "SoftwareApplication",
-        "@id": `https://www.aiwithab.site/projects/${project.id}#app`,
+        "@id": `https://www.abdulnabi.org/projects/${project.id}#app`,
         name: project.title,
         description: project.description,
         applicationCategory: "DeveloperApplication",
         operatingSystem: "Web Browser",
-        url: `https://www.aiwithab.site/projects/${project.id}`,
-        image: `https://www.aiwithab.site/api/og/project?id=${encodeURIComponent(project.id)}`,
+        url: `https://www.abdulnabi.org/projects/${project.id}`,
+        image: `https://www.abdulnabi.org/api/og/project?id=${encodeURIComponent(project.id)}`,
         offers: {
           "@type": "Offer",
           price: "0",
@@ -125,7 +125,7 @@ export default async function DynamicProjectPage({ params }: Props) {
         author: {
           "@type": "Person",
           name: "Abdul Nabi",
-          url: "https://www.aiwithab.site",
+          url: "https://www.abdulnabi.org",
         },
       },
     ],

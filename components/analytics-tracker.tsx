@@ -4,19 +4,22 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getCookieConsent, COOKIE_CONSENT_EVENT, hasUserSetConsent } from "@/lib/cookies";
 
-function getOrCreateSessionId(): string {
-  if (typeof window === "undefined") return "";
-  let sessionId = sessionStorage.getItem("an_session_id");
-  if (!sessionId) {
-    sessionId = "sess_" + Math.random().toString(36).substring(2) + Date.now().toString(36);
-    sessionStorage.setItem("an_session_id", sessionId);
-  }
-  return sessionId;
-}
+// In-memory debounce map (does not write any sensitive markers to browser localStorage or sessionStorage)
+const pageLastTrackedMap = new Map<string, number>();
 
 export function AnalyticsTracker() {
   const pathname = usePathname();
   const [consentAllowed, setConsentAllowed] = useState(true);
+
+  // Proactively purge any legacy storage key left by previous builds
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.removeItem("an_session_id");
+        localStorage.removeItem("an_session_id");
+      } catch {}
+    }
+  }, []);
 
   useEffect(() => {
     const checkConsent = () => {
@@ -40,14 +43,12 @@ export function AnalyticsTracker() {
     if (!consentAllowed) return;
     if (!pathname || pathname.startsWith("/admin") || pathname.startsWith("/api")) return;
 
-    const sessionId = getOrCreateSessionId();
-    const lastVisitKey = `last_track_${pathname}`;
     const now = Date.now();
-    const lastTrackTime = parseInt(sessionStorage.getItem(lastVisitKey) || "0", 10);
+    const lastTrackTime = pageLastTrackedMap.get(pathname) || 0;
 
     // Debounce rapid double-execution within 2.5 seconds (prevents React StrictMode double count)
     if (now - lastTrackTime < 2500) return;
-    sessionStorage.setItem(lastVisitKey, now.toString());
+    pageLastTrackedMap.set(pathname, now);
 
     const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
     const utmSource = searchParams?.get("utm_source") || undefined;
@@ -61,7 +62,6 @@ export function AnalyticsTracker() {
       body: JSON.stringify({
         event_type: "page_view",
         page_slug: pathname,
-        session_id: sessionId,
         utm_source: utmSource,
         utm_medium: utmMedium,
         utm_campaign: utmCampaign,
@@ -90,7 +90,6 @@ export function AnalyticsTracker() {
       );
 
       if (matchedLabel && consentAllowed) {
-        const sessionId = getOrCreateSessionId();
         fetch("/api/analytics/track", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -98,7 +97,6 @@ export function AnalyticsTracker() {
             event_type: "cta_click",
             cta_label: matchedLabel,
             page_slug: window.location.pathname,
-            session_id: sessionId,
           }),
         }).catch(() => {});
       }

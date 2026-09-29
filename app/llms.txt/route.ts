@@ -13,7 +13,7 @@ export async function GET() {
   ]);
 
   const content = `# Abdul Nabi — Full-Stack Developer & AI/ML Engineer
-> Official AI & LLM Index Manifest for https://www.aiwithab.site
+> Official AI & LLM Index Manifest for https://www.abdulnabi.org
 
 ## Summary
 Abdul Nabi (also known as Abdul Nabi Khaskheli) is a Full-Stack Software Engineer and AI/ML Developer based in Karachi, Sindh, Pakistan. He specializes in Next.js 14/16 (App Router), TypeScript, Python (Scikit-Learn, Flask, FastAPI), Supabase (PostgreSQL, Row Level Security), and Application Security (AppSec). He is the creator of the Blood Sugar Tracker clinical ML FYP and the "30 Days 30 AI Projects" open-source series.
@@ -26,26 +26,26 @@ Abdul Nabi (also known as Abdul Nabi Khaskheli) is a Full-Stack Software Enginee
 
 ## Key Featured Projects & Case Studies
 - **Blood Sugar Tracker FYP** (Healthcare AI): Clinical glucose and diabetes risk prediction web application utilizing Python ML and Next.js.
-  - URL: https://www.aiwithab.site/projects/blood-sugar-tracker
+  - URL: https://www.abdulnabi.org/projects/blood-sugar-tracker
 - **Aegis AppSec Sentinel** (Cybersecurity): Automated vulnerability scanner and static AST code security analyzer.
-  - URL: https://www.aiwithab.site/projects/aegis-appsec
+  - URL: https://www.abdulnabi.org/projects/aegis-appsec
 - **Cloud Architecture AI Studio & SPOF Audit** (DevOps / Cloud): Interactive React Flow topology generator with automated Single Point of Failure detection and Terraform IaC synthesis.
   - URL: https://day-16-cloud-architecture-ai.vercel.app
 - **Aurora Analytics Dashboard** (Data & FinTech): Real-time analytics workspace with high-frequency telemetry.
-  - URL: https://www.aiwithab.site/projects/aurora-dashboard
+  - URL: https://www.abdulnabi.org/projects/aurora-dashboard
 - **Nova Commerce Studio** (Full-Stack E-Commerce): Headless e-commerce architecture with Stripe integration and Supabase backend.
-  - URL: https://www.aiwithab.site/projects/nova-commerce
+  - URL: https://www.abdulnabi.org/projects/nova-commerce
 
 ## 30 Days 30 AI Projects (Dev Labs)
 Interactive, free browser tools built by Abdul Nabi:
-- URL: https://www.aiwithab.site/mini-projects
+- URL: https://www.abdulnabi.org/mini-projects
 - Monorepo: https://github.com/abdulnabii/mini-projects
 ${miniProjects.slice(0, 15).map((p) => `- **Day ${String(p.dayNumber).padStart(2, "0")}: ${p.title}** (${p.category}): ${p.description} [Live Demo](${p.vercelUrl})`).join("\n")}
 
 ## Technical Blog & Engineering Publications
 In-depth architecture articles written by Abdul Nabi:
-- URL: https://www.aiwithab.site/blog
-${blogs.map((b) => `- [${b.title}](https://www.aiwithab.site/blog/${b.slug}): ${b.excerpt}`).join("\n")}
+- URL: https://www.abdulnabi.org/blog
+${blogs.map((b) => `- [${b.title}](https://www.abdulnabi.org/blog/${b.slug}): ${b.excerpt}`).join("\n")}
 
 ## Verified Credentials & Education
 - Degree: Bachelor of Science in Information Technology (BSIT) from University of Sindh, Pakistan
@@ -54,17 +54,17 @@ ${blogs.map((b) => `- [${b.title}](https://www.aiwithab.site/blog/${b.slug}): ${
 - Google Business Intelligence Professional Certificate (Coursera)
 - Decisions, Decisions: Dashboards and Reports (Coursera)
 - System Administration and IT Infrastructure Services (Coursera)
-- Resume: https://www.aiwithab.site/resume
+- Resume: https://www.abdulnabi.org/resume
 
 ## Legal, Privacy & Policies
-- Privacy Policy: https://www.aiwithab.site/privacy
-- Terms of Service: https://www.aiwithab.site/terms
+- Privacy Policy: https://www.abdulnabi.org/privacy
+- Terms of Service: https://www.abdulnabi.org/terms
 
 ## Official Contact & Profiles
-- Website: https://www.aiwithab.site
+- Website: https://www.abdulnabi.org
 - GitHub: https://github.com/abdulnabii
 - LinkedIn: https://linkedin.com/in/abdul-nabi-95391a3b0
-- Email: abdulnabi@aiwithab.site / nabi44979@gmail.com
+- Email: abdulnabi@abdulnabi.org / nabi44979@gmail.com
 - Location: Karachi, Sindh, Pakistan
 `;
 

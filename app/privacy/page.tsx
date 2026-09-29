@@ -18,15 +18,15 @@ import {
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "Privacy Policy for aiwithab.site — Abdul Nabi's personal portfolio, developer tools, and blog. Complete transparency regarding cookies, data protection, GDPR rights, and data handling.",
+    "Privacy Policy for abdulnabi.org — Abdul Nabi's personal portfolio, developer tools, and blog. Complete transparency regarding cookies, data protection, GDPR rights, and data handling.",
   alternates: {
-    canonical: "https://www.aiwithab.site/privacy",
+    canonical: "https://www.abdulnabi.org/privacy",
   },
   openGraph: {
     title: "Privacy Policy · Abdul Nabi",
     description:
-      "Full transparency on data protection, cookies, GDPR rights, and telemetry practices across aiwithab.site.",
-    url: "https://www.aiwithab.site/privacy",
+      "Full transparency on data protection, cookies, GDPR rights, and telemetry practices across abdulnabi.org.",
+    url: "https://www.abdulnabi.org/privacy",
   },
 };
 
@@ -37,12 +37,12 @@ export default function PrivacyPolicyPage() {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: "Privacy Policy — Abdul Nabi",
-    url: "https://www.aiwithab.site/privacy",
-    description: "Official Privacy Policy and Data Handling statement for aiwithab.site.",
+    url: "https://www.abdulnabi.org/privacy",
+    description: "Official Privacy Policy and Data Handling statement for abdulnabi.org.",
     publisher: {
       "@type": "Person",
       name: "Abdul Nabi",
-      url: "https://www.aiwithab.site",
+      url: "https://www.abdulnabi.org",
     },
     dateModified: "2026-09-07",
   };
@@ -85,7 +85,7 @@ export default function PrivacyPolicyPage() {
           <p className="max-w-2xl text-base sm:text-lg text-slate-400 leading-relaxed">
             I believe privacy is an engineering requirement, not an afterthought. This policy provides complete
             transparency into how data is collected, stored, and protected across{" "}
-            <strong className="text-slate-200">aiwithab.site</strong>.
+            <strong className="text-slate-200">abdulnabi.org</strong>.
           </p>
         </div>
 
@@ -153,7 +153,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs font-mono space-y-1.5 text-slate-300">
                 <p>Email: <a href="mailto:abdulnabi.khaskhely@gmail.com" className="text-accent-soft hover:underline">abdulnabi.khaskhely@gmail.com</a></p>
-                <p>Domain: <span className="text-slate-400">https://www.aiwithab.site</span></p>
+                <p>Domain: <span className="text-slate-400">https://www.abdulnabi.org</span></p>
                 <p>Location: <span className="text-slate-400">Karachi, Sindh, Pakistan</span></p>
               </div>
             </div>

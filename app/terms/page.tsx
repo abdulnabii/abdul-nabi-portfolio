@@ -16,15 +16,15 @@ import {
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "Terms of Service for aiwithab.site — Abdul Nabi's personal portfolio, engineering projects, open-source codebases, and interactive developer tools.",
+    "Terms of Service for abdulnabi.org — Abdul Nabi's personal portfolio, engineering projects, open-source codebases, and interactive developer tools.",
   alternates: {
-    canonical: "https://www.aiwithab.site/terms",
+    canonical: "https://www.abdulnabi.org/terms",
   },
   openGraph: {
     title: "Terms of Service · Abdul Nabi",
     description:
-      "Review the Terms of Service and acceptable use conditions for aiwithab.site and associated developer labs.",
-    url: "https://www.aiwithab.site/terms",
+      "Review the Terms of Service and acceptable use conditions for abdulnabi.org and associated developer labs.",
+    url: "https://www.abdulnabi.org/terms",
   },
 };
 
@@ -35,12 +35,12 @@ export default function TermsOfServicePage() {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: "Terms of Service — Abdul Nabi",
-    url: "https://www.aiwithab.site/terms",
-    description: "Official Terms of Service and Acceptable Use Policy for aiwithab.site.",
+    url: "https://www.abdulnabi.org/terms",
+    description: "Official Terms of Service and Acceptable Use Policy for abdulnabi.org.",
     publisher: {
       "@type": "Person",
       name: "Abdul Nabi",
-      url: "https://www.aiwithab.site",
+      url: "https://www.abdulnabi.org",
     },
     dateModified: "2026-09-07",
   };
@@ -81,7 +81,7 @@ export default function TermsOfServicePage() {
           </h1>
 
           <p className="max-w-2xl text-base sm:text-lg text-slate-400 leading-relaxed">
-            Welcome to <strong className="text-slate-200">aiwithab.site</strong>. By accessing this website,
+            Welcome to <strong className="text-slate-200">abdulnabi.org</strong>. By accessing this website,
             interactive developer labs, or open-source software demonstrations, you agree to comply with and be
             bound by the following terms.
           </p>
@@ -132,7 +132,7 @@ export default function TermsOfServicePage() {
             </div>
             <div className="text-sm text-slate-300 leading-relaxed space-y-3">
               <p>
-                By visiting, browsing, or utilizing the interactive tools on <strong>aiwithab.site</strong>, you
+                By visiting, browsing, or utilizing the interactive tools on <strong>abdulnabi.org</strong>, you
                 confirm that you are at least 13 years of age and agree to be bound by these Terms of Service,
                 our <Link href="/privacy" className="text-accent-soft hover:underline">Privacy Policy</Link>.
               </p>
@@ -163,7 +163,7 @@ export default function TermsOfServicePage() {
                 </li>
                 <li>
                   <strong className="text-slate-200">Original Content & Branding:</strong> The design, typography, brand assets,
-                  curated articles, case study text, and custom visual components of <code>aiwithab.site</code> are the intellectual property
+                  curated articles, case study text, and custom visual components of <code>abdulnabi.org</code> are the intellectual property
                   of Abdul Nabi and may not be duplicated, mirrored, or scraped for commercial syndication without prior written permission.
                 </li>
               </ul>
@@ -204,7 +204,7 @@ export default function TermsOfServicePage() {
                 As an Application Security professional, I encourage responsible security research. However, you strictly agree NOT to:
               </p>
               <ul className="list-disc pl-5 space-y-1.5 text-slate-400">
-                <li>Perform automated Denial-of-Service (DoS/DDoS) stress tests or volume attacks against <code>aiwithab.site</code> or its hosting infrastructure.</li>
+                <li>Perform automated Denial-of-Service (DoS/DDoS) stress tests or volume attacks against <code>abdulnabi.org</code> or its hosting infrastructure.</li>
                 <li>Attempt unauthorized brute-force attacks against administrative authentication endpoints (<code>/admin/*</code>).</li>
                 <li>Scrape user contact submissions, attempt database privilege escalation, or tamper with third-party service credentials.</li>
                 <li>Submit abusive, defamatory, or unlawful material through the contact form or chatbot interface.</li>

@@ -20,8 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
   if (!project) return { title: "Project not found" };
 
-  const canonicalUrl = "https://www.aiwithab.site/projects/aurora-dashboard";
-  const dynamicOg = "https://www.aiwithab.site/api/og/project?id=aurora-dashboard";
+  const canonicalUrl = "https://www.abdulnabi.org/projects/aurora-dashboard";
+  const dynamicOg = "https://www.abdulnabi.org/api/og/project?id=aurora-dashboard";
 
   return {
     title: `${project.title} — High-Frequency Telemetry Case Study | Abdul Nabi`,
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(project.tags || []),
       "Abdul Nabi Project",
       "Full-Stack Case Study",
-      "aiwithab.site",
+      "abdulnabi.org",
     ],
     alternates: {
       canonical: canonicalUrl,
@@ -143,31 +143,31 @@ export default async function AuroraDashboardPage() {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://www.aiwithab.site",
+            item: "https://www.abdulnabi.org",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Projects",
-            item: "https://www.aiwithab.site/projects",
+            item: "https://www.abdulnabi.org/projects",
           },
           {
             "@type": "ListItem",
             position: 3,
             name: project.title,
-            item: "https://www.aiwithab.site/projects/aurora-dashboard",
+            item: "https://www.abdulnabi.org/projects/aurora-dashboard",
           },
         ],
       },
       {
         "@type": "SoftwareApplication",
-        "@id": "https://www.aiwithab.site/projects/aurora-dashboard#app",
+        "@id": "https://www.abdulnabi.org/projects/aurora-dashboard#app",
         name: project.title,
         description: project.description,
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web Browser",
-        url: "https://www.aiwithab.site/projects/aurora-dashboard",
-        image: "https://www.aiwithab.site/api/og/project?id=aurora-dashboard",
+        url: "https://www.abdulnabi.org/projects/aurora-dashboard",
+        image: "https://www.abdulnabi.org/api/og/project?id=aurora-dashboard",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -176,7 +176,7 @@ export default async function AuroraDashboardPage() {
         author: {
           "@type": "Person",
           name: "Abdul Nabi",
-          url: "https://www.aiwithab.site",
+          url: "https://www.abdulnabi.org",
         },
       },
     ],

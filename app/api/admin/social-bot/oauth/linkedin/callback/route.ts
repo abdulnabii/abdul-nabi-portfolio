@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.aiwithab.site";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.abdulnabi.org";
   const adminUrl = `${siteUrl}/admin/social-bot`;
 
   // ── Handle OAuth errors from LinkedIn ───────────────────────────────────────
