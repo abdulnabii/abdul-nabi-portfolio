@@ -146,11 +146,11 @@ async function pushCommitViaGitHubApi(
       branch: "main",
       committer: {
         name: "Abdul Nabi",
-        email: "abdulnabi.khaskhely@gmail.com",
+        email: "nabi44979@gmail.com",
       },
       author: {
         name: "Abdul Nabi",
-        email: "abdulnabi.khaskhely@gmail.com",
+        email: "nabi44979@gmail.com",
       },
     };
 
@@ -322,7 +322,7 @@ export async function POST(req: NextRequest) {
         commitHash = apiResult.hash;
         commitUrl = apiResult.url || commitUrl;
         methodUsed = "github_api";
-        gitLog = `[GitHub REST API] Successfully committed to branch 'main'.\nCommit SHA: ${commitHash}\nVerified Committer: Abdul Nabi <abdulnabi.khaskhely@gmail.com>\nTriggered auto-deployment on Vercel.`;
+        gitLog = `[GitHub REST API] Successfully committed to branch 'main'.\nCommit SHA: ${commitHash}\nVerified Committer: Abdul Nabi <nabi44979@gmail.com>\nTarget Repository: ${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`;
       } else {
         return NextResponse.json(
           {
