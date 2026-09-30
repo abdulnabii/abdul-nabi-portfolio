@@ -35,11 +35,19 @@ export function StreakKeeperPanel() {
   async function loadStreakInfo() {
     setFetching(true);
     try {
+      let savedToken = "";
+      if (typeof window !== "undefined") {
+        savedToken = localStorage.getItem("admin_github_token") || "";
+        if (savedToken) {
+          setGithubToken(savedToken);
+        }
+      }
+
       const res = await fetch("/api/admin/streak-keeper");
       const data = await res.json();
       if (data.ok) {
         setStreakData(data.data);
-        if (!data.data.hasGitHubToken) {
+        if (!data.data.hasGitHubToken && !savedToken) {
           setShowTokenInput(true);
         }
       }
@@ -59,13 +67,15 @@ export function StreakKeeperPanel() {
     setGitOutput(null);
     setSuccessToast(null);
 
+    const tokenToSend = (githubToken.trim() || (typeof window !== "undefined" ? localStorage.getItem("admin_github_token") : "") || "").trim();
+
     try {
       const res = await fetch("/api/admin/streak-keeper", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: customMessage.trim() || undefined,
-          githubToken: githubToken.trim() || undefined,
+          githubToken: tokenToSend || undefined,
         }),
       });
 
@@ -80,8 +90,8 @@ export function StreakKeeperPanel() {
       setGitOutput(data.gitLog || "GitHub commit & push completed successfully!");
       setSuccessToast(`🎉 Streak kept alive! Pushed commit ${data.commitHash} (Day ${data.streakDays})`);
       setCustomMessage("");
-      if (githubToken) {
-        setGithubToken("");
+      if (tokenToSend && typeof window !== "undefined") {
+        localStorage.setItem("admin_github_token", tokenToSend);
       }
       loadStreakInfo();
     } catch (err: any) {
@@ -95,7 +105,7 @@ export function StreakKeeperPanel() {
 
   const isTodayActive = streakData?.isPushedToday;
   const streakCount = streakData?.streakDays || 42;
-  const hasToken = streakData?.hasGitHubToken;
+  const hasToken = Boolean(streakData?.hasGitHubToken || githubToken);
 
   return (
     <GlassCard padding="lg" elevated className="border-indigo-500/20 bg-[#080d1e]/80 space-y-5">
@@ -266,14 +276,30 @@ export function StreakKeeperPanel() {
                 <input
                   type="password"
                   value={githubToken}
-                  onChange={(e) => setGithubToken(e.target.value)}
-                  placeholder={hasToken ? "•••••••••••••••••••••••••••••••• (Token configured)" : "ghp_... or github_pat_..."}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setGithubToken(val);
+                    if (typeof window !== "undefined") {
+                      if (val.trim()) {
+                        localStorage.setItem("admin_github_token", val.trim());
+                      } else {
+                        localStorage.removeItem("admin_github_token");
+                      }
+                    }
+                  }}
+                  placeholder={hasToken ? "•••••••••••••••••••••••••••••••• (Token active & saved)" : "ghp_... or gho_..."}
                   className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
                 />
               </div>
-              <p className="text-[10px] text-slate-500">
-                Token is stored securely in Supabase / environment. Required so Vercel can commit directly to GitHub without needing the local git command.
-              </p>
+              {githubToken ? (
+                <p className="text-[10px] text-emerald-400 flex items-center gap-1">
+                  <Check className="h-3 w-3" /> Token saved in your browser storage. 1-click cloud push to <span className="font-mono text-amber-300">abdulnabii/priv</span> is ready!
+                </p>
+              ) : (
+                <p className="text-[10px] text-slate-400">
+                  Paste your GitHub Token with &apos;repo&apos; scope (e.g. Classic PAT or OAuth token). It will be saved in your browser so you only need to paste it once.
+                </p>
+              )}
             </div>
           )}
         </div>
