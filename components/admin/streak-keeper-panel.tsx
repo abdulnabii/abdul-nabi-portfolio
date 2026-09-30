@@ -139,12 +139,12 @@ export function StreakKeeperPanel() {
             Refresh
           </button>
           <a
-            href="https://github.com/abdulnabii/abdul-nabi-portfolio/commits/main"
+            href="https://github.com/abdulnabii/priv/commits/main"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-300 transition hover:bg-indigo-500/20"
           >
-            <span>GitHub Commits</span>
+            <span>GitHub Commits (priv)</span>
             <ExternalLink className="h-3 w-3" />
           </a>
         </div>
@@ -202,7 +202,7 @@ export function StreakKeeperPanel() {
               1-Click Cloud GitHub Streak Push
             </h4>
             <p className="text-xs text-slate-300 mt-0.5">
-              Pushes a verified commit directly to your GitHub repository using the GitHub REST API.
+              Pushes a verified streak commit directly to your dedicated streak repo (<span className="text-amber-300 font-mono">abdulnabii/priv</span>).
             </p>
           </div>
 

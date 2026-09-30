@@ -11,8 +11,9 @@ export const dynamic = "force-dynamic";
 
 const execAsync = promisify(exec);
 const STREAK_FILE = path.join(process.cwd(), "data", "streak.json");
-const GITHUB_REPO_OWNER = "abdulnabii";
-const GITHUB_REPO_NAME = "abdul-nabi-portfolio";
+const GITHUB_REPO_OWNER = process.env.STREAK_GITHUB_OWNER || "abdulnabii";
+const GITHUB_REPO_NAME = process.env.STREAK_GITHUB_REPO || "priv";
+const STREAK_TARGET_FILE = "activity_log.txt";
 
 interface StreakData {
   lastStreakPing: string;
@@ -30,6 +31,22 @@ interface StreakData {
     message: string;
     hash?: string;
   }[];
+}
+
+async function findLocalPrivRepo(): Promise<string | null> {
+  const candidates = [
+    "C:\\Users\\nabi4\\Desktop\\priv",
+    path.resolve(process.cwd(), "..", "priv"),
+    "C:\\Users\\nabi4\\OneDrive\\Desktop\\New folder\\priv",
+  ];
+  for (const dir of candidates) {
+    try {
+      const gitDir = path.join(dir, ".git");
+      const stat = await fs.stat(gitDir);
+      if (stat.isDirectory()) return dir;
+    } catch {}
+  }
+  return null;
 }
 
 async function getStreakData(): Promise<StreakData> {
@@ -89,11 +106,12 @@ async function pushCommitViaGitHubApi(
   message: string
 ): Promise<{ success: boolean; hash?: string; url?: string; error?: string }> {
   try {
-    const filePath = "data/streak.json";
+    const filePath = STREAK_TARGET_FILE;
     const getUrl = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${filePath}`;
 
-    // 1. Fetch current file SHA from GitHub
+    // 1. Fetch current file SHA and content from GitHub
     let fileSha: string | undefined;
+    let existingContent = "";
     const getRes = await fetch(getUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -106,12 +124,24 @@ async function pushCommitViaGitHubApi(
     if (getRes.ok) {
       const getData = await getRes.json();
       fileSha = getData.sha;
+      if (getData.content) {
+        existingContent = Buffer.from(getData.content, "base64").toString("utf8");
+      }
     }
 
-    // 2. Push updated file directly to main branch
-    const contentBase64 = Buffer.from(JSON.stringify(updatedData, null, 2)).toString("base64");
+    // 2. Append new activity entry
+    const nowStr = new Date().toISOString().replace("T", " ").substring(0, 19);
+    const newEntry = `[${nowStr}] Automated streak keeper activity ping (Day ${updatedData.streakDays}) - ${message}\n`;
+    const newContent = (existingContent ? existingContent.trimEnd() + "\n" : "") + newEntry;
+
+    // 3. Push updated file directly to main branch
+    const contentBase64 = Buffer.from(newContent, "utf8").toString("base64");
+    const commitMsg = message.startsWith("chore:")
+      ? message
+      : `chore: automated activity commit at ${nowStr} [skip ci]`;
+
     const putPayload: any = {
-      message,
+      message: commitMsg,
       content: contentBase64,
       branch: "main",
       committer: {
@@ -143,7 +173,7 @@ async function pushCommitViaGitHubApi(
 
     if (putRes.ok && putData.commit) {
       const commitSha = putData.commit.sha ? putData.commit.sha.slice(0, 7) : "pushed";
-      const commitUrl = putData.commit.html_url;
+      const commitUrl = putData.commit.html_url || `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/commit/${putData.commit.sha}`;
       return { success: true, hash: commitSha, url: commitUrl };
     }
 
@@ -306,28 +336,45 @@ export async function POST(req: NextRequest) {
 
     // ── STRATEGY 2: Local Git CLI (if running in local development) ───────
     if (methodUsed !== "github_api") {
-      try {
-        await fs.mkdir(path.dirname(STREAK_FILE), { recursive: true });
-        await fs.writeFile(STREAK_FILE, JSON.stringify(updatedData, null, 2), "utf8");
+      const localPrivDir = await findLocalPrivRepo();
+      if (localPrivDir) {
+        try {
+          const logPath = path.join(localPrivDir, STREAK_TARGET_FILE);
+          const nowStr = new Date().toISOString().replace("T", " ").substring(0, 19);
+          const entry = `[${nowStr}] Automated commit trigger (Day ${nextStreakCount}) - ${customMessage}\n`;
+          await fs.appendFile(logPath, entry, "utf8");
 
-        const { stdout: addOut } = await execAsync(`git add "${STREAK_FILE}"`, { timeout: 8000 });
-        const { stdout: commitOut } = await execAsync(
-          `git commit -m "${customMessage.replace(/"/g, '\\"')}"`,
-          { timeout: 8000 }
-        );
-        const { stdout: pushOut } = await execAsync("git push origin main", { timeout: 30000 });
+          await execAsync(`git add "${STREAK_TARGET_FILE}"`, { cwd: localPrivDir, timeout: 8000 });
+          const commitMsg = customMessage.startsWith("chore:")
+            ? customMessage
+            : `chore: automated activity commit at ${nowStr} [skip ci]`;
+          const { stdout: commitOut } = await execAsync(
+            `git commit -m "${commitMsg.replace(/"/g, '\\"')}"`,
+            { cwd: localPrivDir, timeout: 8000 }
+          );
+          const { stdout: pushOut } = await execAsync("git push origin main", { cwd: localPrivDir, timeout: 30000 });
 
-        gitLog = `${commitOut}\n${pushOut}`.trim();
-        methodUsed = "local_git";
+          gitLog = `${commitOut}\n${pushOut}`.trim();
+          methodUsed = "local_git";
 
-        const { stdout: hashOut } = await execAsync("git rev-parse --short HEAD", { timeout: 3000 });
-        if (hashOut && hashOut.trim()) {
-          commitHash = hashOut.trim();
+          const { stdout: hashOut } = await execAsync("git rev-parse --short HEAD", { cwd: localPrivDir, timeout: 3000 });
+          if (hashOut && hashOut.trim()) {
+            commitHash = hashOut.trim();
+            commitUrl = `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/commit/${commitHash}`;
+          }
+        } catch (localErr: any) {
+          return NextResponse.json(
+            {
+              error: `Local git push to ${localPrivDir} failed: ${localErr.message}. Enter a GitHub Token for cloud push instead.`,
+              requiresToken: true,
+            },
+            { status: 400 }
+          );
         }
-      } catch (gitErr: any) {
+      } else {
         return NextResponse.json(
           {
-            error: "A GitHub Personal Access Token (PAT) is required for 1-click cloud push. Please paste your token with 'repo' scope below and try again.",
+            error: `A GitHub Personal Access Token (PAT) with 'repo' scope is required for cloud push to ${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}. Please paste your token below and try again.`,
             requiresToken: true,
           },
           { status: 400 }
