@@ -90,7 +90,7 @@ export function Contact() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
 
-  const email = settings.email || siteContent.email?.trim() || "abdulnabi.khaskhely@gmail.com";
+  const email = settings.email || siteContent.email?.trim() || "abdulnabi@abdulnabi.org";
   const location = settings.location || siteContent.location || "Karachi, Sindh, Pakistan";
   const phone = settings.phone || "0333 7597315";
   const whatsapp = settings.whatsapp || "+92 309 3751434";

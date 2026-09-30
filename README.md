@@ -163,7 +163,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 *Full-Stack Software Engineer & AI/ML Developer (AppSec Specialist)*
 * 🌐 Website: [abdulnabi.org](https://abdulnabi.org)
 * 💼 LinkedIn: [linkedin.com/in/abdul-nabi-95391a3b0](https://linkedin.com/in/abdul-nabi-95391a3b0)
-* 📧 Email: [abdulnabi.khaskhely@gmail.com](mailto:abdulnabi.khaskhely@gmail.com)
+* 📧 Email: [abdulnabi@abdulnabi.org](mailto:abdulnabi@abdulnabi.org)
 * 🐙 GitHub: [@abdulnabii](https://github.com/abdulnabii)
 * 📱 WhatsApp: [+92 309 3751434](https://wa.me/923093751434)
 

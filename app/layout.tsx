@@ -154,7 +154,7 @@ export default async function RootLayout({
           width: 400,
           height: 400,
         },
-        email: "abdulnabi.khaskhely@gmail.com",
+        email: "abdulnabi@abdulnabi.org",
         sameAs: [
           "https://github.com/abdulnabii",
           "https://linkedin.com/in/abdul-nabi-95391a3b0",

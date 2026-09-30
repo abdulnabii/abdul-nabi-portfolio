@@ -1,0 +1,20 @@
+; BIND Zone file for abdulnabi.org
+; Ready for Cloudflare DNS Import
+$ORIGIN abdulnabi.org.
+$TTL 300
+
+; --- Website Records (Vercel Anycast) ---
+@       IN  A       76.76.21.21
+www     IN  CNAME   cname.vercel-dns.com.
+*       IN  A       76.76.21.21
+
+; --- Email Configuration ---
+@       IN  MX  10  mailserver.businessidentity.llc.
+@       IN  TXT     "v=spf1 a mx include:spf.postal.businessidentity.llc ~all"
+_dmarc  IN  TXT     "v=DMARC1; p=quarantine; rua=mailto:bounce@dmarc.businessidentity.llc; ruf=mailto:bounce@dmarc.businessidentity.llc; fo=1"
+
+; --- SSL Certificates & ACME Challenges ---
+_acme-challenge IN  TXT "vywnJpsC9GTGgd0mA3abAWLHb2j3OHR9hwlH7wCbyf4"
+_acme-challenge IN  TXT "5kSf5RJ4VJoNbmSZkUI0ZqRYXNy1JU6EckvS7hlbzjQ"
+_acme-challenge IN  TXT "1fNlWfE5PoOgMyNISrZ7TmhzdGReqJZBNHISoDU4NI4"
+_acme-challenge IN  TXT "CGBlCIqbVQhgzY8hXpZ4JuH9fnTjqPpMwVZ7htqbZlo"

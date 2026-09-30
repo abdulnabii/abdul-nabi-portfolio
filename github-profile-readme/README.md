@@ -20,7 +20,7 @@
   <a href="https://linkedin.com/in/abdul-nabi-95391a3b0" target="_blank">
     <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
   </a>
-  <a href="mailto:abdulnabi.khaskhely@gmail.com" target="_blank">
+  <a href="mailto:abdulnabi@abdulnabi.org" target="_blank">
     <img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/>
   </a>
   <a href="https://wa.me/923093751434" target="_blank">
@@ -43,7 +43,7 @@ Location: Karachi, Sindh, Pakistan
 Role: Full-Stack Developer & Data / ML Engineer
 Focus: Next.js 14, TypeScript, REST APIs, Python ML & Application Security (AppSec)
 Availability: Open to full-time engineering roles & freelance opportunities
-Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
+Contact: abdulnabi@abdulnabi.org | +92 309 3751434
 ```
 
 > Full-stack developer with **1+ years** shipping production web applications with Next.js, Supabase, and Python workflows. Actively expanding expertise in **Application Security (AppSec)** — focusing on OWASP Top 10 mitigation, auth standards, and defensive engineering.
@@ -158,7 +158,7 @@ Contact: abdulnabi.khaskhely@gmail.com | +92 309 3751434
 | :--- | :--- |
 | 🌐 **Live Portfolio** | [abdulnabi.org](https://abdulnabi.org) |
 | 💼 **LinkedIn** | [linkedin.com/in/abdul-nabi-95391a3b0](https://linkedin.com/in/abdul-nabi-95391a3b0) |
-| 📧 **Email** | [abdulnabi.khaskhely@gmail.com](mailto:abdulnabi.khaskhely@gmail.com) |
+| 📧 **Email** | [abdulnabi@abdulnabi.org](mailto:abdulnabi@abdulnabi.org) |
 | 💬 **WhatsApp** | [+92 309 3751434](https://wa.me/923093751434) |
 | 🐙 **GitHub** | [@abdulnabii](https://github.com/abdulnabii) |
 

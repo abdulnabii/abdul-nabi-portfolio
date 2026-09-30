@@ -693,7 +693,7 @@ export function Chatbot() {
                         💬 Chat on WhatsApp
                       </a>
                       <a
-                        href="mailto:abdulnabi.khaskhely@gmail.com?subject=Meeting%20Inquiry%20via%20Receptionist"
+                        href="mailto:abdulnabi@abdulnabi.org?subject=Meeting%20Inquiry%20via%20Receptionist"
                         className="flex-1 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-semibold text-center py-1.5 text-[11px] transition"
                       >
                         📧 Send Email

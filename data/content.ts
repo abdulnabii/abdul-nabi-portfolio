@@ -135,7 +135,7 @@ export const siteContent: SiteContent = {
   title: "Abdul Nabi — Full-Stack Developer · Data & ML (Learning AppSec)",
   tagline:
     "Full-stack developer building clean Next.js apps, REST APIs, and ML models — with a strong specialization in Application Security (AppSec).",
-  email: "abdulnabi.khaskhely@gmail.com",
+  email: "abdulnabi@abdulnabi.org",
   location: "Karachi, Sindh, Pakistan",
   availability: "Open to full-time engineering / security roles and focused freelance projects",
   portraitUrl: "/profile.jpg",
@@ -170,7 +170,7 @@ export const siteContent: SiteContent = {
     },
     {
       label: "Email",
-      href: "mailto:abdulnabi.khaskhely@gmail.com",
+      href: "mailto:abdulnabi@abdulnabi.org",
       icon: "email",
     },
   ],
@@ -389,7 +389,7 @@ export const siteContent: SiteContent = {
       "I'm open to full-time roles, contract work, and application security consulting. The fastest way to reach me is email or WhatsApp.",
     responseTime: "I usually reply within 1–2 business days.",
     formNote:
-      "Send a message using the form below or email me directly at abdulnabi.khaskhely@gmail.com.",
+      "Send a message using the form below or email me directly at abdulnabi@abdulnabi.org.",
   },
   blog: [],
   footer: {

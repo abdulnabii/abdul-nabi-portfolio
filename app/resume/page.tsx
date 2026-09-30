@@ -170,9 +170,9 @@ export default function ResumePage() {
                 Karachi, Pakistan
               </span>
               <span>•</span>
-              <a href="mailto:abdulnabi.khaskhely@gmail.com" className="hover:underline flex items-center gap-1">
+              <a href="mailto:abdulnabi@abdulnabi.org" className="hover:underline flex items-center gap-1">
                 <Mail className="h-3.5 w-3.5 text-indigo-400 print:hidden" />
-                abdulnabi.khaskhely@gmail.com
+                abdulnabi@abdulnabi.org
               </a>
               <span>•</span>
               <a href="tel:03337597315" className="hover:underline flex items-center gap-1">

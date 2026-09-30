@@ -211,8 +211,8 @@ export default function TermsOfServicePage() {
               </ul>
               <p className="text-xs text-slate-400 pt-1">
                 If you discover a legitimate security vulnerability or configuration flaw, please report it responsibly to{" "}
-                <a href="mailto:abdulnabi.khaskhely@gmail.com" className="text-accent-soft hover:underline">
-                  abdulnabi.khaskhely@gmail.com
+                <a href="mailto:abdulnabi@abdulnabi.org" className="text-accent-soft hover:underline">
+                  abdulnabi@abdulnabi.org
                 </a>
                 . Responsible disclosures will be acknowledged promptly and gratefully.
               </p>
@@ -270,8 +270,8 @@ export default function TermsOfServicePage() {
             <p className="text-sm text-slate-300 leading-relaxed">
               These terms shall be governed by and interpreted in accordance with the laws of Pakistan. For inquiries,
               licensing questions, or contract engineering discussions, reach out to{" "}
-              <a href="mailto:abdulnabi.khaskhely@gmail.com" className="text-accent-soft hover:underline">
-                abdulnabi.khaskhely@gmail.com
+              <a href="mailto:abdulnabi@abdulnabi.org" className="text-accent-soft hover:underline">
+                abdulnabi@abdulnabi.org
               </a>
               .
             </p>

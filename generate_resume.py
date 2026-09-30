@@ -88,7 +88,7 @@ def generate_pdf(output_path):
     story.append(Spacer(1, 3))
     
     contact_text = (
-        "Email: <b>abdulnabi.khaskhely@gmail.com</b> | Phone: <b>+92 309 3751434</b> | Location: <b>Karachi, Sindh, Pakistan</b><br/>"
+        "Email: <b>abdulnabi@abdulnabi.org</b> | Phone: <b>+92 309 3751434</b> | Location: <b>Karachi, Sindh, Pakistan</b><br/>"
         "GitHub: <b>github.com/abdulnabii</b> | LinkedIn: <b>linkedin.com/in/abdul-nabi-95391a3b0</b>"
     )
     story.append(Paragraph(contact_text, contact_style))

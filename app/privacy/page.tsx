@@ -152,7 +152,7 @@ export default function PrivacyPolicyPage() {
                 any submitted contact data deleted from the database, please contact me directly:
               </p>
               <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs font-mono space-y-1.5 text-slate-300">
-                <p>Email: <a href="mailto:abdulnabi.khaskhely@gmail.com" className="text-accent-soft hover:underline">abdulnabi.khaskhely@gmail.com</a></p>
+                <p>Email: <a href="mailto:abdulnabi@abdulnabi.org" className="text-accent-soft hover:underline">abdulnabi@abdulnabi.org</a></p>
                 <p>Domain: <span className="text-slate-400">https://www.abdulnabi.org</span></p>
                 <p>Location: <span className="text-slate-400">Karachi, Sindh, Pakistan</span></p>
               </div>
@@ -312,8 +312,8 @@ export default function PrivacyPolicyPage() {
               </div>
               <p className="pt-2 text-xs text-slate-400">
                 To submit an erasure or access request, email{" "}
-                <a href="mailto:abdulnabi.khaskhely@gmail.com" className="text-accent-soft hover:underline">
-                  abdulnabi.khaskhely@gmail.com
+                <a href="mailto:abdulnabi@abdulnabi.org" className="text-accent-soft hover:underline">
+                  abdulnabi@abdulnabi.org
                 </a>
                 . All verified requests are executed within 48 hours.
               </p>

@@ -44,7 +44,7 @@ SECTION 1 — IDENTITY & CONTACT
 - Experience: 2+ years building production Next.js, Supabase, Python ML systems
 
 Contact channels:
-  • Email: abdulnabi.khaskhely@gmail.com
+  • Email: abdulnabi@abdulnabi.org
   • Phone: 0333 7597315
   • WhatsApp: +92 309 3751434
   • LinkedIn: https://linkedin.com/in/abdul-nabi-95391a3b0
@@ -204,7 +204,7 @@ Cookies & tracking:
   • No advertising cookies or third-party tracking scripts are used.
 
 Your rights:
-  • You can request deletion of any contact form data by emailing abdulnabi.khaskhely@gmail.com.
+  • You can request deletion of any contact form data by emailing abdulnabi@abdulnabi.org.
   • This site complies with general data minimisation best practices.
 
 Third-party services used on this site:
@@ -318,7 +318,7 @@ function mockReply(userMessage: string): string {
     lower.includes("collect") ||
     lower.includes("personal")
   ) {
-    return "**Privacy:** This chatbot sends messages to OpenAI in real-time — no chat history is stored on Abdul Nabi's servers. Contact form data is securely stored in Supabase (PostgreSQL) and only accessible by Abdul Nabi. No data is sold or shared. You can request data deletion at **abdulnabi.khaskhely@gmail.com**. Third-party services: Vercel, Supabase, OpenAI, Cloudflare.";
+    return "**Privacy:** This chatbot sends messages to OpenAI in real-time — no chat history is stored on Abdul Nabi's servers. Contact form data is securely stored in Supabase (PostgreSQL) and only accessible by Abdul Nabi. No data is sold or shared. You can request data deletion at **abdulnabi@abdulnabi.org**. Third-party services: Vercel, Supabase, OpenAI, Cloudflare.";
   }
 
   // Mini projects overview
@@ -401,7 +401,7 @@ function mockReply(userMessage: string): string {
     lower.includes("social") ||
     lower.includes("connect")
   ) {
-    return "Connect with Abdul Nabi:\n\n- **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- **GitHub:** github.com/abdulnabii\n- **Portfolio:** abdulnabi.org\n- **Email:** abdulnabi.khaskhely@gmail.com";
+    return "Connect with Abdul Nabi:\n\n- **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- **GitHub:** github.com/abdulnabii\n- **Portfolio:** abdulnabi.org\n- **Email:** abdulnabi@abdulnabi.org";
   }
 
   // Blog
@@ -424,7 +424,7 @@ function mockReply(userMessage: string): string {
     lower.includes("reach") ||
     lower.includes("available")
   ) {
-    return "Get in touch with Abdul Nabi:\n\n- 📧 **Email:** abdulnabi.khaskhely@gmail.com\n- 📱 **Phone:** 0333 7597315\n- 💬 **WhatsApp:** +92 309 3751434\n- 💼 **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- 📝 **Contact form:** abdulnabi.org/#contact\n\nTypical response time: **1–2 business days**.";
+    return "Get in touch with Abdul Nabi:\n\n- 📧 **Email:** abdulnabi@abdulnabi.org\n- 📱 **Phone:** 0333 7597315\n- 💬 **WhatsApp:** +92 309 3751434\n- 💼 **LinkedIn:** linkedin.com/in/abdul-nabi-95391a3b0\n- 📝 **Contact form:** abdulnabi.org/#contact\n\nTypical response time: **1–2 business days**.";
   }
 
   // About / experience

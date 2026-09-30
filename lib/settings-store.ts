@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   githubUrl: "https://github.com/abdulnabii",
   linkedinUrl: "https://linkedin.com/in/abdul-nabi-95391a3b0",
   whatsapp: "+92 309 3751434",
-  email: "abdulnabi.khaskhely@gmail.com",
+  email: "abdulnabi@abdulnabi.org",
   phone: "0333 7597315",
   cvUrl: "/ab_resume.pdf",
   calendlyUrl: "https://calendly.com",
