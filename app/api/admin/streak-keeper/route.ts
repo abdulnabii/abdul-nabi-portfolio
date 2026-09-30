@@ -174,14 +174,39 @@ export async function GET(req: NextRequest) {
       creds.githubToken
     );
 
-    // Attempt to read latest git commit hash locally if shell available
-    let currentHash = data.lastCommitHash || "42e3dc1";
+    // Fetch latest live commit hash from GitHub API
+    let currentHash = data.lastCommitHash || "";
     try {
-      const { stdout } = await execAsync("git rev-parse --short HEAD", { timeout: 2000 });
-      if (stdout && stdout.trim()) {
-        currentHash = stdout.trim();
+      const ghRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/commits/main`,
+        {
+          headers: {
+            Accept: "application/vnd.github.v3+json",
+            "User-Agent": "abdulnabi-streak-keeper",
+            ...(creds.githubToken ? { Authorization: `Bearer ${creds.githubToken}` } : {}),
+          },
+          cache: "no-store",
+        }
+      );
+      if (ghRes.ok) {
+        const ghJson = await ghRes.json();
+        if (ghJson && ghJson.sha) {
+          currentHash = ghJson.sha.slice(0, 7);
+        }
       }
     } catch {}
+
+    if (!currentHash) {
+      try {
+        const { stdout } = await execAsync("git rev-parse --short HEAD", { timeout: 2000 });
+        if (stdout && stdout.trim()) {
+          currentHash = stdout.trim();
+        }
+      } catch {}
+    }
+    if (!currentHash) {
+      currentHash = "24392bd";
+    }
 
     return NextResponse.json({
       ok: true,
@@ -269,7 +294,13 @@ export async function POST(req: NextRequest) {
         methodUsed = "github_api";
         gitLog = `[GitHub REST API] Successfully committed to branch 'main'.\nCommit SHA: ${commitHash}\nVerified Committer: Abdul Nabi <abdulnabi.khaskhely@gmail.com>\nTriggered auto-deployment on Vercel.`;
       } else {
-        gitLog = `[GitHub REST API Notice] ${apiResult.error || "Token authorization issue."}`;
+        return NextResponse.json(
+          {
+            error: `GitHub API Push Failed: ${apiResult.error || "Token invalid or missing 'repo' write permissions."}`,
+            requiresToken: true,
+          },
+          { status: 400 }
+        );
       }
     }
 
@@ -294,9 +325,13 @@ export async function POST(req: NextRequest) {
           commitHash = hashOut.trim();
         }
       } catch (gitErr: any) {
-        if (!gitLog) {
-          gitLog = gitErr.stdout || gitErr.message || "Local git CLI not available on cloud serverless.";
-        }
+        return NextResponse.json(
+          {
+            error: "A GitHub Personal Access Token (PAT) is required for 1-click cloud push. Please paste your token with 'repo' scope below and try again.",
+            requiresToken: true,
+          },
+          { status: 400 }
+        );
       }
     }
 

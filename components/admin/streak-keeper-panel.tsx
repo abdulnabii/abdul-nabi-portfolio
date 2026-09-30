@@ -71,6 +71,9 @@ export function StreakKeeperPanel() {
 
       const data = await res.json();
       if (!res.ok) {
+        if (data.requiresToken) {
+          setShowTokenInput(true);
+        }
         throw new Error(data.error || "Failed to push streak ping");
       }
 
@@ -83,6 +86,7 @@ export function StreakKeeperPanel() {
       loadStreakInfo();
     } catch (err: any) {
       setGitOutput(`Error: ${err.message}`);
+      setShowTokenInput(true);
       alert(err.message || "Failed to push streak");
     } finally {
       setLoading(false);
