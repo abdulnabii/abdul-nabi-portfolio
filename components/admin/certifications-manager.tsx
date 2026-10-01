@@ -25,10 +25,19 @@ export function CertificationsManager() {
   const [skillsInput, setSkillsInput] = useState("");
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_certifications_data");
+      if (saved) {
+        setCertifications(JSON.parse(saved));
+        setLoading(false);
+      }
+    } catch {}
+
     fetch("/api/admin/certifications")
       .then((r) => r.json())
       .then((d) => {
-        if (d.certifications) setCertifications(d.certifications);
+        const saved = typeof window !== "undefined" ? localStorage.getItem("an_certifications_data") : null;
+        if (!saved && d.certifications) setCertifications(d.certifications);
       })
       .catch((err) => console.error("Failed to load certifications", err))
       .finally(() => setLoading(false));
@@ -36,6 +45,13 @@ export function CertificationsManager() {
 
   const handleSaveAll = async (list: CertificationItem[]) => {
     setSaving(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("an_certifications_data", JSON.stringify(list));
+        window.dispatchEvent(new CustomEvent("an-certifications-updated", { detail: list }));
+      } catch {}
+    }
+
     try {
       const res = await fetch("/api/admin/certifications", {
         method: "PUT",

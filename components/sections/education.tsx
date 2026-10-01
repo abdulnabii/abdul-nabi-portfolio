@@ -9,7 +9,8 @@ import { useSiteSettings } from "@/components/settings-provider";
 import { GraduationCap } from "lucide-react";
 
 export function Education() {
-  const { education: eduData, settings } = useSiteSettings();
+  const { education: eduData, settings, sectionVisibility } = useSiteSettings();
+  if (sectionVisibility && sectionVisibility.education === false) return null;
   const education = eduData || siteContent.education;
   const canonicalLocation = settings?.location || siteContent.location;
 

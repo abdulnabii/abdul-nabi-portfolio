@@ -25,10 +25,19 @@ export function TestimonialsManager() {
   });
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_testimonials_data");
+      if (saved) {
+        setTestimonials(JSON.parse(saved));
+        setLoading(false);
+      }
+    } catch {}
+
     fetch("/api/admin/testimonials")
       .then((r) => r.json())
       .then((d) => {
-        if (d.testimonials) setTestimonials(d.testimonials);
+        const saved = typeof window !== "undefined" ? localStorage.getItem("an_testimonials_data") : null;
+        if (!saved && d.testimonials) setTestimonials(d.testimonials);
       })
       .catch((err) => console.error("Failed to load testimonials", err))
       .finally(() => setLoading(false));
@@ -36,6 +45,13 @@ export function TestimonialsManager() {
 
   const handleSaveAll = async (list: TestimonialItem[]) => {
     setSaving(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("an_testimonials_data", JSON.stringify(list));
+        window.dispatchEvent(new CustomEvent("an-testimonials-updated", { detail: list }));
+      } catch {}
+    }
+
     try {
       const res = await fetch("/api/admin/testimonials", {
         method: "PUT",

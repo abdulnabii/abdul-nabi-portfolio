@@ -89,7 +89,8 @@ function SkillProficiencyBadge({ name }: { name: string }) {
 }
 
 export function Skills() {
-  const { skills: skillsData } = useSiteSettings();
+  const { skills: skillsData, sectionVisibility } = useSiteSettings();
+  if (sectionVisibility && sectionVisibility.skills === false) return null;
   const categories = skillsData || siteContent.skills;
 
   return (

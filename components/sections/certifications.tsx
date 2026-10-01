@@ -8,19 +8,40 @@ import { Award, ExternalLink, CheckCircle2, Shield, Sparkles } from "lucide-reac
 import seedCerts from "@/data/certifications.json";
 import type { CertificationItem } from "@/lib/settings-store";
 
+import { useSiteSettings } from "@/components/settings-provider";
+
 export function Certifications() {
+  const { sectionVisibility } = useSiteSettings();
   const [certs, setCerts] = useState<CertificationItem[]>(seedCerts as CertificationItem[]);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_certifications_data");
+      if (saved) setCerts(JSON.parse(saved));
+    } catch {}
+
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) setCerts(customEvent.detail);
+    };
+    window.addEventListener("an-certifications-updated", handleUpdate);
+
     fetch("/api/admin/certifications")
       .then((r) => r.json())
       .then((d) => {
-        if (d.certifications && d.certifications.length > 0) {
+        const saved = typeof window !== "undefined" ? localStorage.getItem("an_certifications_data") : null;
+        if (!saved && d.certifications && d.certifications.length > 0) {
           setCerts(d.certifications);
         }
       })
       .catch(() => {});
+
+    return () => window.removeEventListener("an-certifications-updated", handleUpdate);
   }, []);
+
+  if (sectionVisibility && sectionVisibility.certifications === false) {
+    return null;
+  }
 
   return (
     <section

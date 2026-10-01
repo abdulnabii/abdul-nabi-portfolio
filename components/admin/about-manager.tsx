@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { AboutData } from "@/lib/settings-store";
 import { AlertCircle, CheckCircle2, Plus, Save, Trash2, ArrowUp, ArrowDown } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 interface AboutManagerProps {
   initialAbout: AboutData;
@@ -16,6 +16,15 @@ export function AboutManager({ initialAbout }: AboutManagerProps) {
   const [loading, setLoading] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_about_data");
+      if (saved) {
+        setAbout(JSON.parse(saved));
+      }
+    } catch {}
+  }, []);
 
   const handleParagraphChange = (index: number, val: string) => {
     const next = [...about.paragraphs];
@@ -74,6 +83,7 @@ export function AboutManager({ initialAbout }: AboutManagerProps) {
       if (typeof window !== "undefined") {
         try {
           localStorage.setItem("an_about_data", JSON.stringify(about));
+          window.dispatchEvent(new CustomEvent("an-about-updated", { detail: about }));
         } catch {}
       }
 

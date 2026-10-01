@@ -8,7 +8,10 @@ import { Star, Quote, ShieldCheck, Linkedin, Award, Briefcase } from "lucide-rea
 import seedTestimonials from "@/data/testimonials.json";
 import type { TestimonialItem } from "@/lib/settings-store";
 
+import { useSiteSettings } from "@/components/settings-provider";
+
 export function Testimonials({ initialTestimonials }: { initialTestimonials?: TestimonialItem[] } = {}) {
+  const { sectionVisibility } = useSiteSettings();
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>(
     initialTestimonials && initialTestimonials.length > 0
       ? initialTestimonials
@@ -16,18 +19,33 @@ export function Testimonials({ initialTestimonials }: { initialTestimonials?: Te
   );
 
   useEffect(() => {
-    // Only fetch if initialTestimonials was not supplied on server render
-    if (!initialTestimonials || initialTestimonials.length === 0) {
-      fetch("/api/admin/testimonials")
-        .then((r) => r.json())
-        .then((d) => {
-          if (d.testimonials && d.testimonials.length > 0) {
-            setTestimonials(d.testimonials);
-          }
-        })
-        .catch(() => {});
-    }
+    try {
+      const saved = localStorage.getItem("an_testimonials_data");
+      if (saved) setTestimonials(JSON.parse(saved));
+    } catch {}
+
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) setTestimonials(customEvent.detail);
+    };
+    window.addEventListener("an-testimonials-updated", handleUpdate);
+
+    fetch("/api/admin/testimonials")
+      .then((r) => r.json())
+      .then((d) => {
+        const saved = typeof window !== "undefined" ? localStorage.getItem("an_testimonials_data") : null;
+        if (!saved && d.testimonials && d.testimonials.length > 0) {
+          setTestimonials(d.testimonials);
+        }
+      })
+      .catch(() => {});
+
+    return () => window.removeEventListener("an-testimonials-updated", handleUpdate);
   }, [initialTestimonials]);
+
+  if (sectionVisibility && sectionVisibility.testimonials === false) {
+    return null;
+  }
 
   return (
     <section

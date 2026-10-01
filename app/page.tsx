@@ -17,6 +17,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getPublishedBlogs } from "@/lib/blog-store";
 import { getSectionVisibility, getTestimonials } from "@/lib/settings-store";
+import { SectionVisibilityGate } from "@/components/ui/section-visibility-gate";
 import { ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -29,56 +30,84 @@ export default async function HomePage() {
 
   return (
     <>
-      {vis.hero && <Hero />}
-      {vis.about && <About />}
-      {vis.skills && <Skills />}
-      {vis.projects && <Projects />}
-      {vis.miniProjects && <MiniProjects />}
-      {vis.experience && <Experience />}
-      {vis.education && <Education />}
-      {vis.certifications !== false && <Certifications />}
-      {vis.achievements && <Achievements />}
-      {vis.process !== false && <Process />}
-      {vis.testimonials !== false && <Testimonials initialTestimonials={testimonials} />}
-      {vis.games && <MiniGames />}
+      <SectionVisibilityGate sectionKey="hero">
+        {vis.hero && <Hero />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="about">
+        {vis.about && <About />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="skills">
+        {vis.skills && <Skills />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="projects">
+        {vis.projects && <Projects />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="miniProjects">
+        {vis.miniProjects && <MiniProjects />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="experience">
+        {vis.experience && <Experience />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="education">
+        {vis.education && <Education />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="certifications">
+        {vis.certifications !== false && <Certifications />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="achievements">
+        {vis.achievements && <Achievements />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="process">
+        {vis.process !== false && <Process />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="testimonials">
+        {vis.testimonials !== false && <Testimonials initialTestimonials={testimonials} />}
+      </SectionVisibilityGate>
+      <SectionVisibilityGate sectionKey="games">
+        {vis.games && <MiniGames />}
+      </SectionVisibilityGate>
 
-      {vis.blog && (
-        <section id="blog" className="section-padding relative">
-          <div className="container-narrow space-y-10">
-            <Reveal>
-              <SectionHeading
-                eyebrow="Insights & Writing"
-                title="Latest Developer Blog Posts"
-              />
-            </Reveal>
+      <SectionVisibilityGate sectionKey="blog">
+        {vis.blog && (
+          <section id="blog" className="section-padding relative">
+            <div className="container-narrow space-y-10">
+              <Reveal>
+                <SectionHeading
+                  eyebrow="Insights & Writing"
+                  title="Latest Developer Blog Posts"
+                />
+              </Reveal>
 
-            {latestPosts.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2">
-                {latestPosts.map((post, idx) => (
-                  <Reveal key={post.slug} delay={idx * 0.1}>
-                    <BlogCard post={post} />
-                  </Reveal>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center text-slate-400 text-sm py-8">
-                No blog posts published yet.
-              </div>
-            )}
+              {latestPosts.length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2">
+                  {latestPosts.map((post, idx) => (
+                    <Reveal key={post.slug} delay={idx * 0.1}>
+                      <BlogCard post={post} />
+                    </Reveal>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-slate-400 text-sm py-8">
+                  No blog posts published yet.
+                </div>
+              )}
 
-            <Reveal delay={0.2}>
-              <div className="flex justify-center pt-2">
-                <LinkButton href="/blog" variant="secondary" className="gap-2 text-xs">
-                  View All Blog Posts
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </LinkButton>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-      )}
+              <Reveal delay={0.2}>
+                <div className="flex justify-center pt-2">
+                  <LinkButton href="/blog" variant="secondary" className="gap-2 text-xs">
+                    View All Blog Posts
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </LinkButton>
+                </div>
+              </Reveal>
+            </div>
+          </section>
+        )}
+      </SectionVisibilityGate>
 
-      {vis.contact && <Contact />}
+      <SectionVisibilityGate sectionKey="contact">
+        {vis.contact && <Contact />}
+      </SectionVisibilityGate>
     </>
   );
 }

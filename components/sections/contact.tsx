@@ -81,7 +81,7 @@ const socialIcons = {
 };
 
 export function Contact() {
-  const { settings } = useSiteSettings();
+  const { settings, sectionVisibility } = useSiteSettings();
   const { toast } = useToast();
   const [form, setForm] = useState<FormState>(initialState);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -89,6 +89,8 @@ export function Contact() {
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [calendlyOpen, setCalendlyOpen] = useState(false);
+
+  if (sectionVisibility && sectionVisibility.contact === false) return null;
 
   const email = settings.email || siteContent.email?.trim() || "abdulnabi@abdulnabi.org";
   const location = settings.location || siteContent.location || "Karachi, Sindh, Pakistan";

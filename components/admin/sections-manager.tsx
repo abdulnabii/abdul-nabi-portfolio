@@ -34,33 +34,53 @@ export function SectionsManager() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_live_sections");
+      if (saved) {
+        setVisibility({ ...DEFAULT_VISIBILITY, ...JSON.parse(saved) });
+        setLoading(false);
+      }
+    } catch {}
+
     fetch("/api/admin/sections")
       .then((r) => r.json())
-      .then((d) => { if (d.visibility) setVisibility({ ...DEFAULT_VISIBILITY, ...d.visibility }); })
+      .then((d) => {
+        const saved = typeof window !== "undefined" ? localStorage.getItem("an_live_sections") : null;
+        if (!saved && d.visibility) {
+          setVisibility({ ...DEFAULT_VISIBILITY, ...d.visibility });
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
   const toggle = (key: keyof SectionVisibility) => {
-    setVisibility((prev) => ({ ...prev, [key]: !prev[key] }));
+    setVisibility((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      try {
+        localStorage.setItem("an_live_sections", JSON.stringify(next));
+        window.dispatchEvent(new CustomEvent("an-sections-updated", { detail: next }));
+      } catch {}
+      return next;
+    });
     setSaved(false);
   };
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await fetch("/api/admin/sections", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(visibility),
-      });
-
       if (typeof window !== "undefined") {
         try {
           localStorage.setItem("an_live_sections", JSON.stringify(visibility));
           window.dispatchEvent(new CustomEvent("an-sections-updated", { detail: visibility }));
         } catch {}
       }
+
+      await fetch("/api/admin/sections", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(visibility),
+      });
 
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);

@@ -21,6 +21,7 @@ import {
   Keyboard,
   Shield,
 } from "lucide-react";
+import { useSiteSettings } from "@/components/settings-provider";
 
 const SnakeGame = dynamic(() => import("@/components/games/snake-game").then(m => m.SnakeGame), {
   ssr: false,
@@ -166,8 +167,11 @@ const GAMES: GameSpec[] = [
 ];
 
 export function MiniGames() {
+  const { sectionVisibility } = useSiteSettings();
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const game = GAMES.find((g) => g.id === activeGame);
+
+  if (sectionVisibility && sectionVisibility.games === false) return null;
 
   return (
     <section id="games" className="section-padding relative" aria-labelledby="games-heading">

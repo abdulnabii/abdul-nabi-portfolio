@@ -93,15 +93,38 @@ const DEFAULT_ACHIEVEMENTS: AchievementItem[] = [
   },
 ];
 
+import { useSiteSettings } from "@/components/settings-provider";
+
 export function Achievements() {
+  const { sectionVisibility } = useSiteSettings();
   const [achievements, setAchievements] = useState<AchievementItem[]>(DEFAULT_ACHIEVEMENTS);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_achievements_data");
+      if (saved) setAchievements(JSON.parse(saved));
+    } catch {}
+
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) setAchievements(customEvent.detail);
+    };
+    window.addEventListener("an-achievements-updated", handleUpdate);
+
     fetch("/api/admin/achievements")
       .then((r) => r.json())
-      .then((d) => { if (d.achievements?.length) setAchievements(d.achievements); })
+      .then((d) => {
+        const saved = typeof window !== "undefined" ? localStorage.getItem("an_achievements_data") : null;
+        if (!saved && d.achievements?.length) setAchievements(d.achievements);
+      })
       .catch(() => {});
+
+    return () => window.removeEventListener("an-achievements-updated", handleUpdate);
   }, []);
+
+  if (sectionVisibility && sectionVisibility.achievements === false) {
+    return null;
+  }
 
   const categories = Array.from(new Set(achievements.map((a) => a.category)));
 

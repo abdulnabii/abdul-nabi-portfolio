@@ -68,15 +68,22 @@ export function SettingsProvider({
       if (res.ok) {
         const data = await res.json();
         if (data.settings) {
-          setSettings((prev) => ({ ...prev, ...data.settings }));
-          try {
-            localStorage.setItem("an_live_settings", JSON.stringify(data.settings));
-          } catch {}
+          const local = typeof window !== "undefined" ? localStorage.getItem("an_live_settings") : null;
+          if (!local) {
+            setSettings((prev) => ({ ...prev, ...data.settings }));
+          } else {
+            try {
+              const parsed = JSON.parse(local);
+              setSettings((prev) => ({ ...prev, ...data.settings, ...parsed }));
+            } catch {
+              setSettings((prev) => ({ ...prev, ...data.settings }));
+            }
+          }
         }
-        if (data.about) setAbout(data.about);
-        if (data.skills) setSkills(data.skills);
-        if (data.experience) setExperience(data.experience);
-        if (data.education) setEducation(data.education);
+        if (data.about && !localStorage.getItem("an_about_data")) setAbout(data.about);
+        if (data.skills && !localStorage.getItem("an_skills_data")) setSkills(data.skills);
+        if (data.experience && !localStorage.getItem("an_experience_data")) setExperience(data.experience);
+        if (data.education && !localStorage.getItem("an_education_data")) setEducation(data.education);
       }
     } catch {}
     try {
@@ -84,11 +91,18 @@ export function SettingsProvider({
       if (res2.ok) {
         const data2 = await res2.json();
         if (data2.visibility) {
-          const mergedVis = { ...DEFAULT_VISIBILITY, ...data2.visibility };
-          setSectionVisibility(mergedVis);
-          try {
-            localStorage.setItem("an_live_sections", JSON.stringify(mergedVis));
-          } catch {}
+          const local = typeof window !== "undefined" ? localStorage.getItem("an_live_sections") : null;
+          if (!local) {
+            const mergedVis = { ...DEFAULT_VISIBILITY, ...data2.visibility };
+            setSectionVisibility(mergedVis);
+          } else {
+            try {
+              const parsed = JSON.parse(local);
+              setSectionVisibility({ ...DEFAULT_VISIBILITY, ...data2.visibility, ...parsed });
+            } catch {
+              setSectionVisibility({ ...DEFAULT_VISIBILITY, ...data2.visibility });
+            }
+          }
         }
       }
     } catch {}
@@ -106,6 +120,22 @@ export function SettingsProvider({
       if (localSections) {
         const parsed = JSON.parse(localSections);
         setSectionVisibility((prev) => ({ ...prev, ...parsed }));
+      }
+      const localAbout = localStorage.getItem("an_about_data");
+      if (localAbout) {
+        setAbout((prev) => ({ ...prev, ...JSON.parse(localAbout) }));
+      }
+      const localSkills = localStorage.getItem("an_skills_data");
+      if (localSkills) {
+        setSkills(JSON.parse(localSkills));
+      }
+      const localExp = localStorage.getItem("an_experience_data");
+      if (localExp) {
+        setExperience(JSON.parse(localExp));
+      }
+      const localEdu = localStorage.getItem("an_education_data");
+      if (localEdu) {
+        setEducation(JSON.parse(localEdu));
       }
     } catch {}
 
@@ -125,6 +155,23 @@ export function SettingsProvider({
         setSectionVisibility((prev) => ({ ...prev, ...customEvent.detail }));
       }
     };
+    const handleAboutUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) setAbout(customEvent.detail);
+    };
+    const handleSkillsUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) setSkills(customEvent.detail);
+    };
+    const handleExpUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) setExperience(customEvent.detail);
+    };
+    const handleEduUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) setEducation(customEvent.detail);
+    };
+
     // 4. Listen to cross-tab updates via storage event
     const handleStorage = (e: StorageEvent) => {
       if (e.key === "an_live_settings" && e.newValue) {
@@ -137,15 +184,35 @@ export function SettingsProvider({
           setSectionVisibility((prev) => ({ ...prev, ...JSON.parse(e.newValue!) }));
         } catch {}
       }
+      if (e.key === "an_about_data" && e.newValue) {
+        try { setAbout(JSON.parse(e.newValue!)); } catch {}
+      }
+      if (e.key === "an_skills_data" && e.newValue) {
+        try { setSkills(JSON.parse(e.newValue!)); } catch {}
+      }
+      if (e.key === "an_experience_data" && e.newValue) {
+        try { setExperience(JSON.parse(e.newValue!)); } catch {}
+      }
+      if (e.key === "an_education_data" && e.newValue) {
+        try { setEducation(JSON.parse(e.newValue!)); } catch {}
+      }
     };
 
     window.addEventListener("an-settings-updated", handleSettingsUpdated);
     window.addEventListener("an-sections-updated", handleSectionsUpdated);
+    window.addEventListener("an-about-updated", handleAboutUpdated);
+    window.addEventListener("an-skills-updated", handleSkillsUpdated);
+    window.addEventListener("an-experience-updated", handleExpUpdated);
+    window.addEventListener("an-education-updated", handleEduUpdated);
     window.addEventListener("storage", handleStorage);
 
     return () => {
       window.removeEventListener("an-settings-updated", handleSettingsUpdated);
       window.removeEventListener("an-sections-updated", handleSectionsUpdated);
+      window.removeEventListener("an-about-updated", handleAboutUpdated);
+      window.removeEventListener("an-skills-updated", handleSkillsUpdated);
+      window.removeEventListener("an-experience-updated", handleExpUpdated);
+      window.removeEventListener("an-education-updated", handleEduUpdated);
       window.removeEventListener("storage", handleStorage);
     };
   }, []);
@@ -174,3 +241,5 @@ export function useSiteSettings() {
   }
   return ctx;
 }
+
+export const useSettings = useSiteSettings;

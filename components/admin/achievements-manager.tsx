@@ -25,9 +25,20 @@ export function AchievementsManager() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_achievements_data");
+      if (saved) {
+        setItems(JSON.parse(saved));
+        setLoading(false);
+      }
+    } catch {}
+
     fetch("/api/admin/achievements")
       .then((r) => r.json())
-      .then((d) => { if (d.achievements?.length) setItems(d.achievements); })
+      .then((d) => {
+        const saved = typeof window !== "undefined" ? localStorage.getItem("an_achievements_data") : null;
+        if (!saved && d.achievements?.length) setItems(d.achievements);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -57,6 +68,13 @@ export function AchievementsManager() {
 
   const handleSave = async () => {
     setSaving(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("an_achievements_data", JSON.stringify(items));
+        window.dispatchEvent(new CustomEvent("an-achievements-updated", { detail: items }));
+      } catch {}
+    }
+
     try {
       await fetch("/api/admin/achievements", {
         method: "PUT",

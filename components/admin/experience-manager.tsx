@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { ExperienceItem, EducationItem } from "@/data/content";
 import { AlertCircle, CheckCircle2, Plus, Save, Trash2, ArrowUp, ArrowDown, Briefcase, GraduationCap, X } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 interface ExperienceManagerProps {
   initialExperience: ExperienceItem[];
@@ -23,6 +23,15 @@ export function ExperienceManager({
   const [loading, setLoading] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const savedExp = localStorage.getItem("an_experience_data");
+      if (savedExp) setExperience(JSON.parse(savedExp));
+      const savedEdu = localStorage.getItem("an_education_data");
+      if (savedEdu) setEducation(JSON.parse(savedEdu));
+    } catch {}
+  }, []);
 
   // Experience handlers
   const handleExpChange = (index: number, field: keyof ExperienceItem, value: any) => {
@@ -160,8 +169,10 @@ export function ExperienceManager({
         try {
           if (activeTab === "experience") {
             localStorage.setItem("an_experience_data", JSON.stringify(experience));
+            window.dispatchEvent(new CustomEvent("an-experience-updated", { detail: experience }));
           } else {
             localStorage.setItem("an_education_data", JSON.stringify(education));
+            window.dispatchEvent(new CustomEvent("an-education-updated", { detail: education }));
           }
         } catch {}
       }

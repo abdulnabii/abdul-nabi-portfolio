@@ -5,6 +5,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Compass, Server, Code2, Rocket, ArrowRight, ShieldCheck } from "lucide-react";
+import { useSiteSettings } from "@/components/settings-provider";
 
 const PROCESS_STEPS = [
   {
@@ -42,6 +43,9 @@ const PROCESS_STEPS = [
 ];
 
 export function Process() {
+  const { sectionVisibility } = useSiteSettings();
+  if (sectionVisibility && sectionVisibility.process === false) return null;
+
   return (
     <section
       id="process"

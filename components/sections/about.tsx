@@ -45,7 +45,8 @@ function StatValueDisplay({ value, isLongValue }: { value: string; isLongValue: 
 }
 
 export function About() {
-  const { settings, about: aboutState } = useSiteSettings();
+  const { settings, about: aboutState, sectionVisibility } = useSiteSettings();
+  if (sectionVisibility && sectionVisibility.about === false) return null;
   const name = settings.fullName || siteContent.name;
   const about = aboutState || siteContent.about;
 

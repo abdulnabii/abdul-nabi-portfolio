@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { SiteSettings } from "@/lib/settings-store";
 import { AlertCircle, CheckCircle2, RefreshCw, Save, Sliders } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { CvManager } from "./cv-manager";
 
 interface SettingsFormProps {
@@ -19,6 +19,15 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const [revalidateMsg, setRevalidateMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_live_settings");
+      if (saved) {
+        setSettings((prev) => ({ ...prev, ...JSON.parse(saved) }));
+      }
+    } catch {}
+  }, []);
 
   function handleChange(field: keyof SiteSettings, value: string) {
     setSettings((prev) => ({ ...prev, [field]: value }));

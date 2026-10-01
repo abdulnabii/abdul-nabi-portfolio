@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { SkillCategory } from "@/data/content";
 import { AlertCircle, CheckCircle2, Plus, Save, Trash2, X, ArrowUp, ArrowDown } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 interface StackManagerProps {
   initialSkills: SkillCategory[];
@@ -17,6 +17,15 @@ export function StackManager({ initialSkills }: StackManagerProps) {
   const [loading, setLoading] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("an_skills_data");
+      if (saved) {
+        setCategories(JSON.parse(saved));
+      }
+    } catch {}
+  }, []);
 
   const handleCategoryTitleChange = (index: number, title: string) => {
     const next = [...categories];
@@ -90,6 +99,7 @@ export function StackManager({ initialSkills }: StackManagerProps) {
       if (typeof window !== "undefined") {
         try {
           localStorage.setItem("an_skills_data", JSON.stringify(categories));
+          window.dispatchEvent(new CustomEvent("an-skills-updated", { detail: categories }));
         } catch {}
       }
 

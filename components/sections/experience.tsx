@@ -7,7 +7,8 @@ import { siteContent } from "@/data/content";
 import { useSiteSettings } from "@/components/settings-provider";
 
 export function Experience() {
-  const { experience: expData } = useSiteSettings();
+  const { experience: expData, sectionVisibility } = useSiteSettings();
+  if (sectionVisibility && sectionVisibility.experience === false) return null;
   const experience = expData || siteContent.experience;
   return (
     <section

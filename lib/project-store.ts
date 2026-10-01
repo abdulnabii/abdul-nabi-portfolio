@@ -1,8 +1,10 @@
 import { promises as fs } from "fs";
 import path from "path";
+import os from "os";
 import { Project } from "@/data/content";
 
 const PROJECTS_FILE = path.join(process.cwd(), "data", "projects.json");
+const PROJECTS_TMP_FILE = path.join(os.tmpdir(), "an_projects.json");
 
 async function ensureProjectsFile(): Promise<void> {
   try {
@@ -41,10 +43,15 @@ export async function getAllProjects(): Promise<Project[]> {
       });
     });
 
-    // 2. Read from disk if readable
+    // 2. Read from disk or tmp if readable
     try {
-      await ensureProjectsFile();
-      const raw = await fs.readFile(PROJECTS_FILE, "utf8");
+      let raw = "";
+      try {
+        raw = await fs.readFile(PROJECTS_TMP_FILE, "utf8");
+      } catch {
+        await ensureProjectsFile();
+        raw = await fs.readFile(PROJECTS_FILE, "utf8");
+      }
       const projects = JSON.parse(raw) as Project[];
       projects.forEach((p) => {
         const existing = map.get(p.id);
@@ -141,12 +148,17 @@ export async function saveAllProjects(projects: Project[]): Promise<void> {
       await supabaseDbUpsert("projects", projects);
     } catch {}
 
-    // 3. Write to local disk if filesystem is writeable
+    // 3. Always write to tmp file (writable in serverless)
+    try {
+      await fs.writeFile(PROJECTS_TMP_FILE, JSON.stringify(projects, null, 2), "utf8");
+    } catch {}
+
+    // 4. Write to local disk if filesystem is writeable
     try {
       await ensureProjectsFile();
       await fs.writeFile(PROJECTS_FILE, JSON.stringify(projects, null, 2), "utf8");
     } catch (err) {
-      console.warn("[project-store] Read-only filesystem detected, saved to memory & Supabase fallback.");
+      console.warn("[project-store] Read-only filesystem detected, saved to tmp, memory & Supabase fallback.");
     }
   } catch (err) {
     console.error("[saveAllProjects] Exception:", err);

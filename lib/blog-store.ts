@@ -1,6 +1,7 @@
 import seedBlogs from "@/data/blogs.json";
 import { promises as fs } from "fs";
 import path from "path";
+import os from "os";
 import { supabaseDbDelete, supabaseDbQuery, supabaseDbUpsert } from "./supabase";
 
 export interface BlogPost {
@@ -25,6 +26,7 @@ export interface BlogPost {
 }
 
 const BLOGS_FILE = path.join(process.cwd(), "data", "blogs.json");
+const BLOGS_TMP_FILE = path.join(os.tmpdir(), "an_blogs.json");
 const TRASH_FILE = path.join(process.cwd(), "data", "blogs_trash.json");
 const memoryBlogs: BlogPost[] = [];
 const memoryTrash: BlogPost[] = [];
@@ -93,10 +95,15 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
       if (!isDeleted(p.slug)) map.set(p.slug, p);
     });
 
-    // 2. Read from disk if writeable/readable
+    // 2. Read from disk or tmp if writeable/readable
     try {
-      await ensureBlogsFile();
-      const raw = await fs.readFile(BLOGS_FILE, "utf8");
+      let raw = "";
+      try {
+        raw = await fs.readFile(BLOGS_TMP_FILE, "utf8");
+      } catch {
+        await ensureBlogsFile();
+        raw = await fs.readFile(BLOGS_FILE, "utf8");
+      }
       const posts = JSON.parse(raw) as BlogPost[];
       posts.forEach((p) => {
         if (!isDeleted(p.slug)) map.set(p.slug, p);
@@ -259,7 +266,12 @@ export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
       await supabaseDbUpsert("blogs", dbPayload, "slug");
     } catch {}
 
-    // 4. Write to local disk if filesystem is writeable
+    // 4. Always write to tmp file (writable in serverless)
+    try {
+      await fs.writeFile(BLOGS_TMP_FILE, JSON.stringify(posts, null, 2), "utf8");
+    } catch {}
+
+    // 5. Write to local disk if filesystem is writeable
     try {
       await ensureBlogsFile();
       await fs.writeFile(BLOGS_FILE, JSON.stringify(posts, null, 2), "utf8");

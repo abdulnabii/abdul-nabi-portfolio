@@ -1,4 +1,10 @@
 import { supabaseDbQuery, supabaseDbUpsert } from "./supabase";
+import fs from "fs";
+import path from "path";
+import os from "os";
+
+const MINI_PROJECTS_PRIMARY_FILE = path.join(process.cwd(), "data", "mini-projects.json");
+const MINI_PROJECTS_TMP_FILE = path.join(os.tmpdir(), "an_mini_projects.json");
 
 export interface MiniProject {
   id: string;
@@ -411,6 +417,23 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
 let memoryMiniProjects: MiniProject[] = [...INITIAL_MINI_PROJECTS];
 
 export async function getMiniProjects(): Promise<MiniProject[]> {
+  // 1. Try tmp or local file first
+  try {
+    let raw = "";
+    if (fs.existsSync(MINI_PROJECTS_TMP_FILE)) {
+      raw = fs.readFileSync(MINI_PROJECTS_TMP_FILE, "utf-8");
+    } else if (fs.existsSync(MINI_PROJECTS_PRIMARY_FILE)) {
+      raw = fs.readFileSync(MINI_PROJECTS_PRIMARY_FILE, "utf-8");
+    }
+    if (raw) {
+      const parsed = JSON.parse(raw) as MiniProject[];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        memoryMiniProjects = parsed;
+      }
+    }
+  } catch {}
+
+  // 2. Try Supabase
   try {
     const rows = await supabaseDbQuery<{ key: string; value: string }>(
       "site_settings",
@@ -445,14 +468,30 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
     console.error("[getMiniProjects] Exception:", err);
   }
 
-  // Fallback to initial 30 items
-  memoryMiniProjects = [...INITIAL_MINI_PROJECTS];
+  // Fallback to memory or initial 30 items
+  if (memoryMiniProjects.length === 0) {
+    memoryMiniProjects = [...INITIAL_MINI_PROJECTS];
+  }
   return memoryMiniProjects.sort((a, b) => a.dayNumber - b.dayNumber);
 }
 
 export async function saveMiniProjects(projects: MiniProject[]): Promise<MiniProject[]> {
   try {
     memoryMiniProjects = [...projects];
+
+    // Write to tmp file (guaranteed on serverless)
+    try {
+      fs.writeFileSync(MINI_PROJECTS_TMP_FILE, JSON.stringify(projects, null, 2), "utf-8");
+    } catch {}
+
+    // Write to local repo file if writable
+    try {
+      const dir = path.dirname(MINI_PROJECTS_PRIMARY_FILE);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(MINI_PROJECTS_PRIMARY_FILE, JSON.stringify(projects, null, 2), "utf-8");
+    } catch {}
+
+    // Upsert to Supabase
     await supabaseDbUpsert("site_settings", [
       {
         key: "mini_projects_data",

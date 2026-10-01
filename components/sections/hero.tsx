@@ -32,7 +32,8 @@ const iconMap = {
 };
 
 export function Hero() {
-  const { settings } = useSiteSettings();
+  const { settings, sectionVisibility } = useSiteSettings();
+  if (sectionVisibility && sectionVisibility.hero === false) return null;
   const { hero, resumeUrl } = siteContent;
   const fullName = settings.fullName || siteContent.name;
   const location = settings.location || siteContent.location;
@@ -116,7 +117,7 @@ export function Hero() {
                 {hero.ctaSecondary.label}
               </LinkButton>
               <a
-                href="/ab_resume.pdf"
+                href={settings.cvUrl || "/ab_resume.pdf"}
                 download="Abdul_Nabi_Resume.pdf"
                 className="cursor-grow inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-5 py-3 text-sm font-medium text-slate-200 transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white"
               >
