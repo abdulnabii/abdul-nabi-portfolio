@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { GlassCard } from "@/components/ui/glass-card";
 import type { BlogPost } from "@/lib/blog-store";
+import { getCuratedTopicCoverImage } from "@/lib/image-search";
 import { formatDate } from "@/lib/utils";
 import { ArrowUpRight, Clock, Eye, Sparkles } from "lucide-react";
 import Image from "next/image";
@@ -15,7 +16,18 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post, index = 0 }: BlogCardProps) {
-  const [imageError, setImageError] = useState(false);
+  const fallbackUrl = getCuratedTopicCoverImage(post.title, post.tags);
+  const [imgSrc, setImgSrc] = useState<string>(post.coverImage || fallbackUrl);
+  const [hasFailed, setHasFailed] = useState(false);
+
+  const handleImageError = () => {
+    if (imgSrc !== fallbackUrl) {
+      setImgSrc(fallbackUrl);
+    } else {
+      setHasFailed(true);
+    }
+  };
+
   // Estimate read time if not formatted
   const readTime = post.readTime || `${Math.max(2, Math.ceil((post.content?.split(/\s+/).length || 300) / 200))} min read`;
   const views = post.views ?? 0;
@@ -37,19 +49,28 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
           className="flex h-full flex-col overflow-hidden cursor-grow"
         >
           <div className="relative h-44 w-full overflow-hidden border-b border-white/10 bg-[#060a17]">
-            {post.coverImage && !imageError ? (
+            {!hasFailed && imgSrc ? (
               <Image
-                src={post.coverImage}
+                src={imgSrc}
                 alt={post.title}
                 fill
                 unoptimized
-                onError={() => setImageError(true)}
+                onError={handleImageError}
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-indigo-950/60 via-[#0a0f1e] to-purple-950/40 flex items-center justify-center">
-                <Sparkles className="h-7 w-7 text-indigo-400/40" />
+              <div className="relative h-full w-full bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/80 p-5 flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold uppercase tracking-wider bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                    <Sparkles className="h-3 w-3 text-indigo-400" />
+                    {post.tags?.[0] || "Architecture"}
+                  </span>
+                  <span className="text-[11px] font-mono text-slate-500">abdulnabi.org</span>
+                </div>
+                <div className="font-semibold text-sm text-slate-200 line-clamp-2">
+                  {post.title}
+                </div>
               </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e]/80 via-transparent to-transparent pointer-events-none" />

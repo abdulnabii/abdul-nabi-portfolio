@@ -9,7 +9,7 @@
  */
 
 import { createBlog, getAllBlogs, moveToTrash, slugify, BlogPost } from "./blog-store";
-import { generateAiBlogCoverImage, getUniqueTopicCoverImage } from "./image-search";
+import { generateAiBlogCoverImage, getUniqueTopicCoverImage, getArticleContentImages } from "./image-search";
 import { supabaseDbUpsert } from "./supabase";
 import { revalidatePath } from "next/cache";
 
@@ -406,6 +406,9 @@ function generateTechnicalFallbackPost(
   tagsSet.add("Tech Trends");
   const tags = Array.from(tagsSet).slice(0, 5);
 
+  const { architectureImage, architectureCaption, benchmarkImage, benchmarkCaption } =
+    getArticleContentImages(cleanTitle, tags);
+
   const contextNotes = relatedNews
     .filter((n) => n.title && n.title.trim().toLowerCase() !== cleanTitle.toLowerCase())
     .slice(0, 3)
@@ -425,6 +428,8 @@ ${relatedContextSection}
 ---
 
 ## Core Architecture & Execution Flow
+
+![${architectureCaption}](${architectureImage})
 
 To understand why this pattern matters, here is how the data and compute flow breaks down across production layers:
 
@@ -484,6 +489,8 @@ export async function handleTechnicalEvent(req: NextRequest): Promise<NextRespon
 ---
 
 ## Real-World Case Study: Lessons from Production
+
+![${benchmarkCaption}](${benchmarkImage})
 
 In my own work developing the **Blood Sugar Tracker** (an AI clinical risk prediction system built with Next.js, Python Scikit-Learn/XGBoost, and Supabase RLS), we faced similar trade-offs when balancing model precision against client latency:
 
@@ -618,11 +625,36 @@ Respond ONLY with valid JSON in this exact structure:
     const tags = Array.isArray(parsed.tags) ? parsed.tags.slice(0, 6) : ["AI", "Machine Learning", "Tech Trends"];
     const coverImage = generateAiBlogCoverImage(parsed.title, tags, parsed.visualPrompt, imageStyle);
 
+    let enrichedContent = parsed.content;
+    if (!enrichedContent.includes("![")) {
+      const { architectureImage, architectureCaption, benchmarkImage, benchmarkCaption } =
+        getArticleContentImages(parsed.title, tags);
+
+      // Inject architecture figure after the first h2 section
+      const firstH2Match = enrichedContent.match(/\n##\s+[^\n]+\n/);
+      if (firstH2Match && firstH2Match.index !== undefined) {
+        const insertPos = firstH2Match.index + firstH2Match[0].length;
+        enrichedContent =
+          enrichedContent.slice(0, insertPos) +
+          `\n![${architectureCaption}](${architectureImage})\n\n` +
+          enrichedContent.slice(insertPos);
+      }
+
+      // Inject benchmark figure before the final conclusion or takeaways
+      const lastH2Index = enrichedContent.lastIndexOf("\n## ");
+      if (lastH2Index > 300) {
+        enrichedContent =
+          enrichedContent.slice(0, lastH2Index) +
+          `\n\n![${benchmarkCaption}](${benchmarkImage})\n\n` +
+          enrichedContent.slice(lastH2Index);
+      }
+    }
+
     return {
       title: parsed.title,
       slug: slugify(parsed.slug || parsed.title),
       excerpt: parsed.excerpt,
-      content: parsed.content,
+      content: enrichedContent,
       tags,
       coverImage,
       visualPrompt: parsed.visualPrompt,

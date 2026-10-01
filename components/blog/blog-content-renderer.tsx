@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Check, Copy, Terminal } from "lucide-react";
+import Image from "next/image";
+import { Check, Copy, Terminal, Image as ImageIcon } from "lucide-react";
 
 interface CodeBlockProps {
   code: string;
@@ -91,7 +92,9 @@ function renderInline(text: string): React.ReactNode {
     .replace(/&quot;/gi, '"')
     .replace(/&#39;/gi, "'")
     // Remove Google News RSS redirect links which stretch mobile frames
-    .replace(/https?:\/\/news\.google\.com\/[^\s)\]]+/g, "");
+    .replace(/https?:\/\/news\.google\.com\/[^\s)\]]+/g, "")
+    // Inline images fallback to link if not captured by block parser
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, "[$1]($2)");
 
   // Regex tokenizer for [text](url), `code`, **bold**, *italic*, raw URLs
   const tokenRegex = /(\[[^\]]+\]\([^\)]+\)|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*|https?:\/\/[^\s<]+)/g;
@@ -208,6 +211,43 @@ function renderTable(lines: string[]): React.ReactNode {
   );
 }
 
+function ArticleImageFigure({
+  src,
+  alt,
+  caption,
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+}) {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) return null;
+
+  return (
+    <figure className="my-8 overflow-hidden rounded-2xl border border-white/10 bg-[#060a17]/90 p-2 sm:p-3 shadow-2xl transition-all duration-300 hover:border-indigo-500/30">
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-slate-900/90">
+        <Image
+          src={src}
+          alt={alt || "Article illustration & systems diagram"}
+          fill
+          unoptimized
+          onError={() => setHasError(true)}
+          className="object-cover transition-transform duration-700 hover:scale-105"
+          sizes="(max-width: 768px) 100vw, 850px"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060a17]/70 via-transparent to-transparent pointer-events-none" />
+      </div>
+      {caption && (
+        <figcaption className="mt-3 flex items-center justify-center gap-2 px-3 text-center text-xs font-mono text-slate-400">
+          <ImageIcon className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+          <span>{caption}</span>
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 type ParsedBlock =
   | { type: "h2"; text: string }
   | { type: "h3"; text: string }
@@ -217,6 +257,7 @@ type ParsedBlock =
   | { type: "ul"; items: string[] }
   | { type: "ol"; items: string[] }
   | { type: "quote"; lines: string[] }
+  | { type: "image"; alt: string; src: string; caption?: string }
   | { type: "paragraph"; text: string };
 
 function parseMarkdownToBlocks(markdown: string): ParsedBlock[] {
@@ -262,6 +303,19 @@ function parseMarkdownToBlocks(markdown: string): ParsedBlock[] {
     // Blank line
     if (!trimmed) {
       flush();
+      continue;
+    }
+
+    // Markdown Image: ![alt](url)
+    const exactImgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (exactImgMatch) {
+      flush();
+      blocks.push({
+        type: "image",
+        alt: exactImgMatch[1] || "",
+        src: exactImgMatch[2].trim(),
+        caption: exactImgMatch[1] || undefined,
+      });
       continue;
     }
 
@@ -487,6 +541,16 @@ export function BlogContentRenderer({ content }: { content: string }) {
                         <p key={i}>{renderInline(ql)}</p>
                       ))}
                     </blockquote>
+                  );
+
+                case "image":
+                  return (
+                    <ArticleImageFigure
+                      key={blockKey}
+                      src={b.src}
+                      alt={b.alt}
+                      caption={b.caption}
+                    />
                   );
 
                 case "paragraph":

@@ -7,6 +7,7 @@ import { BlogFeedback } from "@/components/blog-feedback";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { BlogContentRenderer } from "./blog-content-renderer";
 import type { BlogPost } from "@/lib/blog-store";
+import { getCuratedTopicCoverImage } from "@/lib/image-search";
 import { formatDate } from "@/lib/utils";
 import { ArrowLeft, Clock, Eye } from "lucide-react";
 import Image from "next/image";
@@ -21,8 +22,29 @@ interface BlogPostClientProps {
 export function BlogPostClient({ initialPost, slug, related }: BlogPostClientProps) {
   const [post, setPost] = useState<BlogPost | null>(initialPost);
   const [loading, setLoading] = useState(!initialPost);
+  const [imgSrc, setImgSrc] = useState<string>(
+    initialPost?.coverImage || (initialPost ? getCuratedTopicCoverImage(initialPost.title, initialPost.tags) : "")
+  );
   const [imageError, setImageError] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
+
+  useEffect(() => {
+    if (post) {
+      setImgSrc(post.coverImage || getCuratedTopicCoverImage(post.title, post.tags));
+      setImageError(false);
+    }
+  }, [post]);
+
+  const handleImageError = () => {
+    if (post) {
+      const fallbackUrl = getCuratedTopicCoverImage(post.title, post.tags);
+      if (imgSrc !== fallbackUrl) {
+        setImgSrc(fallbackUrl);
+        return;
+      }
+    }
+    setImageError(true);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -136,13 +158,13 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
 
         <header className="mb-10">
           <div className="relative mb-8 h-56 overflow-hidden rounded-3xl border border-white/10 sm:h-72 bg-[#060a17]">
-            {post.coverImage && !imageError ? (
+            {imgSrc && !imageError ? (
               <Image
-                src={post.coverImage}
+                src={imgSrc}
                 alt={post.title}
                 fill
                 unoptimized
-                onError={() => setImageError(true)}
+                onError={handleImageError}
                 className="object-cover"
                 priority
                 sizes="(max-width: 768px) 100vw, 768px"
