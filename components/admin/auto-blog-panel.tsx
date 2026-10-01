@@ -26,6 +26,7 @@ import {
   Radio,
 } from "lucide-react";
 import Link from "next/link";
+import { getCuratedTopicCoverImage } from "@/lib/image-search";
 
 interface NewsItem {
   title: string;
@@ -438,6 +439,10 @@ export function AutoBlogPanel() {
                   src={latestPost.coverImage}
                   alt={latestPost.title}
                   className="h-full w-full object-cover"
+                  onError={(e) => {
+                    const fallback = getCuratedTopicCoverImage(latestPost.title, latestPost.tags);
+                    (e.target as HTMLImageElement).src = fallback;
+                  }}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-slate-500">

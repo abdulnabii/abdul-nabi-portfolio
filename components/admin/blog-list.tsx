@@ -26,6 +26,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useMemo, useEffect } from "react";
 import { DeleteModal } from "./delete-modal";
+import { getCuratedTopicCoverImage } from "@/lib/image-search";
 
 interface BlogListProps {
   posts: BlogPost[];
@@ -33,6 +34,49 @@ interface BlogListProps {
 }
 
 type TabType = "all" | "published" | "scheduled" | "drafts" | "trash";
+
+function AdminBlogThumbnail({ post }: { post: BlogPost }) {
+  const fallbackUrl = getCuratedTopicCoverImage(post.title, post.tags);
+  const initialSrc =
+    post.coverImage && !post.coverImage.includes("pollinations.ai")
+      ? post.coverImage
+      : fallbackUrl;
+
+  const [src, setSrc] = useState<string>(initialSrc);
+  const [failed, setFailed] = useState(false);
+
+  const handleError = () => {
+    if (src !== fallbackUrl) {
+      setSrc(fallbackUrl);
+    } else {
+      setFailed(true);
+    }
+  };
+
+  if (failed || !src) {
+    return (
+      <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-20 sm:w-32 bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/80 p-2.5 flex flex-col justify-between">
+        <span className="text-[9px] font-mono font-semibold uppercase tracking-wider text-indigo-400">
+          {post.tags?.[0] || "Article"}
+        </span>
+        <Sparkles className="h-4 w-4 text-indigo-400/50 self-end" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-20 sm:w-32 bg-[#050814]">
+      <Image
+        src={src}
+        alt={post.title}
+        fill
+        className="object-cover"
+        unoptimized
+        onError={handleError}
+      />
+    </div>
+  );
+}
 
 function formatRelativeTime(targetIso: string): string {
   const diffMs = new Date(targetIso).getTime() - Date.now();
@@ -74,10 +118,27 @@ export function BlogList({ posts: initial, initialTrash = [] }: BlogListProps) {
           if (localBlogs.length > 0) {
             const map = new Map<string, BlogPost>();
             initial.forEach((p) => map.set(p.slug, p));
-            localBlogs.forEach((p) => map.set(p.slug, p));
+            localBlogs.forEach((p) => {
+              const existing = map.get(p.slug);
+              const isPollinations = Boolean(p.coverImage?.includes("pollinations.ai"));
+              const cleanCover = isPollinations
+                ? existing?.coverImage && !existing.coverImage.includes("pollinations.ai")
+                  ? existing.coverImage
+                  : getCuratedTopicCoverImage(p.title, p.tags)
+                : p.coverImage || existing?.coverImage || getCuratedTopicCoverImage(p.title, p.tags);
+
+              map.set(p.slug, {
+                ...p,
+                coverImage: cleanCover,
+              });
+            });
             merged = Array.from(map.values()).sort(
               (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
             );
+            // Save sanitized version back to localStorage to cure browser cache
+            try {
+              localStorage.setItem("an_local_blogs", JSON.stringify(merged));
+            } catch {}
           }
         }
       } catch {}
@@ -513,19 +574,7 @@ export function BlogList({ posts: initial, initialTrash = [] }: BlogListProps) {
                     : "border-white/5 bg-white/[0.03] hover:border-white/10 hover:bg-white/[0.05]"
                 }`}
               >
-                <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 sm:h-20 sm:w-32 bg-[#050814]">
-                  {post.coverImage ? (
-                    <Image
-                      src={post.coverImage}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="h-full w-full bg-white/5" />
-                  )}
-                </div>
+                <AdminBlogThumbnail post={post} />
 
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
