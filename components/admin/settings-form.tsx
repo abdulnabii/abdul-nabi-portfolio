@@ -42,6 +42,14 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         throw new Error(data.error || "Failed to save settings");
       }
 
+      // Sync immediately into localStorage for zero-latency client hydration across tabs & public pages
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("an_live_settings", JSON.stringify(settings));
+          window.dispatchEvent(new CustomEvent("an-settings-updated", { detail: settings }));
+        } catch {}
+      }
+
       setSaveState("saved");
       setTimeout(() => setSaveState("idle"), 3000);
     } catch (err) {

@@ -19,6 +19,7 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const updated = await saveSectionVisibility(body);
     revalidatePath("/", "layout");
+    revalidatePath("/", "page");
     return NextResponse.json({ success: true, visibility: updated });
   } catch (err) {
     console.error("Save sections error:", err);

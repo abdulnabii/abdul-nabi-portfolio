@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     const updated = await saveSiteSettings(body);
 
     revalidatePath("/", "layout");
+    revalidatePath("/", "page");
     revalidatePath("/about", "layout");
     revalidatePath("/contact", "layout");
     revalidatePath("/admin/settings", "layout");

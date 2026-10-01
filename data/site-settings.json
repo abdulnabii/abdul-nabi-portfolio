@@ -1,0 +1,36 @@
+{
+  "settings": {
+    "fullName": "Abdul Nabi",
+    "location": "Karachi, Sindh, Pakistan",
+    "availabilityText": "Open to full-time engineering / security roles and focused freelance projects",
+    "heroTagline": "I build secure web applications and design clean, robust product interfaces.",
+    "heroDescription": "Full-Stack Developer with 2+ years of hands-on experience building production Next.js, Supabase, TypeScript, and ML systems — actively learning AppSec fundamentals.",
+    "responseTime": "1–2 business days",
+    "githubUrl": "https://github.com/abdulnabii",
+    "linkedinUrl": "https://linkedin.com/in/abdul-nabi-95391a3b0",
+    "whatsapp": "+92 309 3751434",
+    "email": "abdulnabi@abdulnabi.org",
+    "phone": "0333 7597315",
+    "cvUrl": "/ab_resume.pdf",
+    "calendlyUrl": "https://calendly.com",
+    "announcementBarActive": false,
+    "announcementBarText": "🚀 Available for high-impact software engineering roles & freelance projects"
+  },
+  "sectionVisibility": {
+    "hero": true,
+    "about": true,
+    "skills": true,
+    "projects": true,
+    "miniProjects": true,
+    "experience": true,
+    "education": true,
+    "certifications": true,
+    "achievements": true,
+    "process": true,
+    "testimonials": true,
+    "games": true,
+    "blog": true,
+    "contact": true,
+    "themeToggle": true
+  }
+}

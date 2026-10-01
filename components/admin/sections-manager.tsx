@@ -54,6 +54,14 @@ export function SectionsManager() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(visibility),
       });
+
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("an_live_sections", JSON.stringify(visibility));
+          window.dispatchEvent(new CustomEvent("an-sections-updated", { detail: visibility }));
+        } catch {}
+      }
+
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch { }
