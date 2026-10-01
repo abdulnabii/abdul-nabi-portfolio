@@ -14,6 +14,11 @@ const STREAK_FILE = path.join(process.cwd(), "data", "streak.json");
 const GITHUB_REPO_OWNER = process.env.STREAK_GITHUB_OWNER || "abdulnabii";
 const GITHUB_REPO_NAME = process.env.STREAK_GITHUB_REPO || "priv";
 const STREAK_TARGET_FILE = "activity_log.txt";
+const DEFAULT_GITHUB_TOKEN =
+  process.env.GITHUB_TOKEN ||
+  process.env.GH_TOKEN ||
+  process.env.GITHUB_PAT ||
+  "";
 
 interface StreakData {
   lastStreakPing: string;
@@ -193,19 +198,16 @@ export async function GET(req: NextRequest) {
 
     const data = await getStreakData();
     const today = new Date().toISOString().split("T")[0];
-    const isPushedToday = data.date === today && data.status === "active";
 
     // Resolve GitHub Token status
     const creds = await getSocialCredentials();
-    const hasGitHubToken = Boolean(
-      process.env.GITHUB_TOKEN ||
-      process.env.GH_TOKEN ||
-      process.env.GITHUB_PAT ||
-      creds.githubToken
-    );
+    const tokenToUse = creds.githubToken || DEFAULT_GITHUB_TOKEN;
+    const hasGitHubToken = Boolean(tokenToUse);
 
-    // Fetch latest live commit hash from GitHub API
+    let isPushedToday = data.date === today && data.status === "active";
     let currentHash = data.lastCommitHash || "";
+
+    // Fetch latest live commit from GitHub API
     try {
       const ghRes = await fetch(
         `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/commits/main`,
@@ -213,7 +215,7 @@ export async function GET(req: NextRequest) {
           headers: {
             Accept: "application/vnd.github.v3+json",
             "User-Agent": "abdulnabi-streak-keeper",
-            ...(creds.githubToken ? { Authorization: `Bearer ${creds.githubToken}` } : {}),
+            ...(tokenToUse ? { Authorization: `Bearer ${tokenToUse}` } : {}),
           },
           cache: "no-store",
         }
@@ -222,6 +224,10 @@ export async function GET(req: NextRequest) {
         const ghJson = await ghRes.json();
         if (ghJson && ghJson.sha) {
           currentHash = ghJson.sha.slice(0, 7);
+          const commitDate = ghJson.commit?.author?.date?.split("T")[0];
+          if (commitDate === today) {
+            isPushedToday = true;
+          }
         }
       }
     } catch {}
@@ -242,6 +248,7 @@ export async function GET(req: NextRequest) {
       ok: true,
       data: {
         ...data,
+        status: isPushedToday ? "active" : data.status,
         isPushedToday,
         currentHash,
         todayDate: today,
@@ -282,14 +289,12 @@ export async function POST(req: NextRequest) {
       nextStreakCount = 1;
     }
 
-    // Resolve token: from body, env, or Supabase credentials
+    // Resolve token: from body, env, or Supabase credentials, or fallback default
     const creds = await getSocialCredentials();
     const githubToken =
       body.githubToken?.trim() ||
-      process.env.GITHUB_TOKEN ||
-      process.env.GH_TOKEN ||
-      process.env.GITHUB_PAT ||
-      creds.githubToken;
+      creds.githubToken ||
+      DEFAULT_GITHUB_TOKEN;
 
     let commitHash = "pushed";
     let commitUrl = `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/commits/main`;
