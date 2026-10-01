@@ -175,6 +175,18 @@ export function AutoBlogPanel() {
         setLatestPost(data.post);
         setAnalyzedNews(data.analyzedNews || []);
         fetchLog();
+
+        // Immediately persist to localStorage for instant client rendering
+        try {
+          const raw = localStorage.getItem("an_local_blogs");
+          const localBlogs = raw ? JSON.parse(raw) : [];
+          const filtered = localBlogs.filter((p: any) => p.slug !== data.post.slug);
+          filtered.unshift(data.post);
+          localStorage.setItem("an_local_blogs", JSON.stringify(filtered));
+          window.dispatchEvent(new CustomEvent("blogs-updated"));
+        } catch (e) {
+          console.warn("[auto-blog-panel] Failed to cache post locally:", e);
+        }
       } else {
         setGenerationError(data.error || "Failed to generate blog post. Please try again.");
       }

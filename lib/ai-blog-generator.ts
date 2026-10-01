@@ -44,10 +44,12 @@ export interface AutoBlogResponse {
     title: string;
     slug: string;
     excerpt: string;
+    content?: string;
     tags: string[];
     coverImage: string;
     readTime: string;
     date: string;
+    published?: boolean;
   };
   analyzedNews?: NewsItem[];
   error?: string;
@@ -746,10 +748,12 @@ export async function generateAndPublishSingleBlog(
         title: createdPost.title,
         slug: createdPost.slug,
         excerpt: createdPost.excerpt,
+        content: createdPost.content,
         tags: createdPost.tags,
         coverImage: createdPost.coverImage || generatedPost.coverImage,
         readTime: createdPost.readTime,
         date: createdPost.date,
+        published: createdPost.published,
       },
       analyzedNews: [primaryTopic, ...relatedNews],
       durationSeconds,
