@@ -25,14 +25,47 @@ export default function AdminBackgroundThemePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/background-theme", { cache: "no-store" })
+    try {
+      const localNight = localStorage.getItem("bg_theme_night") as NightThemeId | null;
+      if (localNight && NIGHT_BACKGROUND_THEMES.some((t) => t.id === localNight)) {
+        setActiveNight(localNight);
+      }
+      const localDay = localStorage.getItem("bg_theme_day") as DayThemeId | null;
+      if (localDay && DAY_BACKGROUND_THEMES.some((t) => t.id === localDay)) {
+        setActiveDay(localDay);
+      }
+      const localCursor = localStorage.getItem("cursor_style") as CursorStyleId | null;
+      if (localCursor && CURSOR_STYLES.some((s) => s.id === localCursor)) {
+        setActiveCursor(localCursor);
+      }
+      const localMode = localStorage.getItem("app_theme") as "dark" | "light" | null;
+      if (localMode === "dark" || localMode === "light") {
+        setDefaultMode(localMode);
+      }
+    } catch {}
+
+    fetch("/api/admin/background-theme?t=" + Date.now(), { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
-        if (d.nightTheme) setActiveNight(d.nightTheme);
-        else if (d.theme) setActiveNight(d.theme);
-        if (d.dayTheme) setActiveDay(d.dayTheme);
-        if (d.cursorStyle) setActiveCursor(d.cursorStyle);
-        if (d.defaultMode) setDefaultMode(d.defaultMode);
+        if (d.nightTheme && NIGHT_BACKGROUND_THEMES.some((t) => t.id === d.nightTheme)) {
+          setActiveNight(d.nightTheme);
+          try { localStorage.setItem("bg_theme_night", d.nightTheme); } catch {}
+        } else if (d.theme && NIGHT_BACKGROUND_THEMES.some((t) => t.id === d.theme)) {
+          setActiveNight(d.theme);
+          try { localStorage.setItem("bg_theme_night", d.theme); } catch {}
+        }
+        if (d.dayTheme && DAY_BACKGROUND_THEMES.some((t) => t.id === d.dayTheme)) {
+          setActiveDay(d.dayTheme);
+          try { localStorage.setItem("bg_theme_day", d.dayTheme); } catch {}
+        }
+        if (d.cursorStyle && CURSOR_STYLES.some((s) => s.id === d.cursorStyle)) {
+          setActiveCursor(d.cursorStyle);
+          try { localStorage.setItem("cursor_style", d.cursorStyle); } catch {}
+        }
+        if (d.defaultMode === "dark" || d.defaultMode === "light") {
+          setDefaultMode(d.defaultMode);
+          try { localStorage.setItem("app_theme", d.defaultMode); } catch {}
+        }
       })
       .finally(() => setLoading(false));
   }, []);

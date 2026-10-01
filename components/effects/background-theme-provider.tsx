@@ -239,6 +239,20 @@ export function BackgroundThemeProvider({ children }: { children: React.ReactNod
   const [nightTheme, setNightThemeState] = useState<NightThemeId>("quantum-plasma");
   const [dayTheme, setDayThemeState] = useState<DayThemeId>("day-sunrise-dawn");
 
+  // Immediate client hydration from localStorage
+  useEffect(() => {
+    try {
+      const localNight = localStorage.getItem("bg_theme_night") as NightThemeId | null;
+      if (localNight && NIGHT_BACKGROUND_THEMES.some((t) => t.id === localNight)) {
+        setNightThemeState(localNight);
+      }
+      const localDay = localStorage.getItem("bg_theme_day") as DayThemeId | null;
+      if (localDay && DAY_BACKGROUND_THEMES.some((t) => t.id === localDay)) {
+        setDayThemeState(localDay);
+      }
+    } catch {}
+  }, []);
+
   const syncServerTheme = async () => {
     try {
       const res = await fetch(`/api/admin/background-theme?t=${Date.now()}`, {
@@ -265,25 +279,46 @@ export function BackgroundThemeProvider({ children }: { children: React.ReactNod
 
     const handleBgChange = (e: Event) => {
       const detail = (e as CustomEvent).detail;
-      if (detail?.nightTheme) setNightThemeState(detail.nightTheme);
-      if (detail?.dayTheme) setDayThemeState(detail.dayTheme);
-      syncServerTheme();
+      if (detail?.nightTheme && NIGHT_BACKGROUND_THEMES.some((t) => t.id === detail.nightTheme)) {
+        setNightThemeState(detail.nightTheme);
+      }
+      if (detail?.dayTheme && DAY_BACKGROUND_THEMES.some((t) => t.id === detail.dayTheme)) {
+        setDayThemeState(detail.dayTheme);
+      }
+    };
+
+    // Cross-tab real-time sync when changed from admin in another tab
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "bg_theme_night" && e.newValue) {
+        if (NIGHT_BACKGROUND_THEMES.some((t) => t.id === e.newValue)) {
+          setNightThemeState(e.newValue as NightThemeId);
+        }
+      }
+      if (e.key === "bg_theme_day" && e.newValue) {
+        if (DAY_BACKGROUND_THEMES.some((t) => t.id === e.newValue)) {
+          setDayThemeState(e.newValue as DayThemeId);
+        }
+      }
     };
 
     window.addEventListener("bg-theme-changed", handleBgChange);
+    window.addEventListener("storage", handleStorage);
     return () => {
       window.removeEventListener("bg-theme-changed", handleBgChange);
+      window.removeEventListener("storage", handleStorage);
     };
   }, []);
 
   const setNightTheme = (id: NightThemeId) => {
     setNightThemeState(id);
     try { localStorage.setItem("bg_theme_night", id); } catch {}
+    window.dispatchEvent(new CustomEvent("bg-theme-changed", { detail: { nightTheme: id } }));
   };
 
   const setDayTheme = (id: DayThemeId) => {
     setDayThemeState(id);
     try { localStorage.setItem("bg_theme_day", id); } catch {}
+    window.dispatchEvent(new CustomEvent("bg-theme-changed", { detail: { dayTheme: id } }));
   };
 
   return (

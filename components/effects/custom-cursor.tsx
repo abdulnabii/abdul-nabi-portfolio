@@ -95,11 +95,22 @@ export function CustomCursor() {
   const current = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
-    // Load saved cursor style from API
+    // 1. Initial hydration from localStorage
+    try {
+      const saved = localStorage.getItem("cursor_style") as CursorStyleId | null;
+      if (saved && CURSOR_STYLES.some((s) => s.id === saved)) {
+        setCursorStyle(saved);
+      }
+    } catch {}
+
+    // 2. Load saved cursor style from API
     fetch("/api/admin/background-theme?t=" + Date.now(), { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
-        if (d.cursorStyle) setCursorStyle(d.cursorStyle as CursorStyleId);
+        if (d.cursorStyle) {
+          setCursorStyle(d.cursorStyle as CursorStyleId);
+          try { localStorage.setItem("cursor_style", d.cursorStyle); } catch {}
+        }
       })
       .catch(() => {});
 
@@ -110,8 +121,20 @@ export function CustomCursor() {
       }
     }
 
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "cursor_style" && e.newValue) {
+        if (CURSOR_STYLES.some((s) => s.id === e.newValue)) {
+          setCursorStyle(e.newValue as CursorStyleId);
+        }
+      }
+    };
+
     window.addEventListener("cursor-style-changed", handleCursorChanged);
-    return () => window.removeEventListener("cursor-style-changed", handleCursorChanged);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("cursor-style-changed", handleCursorChanged);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   useEffect(() => {

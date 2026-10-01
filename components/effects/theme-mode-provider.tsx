@@ -32,6 +32,17 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Immediate client hydration from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("app_theme") as ThemeMode | null;
+      if (saved === "light" || saved === "dark") {
+        setThemeState(saved);
+        applyTheme(saved);
+      }
+    } catch {}
+  }, []);
+
   const syncServerThemeMode = async () => {
     if (sectionVisibility?.themeToggle === false) {
       setThemeState("dark");
@@ -68,9 +79,19 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
+    // Cross-tab sync
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "app_theme" && (e.newValue === "light" || e.newValue === "dark")) {
+        setThemeState(e.newValue);
+        applyTheme(e.newValue);
+      }
+    };
+
     window.addEventListener("theme-mode-changed", handleModeChange);
+    window.addEventListener("storage", handleStorage);
     return () => {
       window.removeEventListener("theme-mode-changed", handleModeChange);
+      window.removeEventListener("storage", handleStorage);
     };
   }, [sectionVisibility?.themeToggle]);
 
