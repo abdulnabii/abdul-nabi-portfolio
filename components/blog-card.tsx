@@ -8,7 +8,7 @@ import { formatDate } from "@/lib/utils";
 import { ArrowUpRight, Clock, Eye, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -16,13 +16,28 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post, index = 0 }: BlogCardProps) {
-  const fallbackUrl = getCuratedTopicCoverImage(post.title, post.tags);
-  const [imgSrc, setImgSrc] = useState<string>(post.coverImage || fallbackUrl);
+  const [retryOffset, setRetryOffset] = useState(0);
+  const getCleanCover = (offset = 0) => {
+    if (offset === 0 && post.coverImage && !post.coverImage.includes("pollinations.ai")) {
+      return post.coverImage;
+    }
+    return getCuratedTopicCoverImage(post.title, post.tags, offset);
+  };
+
+  const [imgSrc, setImgSrc] = useState<string>(() => getCleanCover(0));
   const [hasFailed, setHasFailed] = useState(false);
 
+  useEffect(() => {
+    setImgSrc(getCleanCover(0));
+    setRetryOffset(0);
+    setHasFailed(false);
+  }, [post.coverImage, post.title, post.tags]);
+
   const handleImageError = () => {
-    if (imgSrc !== fallbackUrl) {
-      setImgSrc(fallbackUrl);
+    if (retryOffset < 3) {
+      const next = retryOffset + 1;
+      setRetryOffset(next);
+      setImgSrc(getCuratedTopicCoverImage(post.title, post.tags, next));
     } else {
       setHasFailed(true);
     }
@@ -56,6 +71,7 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
                 fill
                 unoptimized
                 onError={handleImageError}
+                referrerPolicy="no-referrer"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />

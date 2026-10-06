@@ -22,26 +22,34 @@ interface BlogPostClientProps {
 export function BlogPostClient({ initialPost, slug, related }: BlogPostClientProps) {
   const [post, setPost] = useState<BlogPost | null>(initialPost);
   const [loading, setLoading] = useState(!initialPost);
-  const [imgSrc, setImgSrc] = useState<string>(
-    initialPost?.coverImage || (initialPost ? getCuratedTopicCoverImage(initialPost.title, initialPost.tags) : "")
-  );
+  const [retryOffset, setRetryOffset] = useState(0);
+
+  const getCleanCover = (p: BlogPost | null, offset = 0) => {
+    if (!p) return "";
+    if (offset === 0 && p.coverImage && !p.coverImage.includes("pollinations.ai")) {
+      return p.coverImage;
+    }
+    return getCuratedTopicCoverImage(p.title, p.tags, offset);
+  };
+
+  const [imgSrc, setImgSrc] = useState<string>(() => getCleanCover(initialPost, 0));
   const [imageError, setImageError] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
 
   useEffect(() => {
     if (post) {
-      setImgSrc(post.coverImage || getCuratedTopicCoverImage(post.title, post.tags));
+      setImgSrc(getCleanCover(post, 0));
+      setRetryOffset(0);
       setImageError(false);
     }
   }, [post]);
 
   const handleImageError = () => {
-    if (post) {
-      const fallbackUrl = getCuratedTopicCoverImage(post.title, post.tags);
-      if (imgSrc !== fallbackUrl) {
-        setImgSrc(fallbackUrl);
-        return;
-      }
+    if (post && retryOffset < 3) {
+      const next = retryOffset + 1;
+      setRetryOffset(next);
+      setImgSrc(getCuratedTopicCoverImage(post.title, post.tags, next));
+      return;
     }
     setImageError(true);
   };
@@ -71,7 +79,10 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
           const localBlogs = JSON.parse(raw) as BlogPost[];
           const match = localBlogs.find((p) => p.slug === slug);
           if (match) {
-            setPost(match);
+            const cleanCover = (match.coverImage && !match.coverImage.includes("pollinations.ai"))
+              ? match.coverImage
+              : getCuratedTopicCoverImage(match.title, match.tags);
+            setPost({ ...match, coverImage: cleanCover });
             setLoading(false);
             return;
           }
@@ -165,6 +176,7 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
                 fill
                 unoptimized
                 onError={handleImageError}
+                referrerPolicy="no-referrer"
                 className="object-cover"
                 priority
                 sizes="(max-width: 768px) 100vw, 768px"

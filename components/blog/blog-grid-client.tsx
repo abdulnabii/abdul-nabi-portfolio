@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import { BlogCard } from "@/components/blog-card";
 import type { BlogPost } from "@/lib/blog-store";
+import { getCuratedTopicCoverImage } from "@/lib/image-search";
 import { Search, X, Sparkles, Filter } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -25,10 +26,27 @@ export function BlogGridClient({ initialPosts }: BlogGridClientProps) {
           if (publishedLocal.length > 0) {
             const map = new Map<string, BlogPost>();
             initialPosts.forEach((p) => map.set(p.slug, p));
-            publishedLocal.forEach((p) => map.set(p.slug, p));
+            publishedLocal.forEach((p) => {
+              const serverPost = map.get(p.slug);
+              const cleanCover = (p.coverImage && !p.coverImage.includes("pollinations.ai"))
+                ? p.coverImage
+                : (serverPost?.coverImage && !serverPost.coverImage.includes("pollinations.ai"))
+                  ? serverPost.coverImage
+                  : getCuratedTopicCoverImage(p.title, p.tags);
+
+              map.set(p.slug, {
+                ...serverPost,
+                ...p,
+                coverImage: cleanCover,
+              });
+            });
             merged = Array.from(map.values()).sort(
               (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
             );
+            // Write healed sanitized blogs back to localStorage
+            try {
+              localStorage.setItem("an_local_blogs", JSON.stringify(merged));
+            } catch {}
           }
         }
       } catch {

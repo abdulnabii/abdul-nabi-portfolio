@@ -160,20 +160,28 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  // Auto-promote any scheduled blogs whose scheduledAt time has passed
+  // Auto-promote any scheduled blogs whose scheduledAt time has passed & guarantee valid coverImage
   let needsPersist = false;
   const updatedList = allList.map((post) => {
+    let coverImage = post.coverImage;
+    if (!coverImage || coverImage.includes("pollinations.ai")) {
+      coverImage = getDefaultBlogCoverImage(post.title, post.tags);
+    }
     if (post.scheduledAt && new Date(post.scheduledAt).getTime() <= now) {
       needsPersist = true;
       return {
         ...post,
+        coverImage,
         published: true,
         date: post.scheduledAt.slice(0, 10),
         scheduledAt: undefined,
         updatedAt: new Date().toISOString(),
       };
     }
-    return post;
+    return {
+      ...post,
+      coverImage,
+    };
   });
 
   if (needsPersist) {
@@ -428,8 +436,10 @@ export async function updateBlog(
         : current.tags,
     coverImage:
       input.coverImage !== undefined
-        ? input.coverImage.trim() || undefined
-        : current.coverImage,
+        ? (input.coverImage.trim() || getDefaultBlogCoverImage(input.title || current.title, input.tags || current.tags))
+        : (current.coverImage && !current.coverImage.includes("pollinations.ai")
+          ? current.coverImage
+          : getDefaultBlogCoverImage(current.title, current.tags)),
     published: isScheduled
       ? false
       : input.published !== undefined

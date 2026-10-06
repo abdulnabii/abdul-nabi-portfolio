@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Check, Copy, Terminal, Image as ImageIcon } from "lucide-react";
+import { getCuratedTopicCoverImage } from "@/lib/image-search";
 
 interface CodeBlockProps {
   code: string;
@@ -241,7 +242,32 @@ function ArticleImageFigure({
   alt: string;
   caption?: string;
 }) {
+  const [currentSrc, setCurrentSrc] = useState<string>(() => {
+    if (src && !src.includes("pollinations.ai")) return src;
+    return getCuratedTopicCoverImage(alt || "technology", []);
+  });
+  const [retryOffset, setRetryOffset] = useState(0);
   const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (src && !src.includes("pollinations.ai")) {
+      setCurrentSrc(src);
+    } else {
+      setCurrentSrc(getCuratedTopicCoverImage(alt || "technology", []));
+    }
+    setRetryOffset(0);
+    setHasError(false);
+  }, [src, alt]);
+
+  const handleError = () => {
+    if (retryOffset < 3) {
+      const next = retryOffset + 1;
+      setRetryOffset(next);
+      setCurrentSrc(getCuratedTopicCoverImage(alt || "architecture", [], next));
+    } else {
+      setHasError(true);
+    }
+  };
 
   if (hasError) return null;
 
@@ -249,11 +275,12 @@ function ArticleImageFigure({
     <figure className="my-8 overflow-hidden rounded-2xl border border-white/10 bg-[#060a17]/90 p-2 sm:p-3 shadow-2xl transition-all duration-300 hover:border-indigo-500/30">
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-slate-900/90">
         <Image
-          src={src}
+          src={currentSrc}
           alt={alt || "Article illustration & systems diagram"}
           fill
           unoptimized
-          onError={() => setHasError(true)}
+          onError={handleError}
+          referrerPolicy="no-referrer"
           className="object-cover transition-transform duration-700 hover:scale-105"
           sizes="(max-width: 768px) 100vw, 850px"
         />
@@ -327,8 +354,8 @@ function parseMarkdownToBlocks(markdown: string): ParsedBlock[] {
       continue;
     }
 
-    // Markdown Image: ![alt](url)
-    const exactImgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    // Markdown Image: ![alt](url) or ![alt](url "title")
+    const exactImgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)$/);
     if (exactImgMatch) {
       flush();
       blocks.push({
