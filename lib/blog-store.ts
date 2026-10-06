@@ -237,8 +237,39 @@ export async function getBlogBySlug(
   }
 }
 
+async function unsuppressSlugs(slugs: string[]): Promise<void> {
+  if (!slugs || slugs.length === 0) return;
+  const toRemove = new Set(
+    slugs.filter(Boolean).flatMap((s) => [s, slugify(s), decodeURIComponent(s)])
+  );
+  try {
+    const rows = await supabaseDbQuery<{ key: string; value: string }>(
+      "site_settings",
+      "select=key,value&key=eq.deleted_blog_slugs"
+    );
+    if (rows && rows.length > 0 && rows[0].value) {
+      const parsed = JSON.parse(rows[0].value) as string[];
+      if (Array.isArray(parsed)) {
+        const nextDeleted = parsed.filter((s) => !toRemove.has(s));
+        if (nextDeleted.length !== parsed.length) {
+          await supabaseDbUpsert("site_settings", [
+            {
+              key: "deleted_blog_slugs",
+              value: JSON.stringify(nextDeleted),
+              updated_at: new Date().toISOString(),
+            },
+          ]);
+        }
+      }
+    }
+  } catch {}
+}
+
 export async function saveAllBlogs(posts: BlogPost[]): Promise<void> {
   try {
+    // 0. Automatically unsuppress any active saved blogs from deleted_blog_slugs
+    unsuppressSlugs(posts.map((p) => p.slug)).catch(() => {});
+
     // 1. Update memory store for immediate active session reactivity
     memoryBlogs.length = 0;
     memoryBlogs.push(...posts);

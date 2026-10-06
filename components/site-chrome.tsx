@@ -20,7 +20,17 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { ToastProvider } from "@/components/ui/toast";
 import { AnnouncementBar } from "@/components/announcement-bar";
 
-export function SiteChrome({ children }: { children: React.ReactNode }) {
+interface SiteChromeProps {
+  children: React.ReactNode;
+  initialBgTheme?: {
+    nightTheme?: string;
+    dayTheme?: string;
+    cursorStyle?: string;
+    defaultMode?: "dark" | "light";
+  };
+}
+
+export function SiteChrome({ children, initialBgTheme }: SiteChromeProps) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
   const isResume = pathname === "/resume";
@@ -31,7 +41,10 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeModeProvider>
-      <BackgroundThemeProvider>
+      <BackgroundThemeProvider
+        initialNightTheme={initialBgTheme?.nightTheme as any}
+        initialDayTheme={initialBgTheme?.dayTheme as any}
+      >
         <CommandPaletteProvider>
           <ToastProvider>
             <div className="relative min-h-screen transition-colors duration-500">

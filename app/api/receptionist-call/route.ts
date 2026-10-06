@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addInboxItem } from "@/lib/inbox-store";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -54,9 +55,18 @@ Respond exactly with:
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 20 requests per minute per IP to prevent OpenAI and inbox abuse
+    const rl = checkRateLimit(req, "api_receptionist_call", 20, 60 * 1000);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Too many voice turns. Please slow down and try again." },
+        { status: 429 }
+      );
+    }
+
     const body = (await req.json()) as ReceptionistLogPayload & {
       message?: string;
-      history?: { role: "user" | "assistant"; content: string }[];
+      history?: { role: string; content: string }[];
     };
 
     // If this is a call completion log action:
@@ -95,13 +105,18 @@ ${formattedTranscript}
 
     // Process a conversational voice turn using OpenAI or local logic
     const apiKey = process.env.OPENAI_API_KEY;
-    const history = body.history || [];
-    const userMessage = body.message || "";
+    const rawHistory = Array.isArray(body.history) ? body.history : [];
+    // Strict sanitization: only allow "user" or "assistant" roles from client
+    const safeHistory = rawHistory
+      .filter((h) => h && (h.role === "user" || h.role === "assistant") && typeof h.content === "string")
+      .map((h) => ({ role: h.role as "user" | "assistant", content: h.content.slice(0, 1000) }));
+
+    const userMessage = typeof body.message === "string" ? body.message.slice(0, 1000) : "";
 
     if (apiKey && !apiKey.startsWith("sk-your") && apiKey.length > 20) {
       const messages = [
         { role: "system", content: RECEPTIONIST_SYSTEM_PROMPT },
-        ...history,
+        ...safeHistory,
         { role: "user", content: userMessage },
       ];
 

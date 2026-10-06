@@ -123,6 +123,7 @@ import {
   getEducationData,
   getSectionVisibility,
 } from "@/lib/settings-store";
+import { getBackgroundThemeSettings } from "@/lib/theme-store";
 
 export default async function RootLayout({
   children,
@@ -135,6 +136,7 @@ export default async function RootLayout({
   const experience = await getExperienceData();
   const education = await getEducationData();
   const sectionVisibility = await getSectionVisibility();
+  const bgTheme = await getBackgroundThemeSettings();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -268,7 +270,7 @@ export default async function RootLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("app_theme");if(t==="light"){document.documentElement.classList.add("light");document.documentElement.classList.remove("dark");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();`,
+            __html: `(function(){try{var def="${bgTheme.defaultMode || 'dark'}";var t=localStorage.getItem("app_theme")||def;if(t==="light"){document.documentElement.classList.add("light");document.documentElement.classList.remove("dark");}else{document.documentElement.classList.add("dark");document.documentElement.classList.remove("light");}}catch(e){}})();`,
           }}
         />
         <script
@@ -286,7 +288,7 @@ export default async function RootLayout({
           initialSectionVisibility={sectionVisibility}
         >
           <DraftPreviewBanner />
-          <SiteChrome>{children}</SiteChrome>
+          <SiteChrome initialBgTheme={bgTheme}>{children}</SiteChrome>
         </SettingsProvider>
       </body>
     </html>

@@ -100,6 +100,21 @@ function renderInline(text: string): React.ReactNode {
   const tokenRegex = /(\[[^\]]+\]\([^\)]+\)|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*|https?:\/\/[^\s<]+)/g;
   const parts = clean.split(tokenRegex);
 
+function isSafeUrl(url: string): boolean {
+  if (!url) return false;
+  const trimmed = url.trim().toLowerCase();
+  if (trimmed.startsWith("/") || trimmed.startsWith("#")) return true;
+  if (trimmed.startsWith("javascript:") || trimmed.startsWith("data:") || trimmed.startsWith("vbscript:")) {
+    return false;
+  }
+  try {
+    const parsed = new URL(url, "https://abdulnabi.org");
+    return parsed.protocol === "http:" || parsed.protocol === "https:" || parsed.protocol === "mailto:";
+  } catch {
+    return false;
+  }
+}
+
   return parts.map((part, index) => {
     if (!part) return null;
 
@@ -107,11 +122,17 @@ function renderInline(text: string): React.ReactNode {
     const linkMatch = part.match(/^\[([^\]]+)\]\(([^\)]+)\)$/);
     if (linkMatch) {
       const linkText = linkMatch[1];
-      const linkUrl = linkMatch[2];
+      const rawUrl = linkMatch[2]?.trim() || "";
+      const safe = isSafeUrl(rawUrl);
+
+      if (!safe) {
+        return <span key={index} className="text-slate-300">{linkText}</span>;
+      }
+
       return (
         <a
           key={index}
-          href={linkUrl}
+          href={rawUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 break-all transition-colors font-medium"

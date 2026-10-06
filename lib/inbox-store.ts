@@ -171,7 +171,7 @@ export async function markAsRead(id: string, read: boolean): Promise<InboxItem |
 
   item.read = read;
   await saveAllInboxItems(items);
-  await supabaseDbPatch("inbox", `id=eq.${id}`, { read });
+  await supabaseDbPatch("inbox", `id=eq.${encodeURIComponent(id)}`, { read });
   return item;
 }
 
@@ -191,7 +191,7 @@ export async function archiveInboxItem(id: string, archived = true): Promise<Inb
 
   item.archived = archived;
   await saveAllInboxItems(items);
-  await supabaseDbPatch("inbox", `id=eq.${id}`, { archived });
+  await supabaseDbPatch("inbox", `id=eq.${encodeURIComponent(id)}`, { archived });
   return item;
 }
 
@@ -220,8 +220,8 @@ export async function deleteInboxItem(id: string): Promise<boolean> {
   }]);
 
   // Permanently delete record from Supabase DB tables
-  await supabaseDbDelete("inbox", `id=eq.${id}`);
-  await supabaseDbDelete("contact_submissions", `id=eq.${id}`);
+  await supabaseDbDelete("inbox", `id=eq.${encodeURIComponent(id)}`);
+  await supabaseDbDelete("contact_submissions", `id=eq.${encodeURIComponent(id)}`);
 
   const items = await getAllInboxItems();
   const next = items.filter((i) => i.id !== id);

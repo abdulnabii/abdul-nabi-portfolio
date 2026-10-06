@@ -158,7 +158,7 @@ export function BlogForm({ mode, initial }: BlogFormProps) {
 
       // Trigger public site revalidation
       try {
-        await fetch("/api/admin/revalidate?secret=default_revalidate_secret", {
+        await fetch("/api/admin/revalidate", {
           method: "POST",
         });
       } catch (revalErr) {

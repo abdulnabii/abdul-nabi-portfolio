@@ -203,8 +203,12 @@ export async function sendAdminOtpEmail(
 ): Promise<{ success: boolean; deliveredRealEmail: boolean; error?: string }> {
   const normalizedEmail = email.trim().toLowerCase();
 
-  // Always log to server stdout for local dev / fallback recovery
-  console.log(`[Admin OTP] Verification code for ${normalizedEmail}: ${code}`);
+  // Only log plain OTP code in local development environments
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[Admin OTP] Verification code for ${normalizedEmail}: ${code}`);
+  } else {
+    console.log(`[Admin OTP] Verification code generated for ${normalizedEmail}`);
+  }
 
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) {

@@ -235,23 +235,40 @@ const BgThemeContext = createContext<BgThemeCtx>({
   setDayTheme: () => {},
 });
 
-export function BackgroundThemeProvider({ children }: { children: React.ReactNode }) {
-  const [nightTheme, setNightThemeState] = useState<NightThemeId>("quantum-plasma");
-  const [dayTheme, setDayThemeState] = useState<DayThemeId>("day-sunrise-dawn");
+interface BackgroundThemeProviderProps {
+  children: React.ReactNode;
+  initialNightTheme?: NightThemeId;
+  initialDayTheme?: DayThemeId;
+}
 
-  // Immediate client hydration from localStorage
+export function BackgroundThemeProvider({
+  children,
+  initialNightTheme,
+  initialDayTheme,
+}: BackgroundThemeProviderProps) {
+  const [nightTheme, setNightThemeState] = useState<NightThemeId>(
+    initialNightTheme && NIGHT_BACKGROUND_THEMES.some((t) => t.id === initialNightTheme)
+      ? initialNightTheme
+      : "quantum-plasma"
+  );
+  const [dayTheme, setDayThemeState] = useState<DayThemeId>(
+    initialDayTheme && DAY_BACKGROUND_THEMES.some((t) => t.id === initialDayTheme)
+      ? initialDayTheme
+      : "day-sunrise-dawn"
+  );
+
+  // Update state if initial props change
   useEffect(() => {
-    try {
-      const localNight = localStorage.getItem("bg_theme_night") as NightThemeId | null;
-      if (localNight && NIGHT_BACKGROUND_THEMES.some((t) => t.id === localNight)) {
-        setNightThemeState(localNight);
-      }
-      const localDay = localStorage.getItem("bg_theme_day") as DayThemeId | null;
-      if (localDay && DAY_BACKGROUND_THEMES.some((t) => t.id === localDay)) {
-        setDayThemeState(localDay);
-      }
-    } catch {}
-  }, []);
+    if (initialNightTheme && NIGHT_BACKGROUND_THEMES.some((t) => t.id === initialNightTheme)) {
+      setNightThemeState(initialNightTheme);
+    }
+  }, [initialNightTheme]);
+
+  useEffect(() => {
+    if (initialDayTheme && DAY_BACKGROUND_THEMES.some((t) => t.id === initialDayTheme)) {
+      setDayThemeState(initialDayTheme);
+    }
+  }, [initialDayTheme]);
 
   const syncServerTheme = async () => {
     try {

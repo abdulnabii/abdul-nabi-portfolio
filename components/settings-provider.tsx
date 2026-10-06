@@ -67,23 +67,11 @@ export function SettingsProvider({
       const res = await fetch(`/api/admin/settings?t=${Date.now()}`, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
-        if (data.settings) {
-          const local = typeof window !== "undefined" ? localStorage.getItem("an_live_settings") : null;
-          if (!local) {
-            setSettings((prev) => ({ ...prev, ...data.settings }));
-          } else {
-            try {
-              const parsed = JSON.parse(local);
-              setSettings((prev) => ({ ...prev, ...data.settings, ...parsed }));
-            } catch {
-              setSettings((prev) => ({ ...prev, ...data.settings }));
-            }
-          }
-        }
-        if (data.about && !localStorage.getItem("an_about_data")) setAbout(data.about);
-        if (data.skills && !localStorage.getItem("an_skills_data")) setSkills(data.skills);
-        if (data.experience && !localStorage.getItem("an_experience_data")) setExperience(data.experience);
-        if (data.education && !localStorage.getItem("an_education_data")) setEducation(data.education);
+        if (data.settings) setSettings((prev) => ({ ...prev, ...data.settings }));
+        if (data.about) setAbout(data.about);
+        if (data.skills) setSkills(data.skills);
+        if (data.experience) setExperience(data.experience);
+        if (data.education) setEducation(data.education);
       }
     } catch {}
     try {
@@ -91,55 +79,14 @@ export function SettingsProvider({
       if (res2.ok) {
         const data2 = await res2.json();
         if (data2.visibility) {
-          const local = typeof window !== "undefined" ? localStorage.getItem("an_live_sections") : null;
-          if (!local) {
-            const mergedVis = { ...DEFAULT_VISIBILITY, ...data2.visibility };
-            setSectionVisibility(mergedVis);
-          } else {
-            try {
-              const parsed = JSON.parse(local);
-              setSectionVisibility({ ...DEFAULT_VISIBILITY, ...data2.visibility, ...parsed });
-            } catch {
-              setSectionVisibility({ ...DEFAULT_VISIBILITY, ...data2.visibility });
-            }
-          }
+          setSectionVisibility({ ...DEFAULT_VISIBILITY, ...data2.visibility });
         }
       }
     } catch {}
   };
 
   useEffect(() => {
-    // 1. Instantly check localStorage for live overrides saved by admin
-    try {
-      const localSettings = localStorage.getItem("an_live_settings");
-      if (localSettings) {
-        const parsed = JSON.parse(localSettings);
-        setSettings((prev) => ({ ...prev, ...parsed }));
-      }
-      const localSections = localStorage.getItem("an_live_sections");
-      if (localSections) {
-        const parsed = JSON.parse(localSections);
-        setSectionVisibility((prev) => ({ ...prev, ...parsed }));
-      }
-      const localAbout = localStorage.getItem("an_about_data");
-      if (localAbout) {
-        setAbout((prev) => ({ ...prev, ...JSON.parse(localAbout) }));
-      }
-      const localSkills = localStorage.getItem("an_skills_data");
-      if (localSkills) {
-        setSkills(JSON.parse(localSkills));
-      }
-      const localExp = localStorage.getItem("an_experience_data");
-      if (localExp) {
-        setExperience(JSON.parse(localExp));
-      }
-      const localEdu = localStorage.getItem("an_education_data");
-      if (localEdu) {
-        setEducation(JSON.parse(localEdu));
-      }
-    } catch {}
-
-    // 2. Fetch fresh updates from server
+    // 1. Fetch fresh updates from server
     refreshAll();
 
     // 3. Listen to live update events from admin in current window

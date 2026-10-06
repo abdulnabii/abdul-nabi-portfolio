@@ -8,10 +8,17 @@ export async function POST(req: NextRequest) {
     const secret = req.headers.get("x-revalidate-secret") || req.nextUrl.searchParams.get("secret");
     const expectedSecret = process.env.REVALIDATION_SECRET;
 
-    const isAuthorized =
-      Boolean(session) ||
-      (expectedSecret && secret === expectedSecret) ||
-      secret === "default_revalidate_secret";
+    let isSecretValid = false;
+    if (expectedSecret && secret) {
+      const bufA = Buffer.from(secret);
+      const bufB = Buffer.from(expectedSecret);
+      if (bufA.length === bufB.length) {
+        const { timingSafeEqual } = await import("crypto");
+        isSecretValid = timingSafeEqual(bufA, bufB);
+      }
+    }
+
+    const isAuthorized = Boolean(session) || isSecretValid;
 
     if (!isAuthorized) {
       return NextResponse.json({ error: "Unauthorized revalidation request" }, { status: 401 });

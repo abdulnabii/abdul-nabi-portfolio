@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
           (m) =>
             m &&
             typeof m.content === "string" &&
-            (m.role === "user" || m.role === "assistant" || m.role === "system")
+            (m.role === "user" || m.role === "assistant")
         )
         .map((m) => ({
           role: m.role,

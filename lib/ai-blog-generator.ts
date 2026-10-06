@@ -549,7 +549,7 @@ export async function generateAiBlogPost(
   topic: NewsItem,
   relatedNews: NewsItem[] = [],
   customInstructions?: string,
-  imageStyle: string = "ai_flux"
+  imageStyle: string = "curated_hd"
 ): Promise<GeneratedBlogPost | null> {
   const openAiKey = process.env.OPENAI_API_KEY;
   const isKeyMissing = !openAiKey || openAiKey === "sk-your-openai-api-key" || openAiKey.trim() === "";
@@ -686,7 +686,7 @@ export async function generateAndPublishSingleBlog(
     console.log(`[ai-blog-generator] Selected primary topic: "${primaryTopic.title}" (${primaryTopic.source})`);
 
     // 2. Generate the blog post & visual prompt
-    const generatedPost = await generateAiBlogPost(primaryTopic, relatedNews, req.category, req.imageStyle || "ai_flux");
+    const generatedPost = await generateAiBlogPost(primaryTopic, relatedNews, req.category, req.imageStyle || "curated_hd");
     if (!generatedPost) {
       return { success: false, error: "Failed to generate blog content" };
     }
