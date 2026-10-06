@@ -20,8 +20,7 @@ import { getSectionVisibility, getTestimonials } from "@/lib/settings-store";
 import { SectionVisibilityGate } from "@/components/ui/section-visibility-gate";
 import { ArrowRight } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 120;
 
 export default async function HomePage() {
   const latestPosts = (await getPublishedBlogs()).slice(0, 2);

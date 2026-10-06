@@ -212,7 +212,11 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   };
 
   try {
-    const rows = await supabaseDbQuery<{ key: string; value: string }>("site_settings", "select=*");
+    const keysList = Object.keys(DEFAULT_SETTINGS).join(",");
+    const rows = await supabaseDbQuery<{ key: string; value: string }>(
+      "site_settings",
+      `select=key,value&key=in.(${keysList})`
+    );
     if (rows && rows.length > 0) {
       const fetched: Partial<SiteSettings> = {};
       rows.forEach((r) => {

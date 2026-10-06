@@ -21,6 +21,8 @@ import seedProjects from "@/data/projects.json";
 import { supabaseDbDelete, supabaseDbQuery, supabaseDbUpsert } from "./supabase";
 
 const memoryProjects: Project[] = [];
+let lastProjectsFetchTime = 0;
+const PROJECTS_CACHE_TTL = 60 * 1000;
 
 const DEFAULT_PROJECT_BANNERS: Record<string, string> = {
   "aegis-appsec": "/projects/aegis.jpg",
@@ -32,6 +34,11 @@ const DEFAULT_PROJECT_BANNERS: Record<string, string> = {
 };
 
 export async function getAllProjects(): Promise<Project[]> {
+  const now = Date.now();
+  if (memoryProjects.length > 0 && now - lastProjectsFetchTime < PROJECTS_CACHE_TTL) {
+    return memoryProjects;
+  }
+
   const map = new Map<string, Project>();
 
   try {
@@ -101,12 +108,18 @@ export async function getAllProjects(): Promise<Project[]> {
     console.error("[getAllProjects] Exception:", err);
   }
 
-  return Array.from(map.values()).sort((a, b) => {
+  const sorted = Array.from(map.values()).sort((a, b) => {
     if (a.featured !== b.featured) {
       return a.featured ? -1 : 1;
     }
     return (b.year || "").localeCompare(a.year || "");
   });
+
+  memoryProjects.length = 0;
+  memoryProjects.push(...sorted);
+  lastProjectsFetchTime = Date.now();
+
+  return sorted;
 }
 
 export async function getPublishedProjects(): Promise<Project[]> {

@@ -3,7 +3,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { getPublishedBlogs } from "@/lib/blog-store";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 export const metadata: Metadata = {
   title: "Blog — Abdul Nabi | Next.js, AI & Full-Stack Engineering",

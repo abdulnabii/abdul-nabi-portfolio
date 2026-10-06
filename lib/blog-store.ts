@@ -66,16 +66,24 @@ async function ensureBlogsFile(): Promise<void> {
   }
 }
 
+let lastBlogsFetchTime = 0;
+const BLOGS_CACHE_TTL = 60 * 1000; // 60 seconds memory cache
+
 export async function getAllBlogs(): Promise<BlogPost[]> {
+  const now = Date.now();
+  if (memoryBlogs.length > 0 && now - lastBlogsFetchTime < BLOGS_CACHE_TTL) {
+    return memoryBlogs;
+  }
+
   const map = new Map<string, BlogPost>();
   let deletedSet = new Set<string>();
 
   try {
-    // 0. Fetch deleted_blog_slugs list from site_settings
+    // 0. Fetch deleted_blog_slugs list from site_settings (only key,value)
     try {
       const rows = await supabaseDbQuery<{ key: string; value: string }>(
         "site_settings",
-        "select=*&key=eq.deleted_blog_slugs"
+        "select=key,value&key=eq.deleted_blog_slugs"
       );
       if (rows && rows.length > 0 && rows[0].value) {
         const parsed = JSON.parse(rows[0].value) as string[];
@@ -113,28 +121,32 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
     }
 
     // 3a. Overlay Supabase blogs table if connected
+    let foundInDb = false;
     try {
       const dbPosts = await supabaseDbQuery<BlogPost>("blogs", "select=*&order=date.desc");
       if (dbPosts && dbPosts.length > 0) {
+        foundInDb = true;
         dbPosts.forEach((p) => {
           if (!isDeleted(p.slug)) map.set(p.slug, p);
         });
       }
     } catch {}
 
-    // 3b. Overlay site_settings blogs backup table
-    try {
-      const rows = await supabaseDbQuery<{ key: string; value: string }>(
-        "site_settings",
-        "select=*&key=eq.blogs_store_json"
-      );
-      if (rows && rows.length > 0 && rows[0].value) {
-        const backupPosts = JSON.parse(rows[0].value) as BlogPost[];
-        backupPosts.forEach((p) => {
-          if (!isDeleted(p.slug)) map.set(p.slug, p);
-        });
-      }
-    } catch {}
+    // 3b. Overlay site_settings blogs backup ONLY if primary blogs table returned 0 rows
+    if (!foundInDb) {
+      try {
+        const rows = await supabaseDbQuery<{ key: string; value: string }>(
+          "site_settings",
+          "select=key,value&key=eq.blogs_store_json"
+        );
+        if (rows && rows.length > 0 && rows[0].value) {
+          const backupPosts = JSON.parse(rows[0].value) as BlogPost[];
+          backupPosts.forEach((p) => {
+            if (!isDeleted(p.slug)) map.set(p.slug, p);
+          });
+        }
+      } catch {}
+    }
 
     // 4. Overlay in-memory cache LAST
     memoryBlogs.forEach((p) => {
@@ -149,7 +161,6 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
   );
 
   // Auto-promote any scheduled blogs whose scheduledAt time has passed
-  const now = Date.now();
   let needsPersist = false;
   const updatedList = allList.map((post) => {
     if (post.scheduledAt && new Date(post.scheduledAt).getTime() <= now) {
@@ -171,6 +182,10 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
       console.warn("[getAllBlogs] Auto-promote persist notice:", err)
     );
   }
+
+  memoryBlogs.length = 0;
+  memoryBlogs.push(...updatedList);
+  lastBlogsFetchTime = Date.now();
 
   return updatedList;
 }

@@ -415,8 +415,15 @@ export const INITIAL_MINI_PROJECTS: MiniProject[] = [
 ];
 
 let memoryMiniProjects: MiniProject[] = [...INITIAL_MINI_PROJECTS];
+let lastMiniFetchTime = 0;
+const MINI_CACHE_TTL = 60 * 1000;
 
 export async function getMiniProjects(): Promise<MiniProject[]> {
+  const now = Date.now();
+  if (memoryMiniProjects.length > 0 && now - lastMiniFetchTime < MINI_CACHE_TTL) {
+    return memoryMiniProjects.sort((a, b) => a.dayNumber - b.dayNumber);
+  }
+
   // 1. Try tmp or local file first
   try {
     let raw = "";
@@ -437,7 +444,7 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
   try {
     const rows = await supabaseDbQuery<{ key: string; value: string }>(
       "site_settings",
-      "select=*&key=eq.mini_projects_data"
+      "select=value&key=eq.mini_projects_data"
     );
     if (rows && rows.length > 0 && rows[0].value) {
       const parsed = JSON.parse(rows[0].value) as MiniProject[];
@@ -461,6 +468,7 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
             githubUrl: p.githubUrl || `https://github.com/abdulnabii/mini-projects/tree/main/day-${String(p.dayNumber).padStart(2, "0")}`,
           };
         });
+        lastMiniFetchTime = Date.now();
         return memoryMiniProjects.sort((a, b) => a.dayNumber - b.dayNumber);
       }
     }
@@ -472,6 +480,7 @@ export async function getMiniProjects(): Promise<MiniProject[]> {
   if (memoryMiniProjects.length === 0) {
     memoryMiniProjects = [...INITIAL_MINI_PROJECTS];
   }
+  lastMiniFetchTime = Date.now();
   return memoryMiniProjects.sort((a, b) => a.dayNumber - b.dayNumber);
 }
 
