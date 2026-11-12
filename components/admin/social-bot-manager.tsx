@@ -1041,6 +1041,7 @@ export function SocialBotManager() {
                 {/* Picture Banner Card */}
                 {activePost.imageUrl && (
                   <div className="rounded-2xl border border-white/10 bg-slate-900/90 p-3 flex items-center gap-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={
                         activePost.imageUrl.startsWith("http") || activePost.imageUrl.startsWith("data:") || activePost.imageUrl.startsWith("/api/")
@@ -1130,6 +1131,7 @@ export function SocialBotManager() {
                 {/* Picture Banner Card */}
                 {activePost.imageUrl && (
                   <div className="rounded-2xl border border-white/10 bg-slate-900/90 p-3 flex items-center gap-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={
                         activePost.imageUrl.startsWith("http") || activePost.imageUrl.startsWith("data:") || activePost.imageUrl.startsWith("/api/")

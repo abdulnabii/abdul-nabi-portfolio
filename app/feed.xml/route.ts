@@ -29,7 +29,7 @@ export async function GET() {
       <guid isPermaLink="true">${url}</guid>
       <pubDate>${pubDate}</pubDate>
       <description>${escapeXml(post.excerpt || "")}</description>
-      <author>abdulnabi.khaskhely@gmail.com (Abdul Nabi)</author>
+      <author>abdulnabi@abdulnabi.org (Abdul Nabi)</author>
     </item>`;
   }).join("\n");
 

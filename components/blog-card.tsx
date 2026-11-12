@@ -8,7 +8,7 @@ import { formatDate } from "@/lib/utils";
 import { ArrowUpRight, Clock, Eye, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -17,12 +17,15 @@ interface BlogCardProps {
 
 export function BlogCard({ post, index = 0 }: BlogCardProps) {
   const [retryOffset, setRetryOffset] = useState(0);
-  const getCleanCover = (offset = 0) => {
-    if (offset === 0 && post.coverImage && !post.coverImage.includes("pollinations.ai")) {
-      return post.coverImage;
-    }
-    return getCuratedTopicCoverImage(post.title, post.tags, offset);
-  };
+  const getCleanCover = useCallback(
+    (offset = 0) => {
+      if (offset === 0 && post.coverImage && !post.coverImage.includes("pollinations.ai")) {
+        return post.coverImage;
+      }
+      return getCuratedTopicCoverImage(post.title, post.tags, offset);
+    },
+    [post.coverImage, post.title, post.tags]
+  );
 
   const [imgSrc, setImgSrc] = useState<string>(() => getCleanCover(0));
   const [hasFailed, setHasFailed] = useState(false);
@@ -31,7 +34,7 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
     setImgSrc(getCleanCover(0));
     setRetryOffset(0);
     setHasFailed(false);
-  }, [post.coverImage, post.title, post.tags]);
+  }, [getCleanCover]);
 
   const handleImageError = () => {
     if (retryOffset < 3) {
