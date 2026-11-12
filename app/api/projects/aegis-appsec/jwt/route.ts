@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,11 @@ function base64UrlEncode(str: string | Buffer): string {
 
 export async function POST(req: NextRequest) {
   try {
+    const rateCheck = checkRateLimit(req, "aegis_jwt", 30, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Too many JWT requests" }, { status: 429 });
+    }
+
     const body = await req.json();
     const { token, secret = "secret123", action = "verify" } = body;
 

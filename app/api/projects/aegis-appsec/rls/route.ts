@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,11 @@ export interface RlsTestResult {
 
 export async function POST(req: NextRequest) {
   try {
+    const rateCheck = checkRateLimit(req, "aegis_rls", 30, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Too many RLS simulation requests" }, { status: 429 });
+    }
+
     const body = await req.json();
     const { table = "health_records", operation = "SELECT", userContext = "authenticated", tenantId = "tenant_a" } = body;
 

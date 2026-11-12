@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,11 @@ interface CartItem {
 
 export async function POST(request: NextRequest) {
   try {
+    const rateCheck = checkRateLimit(request, "nova_checkout", 15, 10 * 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Too many checkout requests. Please try again later." }, { status: 429 });
+    }
+
     const body = (await request.json().catch(() => ({}))) as {
       cartItems?: CartItem[];
     };

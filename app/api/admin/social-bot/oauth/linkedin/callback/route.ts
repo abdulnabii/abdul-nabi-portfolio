@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAdminSession } from "@/lib/auth";
 import {
   getSocialCredentials,
   saveSocialCredentials,
@@ -13,13 +14,25 @@ export const dynamic = "force-dynamic";
  * Exchanges code for access token, fetches Person URN, saves to Supabase.
  */
 export async function GET(req: NextRequest) {
+  const session = await getAdminSession();
+  if (!session) {
+    return NextResponse.redirect(new URL("/admin/login?error=Unauthorized", req.url));
+  }
+
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
+  const state = searchParams.get("state");
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.abdulnabi.org";
   const adminUrl = `${siteUrl}/admin/social-bot`;
+
+  if (!state || !state.startsWith("linkedin_oauth_")) {
+    return NextResponse.redirect(
+      `${adminUrl}?oauth_error=${encodeURIComponent("Invalid or expired OAuth state parameter.")}`
+    );
+  }
 
   // ── Handle OAuth errors from LinkedIn ───────────────────────────────────────
   if (error) {

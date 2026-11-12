@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,11 @@ export interface SecurityVulnerability {
 
 export async function POST(req: NextRequest) {
   try {
+    const rateCheck = checkRateLimit(req, "aegis_audit", 30, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Too many audit requests" }, { status: 429 });
+    }
+
     const body = await req.json();
     const { payload, targetType, endpoint } = body;
 

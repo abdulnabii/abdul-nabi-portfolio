@@ -1,5 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { supabaseDbQuery, supabaseDbUpsert } from "@/lib/supabase";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,14 @@ interface SubscriberItem {
 
 export async function POST(req: NextRequest) {
   try {
+    const rateCheck = checkRateLimit(req, "newsletter-subscribe", 5, 10 * 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: "Too many subscription attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const email = (body.email || "").trim().toLowerCase();
     const source = (body.source || "website").trim();

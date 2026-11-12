@@ -1,4 +1,5 @@
 import { getProjectById, updateProject } from "@/lib/project-store";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +10,14 @@ interface RouteContext {
 
 export async function POST(request: NextRequest, context: RouteContext) {
   try {
+    const rateCheck = checkRateLimit(request, "project_appreciate", 10, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: "Too many appreciations submitted. Please wait a moment." },
+        { status: 429 }
+      );
+    }
+
     const projectId = context.params.id;
     const cookieName = `liked_${projectId}`;
     const existingCookie = request.cookies.get(cookieName)?.value;

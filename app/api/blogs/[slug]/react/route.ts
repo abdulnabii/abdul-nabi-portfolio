@@ -1,4 +1,5 @@
 import { getBlogBySlug, updateBlog } from "@/lib/blog-store";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +10,14 @@ interface RouteContext {
 
 export async function POST(request: NextRequest, context: RouteContext) {
   try {
+    const rateCheck = checkRateLimit(request, "blog_react", 10, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: "Too many reactions submitted. Please wait a moment." },
+        { status: 429 }
+      );
+    }
+
     const body = (await request.json()) as {
       action: "rate" | "helpful" | "not-helpful";
       rating?: number; // 1-5 for "rate"

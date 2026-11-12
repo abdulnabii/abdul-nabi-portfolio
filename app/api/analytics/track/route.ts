@@ -1,10 +1,16 @@
 import { recordAnalyticsEvent } from "@/lib/analytics-store";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 
 const VISITOR_COOKIE_NAME = "an_session";
 
 export async function POST(req: NextRequest) {
   try {
+    const rateCheck = checkRateLimit(req, "analytics_track", 60, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Too many tracking events" }, { status: 429 });
+    }
+
     const body = await req.json().catch(() => ({}));
     const { event_type, page_slug, cta_label, utm_source, utm_medium, utm_campaign, referrer } = body;
 
