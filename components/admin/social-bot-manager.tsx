@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import type { MiniProject } from "@/lib/mini-projects-store";
@@ -89,9 +89,36 @@ export function SocialBotManager() {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [activePost, setActivePost] = useState<SocialPost | null>(null);
 
+  const handleTestConnection = useCallback(async () => {
+    if (!creds.linkedInAccessToken) {
+      setTokenTestResult({ valid: false, error: "Please paste your LinkedIn Access Token in the box first." });
+      return;
+    }
+    setTestingToken(true);
+    setTokenTestResult(null);
+    try {
+      const res = await fetch("/api/admin/social-bot/test-connection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: creds.linkedInAccessToken }),
+      });
+      const data = await res.json();
+      setTokenTestResult(data);
+      if (data.valid) {
+        setCreds((prev) => ({ ...prev, linkedInPersonUrn: data.urn }));
+        setStatusMessage({ type: "success", text: `✅ LinkedIn token verified & saved! Connected as ${data.name || data.urn}` });
+      } else {
+        setStatusMessage({ type: "error", text: `❌ ${data.error}` });
+      }
+    } catch (err: any) {
+      setTokenTestResult({ valid: false, error: err.message });
+    } finally {
+      setTestingToken(false);
+    }
+  }, [creds.linkedInAccessToken]);
+
   useEffect(() => {
     fetchData();
-    // Read OAuth result from URL params
     const params = new URLSearchParams(window.location.search);
     const oauthSuccess = params.get("oauth_success");
     const oauthError = params.get("oauth_error");
@@ -103,6 +130,7 @@ export function SocialBotManager() {
       setStatusMessage({ type: "error", text: decodeURIComponent(oauthError) });
       window.history.replaceState({}, "", window.location.pathname);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchData() {
@@ -235,35 +263,6 @@ export function SocialBotManager() {
       setStatusMessage({ type: "error", text: "Exception saving credentials." });
     } finally {
       setSavingCreds(false);
-    }
-  }
-
-  async function handleTestConnection() {
-    if (!creds.linkedInAccessToken) {
-      setTokenTestResult({ valid: false, error: "Please paste your LinkedIn Access Token in the box first." });
-      return;
-    }
-    setTestingToken(true);
-    setTokenTestResult(null);
-    try {
-      const res = await fetch("/api/admin/social-bot/test-connection", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: creds.linkedInAccessToken }),
-      });
-      const data = await res.json();
-      setTokenTestResult(data);
-      if (data.valid) {
-        setCreds((prev) => ({ ...prev, linkedInPersonUrn: data.urn }));
-        await fetchData();
-        setStatusMessage({ type: "success", text: `✅ LinkedIn token verified & saved! Connected as ${data.name || data.urn}` });
-      } else {
-        setStatusMessage({ type: "error", text: `❌ ${data.error}` });
-      }
-    } catch (err: any) {
-      setTokenTestResult({ valid: false, error: err.message });
-    } finally {
-      setTestingToken(false);
     }
   }
 

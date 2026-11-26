@@ -13,7 +13,7 @@ import {
   RefreshCw,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface AnalyticsDashboardOverviewProps {
   initialSummary: AnalyticsSummary;
@@ -56,7 +56,7 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
     } catch {}
   }
 
-  async function handleRefresh(showSpinner = true) {
+  const handleRefresh = useCallback(async (showSpinner = true) => {
     if (showSpinner) setLoading(true);
     try {
       const res = await fetch(`/api/analytics/summary?range=${dateRange}&t=${Date.now()}`, {
@@ -78,13 +78,13 @@ export function AnalyticsDashboardOverview({ initialSummary }: AnalyticsDashboar
     } finally {
       if (showSpinner) setLoading(false);
     }
-  }
+  }, [dateRange]);
 
   useEffect(() => {
     handleRefresh(true);
     const timer = setInterval(() => handleRefresh(false), 8000);
     return () => clearInterval(timer);
-  }, [dateRange]);
+  }, [handleRefresh]);
 
   const totalViews = Math.max(summary.totalViews || 0, 8);
   const totalClicks = Math.max(summary.totalClicks || 0, 2);

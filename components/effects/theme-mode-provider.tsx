@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useSiteSettings } from "@/components/settings-provider";
 
 export type ThemeMode = "dark" | "light";
@@ -43,7 +43,7 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, []);
 
-  const syncServerThemeMode = async () => {
+  const syncServerThemeMode = useCallback(async () => {
     if (sectionVisibility?.themeToggle === false) {
       setThemeState("dark");
       applyTheme("dark");
@@ -64,7 +64,7 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
         }
       }
     } catch {}
-  };
+  }, [sectionVisibility?.themeToggle]);
 
   useEffect(() => {
     syncServerThemeMode();
@@ -93,7 +93,7 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("theme-mode-changed", handleModeChange);
       window.removeEventListener("storage", handleStorage);
     };
-  }, [sectionVisibility?.themeToggle]);
+  }, [syncServerThemeMode]);
 
   const setTheme = (mode: ThemeMode) => {
     if (sectionVisibility?.themeToggle === false) {

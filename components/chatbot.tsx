@@ -137,6 +137,7 @@ export function Chatbot() {
   const recognitionRef = useRef<any>(null);
 
   // Listen to external custom events
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleOpenCall = () => {
       if (ENABLE_VOICE_AGENT) {
@@ -193,6 +194,7 @@ export function Chatbot() {
   }, [callActive]);
 
   // Initialize Speech Recognition if supported
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (typeof window !== "undefined" && ENABLE_VOICE_AGENT) {
       const SpeechRecognition =
