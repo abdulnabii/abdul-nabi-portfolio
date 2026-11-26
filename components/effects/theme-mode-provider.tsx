@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { useSiteSettings } from "@/components/settings-provider";
 
 export type ThemeMode = "dark" | "light";
 
@@ -18,7 +17,6 @@ const ThemeModeContext = createContext<ThemeModeContextType>({
 });
 
 export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
-  const { sectionVisibility } = useSiteSettings();
   const [theme, setThemeState] = useState<ThemeMode>("dark");
 
   const applyTheme = (mode: ThemeMode) => {
@@ -44,12 +42,6 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const syncServerThemeMode = useCallback(async () => {
-    if (sectionVisibility?.themeToggle === false) {
-      setThemeState("dark");
-      applyTheme("dark");
-      return;
-    }
-
     try {
       const res = await fetch(`/api/admin/background-theme?t=${Date.now()}`, {
         cache: "no-store",
@@ -64,7 +56,7 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
         }
       }
     } catch {}
-  }, [sectionVisibility?.themeToggle]);
+  }, []);
 
   useEffect(() => {
     syncServerThemeMode();
@@ -96,21 +88,14 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   }, [syncServerThemeMode]);
 
   const setTheme = (mode: ThemeMode) => {
-    if (sectionVisibility?.themeToggle === false) {
-      setThemeState("dark");
-      applyTheme("dark");
-      return;
-    }
     setThemeState(mode);
     applyTheme(mode);
     try {
       localStorage.setItem("app_theme", mode);
     } catch {}
-
   };
 
   const toggleTheme = () => {
-    if (sectionVisibility?.themeToggle === false) return;
     const nextTheme = theme === "dark" ? "light" : "dark";
     setTheme(nextTheme);
   };

@@ -273,7 +273,7 @@ export const siteContent: SiteContent = {
       outcome:
         "Delivered an interactive, production-grade security auditing suite that identifies critical vulnerabilities in real-time and generates hardened code fixes.",
       tags: ["Next.js 14", "TypeScript", "AppSec", "OWASP Top 10", "Supabase RLS", "JWT Crypto"],
-      image: "/projects/ops.jpg",
+      image: "/projects/aegis.jpg",
       githubUrl: "https://github.com/abdulnabii/abdul-nabi-portfolio/tree/main/app/projects/aegis-appsec",
       liveUrl: "https://www.abdulnabi.org/projects/aegis-appsec",
       status: "live",

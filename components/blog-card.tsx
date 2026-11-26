@@ -37,10 +37,15 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
   }, [getCleanCover]);
 
   const handleImageError = () => {
-    if (retryOffset < 3) {
+    if (retryOffset < 1) {
       const next = retryOffset + 1;
       setRetryOffset(next);
       setImgSrc(getCuratedTopicCoverImage(post.title, post.tags, next));
+    } else if (retryOffset === 1) {
+      setRetryOffset(2);
+      setImgSrc(
+        `/api/og/blog?slug=${encodeURIComponent(post.slug)}&title=${encodeURIComponent(post.title)}&tags=${encodeURIComponent((post.tags || []).slice(0, 3).join(","))}`
+      );
     } else {
       setHasFailed(true);
     }
@@ -54,7 +59,7 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
     <article
       className="h-full animate-fade-up opacity-0"
       style={{
-        animationDelay: `${index * 80}ms`,
+        animationDelay: `${Math.min(index, 6) * 50}ms`,
         animationFillMode: "forwards",
       }}
     >

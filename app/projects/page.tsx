@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
-import { Reveal } from "@/components/ui/reveal";
 import { getPublishedProjects } from "@/lib/project-store";
 import { isPublicUrl } from "@/lib/links";
 import { ArrowLeft, ArrowUpRight, FolderGit2, Github, Star } from "lucide-react";
@@ -116,17 +115,15 @@ export default async function AllProjectsPage() {
       {/* Header */}
       <section className="section-padding pb-8">
         <div className="container-narrow">
-          <Reveal>
-            <Link
-              href="/#projects"
-              className="mb-8 inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Portfolio
-            </Link>
-          </Reveal>
+          <Link
+            href="/#projects"
+            className="mb-8 inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Portfolio
+          </Link>
 
-          <Reveal delay={60}>
+          <div>
             <div className="mb-2 flex items-center gap-2">
               <span className="inline-flex h-7 items-center rounded-full bg-indigo-500/15 px-3 text-xs font-semibold uppercase tracking-widest text-indigo-400 border border-indigo-500/25">
                 All Work
@@ -141,27 +138,25 @@ export default async function AllProjectsPage() {
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-400 sm:text-lg">
               Every project I&apos;ve shipped — from production web apps and ML systems to open-source tools. {projects.length} projects total.
             </p>
-          </Reveal>
+          </div>
 
           {/* Stats row with small icons */}
-          <Reveal delay={100}>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 backdrop-blur-sm">
-                <FolderGit2 className="h-5 w-5 text-indigo-400" />
-                <div>
-                  <p className="text-2xl font-bold text-white leading-none">{projects.length}</p>
-                  <p className="mt-1 text-xs text-slate-400 uppercase tracking-wider">Total Projects</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 backdrop-blur-sm">
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400/20" />
-                <div>
-                  <p className="text-2xl font-bold text-white leading-none">{featuredCount}</p>
-                  <p className="mt-1 text-xs text-slate-400 uppercase tracking-wider">Featured</p>
-                </div>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 backdrop-blur-sm">
+              <FolderGit2 className="h-5 w-5 text-indigo-400" />
+              <div>
+                <p className="text-2xl font-bold text-white leading-none">{projects.length}</p>
+                <p className="mt-1 text-xs text-slate-400 uppercase tracking-wider">Total Projects</p>
               </div>
             </div>
-          </Reveal>
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 backdrop-blur-sm">
+              <Star className="h-5 w-5 text-amber-400 fill-amber-400/20" />
+              <div>
+                <p className="text-2xl font-bold text-white leading-none">{featuredCount}</p>
+                <p className="mt-1 text-xs text-slate-400 uppercase tracking-wider">Featured</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

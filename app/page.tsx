@@ -80,7 +80,7 @@ export default async function HomePage() {
               {latestPosts.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2">
                   {latestPosts.map((post, idx) => (
-                    <Reveal key={post.slug} delay={idx * 0.1}>
+                    <Reveal key={post.slug} delay={idx * 100}>
                       <BlogCard post={post} />
                     </Reveal>
                   ))}

@@ -9,10 +9,13 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get("slug");
     const titleParam = searchParams.get("title");
+    const tagsParam = searchParams.get("tags");
 
     let title = titleParam || "Technical Article · Abdul Nabi";
     let date = "August 2026";
-    let tags = ["Full-Stack", "TypeScript", "AI / ML"];
+    let tags = tagsParam
+      ? tagsParam.split(",").map((t) => t.trim()).filter(Boolean)
+      : ["Full-Stack", "TypeScript", "AI / ML"];
 
     if (slug) {
       const post = (seedBlogs as any[]).find((p) => p.slug === slug);

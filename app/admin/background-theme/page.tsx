@@ -22,6 +22,7 @@ export default function AdminBackgroundThemePage() {
   const [defaultMode, setDefaultMode] = useState<"dark" | "light">("dark");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -70,6 +71,35 @@ export default function AdminBackgroundThemePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const persistThemeUpdate = async (payload: {
+    nightTheme: NightThemeId;
+    dayTheme: DayThemeId;
+    cursorStyle: CursorStyleId;
+    defaultMode: "dark" | "light";
+  }) => {
+    setSaving(true);
+    setSaved(false);
+    setSaveError(null);
+    try {
+      const res = await fetch("/api/admin/background-theme", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        setSaveError(errBody.error || `Failed to save theme settings (HTTP ${res.status})`);
+        return;
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch {
+      setSaveError("Network error while saving theme settings.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleSelectNight = async (id: NightThemeId) => {
     setActiveNight(id);
     setDefaultMode("dark");
@@ -81,24 +111,12 @@ export default function AdminBackgroundThemePage() {
     window.dispatchEvent(new CustomEvent("bg-theme-changed", { detail: { nightTheme: id } }));
     window.dispatchEvent(new CustomEvent("theme-mode-changed", { detail: { mode: "dark" } }));
 
-    setSaving(true);
-    setSaved(false);
-    try {
-      await fetch("/api/admin/background-theme", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nightTheme: id,
-          dayTheme: activeDay,
-          cursorStyle: activeCursor,
-          defaultMode: "dark",
-        }),
-      });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
-    } finally {
-      setSaving(false);
-    }
+    await persistThemeUpdate({
+      nightTheme: id,
+      dayTheme: activeDay,
+      cursorStyle: activeCursor,
+      defaultMode: "dark",
+    });
   };
 
   const handleSelectDay = async (id: DayThemeId) => {
@@ -112,24 +130,12 @@ export default function AdminBackgroundThemePage() {
     window.dispatchEvent(new CustomEvent("bg-theme-changed", { detail: { dayTheme: id } }));
     window.dispatchEvent(new CustomEvent("theme-mode-changed", { detail: { mode: "light" } }));
 
-    setSaving(true);
-    setSaved(false);
-    try {
-      await fetch("/api/admin/background-theme", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nightTheme: activeNight,
-          dayTheme: id,
-          cursorStyle: activeCursor,
-          defaultMode: "light",
-        }),
-      });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
-    } finally {
-      setSaving(false);
-    }
+    await persistThemeUpdate({
+      nightTheme: activeNight,
+      dayTheme: id,
+      cursorStyle: activeCursor,
+      defaultMode: "light",
+    });
   };
 
   const handleToggleDefaultMode = async (mode: "dark" | "light") => {
@@ -140,50 +146,26 @@ export default function AdminBackgroundThemePage() {
     } catch {}
     window.dispatchEvent(new CustomEvent("theme-mode-changed", { detail: { mode } }));
 
-    setSaving(true);
-    setSaved(false);
-    try {
-      await fetch("/api/admin/background-theme", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nightTheme: activeNight,
-          dayTheme: activeDay,
-          cursorStyle: activeCursor,
-          defaultMode: mode,
-        }),
-      });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
-    } finally {
-      setSaving(false);
-    }
+    await persistThemeUpdate({
+      nightTheme: activeNight,
+      dayTheme: activeDay,
+      cursorStyle: activeCursor,
+      defaultMode: mode,
+    });
   };
 
   const handleSelectCursor = async (id: CursorStyleId) => {
     setActiveCursor(id);
     try { localStorage.setItem("cursor_style", id); } catch {}
-    setSaving(true);
-    setSaved(false);
     window.dispatchEvent(
       new CustomEvent("cursor-style-changed", { detail: { style: id } })
     );
-    try {
-      await fetch("/api/admin/background-theme", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nightTheme: activeNight,
-          dayTheme: activeDay,
-          cursorStyle: id,
-          defaultMode,
-        }),
-      });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
-    } finally {
-      setSaving(false);
-    }
+    await persistThemeUpdate({
+      nightTheme: activeNight,
+      dayTheme: activeDay,
+      cursorStyle: id,
+      defaultMode,
+    });
   };
 
   return (
@@ -259,7 +241,12 @@ export default function AdminBackgroundThemePage() {
             {saved && !saving && (
               <div className="flex items-center gap-2 text-sm text-emerald-400 font-bold">
                 <Check className="h-4 w-4 stroke-[3]" />
-                Settings saved & live on abdulnabi.org!
+                Settings saved &amp; live on abdulnabi.org!
+              </div>
+            )}
+            {saveError && !saving && (
+              <div className="text-sm text-rose-400 font-semibold">
+                {saveError}
               </div>
             )}
           </div>

@@ -9,9 +9,52 @@ import { BlogContentRenderer } from "./blog-content-renderer";
 import type { BlogPost } from "@/lib/blog-store";
 import { getCuratedTopicCoverImage } from "@/lib/image-search";
 import { formatDate } from "@/lib/utils";
-import { ArrowLeft, Clock, Eye } from "lucide-react";
+import { ArrowLeft, Clock, Eye, Sparkles } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+
+function RelatedPostThumb({ item }: { item: BlogPost }) {
+  const [src, setSrc] = useState<string>(() =>
+    item.coverImage && !item.coverImage.includes("pollinations.ai")
+      ? item.coverImage
+      : getCuratedTopicCoverImage(item.title, item.tags)
+  );
+  const [step, setStep] = useState(0);
+
+  if (step >= 2) {
+    return (
+      <div className="relative flex h-28 w-full items-end bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/70 p-4">
+        <span className="inline-flex items-center gap-1 rounded-md border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-indigo-300">
+          <Sparkles className="h-3 w-3 text-indigo-400" />
+          {item.tags?.[0] || "Article"}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-28 w-full bg-[#060a17]">
+      <Image
+        src={src}
+        alt={item.title}
+        fill
+        unoptimized
+        referrerPolicy="no-referrer"
+        onError={() => {
+          if (step === 0) {
+            setStep(1);
+            setSrc(`/api/og/blog?slug=${encodeURIComponent(item.slug)}&title=${encodeURIComponent(item.title)}`);
+          } else {
+            setStep(2);
+          }
+        }}
+        className="object-cover"
+        sizes="300px"
+      />
+    </div>
+  );
+}
 
 interface BlogPostClientProps {
   initialPost: BlogPost | null;
@@ -24,13 +67,13 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
   const [loading, setLoading] = useState(!initialPost);
   const [retryOffset, setRetryOffset] = useState(0);
 
-  const getCleanCover = (p: BlogPost | null, offset = 0) => {
+  const getCleanCover = useCallback((p: BlogPost | null, offset = 0) => {
     if (!p) return "";
     if (offset === 0 && p.coverImage && !p.coverImage.includes("pollinations.ai")) {
       return p.coverImage;
     }
     return getCuratedTopicCoverImage(p.title, p.tags, offset);
-  };
+  }, []);
 
   const [imgSrc, setImgSrc] = useState<string>(() => getCleanCover(initialPost, 0));
   const [imageError, setImageError] = useState(false);
@@ -42,13 +85,20 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
       setRetryOffset(0);
       setImageError(false);
     }
-  }, [post]);
+  }, [post, getCleanCover]);
 
   const handleImageError = () => {
-    if (post && retryOffset < 3) {
+    if (post && retryOffset < 1) {
       const next = retryOffset + 1;
       setRetryOffset(next);
       setImgSrc(getCuratedTopicCoverImage(post.title, post.tags, next));
+      return;
+    }
+    if (post && retryOffset === 1) {
+      setRetryOffset(2);
+      setImgSrc(
+        `/api/og/blog?slug=${encodeURIComponent(post.slug)}&title=${encodeURIComponent(post.title)}&tags=${encodeURIComponent((post.tags || []).slice(0, 3).join(","))}`
+      );
       return;
     }
     setImageError(true);
@@ -182,7 +232,18 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
                 sizes="(max-width: 768px) 100vw, 768px"
               />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-slate-900" />
+              <div className="relative flex h-full w-full flex-col justify-between bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/80 p-6 sm:p-8">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3 py-1 text-xs font-mono font-semibold uppercase tracking-wider text-indigo-300">
+                    <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+                    {post.tags?.[0] || "Engineering Guide"}
+                  </span>
+                  <span className="text-xs font-mono text-slate-400">abdulnabi.org</span>
+                </div>
+                <p className="text-lg sm:text-xl font-semibold text-slate-100 line-clamp-2 max-w-2xl">
+                  {post.title}
+                </p>
+              </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/70 to-transparent pointer-events-none" />
           </div>
@@ -239,24 +300,13 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {related.map((item) => (
-                <a
+                <Link
                   key={item.slug}
                   href={`/blog/${item.slug}`}
                   className="group block"
                 >
                   <GlassCard hover className="h-full overflow-hidden !p-0">
-                    {item.coverImage && (
-                      <div className="relative h-28 w-full">
-                        <Image
-                          src={item.coverImage}
-                          alt={item.title}
-                          fill
-                          unoptimized
-                          className="object-cover"
-                          sizes="300px"
-                        />
-                      </div>
-                    )}
+                    <RelatedPostThumb item={item} />
                     <div className="p-4">
                       <p className="text-xs text-slate-500">
                         {formatDate(item.date)}
@@ -266,7 +316,7 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
                       </h3>
                     </div>
                   </GlassCard>
-                </a>
+                </Link>
               ))}
             </div>
           </aside>

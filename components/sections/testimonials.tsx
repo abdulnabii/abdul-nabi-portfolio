@@ -94,23 +94,23 @@ export function Testimonials({ initialTestimonials }: { initialTestimonials?: Te
                   </div>
 
                   {/* Author Meta */}
-                  <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-indigo-500/30 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 font-semibold text-xs text-indigo-200">
                         {item.avatar}
                       </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-white">
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-semibold text-white truncate">
                           {item.name}
                         </h4>
-                        <p className="text-[11px] text-slate-400">
+                        <p className="text-[11px] text-slate-400 leading-snug">
                           {item.role} · <span className="text-indigo-300">{item.company}</span>
                         </p>
                       </div>
                     </div>
 
-                    <span className="hidden sm:inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] text-slate-400">
-                      <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                    <span className="hidden sm:inline-flex shrink-0 whitespace-nowrap items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] text-slate-400">
+                      <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-400" />
                       {item.platform}
                     </span>
                   </div>

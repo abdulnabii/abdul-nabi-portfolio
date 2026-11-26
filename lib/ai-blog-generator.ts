@@ -681,8 +681,25 @@ export async function generateAndPublishSingleBlog(
   console.log(`[ai-blog-generator] Starting generation pipeline for topic: "${req.topic || "Auto-discover"}"`);
 
   try {
+    const existingPosts = await getAllBlogs();
+    const existingSlugs = new Set(existingPosts.map((p) => p.slug));
+    const existingTitles = new Set(existingPosts.map((p) => p.title.trim().toLowerCase()));
+
     // 1. Analyze trending tech news
-    const { primaryTopic, relatedNews } = await searchAndAnalyzeTrendingNews(req.topic);
+    const { primaryTopic: initialTopic, relatedNews } = await searchAndAnalyzeTrendingNews(req.topic);
+
+    // Avoid generating duplicate articles when auto-discovering
+    let primaryTopic = initialTopic;
+    if (!req.topic?.trim()) {
+      const candidatePool = [initialTopic, ...relatedNews, ...FALLBACK_TOPICS];
+      const freshTopic = candidatePool.find((candidate) => {
+        const candidateSlug = slugify(candidate.title);
+        const candidateTitle = candidate.title.trim().toLowerCase();
+        return !existingSlugs.has(candidateSlug) && !existingTitles.has(candidateTitle);
+      });
+      if (freshTopic) primaryTopic = freshTopic;
+    }
+
     console.log(`[ai-blog-generator] Selected primary topic: "${primaryTopic.title}" (${primaryTopic.source})`);
 
     // 2. Generate the blog post & visual prompt
@@ -691,9 +708,30 @@ export async function generateAndPublishSingleBlog(
       return { success: false, error: "Failed to generate blog content" };
     }
 
-    // 3. Ensure slug uniqueness
-    const existingPosts = await getAllBlogs();
-    const existingSlugs = new Set(existingPosts.map((p) => p.slug));
+    // 3. Guard against duplicate titles and ensure slug uniqueness
+    const normTitle = generatedPost.title.trim().toLowerCase();
+    if (existingTitles.has(normTitle)) {
+      const existingMatch = existingPosts.find((p) => p.title.trim().toLowerCase() === normTitle);
+      if (existingMatch && !req.topic?.trim()) {
+        return {
+          success: true,
+          post: {
+            title: existingMatch.title,
+            slug: existingMatch.slug,
+            excerpt: existingMatch.excerpt,
+            content: existingMatch.content,
+            tags: existingMatch.tags,
+            coverImage: existingMatch.coverImage || generatedPost.coverImage,
+            readTime: existingMatch.readTime,
+            date: existingMatch.date,
+            published: existingMatch.published,
+          },
+          analyzedNews: [primaryTopic, ...relatedNews],
+          durationSeconds: Math.round((Date.now() - startTime) / 1000),
+        };
+      }
+    }
+
     let finalSlug = generatedPost.slug;
     if (existingSlugs.has(finalSlug)) {
       finalSlug = `${finalSlug}-${Date.now().toString(36).slice(-4)}`;
@@ -776,6 +814,7 @@ export async function runAutoBlog(
 
   const existingPosts = await getAllBlogs();
   const existingSlugs = new Set(existingPosts.map((p) => p.slug));
+  const existingTitles = new Set(existingPosts.map((p) => p.title.trim().toLowerCase()));
 
   const { primaryTopic, relatedNews } = await searchAndAnalyzeTrendingNews(topicQuery);
   const candidates = [primaryTopic, ...relatedNews];
@@ -785,15 +824,22 @@ export async function runAutoBlog(
     if (generated >= maxPosts) break;
 
     const potentialSlug = slugify(topic.title);
-    if (existingSlugs.has(potentialSlug)) {
+    const potentialTitle = topic.title.trim().toLowerCase();
+    if (existingSlugs.has(potentialSlug) || existingTitles.has(potentialTitle)) {
       result.skipped.push(potentialSlug);
       continue;
     }
 
     try {
-      const post = await generateAiBlogPost(topic, relatedNews, undefined, "ai_flux");
+      const post = await generateAiBlogPost(topic, relatedNews, undefined, "curated_hd");
       if (!post) {
         result.errors.push(`Failed to generate: ${topic.title.slice(0, 40)}`);
+        continue;
+      }
+
+      const generatedTitleNorm = post.title.trim().toLowerCase();
+      if (existingSlugs.has(post.slug) || existingTitles.has(generatedTitleNorm)) {
+        result.skipped.push(post.slug);
         continue;
       }
 
@@ -809,6 +855,7 @@ export async function runAutoBlog(
       });
 
       existingSlugs.add(post.slug);
+      existingTitles.add(generatedTitleNorm);
       result.created.push(post.slug);
       generated++;
 

@@ -25,9 +25,16 @@ export function BlogGridClient({ initialPosts }: BlogGridClientProps) {
           const publishedLocal = localBlogs.filter((p) => p.published !== false);
           if (publishedLocal.length > 0) {
             const map = new Map<string, BlogPost>();
+            const initialTitles = new Set(
+              initialPosts.map((p) => p.title.trim().toLowerCase())
+            );
             initialPosts.forEach((p) => map.set(p.slug, p));
             publishedLocal.forEach((p) => {
               const serverPost = map.get(p.slug);
+              // Drop stale cached local copies that duplicate an existing server post title under an older suffix slug
+              if (!serverPost && initialTitles.has(p.title.trim().toLowerCase())) {
+                return;
+              }
               const cleanCover = (p.coverImage && !p.coverImage.includes("pollinations.ai"))
                 ? p.coverImage
                 : (serverPost?.coverImage && !serverPost.coverImage.includes("pollinations.ai"))

@@ -23,6 +23,12 @@ export function Reveal({
     const node = ref.current;
     if (!node) return;
 
+    const rect = node.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.98 && rect.bottom > 0) {
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -30,7 +36,7 @@ export function Reveal({
           observer.unobserve(node);
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.02, rootMargin: "0px 0px 40px 0px" }
     );
 
     observer.observe(node);

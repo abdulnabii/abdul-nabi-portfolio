@@ -6,7 +6,7 @@ import { LinkButton } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
 import { isPublicUrl } from "@/lib/links";
-import { ArrowUpRight, Github, Star, Search, Filter, Sparkles, Heart } from "lucide-react";
+import { ArrowUpRight, Github, Star, Search, Filter, Sparkles, Heart, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -87,14 +87,24 @@ export function ProjectFilterList({ initialProjects }: ProjectFilterListProps) {
 
         {/* Search Input */}
         <div className="relative w-full md:w-72">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search projects by tech, title..."
-            className="w-full rounded-full border border-white/10 bg-white/[0.04] py-2 pl-9.5 pr-4 text-xs text-white placeholder:text-slate-500 focus:border-indigo-500 focus:bg-white/[0.08] focus:outline-none transition-all"
+            className="w-full rounded-full border border-white/10 bg-white/[0.04] py-2 pl-10 pr-9 text-xs text-white placeholder:text-slate-500 focus:border-indigo-500 focus:bg-white/[0.08] focus:outline-none transition-all"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              aria-label="Clear project search"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
 

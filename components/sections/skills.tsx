@@ -108,9 +108,17 @@ export function Skills() {
           />
         </Reveal>
 
-        <div className="grid gap-6 items-stretch md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 items-stretch md:grid-cols-2 lg:grid-cols-6">
           {categories.map((category, index) => {
             const Icon = icons[index % icons.length] || Sparkles;
+            const spanClass =
+              categories.length === 5
+                ? index < 3
+                  ? "lg:col-span-2"
+                  : index === 4
+                    ? "md:col-span-2 lg:col-span-3"
+                    : "lg:col-span-3"
+                : "lg:col-span-2";
             const categoryConfig = CATEGORY_COLORS[category.title] || {
               bar: "from-indigo-500 to-purple-500",
               badge: "border-white/10 bg-white/[0.04] text-slate-300",
@@ -123,7 +131,7 @@ export function Skills() {
               .slice(0, 3);
 
             return (
-              <Reveal key={category.title} delay={index * 70} className="h-full">
+              <Reveal key={category.title} delay={index * 70} className={`h-full ${spanClass}`}>
                 <GlassCard interactive hover padding="lg" className="h-full flex flex-col justify-between cursor-grow p-6">
                   <div>
                     <div className="mb-5 flex items-center justify-between">

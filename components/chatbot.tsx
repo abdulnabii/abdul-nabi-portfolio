@@ -135,15 +135,16 @@ export function Chatbot() {
   const [showAvailabilitySheet, setShowAvailabilitySheet] = useState(false);
   const transcriptListRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const startCallRef = useRef<() => void>(() => {});
+  const handleCallUserTurnRef = useRef<(text: string) => void>(() => {});
 
   // Listen to external custom events
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleOpenCall = () => {
       if (ENABLE_VOICE_AGENT) {
         setOpen(true);
         setAssistantMode("call");
-        startCall();
+        startCallRef.current();
       } else {
         setOpen(true);
         setAssistantMode("chat");
@@ -194,7 +195,6 @@ export function Chatbot() {
   }, [callActive]);
 
   // Initialize Speech Recognition if supported
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (typeof window !== "undefined" && ENABLE_VOICE_AGENT) {
       const SpeechRecognition =
@@ -212,7 +212,7 @@ export function Chatbot() {
         recognition.onresult = (event: any) => {
           const spokenText = event.results[0][0].transcript;
           if (spokenText) {
-            handleCallUserTurn(spokenText);
+            handleCallUserTurnRef.current(spokenText);
           }
         };
 
@@ -398,6 +398,9 @@ export function Chatbot() {
       setCallProcessing(false);
     }
   }
+
+  startCallRef.current = startCall;
+  handleCallUserTurnRef.current = handleCallUserTurn;
 
   // ── Standard Chatbot Actions ──
   async function sendMessage(text: string) {

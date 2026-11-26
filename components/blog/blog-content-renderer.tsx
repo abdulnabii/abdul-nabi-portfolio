@@ -260,30 +260,43 @@ function ArticleImageFigure({
   }, [src, alt]);
 
   const handleError = () => {
-    if (retryOffset < 3) {
+    if (retryOffset < 1) {
       const next = retryOffset + 1;
       setRetryOffset(next);
       setCurrentSrc(getCuratedTopicCoverImage(alt || "architecture", [], next));
+    } else if (retryOffset === 1) {
+      setRetryOffset(2);
+      setCurrentSrc(`/api/og/blog?title=${encodeURIComponent(alt || "System Architecture Diagram")}`);
     } else {
       setHasError(true);
     }
   };
 
-  if (hasError) return null;
-
   return (
     <figure className="my-8 overflow-hidden rounded-2xl border border-white/10 bg-[#060a17]/90 p-2 sm:p-3 shadow-2xl transition-all duration-300 hover:border-indigo-500/30">
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-slate-900/90">
-        <Image
-          src={currentSrc}
-          alt={alt || "Article illustration & systems diagram"}
-          fill
-          unoptimized
-          onError={handleError}
-          referrerPolicy="no-referrer"
-          className="object-cover transition-transform duration-700 hover:scale-105"
-          sizes="(max-width: 768px) 100vw, 850px"
-        />
+        {!hasError ? (
+          <Image
+            src={currentSrc}
+            alt={alt || "Article illustration & systems diagram"}
+            fill
+            unoptimized
+            onError={handleError}
+            referrerPolicy="no-referrer"
+            className="object-cover transition-transform duration-700 hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 850px"
+          />
+        ) : (
+          <div className="flex h-full w-full flex-col justify-between bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-slate-900 p-6">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-indigo-500/30 bg-indigo-500/15 px-2.5 py-1 text-[11px] font-mono text-indigo-300">
+              <ImageIcon className="h-3.5 w-3.5" />
+              Technical Illustration
+            </span>
+            <p className="text-sm sm:text-base font-medium text-slate-200 max-w-xl">
+              {alt || caption || "Systems architecture and telemetry benchmark"}
+            </p>
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#060a17]/70 via-transparent to-transparent pointer-events-none" />
       </div>
       {caption && (
