@@ -117,6 +117,8 @@ export async function GET(req: NextRequest) {
                 <div
                   key={i}
                   style={{
+                    display: "flex",
+                    alignItems: "center",
                     padding: "6px 14px",
                     borderRadius: "8px",
                     backgroundColor: "rgba(255, 255, 255, 0.08)",
@@ -125,7 +127,7 @@ export async function GET(req: NextRequest) {
                     color: "#cbd5e1",
                   }}
                 >
-                  #{tag}
+                  {`#${tag}`}
                 </div>
               ))}
             </div>
