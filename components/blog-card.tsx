@@ -29,14 +29,17 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
 
   const [imgSrc, setImgSrc] = useState<string>(() => getCleanCover(0));
   const [hasFailed, setHasFailed] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     setImgSrc(getCleanCover(0));
     setRetryOffset(0);
     setHasFailed(false);
+    setIsLoaded(false);
   }, [getCleanCover]);
 
   const handleImageError = () => {
+    setIsLoaded(false);
     if (retryOffset < 1) {
       const next = retryOffset + 1;
       setRetryOffset(next);
@@ -72,30 +75,30 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
           className="flex h-full flex-col overflow-hidden cursor-grow"
         >
           <div className="relative h-44 w-full overflow-hidden border-b border-white/10 bg-[#060a17]">
-            {!hasFailed && imgSrc ? (
+            <div className="relative h-full w-full bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/80 p-5 flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold uppercase tracking-wider bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                  <Sparkles className="h-3 w-3 text-indigo-400" />
+                  {post.tags?.[0] || "Architecture"}
+                </span>
+                <span className="text-[11px] font-mono text-slate-500">abdulnabi.org</span>
+              </div>
+              <div className="font-semibold text-sm text-slate-200 line-clamp-2">
+                {post.title}
+              </div>
+            </div>
+            {!hasFailed && imgSrc && (
               <Image
                 src={imgSrc}
                 alt={post.title}
                 fill
                 unoptimized
+                onLoad={() => setIsLoaded(true)}
                 onError={handleImageError}
                 referrerPolicy="no-referrer"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className={`object-cover transition-all duration-500 group-hover:scale-105 ${isLoaded ? "opacity-100" : "opacity-0"}`}
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
-            ) : (
-              <div className="relative h-full w-full bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/80 p-5 flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold uppercase tracking-wider bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                    <Sparkles className="h-3 w-3 text-indigo-400" />
-                    {post.tags?.[0] || "Architecture"}
-                  </span>
-                  <span className="text-[11px] font-mono text-slate-500">abdulnabi.org</span>
-                </div>
-                <div className="font-semibold text-sm text-slate-200 line-clamp-2">
-                  {post.title}
-                </div>
-              </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1e]/80 via-transparent to-transparent pointer-events-none" />
           </div>

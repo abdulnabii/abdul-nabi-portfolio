@@ -21,37 +21,39 @@ function RelatedPostThumb({ item }: { item: BlogPost }) {
       : getCuratedTopicCoverImage(item.title, item.tags)
   );
   const [step, setStep] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
-  if (step >= 2) {
-    return (
-      <div className="relative flex h-28 w-full items-end bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/70 p-4">
+  return (
+    <div className="relative h-28 w-full overflow-hidden bg-[#060a17]">
+      <div className="flex h-full w-full items-end bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/70 p-4">
         <span className="inline-flex items-center gap-1 rounded-md border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-indigo-300">
           <Sparkles className="h-3 w-3 text-indigo-400" />
           {item.tags?.[0] || "Article"}
         </span>
       </div>
-    );
-  }
-
-  return (
-    <div className="relative h-28 w-full bg-[#060a17]">
-      <Image
-        src={src}
-        alt={item.title}
-        fill
-        unoptimized
-        referrerPolicy="no-referrer"
-        onError={() => {
-          if (step === 0) {
-            setStep(1);
-            setSrc(`/api/og/blog?slug=${encodeURIComponent(item.slug)}&title=${encodeURIComponent(item.title)}`);
-          } else {
-            setStep(2);
-          }
-        }}
-        className="object-cover"
-        sizes="300px"
-      />
+      {step < 2 && (
+        <Image
+          src={src}
+          alt={item.title}
+          fill
+          unoptimized
+          referrerPolicy="no-referrer"
+          onLoad={() => setLoaded(true)}
+          onError={() => {
+            setLoaded(false);
+            if (step === 0) {
+              setStep(1);
+              setSrc(
+                `/api/og/blog?slug=${encodeURIComponent(item.slug)}&title=${encodeURIComponent(item.title)}&tags=${encodeURIComponent((item.tags || []).slice(0, 3).join(","))}`
+              );
+            } else {
+              setStep(2);
+            }
+          }}
+          className={`object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+          sizes="300px"
+        />
+      )}
     </div>
   );
 }
@@ -77,6 +79,7 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
 
   const [imgSrc, setImgSrc] = useState<string>(() => getCleanCover(initialPost, 0));
   const [imageError, setImageError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
 
   useEffect(() => {
@@ -84,10 +87,12 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
       setImgSrc(getCleanCover(post, 0));
       setRetryOffset(0);
       setImageError(false);
+      setIsLoaded(false);
     }
   }, [post, getCleanCover]);
 
   const handleImageError = () => {
+    setIsLoaded(false);
     if (post && retryOffset < 1) {
       const next = retryOffset + 1;
       setRetryOffset(next);
@@ -219,31 +224,31 @@ export function BlogPostClient({ initialPost, slug, related }: BlogPostClientPro
 
         <header className="mb-10">
           <div className="relative mb-8 h-56 overflow-hidden rounded-3xl border border-white/10 sm:h-72 bg-[#060a17]">
-            {imgSrc && !imageError ? (
+            <div className="relative flex h-full w-full flex-col justify-between bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/80 p-6 sm:p-8">
+              <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3 py-1 text-xs font-mono font-semibold uppercase tracking-wider text-indigo-300">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+                  {post.tags?.[0] || "Engineering Guide"}
+                </span>
+                <span className="text-xs font-mono text-slate-400">abdulnabi.org</span>
+              </div>
+              <p className="text-lg sm:text-xl font-semibold text-slate-100 line-clamp-2 max-w-2xl">
+                {post.title}
+              </p>
+            </div>
+            {imgSrc && !imageError && (
               <Image
                 src={imgSrc}
                 alt={post.title}
                 fill
                 unoptimized
+                onLoad={() => setIsLoaded(true)}
                 onError={handleImageError}
                 referrerPolicy="no-referrer"
-                className="object-cover"
+                className={`object-cover transition-opacity duration-300 ${isLoaded ? "opacity-100" : "opacity-0"}`}
                 priority
                 sizes="(max-width: 768px) 100vw, 768px"
               />
-            ) : (
-              <div className="relative flex h-full w-full flex-col justify-between bg-gradient-to-br from-indigo-950 via-[#0a0f1e] to-purple-950/80 p-6 sm:p-8">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3 py-1 text-xs font-mono font-semibold uppercase tracking-wider text-indigo-300">
-                    <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
-                    {post.tags?.[0] || "Engineering Guide"}
-                  </span>
-                  <span className="text-xs font-mono text-slate-400">abdulnabi.org</span>
-                </div>
-                <p className="text-lg sm:text-xl font-semibold text-slate-100 line-clamp-2 max-w-2xl">
-                  {post.title}
-                </p>
-              </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/70 to-transparent pointer-events-none" />
           </div>
